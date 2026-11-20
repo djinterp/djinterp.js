@@ -45,6 +45,10 @@ import { HANDLER_ID_NULL, STATUS, VERDICT, verdictIsConsumed }
 import { stepFold } from './event_handler_common.js';
 import * as eventTable from './event_table_common.js';
 
+// the types of other modules that this one's comments name
+/** @import { EventStep } from './event_handler_common.js' */
+/** @import { EventTable } from './event_table_common.js' */
+
 
 //==============================================================================
 // 1.  THE REGISTRY
@@ -53,7 +57,7 @@ import * as eventTable from './event_table_common.js';
 /**
  * A registry: `table` is its table, read with event_table_common.js.
  *
- * @typedef {{table: EventTable}} eventRegistry
+ * @typedef {{table: EventTable}} EventRegistry
  */
 
 // 1.1
@@ -61,7 +65,7 @@ import * as eventTable from './event_table_common.js';
  * A registry with no letters.
  *
  * @param {object} [_room]  the table's room, as `tableInit` takes it.
- * @returns {eventRegistry}
+ * @returns {EventRegistry}
  */
 export function registryInit(
     _room = {}
@@ -73,7 +77,7 @@ export function registryInit(
 /**
  * Unbinds every letter and ends the registry.
  *
- * @param {?eventRegistry} _registry  the registry.
+ * @param {?EventRegistry} _registry  the registry.
  */
 export function registryDispose(
     _registry
@@ -91,7 +95,7 @@ export function registryDispose(
 /**
  * Appends a letter to a key's word: `tableBind` on the registry's table.
  *
- * @param {?eventRegistry} _registry  the registry.
+ * @param {?EventRegistry} _registry  the registry.
  * @param {bigint}          _key       the key.
  * @param {EventStep}      _step      the handler.
  * @param {?function(*): void} [_stateFree=null]  called with the step's
@@ -116,7 +120,7 @@ export function registryBind(
 /**
  * Unbinds the letter of an id: `tableUnbind` on the registry's table.
  *
- * @param {?eventRegistry} _registry  the registry.
+ * @param {?EventRegistry} _registry  the registry.
  * @param {number}          _id        the letter's id.
  * @returns {number}
  */
@@ -154,7 +158,7 @@ export function dispatchResultEmpty()
  * Folds a key's word over one occurrence: each enabled letter in the
  * order it was bound, until one consumes.
  *
- * @param {?eventRegistry} _registry  the registry.
+ * @param {?EventRegistry} _registry  the registry.
  * @param {bigint}          _key       the key.
  * @param {*}               _payload   the occurrence's payload, handed to
  *        each handler; the handlers may change what it refers to.
@@ -233,7 +237,7 @@ export function registryDispatch(
  * Dispatches a row of occurrences of one key, in order. The word is found
  * for each one, so an edit a handler makes is seen by the next.
  *
- * @param {?eventRegistry} _registry  the registry.
+ * @param {?EventRegistry} _registry  the registry.
  * @param {bigint}          _key       the key.
  * @param {Array<*>}        _payloads  each occurrence's payload.
  * @returns {{occurrences: number, handlersInvoked: number,
@@ -286,7 +290,7 @@ export function registryRun(
 /**
  * Copies out a key's enabled letters as a word.
  *
- * @param {?eventRegistry} _registry  the registry.
+ * @param {?EventRegistry} _registry  the registry.
  * @param {bigint}          _key       the key.
  * @returns {{status: number, word: ?EventWord}} OK and the word; ERR_NULL
  *          and no word for no registry.

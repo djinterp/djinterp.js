@@ -88,6 +88,9 @@ import { formatReal } from '../text/real_format.js';
 import { readReal } from '../text/real_read.js';
 import { STATUS, fail, ok } from './option_common.js';
 
+// the types of other modules that this one's comments name
+/** @import { OptionResult } from './option_common.js' */
+
 
 //==============================================================================
 // 1.  VOCABULARY
@@ -1957,10 +1960,11 @@ function nameValue(
     return;
 }
 
-/*
-getInner
-  d_option_env_get, its value's text and its integer a BigInt.
-*/
+/**
+ * d_option_env_get, its value's text and its integer a BigInt.
+ *
+ * @returns {OptionResult & {got?: *, decl?: *, scope?: number}}
+ */
 function getInner(
     _env,
     _scope,
@@ -3116,6 +3120,7 @@ function readFlags(
             ++at;
         }
 
+        /** @type {{status: number, value: bigint}} */
         const term = (at === start)
                          ? { status: STATUS.INVALID_ARGUMENT, value: 0n }
                          : readChoice(_decl, _text.slice(start, at));
@@ -3862,11 +3867,14 @@ export { import_ as import };
 // 7.  WRITING TEXT
 //==============================================================================
 
-/*
-widest
-  The row's name whose bits are all still to be written and are the most;
--1 for none.
-*/
+/**
+ * The row's name whose bits are all still to be written and are the most;
+ * -1 for none.
+ *
+ * @param {*}      _decl  the row, as the machine holds it.
+ * @param {bigint} _left  the bits still to be written.
+ * @returns {number}
+ */
 function widest(
     _decl,
     _left
@@ -3877,6 +3885,7 @@ function widest(
 
     for (let i = 0; i < _decl.name_count; ++i)
     {
+        /** @type {bigint} */
         const bits  = _decl.names[i].value;
         let   count = 0;
 

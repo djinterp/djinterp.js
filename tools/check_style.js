@@ -8,8 +8,9 @@
 * return; one line break at the file's end; and, in a file under src/,
 * tests/ or tools/, the banner's path is the file's own. A row of a table
 * in a `.md` file may pass 80 columns, since it cannot be broken.
-*   Generated files and recorded transcripts are not people's, and are not
-* checked. Exits 1 where anything is found, having said where.
+*   Generated files, recorded transcripts and the declarations in types/
+* are not people's, and are not checked. Exits 1 where anything is found,
+* having said where.
 *
 *
 * path:      /tools/check_style.js
@@ -24,7 +25,8 @@ import { fileURLToPath } from 'node:url';
 
 const ROOT    = join(dirname(fileURLToPath(import.meta.url)), '..');
 const CHECKED = /\.(js|c|h|sh|md|json|html)$/;
-const SKIPPED = new Set(['.git', 'node_modules', 'generated', 'transcripts']);
+const SKIPPED = new Set(['.git', 'node_modules', 'generated', 'transcripts',
+                         'types']);
 
 // not held to the columns: the starting package's driver, kept as it
 // came; and the page of decisions, which is in the form of the owner's

@@ -49,6 +49,9 @@ TABLE OF CONTENTS
 
 import { HANDLER_ID_NULL, STATUS } from './event_common.js';
 
+// the types of other modules that this one's comments name
+/** @import { EventStep } from './event_handler_common.js' */
+
 
 //==============================================================================
 // 1.  THE TABLE

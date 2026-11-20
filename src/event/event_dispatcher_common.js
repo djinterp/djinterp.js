@@ -50,6 +50,11 @@ import { HANDLER_ID_NULL, STATUS, verdictIsConsumed }
 import * as eventRegistry from './event_registry_common.js';
 import * as eventTable from './event_table_common.js';
 
+// the types of other modules that this one's comments name
+/** @import { EventRegistry } from './event_registry_common.js' */
+/** @import { EventStep } from './event_handler_common.js' */
+/** @import { EventWord } from './event_registry_common.js' */
+
 const DROP_OLDEST = (data.queue_overflow === data.queue_overflow_drop_oldest);
 
 
@@ -156,7 +161,7 @@ export function queueEnqueue(
  * more than were queued when the call began.
  *
  * @param {?EventQueue}    _queue     the queue.
- * @param {?eventRegistry} _registry  what they are dispatched over.
+ * @param {?EventRegistry} _registry  what they are dispatched over.
  * @param {number}          [_max=0]   the most to deliver; 0 for every
  *        one queued at the call.
  * @returns {{processed: number, result: {occurrences: number,
@@ -266,8 +271,8 @@ export function queuePeek(
 /**
  * A dispatcher: `registry` is its registry and `queue` its queue.
  *
- * @typedef {{registry: eventRegistry, queue: EventQueue}}
- *          event_dispatcher
+ * @typedef {{registry: EventRegistry, queue: EventQueue}}
+ *          EventDispatcher
  */
 
 // 2.1

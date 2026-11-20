@@ -46,6 +46,10 @@ import { STATUS, resultStatus, statusName }
 import * as optionEnv from '../../option/option_env.js';
 import * as optionEnvRegistry from '../../option/option_env_registry.js';
 
+// the types of other modules that this one's comments name
+/** @import { OptionEnvRegistry } from '../../option/option_env_registry.js' */
+/** @import { OptionResult } from '../../option/option_common.js' */
+
 const ROOM     = 256;
 const envInner = optionEnv.inner;
 const regInner = optionEnvRegistry.inner;
@@ -217,6 +221,7 @@ export function load(
 
     while (offset < script.length)
     {
+        /** @type {OptionResult & {errorOffset?: number}} */
         const done = regInner.load(_registry, script.slice(offset),
                                    optionEnv.SOURCE.FILE);
 
@@ -427,8 +432,8 @@ export function saidFor(
  * @param {OptionEnvRegistry} _registry  the registry.
  * @param {Array<string>} _argv      the command line, the program's name
  *        first.
- * @param {Array<string>} _commands  the names of the program's commands:
- *        a refusal is said of the one the walk has reached.
+ * @param {ReadonlyArray<string>} _commands  the names of the program's
+ *        commands: a refusal is said of the one the walk has reached.
  * @returns {{kept: Array<string>, refused: ?{command: ?string,
  *            message: string}}} the arguments kept; and for a setting
  *          refused, which stops the walk, the command reached, or null

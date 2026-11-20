@@ -45,6 +45,10 @@ import data from '../../generated/option.js';
 import { STATUS, fail, ok } from './option_common.js';
 import * as optionEnv from './option_env.js';
 
+// the types of other modules that this one's comments name
+/** @import { OptionEnv } from './option_env.js' */
+/** @import { OptionResult } from './option_common.js' */
+
 const PREFIX_ROOM = 256;
 const REGISTRY    = Symbol('option_env_registry');
 const envInner    = optionEnv.inner;

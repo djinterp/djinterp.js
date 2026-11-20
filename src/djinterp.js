@@ -79,6 +79,20 @@ import * as optionEnvRegistry from './option/option_env_registry.js';
 import * as cliSettings from './tools/cli/cli_settings.js';
 import * as djinterpCommands from './tools/djinterp/djinterp_commands.js';
 
+// the types of other modules that this one's comments name
+/** @import { DjinRecord } from './modules/interp/djin.js' */
+/** @import { DjinSet } from './modules/interp/djin.js' */
+/**
+ * @import { DjinterpProgram }
+ *         from './tools/djinterp/djinterp_commands.js'
+ */
+/** @import { OptionEnv } from './option/option_env.js' */
+/**
+ * @import { OptionEnvRegistry }
+ *         from './option/option_env_registry.js'
+ */
+/** @import { OptionRow } from './option/option_env.js' */
+
 export { djin, event, optionEnv, optionEnvRegistry };
 
 const SETTINGS_NAME = 'djinterp/settings';
@@ -354,6 +368,7 @@ function takeQuery(
  * @typedef {object} DjinterpSession
  * @property {OptionEnvRegistry} registry  its settings.
  * @property {DjinSet} set  its djins.
+ * @property {DjinterpProgram} program  the program under it.
  * @property {string} warnings  what was said while its settings were
  *           readied: a line for each statement of the settings file, and
  *           each piece of the query, that was refused.
@@ -508,7 +523,8 @@ export function openProgram(
             return event.dispatcherBind(
                        events, event.keyOfName(_name),
                        event.stepMake((_payload) =>
-                           (event.verdictIsConsumed(_handler(_payload))
+                           (event.verdictIsConsumed(_handler(_payload) ??
+                                                    event.VERDICT.PASS)
                                 ? event.VERDICT.CONSUME
                                 : event.VERDICT.PASS))).id;
         },

@@ -48,6 +48,10 @@ import { formatReal } from '../../text/real_format.js';
 import * as optionEnv from '../../option/option_env.js';
 import * as optionEnvRegistry from '../../option/option_env_registry.js';
 
+// the types of other modules that this one's comments name
+/** @import { OptionEnv } from '../../option/option_env.js' */
+/** @import { OptionEnvRegistry } from '../../option/option_env_registry.js' */
+
 const DEFAULT_ROOM = 96;
 const NAME_ROOM    = 128;
 const envInner     = optionEnv.inner;
@@ -259,7 +263,7 @@ function recordValid(
  *        takes.
  * @param {?OptionEnvRegistry} [_options.registry=null]  the registry a
  *        record's settings are listed in.
- * @param {Array<string>} [_options.reserved=[]]  the names the program
+ * @param {ReadonlyArray<string>} [_options.reserved=[]]  the names the program
  *        keeps for itself.
  * @returns {DjinSet}
  */

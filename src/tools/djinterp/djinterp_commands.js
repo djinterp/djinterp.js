@@ -46,6 +46,10 @@ import * as optionEnvRegistry from '../../option/option_env_registry.js';
 import { formatReal } from '../../text/real_format.js';
 import * as cliSettings from '../cli/cli_settings.js';
 
+// the types of other modules that this one's comments name
+/** @import { DjinSet } from '../../modules/interp/djin.js' */
+/** @import { OptionEnvRegistry } from '../../option/option_env_registry.js' */
+
 const ROOM     = 512;
 const envInner = optionEnv.inner;
 const regInner = optionEnvRegistry.inner;
@@ -421,6 +425,7 @@ function workGet(
 )
 {
     const registry = _run.program.registry;
+    /** @type {number} */
     let   status   = EXIT.OK;
 
     if (_names.length === 0)
