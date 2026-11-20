@@ -17,7 +17,7 @@
 * The reference's arena of payload bytes is not here; the queue's room is
 * a count of occurrences, and it has none unless given.
 *   reference: inc/djinterp/c/event/event_dispatcher_common.h and
-*              src/djinterp/c/event/event_dispatcher_common.c, at d20c0b23
+*              src/djinterp/c/event/event_dispatcher_common.c, at dfc793c4
 *
 *
 * path:      /src/event/event_dispatcher_common.js

@@ -20,7 +20,7 @@
 *   Everything here is in bytes (src/text/utf8.js), as the program's
 * commands are: what is said is the reference's, byte for byte.
 *   reference: inc/djinterp/tools/cli/c/cli_settings.h and
-*              src/djinterp/tools/cli/c/cli_settings.c, at d20c0b23
+*              src/djinterp/tools/cli/c/cli_settings.c, at dfc793c4
 *
 *
 * path:      /src/tools/cli/cli_settings.js

@@ -1,6 +1,6 @@
 # djinterp.js: handoff after the first session
 
-2026-11-16. The port follows djinterp at `d20c0b23`.
+2026-11-16. The port follows djinterp at `dfc793c4`.
 
 Read this, then `decisions.html`, which has the seventeen decisions
 this session leaves with the owner. `docs/JS_STYLE.md` is the style.

@@ -35,7 +35,7 @@
 *     with the room D_OPTION_ENV_DECLARE gives, the reference cannot
 *     report it.
 *   reference: inc/djinterp/c/option/option_env.h and
-*              src/djinterp/c/option/option_env.c, at d20c0b23
+*              src/djinterp/c/option/option_env.c, at dfc793c4
 *
 *
 * path:      /src/option/option_env.js

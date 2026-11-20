@@ -13,7 +13,7 @@
 * reference refuses both before strtod sees them, by their letters, so
 * neither is read here, and a caller that needs them must add them.
 *   reference: src/djinterp/c/option/option_env.c,
-*              d_internal_option_env_read_real, at d20c0b23 -- which calls
+*              d_internal_option_env_read_real, at dfc793c4 -- which calls
 *              strtod; the conversion itself is the C library's (ISO C,
 *              7.22.1.3)
 *

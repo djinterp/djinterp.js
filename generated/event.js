@@ -1,6 +1,6 @@
 // generated from event.json by tools/json_module.js; never edited by hand
 export default {
-  "reference": "d20c0b23",
+  "reference": "dfc793c4",
   "generated_by": "tools/rows_json.c event",
   "statuses": [
     {"name": "D_EVENT_OK", "value": 0},

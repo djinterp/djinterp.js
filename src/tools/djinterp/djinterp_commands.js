@@ -19,7 +19,7 @@
 * to every program -- `help`, `completion`, `--help`, `--version`, `-q`,
 * `-v`, `--color` -- is not here, though their names are, since the
 * parser suggests them (HANDOFF.md, "what is not ported").
-*   reference: src/djinterp/tools/djinterp/djinterp_commands.c, at d20c0b23
+*   reference: src/djinterp/tools/djinterp/djinterp_commands.c, at dfc793c4
 *
 *
 * path:      /src/tools/djinterp/djinterp_commands.js

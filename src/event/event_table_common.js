@@ -18,7 +18,7 @@
 * the reference's fixed table does. Where the reference walks a word by
 * slot index (`first`, `next`, `at`), this gives the word (`table_word`).
 *   reference: inc/djinterp/c/event/event_table_common.h and
-*              src/djinterp/c/event/event_table_common.c, at d20c0b23
+*              src/djinterp/c/event/event_table_common.c, at dfc793c4
 *
 *
 * path:      /src/event/event_table_common.js

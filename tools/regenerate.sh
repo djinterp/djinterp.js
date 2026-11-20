@@ -12,9 +12,10 @@
 #   In order: builds the tools (tools/build.sh); writes generated/*.json and
 # the modules beside them; writes the sweep of doubles; makes the fuzzed
 # inputs again from their seeds; records every transcript under
-# tests/transcripts; and checks that the starting package's four runs
+# tests/transcripts; checks that the starting package's four runs
 # (tests/transcripts/prototype, kept as they came) are still what the
-# reference prints. `node --test` then says whether the port still follows.
+# reference prints; and writes the commit into the banners under src/ and
+# tests/. `node --test` then says whether the port still follows.
 #   This is how the port moves to a later commit of djinterp: run it, read
 # what `git diff` shows changed in the reference's own words, and bring the
 # port after it.
@@ -72,5 +73,9 @@ do
         || { echo "prototype/$run: the reference no longer prints this" >&2
              exit 1; }
 done
+
+# the commit each file of the port says it follows
+find "$ROOT/src" "$ROOT/tests" -name '*.js' -exec                             \
+    sed -i -E "s/\\bat [0-9a-f]{8}\\b/at $COMMIT/" {} +
 
 echo "regenerated at $COMMIT; now: node --test"

@@ -8,7 +8,7 @@
 *     const key        = event.key_of_name('set');
 *     event.dispatcher_bind(dispatcher, key, event.step_make(handler));
 *     event.dispatcher_fire(dispatcher, key, payload);
-*   reference: inc/djinterp/c/event/event.h, at d20c0b23
+*   reference: inc/djinterp/c/event/event.h, at dfc793c4
 *
 *
 * path:      /src/event/event.js
