@@ -56,7 +56,7 @@ TABLE OF CONTENTS
     3.  kindName, sourceName
     4.  rowBool ... rowFlags
 2.  Setting up
-    1.  init
+    1.  init, fromRecord
     2.  declare, declareAll
     3.  setScopes, setParent, setName
     4.  clear, detach, generation, root, name
@@ -816,6 +816,55 @@ export function init(
         depth:           0,
         childCount:      0
     };
+}
+
+/**
+ * A frame made from its record in the reference's data, as
+ * tools/rows_json.c writes one: with the room the reference's own frame
+ * has, its name, its rows and its scopes, so that it is full where the
+ * reference's is (the owner's ruling 5 of 2026-11-16). The port's own.
+ *
+ * @param {{name?: ?string, bindings?: number, vars?: number,
+ *          text?: number, rows?: Array<OptionRow>,
+ *          scopes?: Array<string>}} _record  the frame's record. Room it
+ *        does not give is not limited.
+ * @returns {OptionResult & {env?: OptionEnv}} OK, and the frame in `env`;
+ *          or what the reference refuses of it first: its name, a row,
+ *          or its scopes.
+ * @throws {TypeError} for what is no record.
+ */
+export function fromRecord(
+    _record
+)
+{
+    if ( (_record === null) ||
+         (typeof _record !== 'object') )
+    {
+        throw new TypeError('optionEnv.fromRecord: no record of a frame');
+    }
+
+    const env   = init({ bindings: _record.bindings, vars: _record.vars,
+                         text: _record.text });
+    const steps = [
+        () => ( (typeof _record.name === 'string') ? setName(env,
+                                                             _record.name)
+                                                   : ok(0) ),
+        () => declareAll(env, _record.rows ?? []),
+        () => ( ((_record.scopes ?? []).length !== 0)
+                    ? setScopes(env, _record.scopes) : ok(0) )
+    ];
+
+    for (const step of steps)
+    {
+        const done = step();
+
+        if (!done.isOk)
+        {
+            return done;
+        }
+    }
+
+    return { ...ok(0), env: env };
 }
 
 /*

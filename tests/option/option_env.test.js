@@ -22,6 +22,7 @@ import { STATUS, fail, ok, resultStatus, statusIsMechanical,
          statusMessage, statusName }
     from '../../src/option/option_common.js';
 import * as optionEnv from '../../src/option/option_env.js';
+import { generated } from '../support/fixture.js';
 
 const { GLOBAL, KIND, SOURCE } = optionEnv;
 
@@ -345,4 +346,31 @@ test('ids carry their frame\'s depth', () =>
     assert.equal(optionEnv.root(null), null);
     assert.equal(optionEnv.setParent(child, undefined).isOk, true);
     assert.equal(optionEnv.root(child), child);
+});
+
+test('a frame from its record is full where the reference\'s is', () =>
+{
+    // the fixture's smallest frame: two bindings, three variables, and
+    // sixteen units of text, as tools/rows_json.c wrote it
+    const record = generated('fixture.json').frames
+                       .find((_frame) => (_frame.name === 'tiny'));
+    const made   = optionEnv.fromRecord(record);
+
+    assert.equal(made.isOk, true);
+    assert.equal(optionEnv.name(made.env), 'tiny');
+    assert.equal(optionEnv.varCount(made.env), record.rows.length);
+    assert.deepEqual(optionEnv.declare(made.env,
+                                       optionEnv.rowBool('over', false)),
+                     fail(STATUS.CAPACITY));
+    assert.equal(optionEnv.assign(made.env, 't', 'fits').isOk, true);
+    assert.deepEqual(optionEnv.setTextCopy(made.env, GLOBAL, 0,
+                                           'x'.repeat(record.text)),
+                     fail(STATUS.BUFFER_TOO_SMALL));
+
+    // what the reference refuses of a record is the answer; no record is
+    // a misuse
+    assert.deepEqual(optionEnv.fromRecord({ name: 'not a name' }),
+                     fail(STATUS.INVALID_ARGUMENT));
+    assert.equal(optionEnv.fromRecord({}).isOk, true);
+    assert.throws(() => optionEnv.fromRecord(null), TypeError);
 });

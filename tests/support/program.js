@@ -61,26 +61,22 @@ export function makeProgram(
 
     for (const fx of data.frames)
     {
-        const frame = fx.is_root
-            ? optionEnvRegistry.frame(registry)
-            : optionEnv.init({ bindings: fx.bindings, vars: fx.vars,
-                               text: fx.text });
-
+        // a frame from its record has the reference's room for it
         if (!fx.is_root)
         {
-            must(optionEnv.setName(frame, fx.name));
+            must(optionEnvRegistry.add(registry,
+                                       must(optionEnv.fromRecord(fx)).env));
+
+            continue;
         }
+
+        const frame = optionEnvRegistry.frame(registry);
 
         must(optionEnv.declareAll(frame, fx.rows));
 
         if (fx.scopes.length !== 0)
         {
             must(optionEnv.setScopes(frame, fx.scopes));
-        }
-
-        if (!fx.is_root)
-        {
-            must(optionEnvRegistry.add(registry, frame));
         }
     }
 

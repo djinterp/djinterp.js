@@ -158,6 +158,31 @@ export function init(_room?: {
     text?: number;
 }): OptionEnv;
 /**
+ * A frame made from its record in the reference's data, as
+ * tools/rows_json.c writes one: with the room the reference's own frame
+ * has, its name, its rows and its scopes, so that it is full where the
+ * reference's is (the owner's ruling 5 of 2026-11-16). The port's own.
+ *
+ * @param {{name?: ?string, bindings?: number, vars?: number,
+ *          text?: number, rows?: Array<OptionRow>,
+ *          scopes?: Array<string>}} _record  the frame's record. Room it
+ *        does not give is not limited.
+ * @returns {OptionResult & {env?: OptionEnv}} OK, and the frame in `env`;
+ *          or what the reference refuses of it first: its name, a row,
+ *          or its scopes.
+ * @throws {TypeError} for what is no record.
+ */
+export function fromRecord(_record: {
+    name?: string | null;
+    bindings?: number;
+    vars?: number;
+    text?: number;
+    rows?: Array<OptionRow>;
+    scopes?: Array<string>;
+}): OptionResult & {
+    env?: OptionEnv;
+};
+/**
  * Declares a variable in a frame.
  *
  * @param {OptionEnv} _env  the frame.
