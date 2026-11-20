@@ -196,7 +196,77 @@ export const internal: Readonly<{
 /**
  * A table. Made by `tableInit`; read through the functions here.
  */
-export type EventTable = object;
+export type EventTable = {
+    /**
+     * made by `tableInit`, and not yet disposed.
+     */
+    ready: boolean;
+    /**
+     * its letters, in the order they
+     * were bound; one unbound during a dispatch stays, a zombie,
+     * until the outermost dispatch ends.
+     */
+    entries: Array<EventLetter>;
+    /**
+     * the id the next letter bound takes.
+     */
+    nextId: number;
+    /**
+     * its letters, zombies not counted.
+     */
+    count: number;
+    /**
+     * those of them enabled.
+     */
+    enabledCount: number;
+    /**
+     * the most letters it holds.
+     */
+    capacity: number;
+    /**
+     * whether a dispatch is under way.
+     */
+    dispatching: boolean;
+    /**
+     * whether a letter was unbound during
+     * it, to be released when the outermost dispatch ends.
+     */
+    zombies: boolean;
+    /**
+     * whether the table was disposed during
+     * it, to be cleared when the outermost dispatch ends.
+     */
+    disposeAsked: boolean;
+};
+/**
+ * A letter as the table holds it.
+ */
+export type EventLetter = {
+    /**
+     * its handler id.
+     */
+    id: number;
+    /**
+     * the key of its word.
+     */
+    key: bigint;
+    /**
+     * the handler.
+     */
+    step: EventStep;
+    /**
+     * what releases the step's state.
+     */
+    stateFree: Function | null;
+    /**
+     * its mask.
+     */
+    enabled: boolean;
+    /**
+     * unbound during a dispatch.
+     */
+    zombie: boolean;
+};
 /**
  * A letter, as a reader is shown one.
  */
@@ -224,6 +294,30 @@ import type { EventStep } from './event_handler_common.js';
  * A table. Made by `tableInit`; read through the functions here.
  *
  * @typedef {object} EventTable
+ * @property {boolean} ready  made by `tableInit`, and not yet disposed.
+ * @property {Array<EventLetter>} entries  its letters, in the order they
+ *           were bound; one unbound during a dispatch stays, a zombie,
+ *           until the outermost dispatch ends.
+ * @property {number}  nextId        the id the next letter bound takes.
+ * @property {number}  count         its letters, zombies not counted.
+ * @property {number}  enabledCount  those of them enabled.
+ * @property {number}  capacity      the most letters it holds.
+ * @property {boolean} dispatching   whether a dispatch is under way.
+ * @property {boolean} zombies       whether a letter was unbound during
+ *           it, to be released when the outermost dispatch ends.
+ * @property {boolean} disposeAsked  whether the table was disposed during
+ *           it, to be cleared when the outermost dispatch ends.
+ */
+/**
+ * A letter as the table holds it.
+ *
+ * @typedef {object} EventLetter
+ * @property {number}    id         its handler id.
+ * @property {bigint}    key        the key of its word.
+ * @property {EventStep} step       the handler.
+ * @property {?function} stateFree  what releases the step's state.
+ * @property {boolean}   enabled    its mask.
+ * @property {boolean}   zombie     unbound during a dispatch.
  */
 /**
  * A letter, as a reader is shown one.
@@ -231,10 +325,34 @@ import type { EventStep } from './event_handler_common.js';
  * @typedef {object} EventEntry
  * @property {number}     id       its handler id.
  * @property {bigint}     key      the key of its word.
- * @property {EventStep} step     the handler.
+ * @property {EventStep}  step     the handler.
  * @property {boolean}    enabled  its mask.
  */
-declare function ready(_table: any): boolean;
-declare function dispatchBegin(_table: any): boolean;
-declare function dispatchEnd(_table: any, _outermost: any): void;
+/**
+ * ready
+ *   Whether a table was made by `tableInit` and is not yet disposed.
+ *
+ * @param {*} _table  what may be a table.
+ * @returns {_table is EventTable}
+ */
+declare function ready(_table: any): _table is EventTable;
+/**
+ * dispatchBegin
+ *   Marks the table as dispatching; true when this is the outermost
+ * dispatch, the one that must end it.
+ *
+ * @param {EventTable} _table  the table.
+ * @returns {boolean}
+ */
+declare function dispatchBegin(_table: EventTable): boolean;
+/**
+ * dispatchEnd
+ *   When outermost: clears the mark, releases the letters unbound
+ * meanwhile, running their hooks, and ends the table where a handler asked
+ * for that.
+ *
+ * @param {EventTable} _table      the table.
+ * @param {boolean}    _outermost  what `dispatchBegin` gave.
+ */
+declare function dispatchEnd(_table: EventTable, _outermost: boolean): void;
 export {};

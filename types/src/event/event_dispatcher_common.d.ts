@@ -2,6 +2,11 @@
  * A queue of occurrences. Made by `queueInit`.
  *
  * @typedef {object} EventQueue
+ * @property {Array<{key: bigint, payload: *}>} slots  the occurrences
+ *           queued, the oldest first, each with a copy of its payload.
+ * @property {number}  capacity    the most it holds.
+ * @property {boolean} processing  whether it is being processed, the
+ *           first slot being the occurrence in flight.
  */
 /**
  * An empty queue.
@@ -268,7 +273,25 @@ export function dispatcherPending(_dispatcher: EventDispatcher | null): number;
 /**
  * A queue of occurrences. Made by `queueInit`.
  */
-export type EventQueue = object;
+export type EventQueue = {
+    /**
+     * the occurrences
+     * queued, the oldest first, each with a copy of its payload.
+     */
+    slots: Array<{
+        key: bigint;
+        payload: any;
+    }>;
+    /**
+     * the most it holds.
+     */
+    capacity: number;
+    /**
+     * whether it is being processed, the
+     * first slot being the occurrence in flight.
+     */
+    processing: boolean;
+};
 /**
  * A dispatcher: `registry` is its registry and `queue` its queue.
  */

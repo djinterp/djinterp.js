@@ -96,6 +96,11 @@ export function openProgram(_program: object, _options?: {
  *        `printer.style`.
  * @param {?string} [_options.query=null]  a URL's query, such as
  *        `location.search`, bound as the command line.
+ * @param {boolean} [_options.colour=false]  whether what shows the
+ *        program's console draws colour, as a terminal does: then
+ *        `--color=auto`, the default, colours what it says of errors,
+ *        warnings and notes with the reference's escapes, as the reference
+ *        does on a terminal (the owner's ruling D27).
  * @returns {DjinterpSession}
  * @throws {Error} for a row or a djin the reference refuses: the page's
  *         own mistake.
@@ -108,6 +113,7 @@ export function openNow(_options?: {
     file?: object | null;
     environment?: any;
     query?: string | null;
+    colour?: boolean;
 }): DjinterpSession;
 /**
  * Opens a program, as `openNow` does, and answers with a promise of it:

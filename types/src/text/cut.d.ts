@@ -14,7 +14,7 @@
 * path:      /src/text/cut.js
 * link(s):   TBA
 * author(s): Samuel 'teer' Neal-Blim                         created: 2026.11.16
-*                                                            revised: 2026.11.16
+*                                                            revised: 2026.11.17
 *******************************************************************************/
 /**
  * The first units of a text, as many as a limit allows, and one fewer

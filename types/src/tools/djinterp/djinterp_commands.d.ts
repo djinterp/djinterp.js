@@ -10,6 +10,8 @@
  *           (src/tools/cli/cli_settings.js), or null for none.
  * @property {*} environment  the environment, as `optionEnv.import`
  *           takes one.
+ * @property {boolean} colour  whether what shows its console draws
+ *           colour, as a terminal does: what `--color=auto` asks after.
  */
 /**
  * A program over a registry.
@@ -20,6 +22,9 @@
  * @param {*} [_options.environment=null]  the environment.
  * @param {number} [_options.djins=16]  the most djins its set holds; the
  *        reference's program holds 16.
+ * @param {boolean} [_options.colour=false]  whether what shows its
+ *        console draws colour, as a terminal does (the owner's ruling
+ *        D27): `--color=auto`, the default, then colours.
  * @returns {DjinterpProgram}
  */
 export function programMake(_options: {
@@ -27,6 +32,7 @@ export function programMake(_options: {
     file?: object | null;
     environment?: any;
     djins?: number;
+    colour?: boolean;
 }): DjinterpProgram;
 /**
  * Readies the program's settings for a run, once: the environment's and
@@ -37,6 +43,17 @@ export function programMake(_options: {
  *          refused: a warning a line.
  */
 export function programStart(_program: DjinterpProgram): string;
+/**
+ * What the program said, with each diagnostic's start coloured as the kit
+ * colours one: its locus bold -- the program's name, or a file and a
+ * line -- and `error:`, `warning:` or `note:` in its own colour. The
+ * escapes are the reference's (d_cli_vreport, d_cli_internal_locus in
+ * cli_program.c), and what a console that draws colour shows (D27).
+ *
+ * @param {string} _said  what was said, a diagnostic a line.
+ * @returns {string} the same, coloured.
+ */
+export function coloured(_said: string): string;
 /**
  * Runs the program on a command line.
  *
@@ -99,6 +116,11 @@ export type DjinterpProgram = {
      * takes one.
      */
     environment: any;
+    /**
+     * whether what shows its console draws
+     * colour, as a terminal does: what `--color=auto` asks after.
+     */
+    colour: boolean;
 };
 import * as optionEnvRegistry from '../../option/option_env_registry.js';
 import * as djin from '../../modules/interp/djin.js';
