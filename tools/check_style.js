@@ -25,8 +25,11 @@ const ROOT    = join(dirname(fileURLToPath(import.meta.url)), '..');
 const CHECKED = /\.(js|c|h|sh|md|json|html)$/;
 const SKIPPED = new Set(['.git', 'node_modules', 'generated', 'transcripts']);
 
-// kept as they came: the style's own text, and the starting package's driver
-const AS_CAME = new Set(['docs/JS_STYLE.md', 'tools/option_driver.c']);
+// not held to the columns: the style's own text and the starting package's
+// driver, kept as they came; and the page of decisions, which is in the
+// form of the owner's own such pages
+const AS_CAME = new Set(['docs/JS_STYLE.md', 'tools/option_driver.c',
+                         'decisions.html']);
 
 /*
 files_under

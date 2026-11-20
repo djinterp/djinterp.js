@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>djinterp.js: decisions after the first session (2026-11-16)</title>
+<style>
+  :root {
+    --bg: #fbfaf7;
+    --paper: #ffffff;
+    --ink: #1d1d1b;
+    --ink-2: #4a4a46;
+    --ink-3: #75756f;
+    --rule: #e3e0d8;
+    --rule-2: #cfcbc0;
+    --accent: #1f5f8b;
+    --accent-soft: #e8f0f6;
+    --rec: #2f6f3e;
+    --rec-soft: #eaf3ec;
+    --warn: #8a4b0f;
+    --warn-soft: #fbf0e3;
+    --code-bg: #f2f0ea;
+    --chosen: #fff7d6;
+    --mono: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, monospace;
+    --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #161614;
+      --paper: #1e1e1b;
+      --ink: #ecebe6;
+      --ink-2: #c4c2ba;
+      --ink-3: #96948c;
+      --rule: #34332f;
+      --rule-2: #4a4843;
+      --accent: #7fb3d9;
+      --accent-soft: #1f2a33;
+      --rec: #8fcf9e;
+      --rec-soft: #1d2b21;
+      --warn: #f0b878;
+      --warn-soft: #2f2418;
+      --code-bg: #2a2925;
+      --chosen: #3a3420;
+    }
+  }
+  * { box-sizing: border-box; }
+  html { background: var(--bg); }
+  body {
+    margin: 0;
+    color: var(--ink);
+    font: 15.5px/1.55 var(--sans);
+    background: var(--bg);
+  }
+  .page { max-width: 1040px; margin: 0 auto; padding: 40px 28px 80px; }
+  header.top { border-bottom: 2px solid var(--ink); padding-bottom: 18px; margin-bottom: 28px; }
+  .eyebrow { font: 600 12px/1.2 var(--sans); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); }
+  h1 { font-size: 30px; line-height: 1.15; margin: 8px 0 10px; letter-spacing: -.01em; }
+  h2 { scroll-margin-top: 76px; font-size: 21px; margin: 44px 0 12px; padding-bottom: 6px; border-bottom: 1px solid var(--rule-2); }
+  h3 { font-size: 18px; margin: 0; line-height: 1.3; }
+  h4 { font-size: 13px; margin: 18px 0 6px; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-3); }
+  p { margin: 8px 0; }
+  .meta { color: var(--ink-2); font-size: 14px; }
+  .meta span + span::before { content: "·"; margin: 0 8px; color: var(--ink-3); }
+  code, kbd { font: 13px/1.4 var(--mono); background: var(--code-bg); padding: 1px 5px; border-radius: 4px; word-break: break-word; }
+  a { color: var(--accent); }
+  ul { margin: 6px 0 6px 0; padding-left: 22px; }
+  li { margin: 3px 0; }
+
+  .standing {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 12px; margin: 18px 0 8px;
+  }
+  .standing .cell { background: var(--paper); border: 1px solid var(--rule); border-radius: 8px; padding: 12px 14px; }
+  .standing .num { font-size: 26px; font-weight: 700; line-height: 1.1; }
+  .standing .lbl { font-size: 13px; color: var(--ink-2); }
+
+  .callout { background: var(--accent-soft); border-left: 4px solid var(--accent); padding: 12px 16px; border-radius: 0 8px 8px 0; margin: 14px 0; }
+  .callout.warn { background: var(--warn-soft); border-left-color: var(--warn); }
+
+  table { border-collapse: collapse; width: 100%; font-size: 14.5px; }
+  th, td { text-align: left; vertical-align: top; padding: 8px 10px; border-bottom: 1px solid var(--rule); }
+  th { font-size: 12.5px; text-transform: uppercase; letter-spacing: .05em; color: var(--ink-3); font-weight: 600; border-bottom: 1px solid var(--rule-2); }
+  table.index td:first-child { font-weight: 700; white-space: nowrap; }
+  table.index td.ruling { white-space: nowrap; font-weight: 600; }
+  table.index td.ruling.none { color: var(--ink-3); font-weight: 400; }
+  table.index td.ruling.agree { color: var(--rec); }
+  table.index td.ruling.other { color: var(--warn); }
+  table.index td.now { white-space: nowrap; color: var(--ink-2); }
+  table.index td.now.differs { color: var(--warn); font-weight: 600; }
+  table.index a { text-decoration: none; }
+  table.index a:hover { text-decoration: underline; }
+
+  .decision {
+    background: var(--paper); border: 1px solid var(--rule); border-radius: 10px;
+    padding: 22px 24px 18px; margin: 22px 0; scroll-margin-top: 76px;
+  }
+  .decision header { display: flex; gap: 14px; align-items: baseline; flex-wrap: wrap; }
+  .decision .badge {
+    font: 700 13px/1 var(--sans); background: var(--ink); color: var(--paper);
+    border-radius: 6px; padding: 6px 8px; flex: none;
+  }
+  .decision .facts { display: flex; flex-wrap: wrap; gap: 6px 18px; margin: 8px 0 4px; font-size: 13.5px; color: var(--ink-2); }
+  .decision .facts b { color: var(--ink); font-weight: 600; }
+
+  fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
+  legend { position: absolute; left: -9999px; }
+  .options { width: 100%; border: 1px solid var(--rule); border-radius: 8px; overflow: hidden; }
+  .options .opt {
+    display: grid; grid-template-columns: 34px minmax(170px, 1.05fr) 1.4fr 1.4fr; gap: 0;
+    border-top: 1px solid var(--rule);
+  }
+  .options .opt:first-child { border-top: 0; }
+  .options .opt.head { background: var(--code-bg); font-size: 12px; text-transform: uppercase; letter-spacing: .05em; color: var(--ink-3); font-weight: 600; }
+  .options .opt > div, .options .opt > span { display: block; padding: 9px 10px; font-size: 14px; }
+  .options .opt > * + * { border-left: 1px solid var(--rule); }
+  .options .opt.rec { background: var(--rec-soft); }
+  .options .opt.picked { box-shadow: inset 4px 0 0 var(--accent); background: var(--chosen); }
+  .options .opt.rec.picked { background: var(--rec-soft); box-shadow: inset 4px 0 0 var(--rec); }
+  .options .opt .pick { display: flex; justify-content: center; padding-top: 11px; }
+  .options .opt .name { font-weight: 600; }
+  .options .opt .name .tag { display: inline-block; margin-top: 4px; font: 700 10.5px/1 var(--sans); letter-spacing: .06em; text-transform: uppercase; color: var(--rec); border: 1px solid var(--rec); border-radius: 4px; padding: 3px 5px; }
+  .options .opt .name .tag.runs { color: var(--accent); border-color: var(--accent); }
+  .options .opt ul { padding-left: 16px; margin: 0; }
+  .options label { cursor: pointer; }
+  input[type=radio] { width: 16px; height: 16px; accent-color: var(--accent); cursor: pointer; margin: 0; }
+
+  .recommend { margin-top: 14px; border-left: 4px solid var(--rec); background: var(--rec-soft); padding: 10px 14px; border-radius: 0 8px 8px 0; }
+  .recommend b.lead { color: var(--rec); }
+  .note-row { margin-top: 12px; display: flex; gap: 10px; align-items: flex-start; }
+  .note-row label { font-size: 13px; color: var(--ink-3); padding-top: 6px; white-space: nowrap; }
+  textarea.note {
+    flex: 1; min-height: 34px; height: 34px; resize: vertical; font: 13.5px/1.4 var(--sans); padding: 6px 8px;
+    border: 1px solid var(--rule-2); border-radius: 6px; background: var(--paper); color: var(--ink);
+  }
+  textarea.note:focus { height: 70px; outline: 2px solid var(--accent-soft); }
+
+  .sub { border-top: 1px dashed var(--rule-2); margin-top: 18px; padding-top: 12px; }
+  .sub:first-of-type { border-top: 0; margin-top: 8px; padding-top: 0; }
+  .sub h4 { margin-top: 4px; color: var(--ink); text-transform: none; letter-spacing: 0; font-size: 15px; }
+
+  .toolbar {
+    position: sticky; top: 0; z-index: 5; background: var(--bg); border-bottom: 1px solid var(--rule);
+    padding: 10px 0; margin: 0 0 8px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center;
+  }
+  .toolbar .count { font-size: 13.5px; color: var(--ink-2); margin-right: auto; }
+  button {
+    font: 600 13.5px/1 var(--sans); padding: 9px 12px; border-radius: 6px; cursor: pointer;
+    border: 1px solid var(--rule-2); background: var(--paper); color: var(--ink);
+  }
+  button.primary { background: var(--accent); border-color: var(--accent); color: var(--paper); }
+  button:hover { filter: brightness(0.97); }
+  #export { width: 100%; min-height: 220px; font: 13px/1.45 var(--mono); padding: 12px; border: 1px solid var(--rule-2); border-radius: 8px; background: var(--paper); color: var(--ink); }
+  .status { font-size: 13px; color: var(--rec); min-height: 18px; }
+
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  @media (max-width: 760px) {
+    .page { padding: 24px 14px 60px; }
+    .options .opt { grid-template-columns: 30px 1fr; }
+    .options .opt > *:nth-child(3), .options .opt > *:nth-child(4) { grid-column: 2; border-left: 0; padding-top: 0; }
+    .options .opt > *:nth-child(3)::before { content: "For: "; font-weight: 600; color: var(--rec); }
+    .options .opt > *:nth-child(4)::before { content: "Against: "; font-weight: 600; color: var(--warn); }
+    .options .opt.head { display: none; }
+    .two { grid-template-columns: 1fr; }
+    #toolbar { position: static; }
+    .decision, h2 { scroll-margin-top: 12px; }
+  }
+  @media print {
+    .toolbar, .note-row, #exportSection button, .status { display: none !important; }
+    body { background: #fff; color: #000; }
+    .decision { break-inside: avoid-page; border-color: #bbb; }
+    a { color: #000; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+<header class="top">
+  <div class="eyebrow">djinterp.js · the port of djinterp's front-end half · first session</div>
+  <h1>Decisions for the owner</h1>
+  <div class="meta">
+    <span>Monday 2026-11-16</span>
+    <span>the port follows djinterp at <code>d20c0b23</code></span>
+    <span>20 rulings in 18 decisions, each with options, their advantages and disadvantages, and a recommendation</span>
+  </div>
+  <p class="meta" style="margin-top:10px">Each recommendation picks the most accurate and functional solution, not the easiest or cheapest one. Every figure was measured in this session, on the port and on the reference built from the tree you attached; where something was not measured, it says so. An option tagged <b>Runs now</b> is what the repository does today, so that no ruling is needed for work to go on. Pick an option in each decision, then use <b>Copy rulings</b> at the end to get one block you can send back.</p>
+</header>
+
+<h2 id="standing">Where things stand</h2>
+<div class="standing">
+  <div class="cell"><div class="num">95 of 95</div><div class="lbl">The port's tests pass under node 22.23.4, with no dependency and no build step. Six deliberate faults went in, one to a module: five failed a suite at once, and the sixth showed a case no test had, which is now a test.</div></div>
+  <div class="cell"><div class="num">15 transcripts</div><div class="lbl">Recorded from the reference by tools in <code>tools/</code> and replayed byte for byte: 11 sessions of the option machine, the registry and the djin records (3,996 lines in), and 4 of the <code>djinterp</code> program (679 command lines).</div></div>
+  <div class="cell"><div class="num">461,400 lines</div><div class="lbl">Nobody typed: 401,400 session lines and 60,000 command lines from seeded fuzzers, the port's bytes against the reference's. All agree now. A fresh seed did not this morning: see decision 11.</div></div>
+  <div class="cell"><div class="num">1 page</div><div class="lbl"><code>examples/console.html</code>, opened twice in headless Chrome 153 behind a static file server and nothing else: the query bound, a <code>set</code> kept in localStorage, and read back as the file's.</div></div>
+</div>
+
+<div class="callout">
+  <b>Not decisions: four things the port needs from you.</b>
+  <ul>
+    <li><b>genterp's <code>platform/wasm/glue.js</code></b> (START, hazard 2), to run through the sweep of doubles. Decision 14 turns on it.</li>
+    <li><b>Lane E's answer</b> to whether desc already writes rows as JSON (J13). Decision 16 turns on it.</li>
+    <li><b>W7 in full</b>, from the uxoxo.js note. This session has only START's one sentence about it. Decision 9 was built on that sentence.</li>
+    <li><b>How lane B's decision 2 of 11-13 was ruled</b> (dotted event names in the log's form), and whether that convention covers every event in the tree. Decision 10 turns on it.</li>
+  </ul>
+</div>
+
+<h2 id="index">The decisions at a glance</h2>
+<table class="index">
+  <thead><tr><th>#</th><th>Decision</th><th>Decide before</th><th>Runs now</th><th>Recommended</th><th>Your ruling</th></tr></thead>
+  <tbody>
+    <tr><td><a href="#d1">1</a></td><td><a href="#d1">Which commit of djinterp the port follows (J12)</a></td><td>the next regeneration</td><td class="now">A</td><td>A. <code>d20c0b23</code>, moved only by <code>regenerate.sh</code></td><td class="ruling none" data-for="d1">—</td></tr>
+    <tr><td><a href="#d2">2</a></td><td><a href="#d2">64-bit INT rows in JavaScript (J11)</a></td><td>uxoxo.js reads a value</td><td class="now">C</td><td>C. A number where the row's values are exact, a bigint where not</td><td class="ruling none" data-for="d2">—</td></tr>
+    <tr><td><a href="#d3">3</a></td><td><a href="#d3">Text inside the port: bytes or strings</a></td><td>uxoxo.js reads a value</td><td class="now">A</td><td>A. Bytes inside, strings at the edge</td><td class="ruling none" data-for="d3">—</td></tr>
+    <tr><td><a href="#d4">4</a></td><td><a href="#d4">A NaN's sign</a></td><td>REAL rows gain a range</td><td class="now differs">A</td><td>C. Carry it, and ask lane E to settle what the machine writes</td><td class="ruling none" data-for="d4">—</td></tr>
+    <tr><td><a href="#d5">5</a></td><td><a href="#d5">Room: how much a frame holds</a></td><td>rows come from the reference's JSON</td><td class="now differs">A</td><td>C. Optional, and written with the rows where they are generated</td><td class="ruling none" data-for="d5">—</td></tr>
+    <tr><td><a href="#d6">6</a></td><td><a href="#d6"><code>open</code> and <code>run</code>: promises or plain values</a></td><td>uxoxo.js binds to the interface</td><td class="now">B</td><td>B. Promises, with the port's own immediate pair</td><td class="ruling none" data-for="d6">—</td></tr>
+    <tr><td><a href="#d7">7</a></td><td><a href="#d7">What a line is: a run of the program, or a turn in a session</a></td><td>uxoxo.js binds to the interface</td><td class="now differs">A</td><td>B. A run of the program, as the reference is</td><td class="ruling none" data-for="d7">—</td></tr>
+    <tr><td><a href="#d8">8</a></td><td><a href="#d8">Splitting a line into words</a></td><td>uxoxo.js binds to the interface</td><td class="now differs">A</td><td>D. A line or the words themselves; the frozen grammar after 12-11</td><td class="ruling none" data-for="d8">—</td></tr>
+    <tr><td><a href="#d9">9</a></td><td><a href="#d9">A browser's sources of a setting (W7)</a></td><td>a page ships</td><td class="now">A</td><td>A. As W7, when the page hands them over</td><td class="ruling none" data-for="d9">—</td></tr>
+    <tr><td><a href="#d10">10</a></td><td><a href="#d10">The names of the events the program posts</a></td><td>uxoxo.js binds a handler</td><td class="now differs">A</td><td>B. Dotted, if the tree's names were ruled dotted</td><td class="ruling none" data-for="d10">—</td></tr>
+    <tr><td><a href="#d11">11</a></td><td><a href="#d11">The parser and the kit: how the program reads its command line</a></td><td>a console is shown to anyone</td><td class="now differs">A</td><td>D. Model the rest of the kit now; ask again with the command language</td><td class="ruling none" data-for="d11">—</td></tr>
+    <tr><td><a href="#d12">12</a></td><td><a href="#d12">A row or a djin refused at <code>open</code></a></td><td>a page loads a djin it did not write</td><td class="now">A</td><td>A. The promise is broken, by name</td><td class="ruling none" data-for="d12">—</td></tr>
+    <tr><td><a href="#d13">13</a></td><td><a href="#d13">Copies of queued events' payloads</a></td><td>a view queues an event</td><td class="now">A</td><td>A. Copied when queued, as the reference copies bytes</td><td class="ruling none" data-for="d13">—</td></tr>
+    <tr><td><a href="#d14">14</a></td><td><a href="#d14">Real numbers as text: one implementation</a></td><td><code>glue.js</code> arrives</td><td class="now differs">A</td><td>C. Both through one sweep; keep one module</td><td class="ruling none" data-for="d14">—</td></tr>
+    <tr><td><a href="#d15">15</a></td><td><a href="#d15">Where it lives (J2)</a></td><td>the tree has CI</td><td class="now differs">B</td><td>A. In djinterp's tree, once CI exists</td><td class="ruling none" data-for="d15">—</td></tr>
+    <tr><td><a href="#d16">16</a></td><td><a href="#d16">Who writes the rows as JSON (J13)</a></td><td>REAL rows gain a range</td><td class="now differs">A</td><td>B. Lane E takes the kit, after saying what desc writes</td><td class="ruling none" data-for="d16">—</td></tr>
+    <tr><td><a href="#d17">17</a></td><td><a href="#d17">Generated data as modules</a></td><td>any time</td><td class="now">A</td><td>A. A generated module beside each JSON file</td><td class="ruling none" data-for="d17">—</td></tr>
+    <tr><td><a href="#d18">18</a></td><td><a href="#d18">JS_STYLE's three, as they ran (JS1, JS2, JS3)</a></td><td>uxoxo.js's first handoff</td><td class="now">A · A · A</td><td>A · A, with declarations generated and checked · A</td><td class="ruling none" data-for="d18a d18b d18c">—</td></tr>
+  </tbody>
+</table>
+
+<div class="toolbar" id="toolbar">
+  <span class="count" id="count">0 of 20 rulings chosen</span>
+  <button type="button" id="agreeAll">Agree with every recommendation</button>
+  <button type="button" id="clearAll">Clear</button>
+  <button type="button" class="primary" id="toExport">Copy rulings ↓</button>
+</div>
+
+<!-- ===================================================================== -->
+<section class="decision" id="d1">
+  <header><span class="badge">1</span><h3>Which commit of djinterp the port follows (J12)</h3></header>
+  <div class="facts"><span><b>Decide before</b> the next regeneration</span><span><b>Affects</b> every generated file and every transcript, which carry the commit's name</span></div>
+  <p>START names <code>2bb6b246</code>. The tree attached to this session is three commits on, at <code>d20c0b23</code>. The three commits change math and <code>ladder_known.txt</code> (159 files). <code>git diff</code> between the two is empty for <code>option</code>, <code>event</code>, <code>modules/interp</code>, the argument parser, <code>tools/cli</code> and <code>tools/djinterp</code>.</p>
+  <p><b>Measured further:</b> <code>tools/regenerate.sh</code> builds the tools against a checkout, writes the generated data, and records every transcript. Run against each commit, it writes the same files byte for byte, apart from the commit's name and the date. The port's tests pass on both.</p>
+  <fieldset><legend>Decision 1</legend>
+  <div class="options">
+    <div class="opt head"><div></div><div>Option</div><div>Advantages</div><div>Disadvantages</div></div>
+    <label class="opt rec" data-rec="1"><span class="pick"><input type="radio" name="d1" value="A"></span><span class="name">A. <code>d20c0b23</code>, the head of the tree you attached; moved forward only by <code>tools/regenerate.sh</code>, each move replaying every transcript<br><span class="tag">Recommended</span> <span class="tag runs">Runs now</span></span><span>The newest tree in hand. Nothing the port follows differs from <code>2bb6b246</code>, so START's instruction is met in substance. A move is one command, and <code>git diff</code> afterwards shows what the reference changed, in the reference's own words.</span><span>Not the commit START names. Anyone comparing by name sees a difference until this is ruled.</span></label>
+    <label class="opt"><span class="pick"><input type="radio" name="d1" value="B"></span><span class="name">B. <code>2bb6b246</code>, as START names it</span><span>The letter of START, and the commit lane B's page of 11-13 was measured on.</span><span>Older than the tree in hand, for no difference in what the port reads. One run of <code>regenerate.sh</code> to switch.</span></label>
+    <label class="opt"><span class="pick"><input type="radio" name="d1" value="C"></span><span class="name">C. <code>main</code>, as it moves (J12's B)</span><span>Never stale.</span><span>A transcript recorded yesterday says nothing about today's reference. The option machine is still moving (START, hazard 4), so the port would break without anyone having decided to move it.</span></label>
+  </div></fieldset>
+  <div class="recommend"><b class="lead">Recommendation: A.</b> J12's recommendation, a named commit moved deliberately, stands, and it now has a tool. Which of two identical commits carries the name is yours to say. The procedure is the part that matters: regenerate, read the diff, bring the port after it, and never edit a generated file by hand.</div>
+  <div class="note-row"><label for="n-d1">Note</label><textarea class="note" id="n-d1" data-for="d1" placeholder="Optional: a different commit"></textarea></div>
+</section>
+
+<!-- ===================================================================== -->
+<section class="decision" id="d2">
+  <header><span class="badge">2</span><h3>64-bit INT rows in JavaScript (J11)</h3></header>
+  <div class="facts"><span><b>Decide before</b> uxoxo.js reads a value</span><span><b>Affects</b> every page that reads or writes an integer setting</span></div>
+  <p>An INT row holds an <code>int64_t</code> with an <code>int64_t</code> range. A JavaScript number is exact only to 2<sup>53</sup> − 1. Inside, the port holds every integer as a BigInt, so no comparison, range check or flag operation is ever inexact. The question is the type a page is handed.</p>
+  <p><b>Measured on the fixture:</b> of its 20 INT rows, 11 declare no range, so each can hold any <code>int64_t</code>. START's "most rows are small" is true of values, but not of what rows are declared to hold.</p>
+  <fieldset><legend>Decision 2</legend>
+  <div class="options">
+    <div class="opt head"><div></div><div>Option</div><div>Advantages</div><div>Disadvantages</div></div>
+    <label class="opt"><span class="pick"><input type="radio" name="d2" value="A"></span><span class="name">A. A bigint for every INT, CHOICE and FLAGS row</span><span>One type. A row's type never changes, and no value is ever inexact.</span><span>Every page handles BigInt for a sidebar's width. It doesn't mix with numbers in arithmetic, <code>JSON.stringify</code> throws on it, and a slider wants a number. Pages will convert with <code>Number()</code> by habit, which is where a wrong value gets in unseen.</span></label>
+    <label class="opt"><span class="pick"><input type="radio" name="d2" value="B"></span><span class="name">B. Numbers; a row whose range leaves the exact integers is refused by name</span><span>One type, and the convenient one.</span><span>Refuses 11 of the fixture's 20 INT rows as the C declares them. The port would refuse rows the reference accepts, so the same rows as JSON could not load in a page.</span></label>
+    <label class="opt rec" data-rec="1"><span class="pick"><input type="radio" name="d2" value="C"></span><span class="name">C. By row: a number where every value the row can hold is exact, a bigint where not. Fixed when the row is declared, never by the value<br><span class="tag">Recommended</span> <span class="tag runs">Runs now</span></span><span>No value is ever wrong, and no row the reference accepts is refused. A ranged row (a width, a depth, a port) is a plain number. The type belongs to the row, so code that reads a row meets one type for good.</span><span>Two types across rows. An INT row with no range is a bigint, so a row's author gets numbers by declaring the range. Widening a range past 2<sup>53</sup> changes the row's type.</span></label>
+    <label class="opt"><span class="pick"><input type="radio" name="d2" value="D"></span><span class="name">D. By value: a number when the value is exact, a bigint when not</span><span>Numbers nearly always.</span><span>The type changes with the data. Code that works for every value tried fails on the one large one, in production.</span></label>
+  </div></fieldset>
+  <div class="recommend"><b class="lead">Recommendation: C.</b> It's the only option under which nothing is refused and nothing is silently wrong. The rule a page needs is one line: declare a range and the row is a number. A value is taken in as a number, a bigint or a decimal string; a number that isn't an exact integer is a <code>TypeError</code>, and one outside 64 bits a <code>RangeError</code>.</div>
+  <div class="note-row"><label for="n-d2">Note</label><textarea class="note" id="n-d2" data-for="d2" placeholder="Optional"></textarea></div>
+</section>
+
+<!-- ===================================================================== -->
+<section class="decision" id="d3">
+  <header><span class="badge">3</span><h3>Text inside the port: bytes or JavaScript strings</h3></header>
+  <div class="facts"><span><b>Decide before</b> uxoxo.js reads a value</span><span><b>Affects</b> every offset, width and limit the port reports</span></div>
+  <p>The reference measures text in bytes. A script's refusal is reported at a byte offset. <code>list</code> and <code>describe</code> pad their columns by bytes. <code>get</code> cuts a value at 511 bytes. A frame's text arena fills by bytes. A JavaScript string is measured in UTF-16 units, and the two agree only for ASCII.</p>
+  <p><b>Measured:</b> the script <code>title = €€; width = 5</code> is refused at byte 16, which is unit 12 of the string. The transcript <code>session_bytes</code> holds the port to the reference on text that isn't ASCII and on bytes that aren't UTF-8.</p>
+  <fieldset><legend>Decision 3</legend>
+  <div class="options">
+    <div class="opt head"><div></div><div>Option</div><div>Advantages</div><div>Disadvantages</div></div>
+    <label class="opt rec" data-rec="1"><span class="pick"><input type="radio" name="d3" value="A"></span><span class="name">A. Bytes inside, strings at the edge: text is encoded to UTF-8 on the way in and decoded on the way out, and a byte that isn't UTF-8 survives the round trip<br><span class="tag">Recommended</span> <span class="tag runs">Runs now</span></span><span>Every offset, width, limit and capacity is the reference's, for any text. A settings file that isn't UTF-8 loads and writes back unchanged. Pages see ordinary strings. <code>utf8.string_index</code> turns a byte offset into a string index for a page that wants to point at it.</span><span>An encode and a decode at each call. An offset handed out is a byte offset, which a page converts before it indexes a string. A byte that isn't UTF-8 shows in a string as a lone surrogate.</span></label>
+    <label class="opt"><span class="pick"><input type="radio" name="d3" value="B"></span><span class="name">B. JavaScript strings throughout, with offsets in UTF-16 units</span><span>What a JavaScript programmer expects. No conversion.</span><span>Differs from the reference on any text that isn't ASCII: columns that don't line up with the native program's, different offsets, a value cut at a different place, a frame that fills at a different point. Transcripts with such text could not pass.</span></label>
+    <label class="opt"><span class="pick"><input type="radio" name="d3" value="C"></span><span class="name">C. <code>Uint8Array</code> at the interface</span><span>Exact, with no conversion hidden.</span><span>Every page encodes and decodes by hand to show a title.</span></label>
+  </div></fieldset>
+  <div class="recommend"><b class="lead">Recommendation: A.</b> The reference is the oracle, and its unit is the byte. A keeps that and still hands a page strings. The byte-level functions are also exported (<code>option_env.bytes</code>), for a caller that already has bytes.</div>
+  <div class="note-row"><label for="n-d3">Note</label><textarea class="note" id="n-d3" data-for="d3" placeholder="Optional"></textarea></div>
+</section>
+
+<!-- ===================================================================== -->
+<section class="decision" id="d4">
+  <header><span class="badge">4</span><h3>A NaN's sign</h3></header>
+  <div class="facts"><span><b>Decide before</b> REAL rows gain a range and a step</span><span><b>Affects</b> the port's real text, and lane E's option machine</span></div>
+  <p>The reference writes a REAL with printf's <code>%.17g</code>. Built with glibc, it writes a NaN whose sign bit is set as <code>-nan</code>, and the transcripts hold that: <code>ratio=-nan</code> reads back as <code>-nan</code>. JavaScript has one NaN, and gives no dependable way to carry its sign in a number.</p>
+  <fieldset><legend>Decision 4</legend>
+  <div class="options">
+    <div class="opt head"><div></div><div>Option</div><div>Advantages</div><div>Disadvantages</div></div>
+    <label class="opt"><span class="pick"><input type="radio" name="d4" value="A"></span><span class="name">A. Carry the sign beside the number: a value has <code>negative_nan</code>, set when the text read was <code>-nan</code>, and written back as <code>-nan</code><br><span class="tag runs">Runs now</span></span><span>Byte for byte what the reference prints where it was measured.</span><span>A field with no meaning in arithmetic. A NaN that a page hands in as a number is always written <code>nan</code>. It follows the C library's text, not djinterp's: other C libraries write a NaN differently (known, but not measured here).</span></label>
+    <label class="opt"><span class="pick"><input type="radio" name="d4" value="B"></span><span class="name">B. Drop it: any NaN is <code>nan</code></span><span>Simple.</span><span>Differs from the reference where the transcripts measure it.</span></label>
+    <label class="opt rec" data-rec="1"><span class="pick"><input type="radio" name="d4" value="C"></span><span class="name">C. A for now, and lane E is asked two things: that the option machine write a NaN itself, the same on every C library, and whether a REAL row should hold a NaN at all. The port follows the answer<br><span class="tag">Recommended</span></span><span>The reference's output stops depending on the C library, so one transcript holds on every platform. If a NaN is refused, or always written <code>nan</code>, the port loses a special case. A ranged REAL row has to answer the question anyway: a NaN is inside no range.</span><span>A question for lane E, in a module that's about to change. Until it's answered, A runs.</span></label>
+  </div></fieldset>
+  <div class="recommend"><b class="lead">Recommendation: C.</b> The port can copy <code>-nan</code>, and does. But the accurate fix is in the reference: a setting's text shouldn't vary with the C library that printed it, and the port is the first second reader to notice.</div>
+  <div class="note-row"><label for="n-d4">Note</label><textarea class="note" id="n-d4" data-for="d4" placeholder="Optional"></textarea></div>
+</section>
+
+<!-- ===================================================================== -->
+<section class="decision" id="d5">
+  <header><span class="badge">5</span><h3>Room: how much a frame holds</h3></header>
+  <div class="facts"><span><b>Decide before</b> rows come from the reference's own JSON</span><span><b>Affects</b> when a page meets <code>CAPACITY</code> and <code>BUFFER_TOO_SMALL</code></span></div>
+  <p>A C frame is declared over fixed storage: so many bindings, variables and bytes of text. Past them it answers <code>CAPACITY</code> or <code>BUFFER_TOO_SMALL</code>, and its text arena compacts, which moves the generation. The port does all of this when a frame is given room, and the transcript <code>session_room</code> holds it to the reference.</p>
+  <p>The registry that <code>open</code> makes has the reference's configured room, read from generated data: 256 bindings, 64 variables, 4,096 bytes of text and 32 djins. A djin's own frame has no such default: in C, each is sized where it's declared.</p>
+  <fieldset><legend>Decision 5</legend>
+  <div class="options">
+    <div class="opt head"><div></div><div>Option</div><div>Advantages</div><div>Disadvantages</div></div>
+    <label class="opt"><span class="pick"><input type="radio" name="d5" value="A"></span><span class="name">A. Room is optional: a frame made with none is unbounded; the registry has the reference's; a frame given room has the reference's limits<br><span class="tag runs">Runs now</span></span><span>A frame a page declares has no C array behind it whose size it would have to guess. Where the reference's size is known, the port has it. The limits stay testable.</span><span>A djin's frame can hold more in a page than the same djin's C frame holds natively, unless the page gives it the C frame's room by hand.</span></label>
+    <label class="opt"><span class="pick"><input type="radio" name="d5" value="B"></span><span class="name">B. Every frame has room, from a default where none is given</span><span>No frame is ever larger than a native one could be.</span><span>There's no reference default for a djin's frame to copy, so the default would be a guess, wrong in both directions.</span></label>
+    <label class="opt rec" data-rec="1"><span class="pick"><input type="radio" name="d5" value="C"></span><span class="name">C. A, and the C tool writes each frame's capacities beside its rows, so a frame made from generated rows has exactly the reference's room<br><span class="tag">Recommended</span></span><span>A frame read from the reference's data overflows where the native one does, with the same status. A frame a page invents stays unbounded. Nothing is guessed.</span><span>Three more fields in the rows' JSON, which is decision 16's to own. Until then A runs.</span></label>
+  </div></fieldset>
+  <div class="recommend"><b class="lead">Recommendation: C.</b> Room is data about a frame, like its rows, and START's rule is that data is generated and not typed twice.</div>
+  <div class="note-row"><label for="n-d5">Note</label><textarea class="note" id="n-d5" data-for="d5" placeholder="Optional"></textarea></div>
+</section>
+
+<!-- ===================================================================== -->
+<section class="decision" id="d6">
+  <header><span class="badge">6</span><h3><code>open</code> and <code>run</code>: promises or plain values</h3></header>
+  <div class="facts"><span><b>Decide before</b> uxoxo.js binds to the interface</span><span><b>Affects</b> every caller of the page interface</span></div>
+  <p>The morning's note drew the interface with <code>await</code>, and START repeats it: <code>const dj = await djinterp.open(); const reply = await dj.run(…);</code>. START asks that the interface stay as drawn "so that what answers it can change", to a wasm module in a Worker or to a remote engine. The port itself never waits for anything.</p>
+  <fieldset><legend>Decision 6</legend>
+  <div class="options">
+    <div class="opt head"><div></div><div>Option</div><div>Advantages</div><div>Disadvantages</div></div>
+    <label class="opt"><span class="pick"><input type="radio" name="d6" value="A"></span><span class="name">A. Promises only</span><span>Exactly the drawn interface. No page can come to depend on an immediate answer, so any engine can replace the port.</span><span>Tests and tools that know they have the port still go through a promise. A view can't read a setting while it renders, except by going under the interface to the option machine.</span></label>
+    <label class="opt rec" data-rec="1"><span class="pick"><input type="radio" name="d6" value="B"></span><span class="name">B. Promises, and the port's own immediate pair, <code>open_now</code> and <code>run_now</code><br><span class="tag">Recommended</span> <span class="tag runs">Runs now</span></span><span>The drawn interface, unchanged. Code that knows it has the port can call straight through. In both forms, what is heard of a line through <code>on</code> has been heard before the line's promise settles. A misuse is a throw from the one and a rejection from the other.</span><span>A page that calls the <code>_now</code> pair has tied itself to the port. Another engine will have neither, and their documentation says so.</span></label>
+    <label class="opt"><span class="pick"><input type="radio" name="d6" value="C"></span><span class="name">C. Plain values only</span><span>The simplest. <code>await</code> on a plain value still works.</span><span>Code written without <code>await</code> works today and breaks the day the engine changes. That's the dependency START asked to avoid.</span></label>
+  </div></fieldset>
+  <div class="recommend"><b class="lead">Recommendation: B.</b> The promise is the contract, and the immediate pair is named so that nobody takes it for the contract. If you'd rather no page could lean on the port at all, A costs nothing but the pair.</div>
+  <div class="note-row"><label for="n-d6">Note</label><textarea class="note" id="n-d6" data-for="d6" placeholder="Optional"></textarea></div>
+</section>
+
+<!-- ===================================================================== -->
+<section class="decision" id="d7">
+  <header><span class="badge">7</span><h3>What a line is: a run of the program, or a turn in a session</h3></header>
+  <div class="facts"><span><b>Decide before</b> uxoxo.js binds to the interface</span><span><b>Affects</b> what every line after the first answers</span></div>
+  <p>The reference's <code>djinterp</code> program is one process for one command line. It imports the environment, reads the settings file, takes the line's <code>--set</code> and <code>--NAME</code> options at the command line's standing, runs one command and exits. <code>set</code> binds at override's standing and writes the file, and the next process reads that value from the file.</p>
+  <p>The port's <code>open</code> is one start, and its lines share one registry. <b>Measured, the two differ after the first line:</b></p>
+  <ul>
+    <li>After <code>set printer.style=json</code>, the port's next <code>get --show-origin printer.style</code> says <code>(override)</code>. The next native run says <code>(file)</code>.</li>
+    <li><code>get --set printer.key_width=40 printer.key_width</code> leaves <code>key_width</code> bound at the command line's standing for every later line. Natively the binding ends with the process.</li>
+  </ul>
+  <p>The transcripts don't catch this. Their harness makes a fresh program for each line, as the reference is, so the page's own <code>run</code> is the one path they don't check.</p>
+  <fieldset><legend>Decision 7</legend>
+  <div class="options">
+    <div class="opt head"><div></div><div>Option</div><div>Advantages</div><div>Disadvantages</div></div>
+    <label class="opt"><span class="pick"><input type="radio" name="d7" value="A"></span><span class="name">A. A session: one start, and lines share what they bind<br><span class="tag runs">Runs now</span></span><span>A console feels like a shell: what one line bound, the next sees. Nothing is read between lines.</span><span>After the first line, the answers are ones no reference gives, so nothing can check them. A <code>--set</code> meant for one line outlives it without saying so.</span></label>
+    <label class="opt rec" data-rec="1"><span class="pick"><input type="radio" name="d7" value="B"></span><span class="name">B. A line is a run: before each line the port drops what the last line bound at the command line's and override's standing, and reads the settings file again. What the page bound at the program's standing stays, and so does the environment<br><span class="tag">Recommended</span></span><span>Every line answers as the native program would. The program transcripts can then be replayed through <code>run</code> itself, so the page's own path is checked against the reference. <code>--set</code> binds for its line, as it does natively. What <code>set</code> kept persists the way it does natively, through the file.</span><span>The settings file is read once a line, from memory or localStorage. After <code>set</code>, provenance reads <code>(file)</code>, not <code>(override)</code>. With no settings file, what <code>set</code> bound is gone at the next line, as it is natively with no home.</span></label>
+    <label class="opt"><span class="pick"><input type="radio" name="d7" value="C"></span><span class="name">C. Wait for the command language's freeze on 12-11, and take its meaning of a session</span><span>One ruling, from the reference.</span><span>Until then A runs unchecked, and uxoxo.js starts on it.</span></label>
+  </div></fieldset>
+  <div class="recommend"><b class="lead">Recommendation: B.</b> A port passes when its bytes agree with the reference's, and for these four commands the reference has one meaning of a line. A session is a reasonable thing for a console to want, but today it has no oracle. When the frozen command language defines one, the port takes it from there, with transcripts.</div>
+  <div class="note-row"><label for="n-d7">Note</label><textarea class="note" id="n-d7" data-for="d7" placeholder="Optional"></textarea></div>
+</section>
+
+<!-- ===================================================================== -->
+<section class="decision" id="d8">
+  <header><span class="badge">8</span><h3>Splitting a line into words</h3></header>
+  <div class="facts"><span><b>Decide before</b> uxoxo.js binds to the interface</span><span><b>Affects</b> every line a console or a panel sends; replaced by the frozen grammar after 12-11</span></div>
+  <p>The reference has no line splitter for these commands: a shell splits the line before the program starts. The command language that will define one freezes on 12-11, and it's in the port's second tier. A page's console has a line and needs words today.</p>
+  <p><b>The port's rule</b> (<code>djinterp.split</code>): spaces and tabs separate words; <code>"…"</code> holds a word, with <code>\"</code> and <code>\\</code> inside it; <code>'…'</code> holds one literally; spans that touch join; an unclosed quote is <code>djinterp: error: a quote is not closed</code>. <code>tools/djinterp_fixture_main.c</code> has the same rule in C behind <code>--line</code>, so the transcripts hold the two to each other. The rule is this session's invention, not the reference's.</p>
+  <fieldset><legend>Decision 8</legend>
+  <div class="options">
+    <div class="opt head"><div></div><div>Option</div><div>Advantages</div><div>Disadvantages</div></div>
+    <label class="opt"><span class="pick"><input type="radio" name="d8" value="A"></span><span class="name">A. The port's small rule, for a line only<br><span class="tag runs">Runs now</span></span><span>Enough for a console. Small enough to state in one sentence and to replace whole.</span><span>Invented. A settings panel has to quote a value correctly to send it, and a value with a quote or a backslash in it is where that goes wrong.</span></label>
+    <label class="opt"><span class="pick"><input type="radio" name="d8" value="B"></span><span class="name">B. POSIX shell's word rules</span><span>What a person at a terminal expects.</span><span>A large grammar to get exactly right (escapes outside quotes, expansions that must then be refused) for a console that isn't a shell, and it's replaced after 12-11 as well.</span></label>
+    <label class="opt"><span class="pick"><input type="radio" name="d8" value="C"></span><span class="name">C. No lines: <code>run</code> takes the words</span><span>Nothing invented. Words are exactly what the reference's <code>main</code> receives.</span><span>Every console writes its own splitter, each a little differently.</span></label>
+    <label class="opt rec" data-rec="1"><span class="pick"><input type="radio" name="d8" value="D"></span><span class="name">D. Both: <code>run</code> takes a line, split by the small rule, or an array of words, passed through untouched. The frozen grammar replaces the rule after 12-11<br><span class="tag">Recommended</span></span><span>A settings panel passes words and never meets quoting, so no value can be split wrongly. A console passes its line. The exact path already exists one level down (<code>program_run</code> takes words). The words form won't change at the freeze.</span><span>Two forms of one call. The line form's rule changes at the freeze, and a line that leaned on its edges changes meaning then.</span></label>
+  </div></fieldset>
+  <div class="recommend"><b class="lead">Recommendation: D.</b> The words form is the reference's own interface, so it should be on the page's interface too, and it's the form that programs should use. The line form is for people, and it's the part to treat as provisional until 12-11.</div>
+  <div class="note-row"><label for="n-d8">Note</label><textarea class="note" id="n-d8" data-for="d8" placeholder="Optional"></textarea></div>
+</section>
+
+<!-- ===================================================================== -->
+<section class="decision" id="d9">
+  <header><span class="badge">9</span><h3>A browser's sources of a setting (W7)</h3></header>
+  <div class="facts"><span><b>Decide before</b> a page ships</span><span><b>Affects</b> every page; shared with uxoxo.js</span></div>
+  <p>START, from the uxoxo.js note's W7 (recommended, unruled): the URL's query at the command line's standing, and browser storage at the file's. What runs is both, when the page asks:</p>
+  <ul>
+    <li><code>open({ query: location.search })</code> binds <code>name=value</code> as <code>--set name=value</code>, and a bare <code>name</code> as <code>--name</code>, so <code>no-color</code> works. Each is percent-decoded, and each refusal is a warning that names it.</li>
+    <li><code>open({ file: djinterp.storage_file(localStorage) })</code> keeps the settings file's text under one key, <code>djinterp/settings</code>. A storage that throws is reported as a file that can't be read or written.</li>
+    <li>By default, <code>open</code> reads neither. The library touches no global it wasn't handed.</li>
+  </ul>
+  <p><b>Measured in headless Chrome 153:</b> a query bound <code>printer.key_width</code> at the command line's standing, and a value <code>set</code> in one page load was read at the file's standing in the next.</p>
+  <fieldset><legend>Decision 9</legend>
+  <div class="options">
+    <div class="opt head"><div></div><div>Option</div><div>Advantages</div><div>Disadvantages</div></div>
+    <label class="opt rec" data-rec="1"><span class="pick"><input type="radio" name="d9" value="A"></span><span class="name">A. As W7, when the page hands them over<br><span class="tag">Recommended</span> <span class="tag runs">Runs now</span></span><span>W7's standing exactly, under the reference's own refusal rules: a row that refuses the command line refuses the query. The same code runs under node, in a Worker and in a test, since nothing is read from globals. The page decides whether a link may change its settings.</span><span>A line of setup in each page, and two pages can choose differently.</span></label>
+    <label class="opt"><span class="pick"><input type="radio" name="d9" value="B"></span><span class="name">B. As W7, by default: in a browser, <code>open</code> reads <code>location.search</code> and <code>localStorage</code> itself</span><span>No setup, and every page behaves alike.</span><span>Any link anyone sends binds settings above the user's own file, in every page, unless each row refuses it. The library reads globals, against JS_STYLE. A page's other query parameters are read as settings and warned about.</span></label>
+    <label class="opt"><span class="pick"><input type="radio" name="d9" value="C"></span><span class="name">C. Storage only</span><span>No link can change a setting.</span><span>Drops half of W7, and with it a link that shows a page in a given state.</span></label>
+  </div></fieldset>
+  <div class="recommend"><b class="lead">Recommendation: A.</b> It gives W7's two sources their standing and leaves the choice to use them with the page that knows who sends it links. Two details go with the ruling: the storage key's name, and whether the query's names should carry a prefix so they can share a URL with a page's own parameters.</div>
+  <div class="note-row"><label for="n-d9">Note</label><textarea class="note" id="n-d9" data-for="d9" placeholder="Optional: the key's name; a prefix for the query"></textarea></div>
+</section>
+
+<!-- ===================================================================== -->
+<section class="decision" id="d10">
+  <header><span class="badge">10</span><h3>The names of the events the program posts</h3></header>
+  <div class="facts"><span><b>Decide before</b> uxoxo.js binds a handler</span><span><b>Affects</b> uxoxo.js's shell and views; a name is hashed into a key</span></div>
+  <p>START's sketch has <code>dj.on('set', handler)</code>. The port posts two events: <code>set</code>, with the names a line's <code>set</code> kept, and <code>run</code>, with every line and its reply. An event's key is the FNV-1a-64 hash of its name, as in the reference. The reference's program posts no events, so both names are the port's.</p>
+  <p>Lane B's page of 11-13 recommends (its decision 2) that event names take the log's dotted form, <code>module.name</code>, because a name that's hashed into a key is a wire format. This session doesn't know how that was ruled.</p>
+  <fieldset><legend>Decision 10</legend>
+  <div class="options">
+    <div class="opt head"><div></div><div>Option</div><div>Advantages</div><div>Disadvantages</div></div>
+    <label class="opt"><span class="pick"><input type="radio" name="d10" value="A"></span><span class="name">A. <code>set</code> and <code>run</code>, as START drew<br><span class="tag runs">Runs now</span></span><span>Your own sketch, and short.</span><span>No module in the name, so a djin's event called <code>set</code> hashes to the same key. If the tree's events are dotted, this is one more spelling.</span></label>
+    <label class="opt rec" data-rec="1"><span class="pick"><input type="radio" name="d10" value="B"></span><span class="name">B. Dotted: <code>djinterp.set</code> and <code>djinterp.run</code><br><span class="tag">Recommended, if the tree's names were ruled dotted</span></span><span>One convention with the reference's events and message codes. A djin's events can't collide with the program's. The key is the same hash a C listener would compute.</span><span>Not START's sketch. If the tree didn't go dotted, the port alone would be.</span></label>
+    <label class="opt"><span class="pick"><input type="radio" name="d10" value="C"></span><span class="name">C. Both, one as an alias of the other</span><span>Nothing written against either breaks.</span><span>Two names and two keys for one event, which no collision check can see. Lane B's page argues against the same thing in its decision 1, option D.</span></label>
+  </div></fieldset>
+  <div class="recommend"><b class="lead">Recommendation: B if the tree's event names were ruled dotted, and A if they weren't.</b> Either way, rule it before uxoxo.js binds its first handler: once views hash a name, changing it is a change to a wire format. C shouldn't be chosen in either case.</div>
+  <div class="note-row"><label for="n-d10">Note</label><textarea class="note" id="n-d10" data-for="d10" placeholder="Optional: how lane B's decision 2 was ruled"></textarea></div>
+</section>
+
+<!-- ===================================================================== -->
+<section class="decision" id="d11">
+  <header><span class="badge">11</span><h3>The parser and the kit: how the program reads its command line</h3></header>
+  <div class="facts"><span><b>Decide before</b> a console is shown to anyone</span><span><b>Affects</b> every command line that isn't one of four plain commands</span></div>
+  <p>The reference reads a command line with djinterp's argument parser (58,507 lines in 42 C sources) and its command-line kit (12,721 lines in 8). Neither is ported. The port's <code>djinterp_commands.js</code> reads the four commands' arguments with a model of what the parser does for them, written from the parser's source and checked against the reference.</p>
+  <p><b>What the model covers, and how it was checked:</b> a missing command, a word that's no command, arguments a command doesn't expect, an operand it requires, <code>--show-origin</code>, the settings options <code>--set</code> and <code>--NAME</code>, and the parser's "did you mean". 60,000 fuzzed command lines agree with the reference, near misses of every name among them.</p>
+  <p><b>What it doesn't cover:</b> <code>help</code>, <code>completion</code>, <code>--help</code>, <code>--version</code>, <code>-q</code>, <code>-v</code>, <code>--color</code>, a bare <code>--</code>, and short options run together. The port answers each as a word it doesn't know, where the reference runs it. The fuzzer never produces them, so the agreement above says nothing about them.</p>
+  <p><b>What this morning showed.</b> "Did you mean" was on the not-ported list, and 7,050 fuzzed lines had agreed without it. Then a fresh seed happened on a near miss of <code>list</code> and differed. With the fuzzer made to produce near misses, two more differences followed (how an argument like <code>---color</code> is classed, and a space dropped from the end of the arguments listed), and a hand-typed line found a fourth: which word the kit names. All four are now ported, from <code>arg_suggest.c</code>, <code>arg_parse.c</code> and <code>cli_program.c</code>. A model is exact as far as its fuzzer reaches and no further.</p>
+  <fieldset><legend>Decision 11</legend>
+  <div class="options">
+    <div class="opt head"><div></div><div>Option</div><div>Advantages</div><div>Disadvantages</div></div>
+    <label class="opt"><span class="pick"><input type="radio" name="d11" value="A"></span><span class="name">A. The model as it is<br><span class="tag runs">Runs now</span></span><span>About 1,050 lines. Exact wherever it has been checked.</span><span>A person's first word at a console is <code>help</code>, and the port answers that it's not a command. <code>--</code> can't protect a value that starts with a dash. Quiet and verbose do nothing.</span></label>
+    <label class="opt"><span class="pick"><input type="radio" name="d11" value="B"></span><span class="name">B. Model the rest of the kit: <code>--</code>, <code>-q</code>, <code>-v</code>, <code>--color</code>, <code>--version</code>, <code>--help</code> and <code>help</code>, with the help texts written out by the C as data, as rows are. <code>completion</code> is left out: a page has no shell to complete in</span><span>Every word the native program takes, a page's console takes, bar the one with no meaning in a page. Help comes from the reference, so it can't drift. Each piece arrives with its fuzz and its transcript.</span><span>Still a model: a second reading of 71,228 lines' behaviour, for four commands. The kit wraps help to a terminal's width, which a page hasn't got, so a width has to be chosen.</span></label>
+    <label class="opt"><span class="pick"><input type="radio" name="d11" value="C"></span><span class="name">C. Port the parser and the kit whole</span><span>One reading of a command line, the reference's, for every command a djin will ever add.</span><span>71,228 lines of C to follow, most of it for things these commands never use: response files, configuration formats, Windows-style options. The interpreter's interfaces freeze on 12-11, so a port before then follows a moving source.</span></label>
+    <label class="opt rec" data-rec="1"><span class="pick"><input type="radio" name="d11" value="D"></span><span class="name">D. B now, with the fuzzer extended to every word B adds. C is asked again when the command language is ported after 12-11, when a djin's own commands and options have to be read<br><span class="tag">Recommended</span></span><span>The console is complete for the program as it is, and checked. The question of a whole port is decided when its real cost and need are known: a model for each djin's command stops being small.</span><span>B's work may be replaced if C is chosen later. Its transcripts and fuzzer carry over, and they're the part that proves either.</span></label>
+  </div></fieldset>
+  <div class="recommend"><b class="lead">Recommendation: D.</b> The accurate port of four commands isn't 71,228 lines, but it isn't today's model either: a console that refuses <code>help</code> isn't djinterp's. B closes that, and the rule from this morning goes with it: nothing joins the model without the fuzzer being taught to produce it first.</div>
+  <div class="note-row"><label for="n-d11">Note</label><textarea class="note" id="n-d11" data-for="d11" placeholder="Optional: a width for help; whether completion should offer candidates to a console"></textarea></div>
+</section>
+
+<!-- ===================================================================== -->
+<section class="decision" id="d12">
+  <header><span class="badge">12</span><h3>A row or a djin refused at <code>open</code></h3></header>
+  <div class="facts"><span><b>Decide before</b> a page loads a djin it didn't write</span><span><b>Affects</b> how a page learns of its own mistakes</span></div>
+  <p>JS_STYLE: an expected failure is a value, and a throw is for a programmer's misuse. Below <code>open</code> the port follows that: <code>option_env.declare</code> and <code>djin.register</code> answer with the reference's statuses. <code>open</code> is the convenience over them. Handed a row or a djin the reference refuses, its promise is rejected with an <code>Error</code> that names it: <code>the setting 'width' was refused (INVALID_ARGUMENT)</code>.</p>
+  <fieldset><legend>Decision 12</legend>
+  <div class="options">
+    <div class="opt head"><div></div><div>Option</div><div>Advantages</div><div>Disadvantages</div></div>
+    <label class="opt rec" data-rec="1"><span class="pick"><input type="radio" name="d12" value="A"></span><span class="name">A. The promise is rejected, naming what was refused and the reference's status<br><span class="tag">Recommended</span> <span class="tag runs">Runs now</span></span><span>A row typed wrongly in a page's source fails at once, by name, and not as a setting that quietly isn't there. The value-returning calls are underneath for a page that loads djins it didn't write: <code>djin.register(dj.set, record)</code> answers with a status.</span><span>One bad djin among several stops the page opening, unless the page registers them itself.</span></label>
+    <label class="opt"><span class="pick"><input type="radio" name="d12" value="B"></span><span class="name">B. Open anyway, with each refusal listed in the session and in <code>warnings</code></span><span>A page with one bad djin still opens. A refusal is a value everywhere.</span><span>A mistake in the page's own rows is easy to miss: the page works, less one setting.</span></label>
+    <label class="opt"><span class="pick"><input type="radio" name="d12" value="C"></span><span class="name">C. Rows reject; djins are listed</span><span>Treats what the page typed as code and what it loaded as data.</span><span>Two behaviours in one call. Today a djin's record in a page is typed by the page too.</span></label>
+  </div></fieldset>
+  <div class="recommend"><b class="lead">Recommendation: A.</b> Both behaviours a page could want already exist, at the two levels where each is right: the convenience fails loudly, and the functions under it return statuses.</div>
+  <div class="note-row"><label for="n-d12">Note</label><textarea class="note" id="n-d12" data-for="d12" placeholder="Optional"></textarea></div>
+</section>
+
+<!-- ===================================================================== -->
+<section class="decision" id="d13">
+  <header><span class="badge">13</span><h3>Copies of queued events' payloads</h3></header>
+  <div class="facts"><span><b>Decide before</b> a view queues an event</span><span><b>Affects</b> the event queue only; firing an event at once copies nothing</span></div>
+  <p>The reference's queue copies a payload's bytes into its own storage when an event is queued, so what a handler hears later is what was queued. A page has objects, not bytes. The port copies the payload with <code>structuredClone</code> when it's queued. It's the one function of the host that the library calls, and browsers and node both have it.</p>
+  <fieldset><legend>Decision 13</legend>
+  <div class="options">
+    <div class="opt head"><div></div><div>Option</div><div>Advantages</div><div>Disadvantages</div></div>
+    <label class="opt rec" data-rec="1"><span class="pick"><input type="radio" name="d13" value="A"></span><span class="name">A. Copied when queued<br><span class="tag">Recommended</span> <span class="tag runs">Runs now</span></span><span>The reference's meaning: a payload changed after it was queued is still heard as it was.</span><span>A payload that holds a function or a DOM node can't be copied, and queueing it throws. Such an event has to be fired, not queued.</span></label>
+    <label class="opt"><span class="pick"><input type="radio" name="d13" value="B"></span><span class="name">B. Queued by reference</span><span>Anything can be queued, and nothing is copied.</span><span>Differs from the reference: a change after queueing changes what's heard, which is the fault the reference's copy exists to rule out.</span></label>
+    <label class="opt"><span class="pick"><input type="radio" name="d13" value="C"></span><span class="name">C. A, with the copy replaceable for a queue</span><span>A view that must queue a node says so, knowingly, for that queue alone.</span><span>A knob the reference doesn't have, added before any page has needed it.</span></label>
+  </div></fieldset>
+  <div class="recommend"><b class="lead">Recommendation: A.</b> It keeps the reference's guarantee. C is a pure addition, so it can come the day uxoxo.js shows a view that needs it, without changing anything written against A.</div>
+  <div class="note-row"><label for="n-d13">Note</label><textarea class="note" id="n-d13" data-for="d13" placeholder="Optional"></textarea></div>
+</section>
+
+<!-- ===================================================================== -->
+<section class="decision" id="d14">
+  <header><span class="badge">14</span><h3>Real numbers as text: one implementation</h3></header>
+  <div class="facts"><span><b>Decide before</b> <code>glue.js</code> arrives</span><span><b>Affects</b> djinterp.js and genterp's wasm glue</span></div>
+  <p>START, hazard 2: write printf's <code>%.*g</code> once, or use genterp's <code>glue.js</code> (<code>formatReal</code>, <code>readReal</code>) "if it passes the table rather than write a second one". <code>glue.js</code> isn't in the package, and there was no chance to ask for it. So the session wrote <code>src/text/real_format.js</code> and <code>real_read.js</code>, which work by exact integer arithmetic and use none of JavaScript's own number formatting or parsing.</p>
+  <p><b>Measured:</b> <code>tools/reals.c</code> writes 6,778 doubles (the edges, powers of ten, subnormals, and 4,000 from a fixed seed), each as <code>%.17g</code>, <code>%.15g</code>, <code>%.6g</code> and <code>%.1g</code>. The port's writer gives the same text for all 27,112, and its reader returns each <code>%.17g</code> text to the same 64 bits.</p>
+  <fieldset><legend>Decision 14</legend>
+  <div class="options">
+    <div class="opt head"><div></div><div>Option</div><div>Advantages</div><div>Disadvantages</div></div>
+    <label class="opt"><span class="pick"><input type="radio" name="d14" value="A"></span><span class="name">A. Keep the port's own<br><span class="tag runs">Runs now</span></span><span>Exact on the whole sweep. No dependency on genterp.</span><span>Two implementations of printf's reals in your JavaScript, which START asked to avoid. They can come to disagree.</span></label>
+    <label class="opt"><span class="pick"><input type="radio" name="d14" value="B"></span><span class="name">B. Replace it with <code>glue.js</code>'s, if that passes</span><span>One implementation, as START wished.</span><span>Unseen here. Whether it's exact at every precision, and what else it brings with it, isn't known.</span></label>
+    <label class="opt rec" data-rec="1"><span class="pick"><input type="radio" name="d14" value="C"></span><span class="name">C. Run <code>glue.js</code> through the same sweep, then keep one module, whichever passes all of it, and have both libraries import that one<br><span class="tag">Recommended</span></span><span>One implementation, chosen by measurement and not by which was written first. genterp's glue and djinterp.js can't then disagree about a real's text. The sweep becomes that module's test in both places.</span><span>Needs <code>glue.js</code> from you. If the port's is the one kept, genterp's glue changes, which is genterp's to accept.</span></label>
+  </div></fieldset>
+  <div class="recommend"><b class="lead">Recommendation: C.</b> START's aim was one implementation that passes the table. A second one exists now, with a larger table than the one START had, so the table should pick.</div>
+  <div class="note-row"><label for="n-d14">Note</label><textarea class="note" id="n-d14" data-for="d14" placeholder="Optional"></textarea></div>
+</section>
+
+<!-- ===================================================================== -->
+<section class="decision" id="d15">
+  <header><span class="badge">15</span><h3>Where it lives (J2)</h3></header>
+  <div class="facts"><span><b>Decide before</b> the tree has CI</span><span><b>Affects</b> the port, lane A's build, and whoever re-records transcripts</span></div>
+  <p>START: until ruled, a repository of its own, laid out so that it can be moved into djinterp's tree. That's what it is. Its files mirror the reference's paths (<code>src/option/option_env.js</code> for <code>c/option/option_env</code>). Its tools build against a checkout of djinterp and change nothing in it. Neither side has CI (START, hazard 6).</p>
+  <fieldset><legend>Decision 15</legend>
+  <div class="options">
+    <div class="opt head"><div></div><div>Option</div><div>Advantages</div><div>Disadvantages</div></div>
+    <label class="opt rec" data-rec="1"><span class="pick"><input type="radio" name="d15" value="A"></span><span class="name">A. In djinterp's tree, with a JavaScript section in the style guides and its suites in CI (the morning's recommendation), moved when CI exists<br><span class="tag">Recommended</span></span><span>A change to <code>option_env.c</code> and the port's answer to it land together. The port's C tools reach into the option machine, and built by the tree's own CMake they break when it changes, not at the next regeneration. One history.</span><span>The gain is real only with CI. node becomes a tool in a C tree. Someone must own re-recording when the reference changes what it prints.</span></label>
+    <label class="opt"><span class="pick"><input type="radio" name="d15" value="B"></span><span class="name">B. A repository of its own<br><span class="tag runs">Runs now</span></span><span>Moves at its own pace. A page's author clones 2 MB and not djinterp.</span><span>The port learns of a change in the reference only when someone runs <code>regenerate.sh</code>. Two histories, pinned to each other by a name in a file.</span></label>
+    <label class="opt"><span class="pick"><input type="radio" name="d15" value="C"></span><span class="name">C. Its own repository, with djinterp as a pinned submodule</span><span>Independence, and a mechanical pin: the submodule's commit is decision 1's named commit.</span><span>Submodules. Still needs CI to do anything by itself.</span></label>
+  </div></fieldset>
+  <div class="recommend"><b class="lead">Recommendation: A, when the tree has CI; B until then.</b> What a shared tree buys is a port that can't fall behind unnoticed, and only a machine running the transcripts on every change delivers that. Moving before CI exists would cost the move and buy nothing.</div>
+  <div class="note-row"><label for="n-d15">Note</label><textarea class="note" id="n-d15" data-for="d15" placeholder="Optional: where in the tree"></textarea></div>
+</section>
+
+<!-- ===================================================================== -->
+<section class="decision" id="d16">
+  <header><span class="badge">16</span><h3>Who writes the rows as JSON (J13)</h3></header>
+  <div class="facts"><span><b>Decide before</b> REAL rows gain a range and a step</span><span><b>Affects</b> lane E, uxoxo.js, and genterp's context documents</span></div>
+  <p>START's step 2 asked for a small C program that writes a registry's rows, and J13 asked who writes it: "desc may already write most of it, so ask lane E first". There was no chance to ask. What exists:</p>
+  <ul>
+    <li><code>tools/rows_json.c</code> writes the statuses and their messages, the sources, the kinds, the registry's room and the fixture's rows. Every field of <code>dj_option_env_var</code> appears. Integers are decimal strings; a real is its <code>%.17g</code> text and its bits.</li>
+    <li><code>tools/djinterp_fixture_main.c</code> adds <code>--rows-json</code> to the program, for its own registry.</li>
+    <li>Both link the reference's objects from its CMake build (<code>tools/build.sh</code>).</li>
+  </ul>
+  <fieldset><legend>Decision 16</legend>
+  <div class="options">
+    <div class="opt head"><div></div><div>Option</div><div>Advantages</div><div>Disadvantages</div></div>
+    <label class="opt"><span class="pick"><input type="radio" name="d16" value="A"></span><span class="name">A. They stay the port's tools<br><span class="tag runs">Runs now</span></span><span>Works today, and lane E's tree is untouched.</span><span>The JSON's shape is this session's invention, known to no other reader. uxoxo.js and genterp's context documents need the same rows and would each write their own.</span></label>
+    <label class="opt rec" data-rec="1"><span class="pick"><input type="radio" name="d16" value="B"></span><span class="name">B. Lane E takes <code>rows_json.c</code> as a kit and makes it the reference's own: one function that writes a frame's rows and room, reachable from the program, its shape documented with the option machine. The port keeps only its test drivers<br><span class="tag">Recommended</span></span><span>One writer, in the tree that owns the rows, changed in the same commit as <code>dj_option_env_var</code>. One shape for every reader. START's check, that every field appears, becomes a test in the reference. Decision 5's room is written with it.</span><span>Lane E's time, and a format to keep stable.</span></label>
+    <label class="opt"><span class="pick"><input type="radio" name="d16" value="C"></span><span class="name">C. desc writes them</span><span>If desc's JSON already describes <code>dj_option_env_var</code>, there may be little to add. START: "read desc's JSON, do not port the machines".</span><span>Not known here whether it does. desc describes a type; a registry's rows are values of that type, with names and help, so desc may give the shape and not the data.</span></label>
+  </div></fieldset>
+  <div class="recommend"><b class="lead">Recommendation: B, after lane E says what desc already writes.</b> Three readers are about to want these rows, and REAL rows are about to gain fields. The writer belongs where the fields are defined.</div>
+  <div class="note-row"><label for="n-d16">Note</label><textarea class="note" id="n-d16" data-for="d16" placeholder="Optional: lane E's answer about desc"></textarea></div>
+</section>
+
+<!-- ===================================================================== -->
+<section class="decision" id="d17">
+  <header><span class="badge">17</span><h3>Generated data as modules</h3></header>
+  <div class="facts"><span><b>Decide</b> any time</span><span><b>Affects</b> how <code>src/</code> reads the reference's statuses, kinds and sources</span></div>
+  <p>The port takes the reference's statuses, messages, kinds and sources from <code>generated/option.json</code> and <code>event.json</code>, so none is typed twice. JS_STYLE allows no build step, and a page imports modules. <code>tools/json_module.js</code> writes each file again as a module beside it, and <code>src/</code> imports those. A test holds each module equal to its JSON.</p>
+  <fieldset><legend>Decision 17</legend>
+  <div class="options">
+    <div class="opt head"><div></div><div>Option</div><div>Advantages</div><div>Disadvantages</div></div>
+    <label class="opt rec" data-rec="1"><span class="pick"><input type="radio" name="d17" value="A"></span><span class="name">A. A generated module beside each JSON file<br><span class="tag">Recommended</span> <span class="tag runs">Runs now</span></span><span>Works wherever modules do, with the data there as soon as the import is. The JSON stays for readers that aren't JavaScript. Both come from one run of <code>regenerate.sh</code>.</span><span>Each table is on disk twice.</span></label>
+    <label class="opt"><span class="pick"><input type="radio" name="d17" value="B"></span><span class="name">B. Import the JSON itself, as a JSON module</span><span>One file.</span><span>Needs a browser recent enough to import JSON; an older one fails at load with no way round. Which versions weren't checked here.</span></label>
+    <label class="opt"><span class="pick"><input type="radio" name="d17" value="C"></span><span class="name">C. Fetch the JSON in <code>open</code></span><span>One file, and <code>open</code> already answers with a promise.</span><span>A request before first use, and a URL the page must be able to reach. Nothing can name a status until it returns. node needs another path.</span></label>
+  </div></fieldset>
+  <div class="recommend"><b class="lead">Recommendation: A.</b> It's the only one of the three with no condition on the browser or the network.</div>
+  <div class="note-row"><label for="n-d17">Note</label><textarea class="note" id="n-d17" data-for="d17" placeholder="Optional"></textarea></div>
+</section>
+
+<!-- ===================================================================== -->
+<section class="decision" id="d18">
+  <header><span class="badge">18</span><h3>JS_STYLE's three, as they ran (JS1, JS2, JS3)</h3></header>
+  <div class="facts"><span><b>Decide before</b> uxoxo.js's first handoff</span><span><b>Affects</b> both libraries</span></div>
+  <p>JS_STYLE's section 9 leaves three choices to you and says how each runs meanwhile. The session ran all three as written. What follows is what 11,000 lines of port add to each.</p>
+
+  <div class="sub">
+    <h4>18a. Names (JS1)</h4>
+    <p>Every exported name is the reference's, less its <code>d_</code> or <code>dj_</code> prefix: <code>option_env.assign_from</code> is <code>d_option_env_assign_from</code>. One name met the language: <code>import</code> can't be a function's own name, so it's <code>import_</code>, also exported as <code>import</code>.</p>
+    <fieldset><legend>Decision 18a</legend>
+    <div class="options">
+      <div class="opt head"><div></div><div>Option</div><div>Advantages</div><div>Disadvantages</div></div>
+      <label class="opt rec" data-rec="1"><span class="pick"><input type="radio" name="d18a" value="A"></span><span class="name">A. The reference's names, in snake_case<br><span class="tag">Recommended</span> <span class="tag runs">Runs now</span></span><span>Any function in the port can be found in the C with one search, and that's how each was checked. A transcript's operation, the C function and the port's function share a name.</span><span>Not the language's habit, and not <code>glue.js</code>'s. A reserved word needs a second spelling.</span></label>
+      <label class="opt"><span class="pick"><input type="radio" name="d18a" value="B"></span><span class="name">B. camelCase</span><span>The language's convention.</span><span>Every name is translated, by hand, in both directions, for as long as the port follows the reference.</span></label>
+    </div></fieldset>
+    <div class="note-row"><label for="n-d18a">Note</label><textarea class="note" id="n-d18a" data-for="d18a" placeholder="Optional"></textarea></div>
+  </div>
+
+  <div class="sub">
+    <h4>18b. Types (JS2)</h4>
+    <p>Every export has JSDoc, with typedefs for what's handed back. No declarations have been generated from it yet, and nothing has checked the JSDoc against the code.</p>
+    <fieldset><legend>Decision 18b</legend>
+    <div class="options">
+      <div class="opt head"><div></div><div>Option</div><div>Advantages</div><div>Disadvantages</div></div>
+      <label class="opt"><span class="pick"><input type="radio" name="d18b" value="A"></span><span class="name">A. JSDoc in the sources; declarations generated later<br><span class="tag runs">Runs now</span></span><span>No build step. What a page imports is what was written.</span><span>Until something checks them, the types are comments, and comments drift.</span></label>
+      <label class="opt rec" data-rec="1"><span class="pick"><input type="radio" name="d18b" value="B"></span><span class="name">B. A, and a checker reads the JSDoc as types: it writes the declarations and fails on a mismatch, as a tool beside <code>check_style.js</code>, never as a step a page needs<br><span class="tag">Recommended</span></span><span>The sources stay as they are and run unbuilt. The types are checked, and an editor gets declarations. Other hosts' bindings (J10) can be generated from the same declarations.</span><span>A development dependency on a type checker. Not run in this session, so its findings on the present sources aren't known.</span></label>
+      <label class="opt"><span class="pick"><input type="radio" name="d18b" value="C"></span><span class="name">C. TypeScript sources</span><span>Types are the language's own.</span><span>A build step between the sources and a page, which JS_STYLE rules out.</span></label>
+    </div></fieldset>
+    <div class="note-row"><label for="n-d18b">Note</label><textarea class="note" id="n-d18b" data-for="d18b" placeholder="Optional"></textarea></div>
+  </div>
+
+  <div class="sub">
+    <h4>18c. One file of style, or two (JS3)</h4>
+    <p>The session needed no rule of its own. JS_STYLE is silent on three things, which were settled by the C guide's habits and are listed in <code>HANDOFF.md</code>: banners for files that aren't JavaScript, the layout of a tool that's a program and not a module, and a test file's sections.</p>
+    <fieldset><legend>Decision 18c</legend>
+    <div class="options">
+      <div class="opt head"><div></div><div>Option</div><div>Advantages</div><div>Disadvantages</div></div>
+      <label class="opt rec" data-rec="1"><span class="pick"><input type="radio" name="d18c" value="A"></span><span class="name">A. One file, the same in both libraries, changed only through you<br><span class="tag">Recommended</span> <span class="tag runs">Runs now</span></span><span>The two libraries read alike, and <code>tools/check_style.js</code> can serve both.</span><span>The three gaps above want a sentence each, which is yours to add.</span></label>
+      <label class="opt"><span class="pick"><input type="radio" name="d18c" value="B"></span><span class="name">B. Each library its own</span><span>Each can settle its own gaps.</span><span>They'd drift, and uxoxo.js stands on djinterp.js.</span></label>
+    </div></fieldset>
+    <div class="note-row"><label for="n-d18c">Note</label><textarea class="note" id="n-d18c" data-for="d18c" placeholder="Optional"></textarea></div>
+  </div>
+</section>
+
+<h2 id="found">Found while preparing this: no decision of yours needed</h2>
+<p>Three are for the lanes that own the program, the kit and the option machine, for you to relay. The rest are done or are the port's to do.</p>
+<ul>
+  <li><b><code>djinterp get -- NAME</code> refuses NAME.</b> Measured on the reference's own binary at <code>d20c0b23</code>: <code>djinterp get -- plugin_path</code> answers <code>get: the following argument was not expected: plugin_path</code>, while <code>djinterp get plugin_path</code> prints it. <code>set -- NAME=VALUE</code> and <code>describe -- DJIN</code> take their operands after <code>--</code>. It looks unintended. The port doesn't model <code>--</code> yet (decision 11), so it hasn't copied it.</li>
+  <li><b>The kit names half a word.</b> With several arguments and no command, the word it calls "not a command" is cut at the first space of the joined arguments: <code>djinterp 'two words' --x</code> answers <code>'two' is not a command</code>. With one argument it names the whole of it. The port does the same, and the transcript <code>program_commands</code> holds both.</li>
+  <li><b><code>d_option_env_statement_end</code> reads past a script's end</b> when it's given an offset beyond the terminator. The port's fuzzer keeps within the script. Lane E can say whether that's the caller's contract or wants a guard.</li>
+  <li><b>The parser drops one space</b> from the end of the arguments it lists as unexpected, as CLI11's join does, so an argument that ends with a space is shown without it. Ported as it is.</li>
+  <li><b>What isn't ported, beyond decision 11:</b> the event core's storage (its arena, buckets, rehashing, statistics and payload ring), so handler ids are plain numbers and a queue's room is a count; and hexadecimal reals and <code>nan(…)</code>, which the option machine refuses before any reader sees them. <code>HANDOFF.md</code> has the full list.</li>
+  <li><b>What waits with the wasm route, untouched:</b> J3, J4, J6, J7 and J8. J5 and J9 wait with the journal, and J10 with the first transport. Nothing in the port forecloses them: the page's interface is the one the morning's note drew.</li>
+  <li><b>The starting package's four prototype runs</b> are kept as they came and are replayed as tests. <code>regenerate.sh</code> fails if the reference stops printing them.</li>
+</ul>
+
+<h2 id="work">The work, if the recommendations stand</h2>
+<table>
+  <thead><tr><th>Decision</th><th>What changes in the port</th><th>Its check</th></tr></thead>
+  <tbody>
+    <tr><td><b>1, 2, 3, 6, 9, 12, 13, 17, 18a, 18c</b></td><td>Nothing: each runs as recommended</td><td>The suites as they stand</td></tr>
+    <tr><td><b>7</b></td><td><code>run</code> drops the last line's command-line and override bindings and reads the settings file again before each line</td><td>The four program transcripts replayed through <code>run</code> itself, byte for byte</td></tr>
+    <tr><td><b>8</b></td><td><code>run</code> also takes an array of words</td><td>The same transcripts, sent as words and as lines, give the same bytes</td></tr>
+    <tr><td><b>10</b></td><td>The two event names change, if the tree's are dotted</td><td>The page interface's tests; a note to the uxoxo agent</td></tr>
+    <tr><td><b>11</b></td><td><code>--</code>, <code>-q</code>, <code>-v</code>, <code>--color</code>, <code>--version</code>, <code>--help</code> and <code>help</code>; help texts generated by a C tool</td><td>The fuzzer taught each word first; a transcript of each; then the model</td></tr>
+    <tr><td><b>4, 5, 16</b></td><td>A note to lane E: the NaN, the rows' writer and its room. The port's JSON reader follows what lane E lands</td><td><code>regenerate.sh</code> at the commit that lands it</td></tr>
+    <tr><td><b>14</b></td><td><code>glue.js</code> through <code>generated/reals.txt</code>; one module kept</td><td>27,112 texts and 6,778 round trips, on whichever is kept</td></tr>
+    <tr><td><b>18b</b></td><td>A type checker over the JSDoc, as a tool; declarations written out</td><td>It passes, or its findings are fixed</td></tr>
+    <tr><td><b>15</b></td><td>The move into djinterp's tree</td><td>When the tree has CI to run the transcripts</td></tr>
+    <tr><td><b>After 12-11</b></td><td>The command language, from the frozen grammar: splitting a line, dispatch to a djin's command, and decision 11's C asked again</td><td>Transcripts of the frozen interpreter</td></tr>
+  </tbody>
+</table>
+
+<h2 id="exportSection">Your rulings</h2>
+<p class="meta">Built from your choices and notes above. Copy it into your reply, or download it as JSON.</p>
+<textarea id="export" readonly aria-label="Your rulings, as text"></textarea>
+<div class="toolbar" style="position:static;border:0">
+  <button type="button" class="primary" id="copy">Copy rulings</button>
+  <button type="button" id="download">Download as JSON</button>
+  <span class="status" id="status" role="status"></span>
+</div>
+
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  var TITLES = {
+    d1:  "Which commit of djinterp the port follows (J12)",
+    d2:  "64-bit INT rows in JavaScript (J11)",
+    d3:  "Text inside the port: bytes or strings",
+    d4:  "A NaN's sign",
+    d5:  "Room: how much a frame holds",
+    d6:  "open and run: promises or plain values",
+    d7:  "What a line is: a run of the program, or a turn in a session",
+    d8:  "Splitting a line into words",
+    d9:  "A browser's sources of a setting (W7)",
+    d10: "The names of the events the program posts",
+    d11: "The parser and the kit",
+    d12: "A row or a djin refused at open",
+    d13: "Copies of queued events' payloads",
+    d14: "Real numbers as text: one implementation",
+    d15: "Where it lives (J2)",
+    d16: "Who writes the rows as JSON (J13)",
+    d17: "Generated data as modules",
+    d18a: "Names (JS1)",
+    d18b: "Types (JS2)",
+    d18c: "One file of style, or two (JS3)"
+  };
+  var ORDER = ["d1","d2","d3","d4","d5","d6","d7","d8","d9","d10","d11","d12","d13","d14","d15","d16","d17","d18a","d18b","d18c"];
+  var KEY = "djinterp-js-decisions-2026-11-16";
+
+  function recOf(name) {
+    var el = document.querySelector('label.opt[data-rec] input[name="' + name + '"]');
+    return el ? el.value : null;
+  }
+  function chosen(name) {
+    var el = document.querySelector('input[name="' + name + '"]:checked');
+    return el ? el.value : null;
+  }
+  function optionText(name, value) {
+    var el = document.querySelector('input[name="' + name + '"][value="' + value + '"]');
+    if (!el) { return ""; }
+    var label = el.closest("label");
+    var nm = label ? label.querySelector(".name") : null;
+    if (!nm) { return ""; }
+    var clone = nm.cloneNode(true);
+    clone.querySelectorAll(".tag").forEach(function (tag) { tag.parentNode.removeChild(tag); });
+    return clone.textContent.replace(/\s+/g, " ").trim();
+  }
+  function noteOf(name) {
+    var el = document.querySelector('textarea.note[data-for="' + name + '"]');
+    return el ? el.value.trim() : "";
+  }
+
+  function save() {
+    var state = {};
+    ORDER.forEach(function (n) { state[n] = { pick: chosen(n), note: noteOf(n) }; });
+    try { window.localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) { /* storage is optional */ }
+  }
+  function load() {
+    var raw = null;
+    try { raw = window.localStorage.getItem(KEY); } catch (e) { raw = null; }
+    if (!raw) { return; }
+    var state;
+    try { state = JSON.parse(raw); } catch (e) { return; }
+    ORDER.forEach(function (n) {
+      var s = state[n];
+      if (!s) { return; }
+      if (s.pick) {
+        var el = document.querySelector('input[name="' + n + '"][value="' + s.pick + '"]');
+        if (el) { el.checked = true; }
+      }
+      var t = document.querySelector('textarea.note[data-for="' + n + '"]');
+      if (t && s.note) { t.value = s.note; }
+    });
+  }
+
+  function refresh() {
+    var done = 0;
+    ORDER.forEach(function (n) { if (chosen(n)) { done += 1; } });
+    document.getElementById("count").textContent =
+      done + " of " + ORDER.length + " rulings chosen";
+
+    document.querySelectorAll("label.opt input[type=radio]").forEach(function (r) {
+      var row = r.closest("label.opt");
+      if (row) { row.classList.toggle("picked", r.checked); }
+    });
+
+    document.querySelectorAll("td.ruling").forEach(function (td) {
+      var names = td.getAttribute("data-for").split(" ");
+      var parts = [];
+      var allAgree = true;
+      var any = false;
+      names.forEach(function (n) {
+        var c = chosen(n);
+        if (c) { any = true; } else { allAgree = false; }
+        if (c && c !== recOf(n)) { allAgree = false; }
+        parts.push(c || "—");
+      });
+      td.textContent = any ? parts.join(" · ") : "—";
+      td.classList.remove("none", "agree", "other");
+      td.classList.add(!any ? "none" : (allAgree ? "agree" : "other"));
+    });
+
+    document.getElementById("export").value = buildText();
+    save();
+  }
+
+  function buildText() {
+    var lines = [];
+    var open = [];
+    lines.push("djinterp.js: decisions of 2026-11-16 (the port follows djinterp at d20c0b23): the owner's rulings");
+    lines.push("");
+    ORDER.forEach(function (n) {
+      var num = n.replace(/^d/, "");
+      var c = chosen(n);
+      var rec = recOf(n);
+      var note = noteOf(n);
+      if (!c) {
+        open.push(num);
+        if (note) { lines.push(num + ". " + TITLES[n] + ": not ruled. Note: " + note); }
+        return;
+      }
+      var agrees = (c === rec) ? " (as recommended)" : " (recommended was " + rec + ")";
+      lines.push(num + ". " + TITLES[n] + ": " + c + agrees);
+      lines.push("   " + optionText(n, c));
+      if (note) { lines.push("   Note: " + note); }
+    });
+    lines.push("");
+    lines.push(open.length ? "Not yet ruled: " + open.join(", ") : "All " + ORDER.length + " ruled.");
+    return lines.join("\n");
+  }
+
+  function buildJson() {
+    var out = { page: "djinterp.js decisions 2026-11-16", base: "d20c0b23", rulings: {} };
+    ORDER.forEach(function (n) {
+      out.rulings[n] = {
+        title: TITLES[n],
+        choice: chosen(n),
+        recommended: recOf(n),
+        option: chosen(n) ? optionText(n, chosen(n)) : null,
+        note: noteOf(n) || null
+      };
+    });
+    return JSON.stringify(out, null, 2);
+  }
+
+  function flash(msg) {
+    var s = document.getElementById("status");
+    s.textContent = msg;
+    setTimeout(function () { s.textContent = ""; }, 2600);
+  }
+
+  document.addEventListener("change", function (e) {
+    if (e.target && e.target.matches && e.target.matches("input[type=radio]")) { refresh(); }
+  });
+  document.addEventListener("input", function (e) {
+    if (e.target && e.target.matches && e.target.matches("textarea.note")) { refresh(); }
+  });
+
+  document.getElementById("agreeAll").addEventListener("click", function () {
+    ORDER.forEach(function (n) {
+      var r = recOf(n);
+      var el = r && document.querySelector('input[name="' + n + '"][value="' + r + '"]');
+      if (el) { el.checked = true; }
+    });
+    refresh();
+    flash("Every recommendation chosen.");
+  });
+  document.getElementById("clearAll").addEventListener("click", function () {
+    document.querySelectorAll("input[type=radio]").forEach(function (r) { r.checked = false; });
+    document.querySelectorAll("textarea.note").forEach(function (t) { t.value = ""; });
+    refresh();
+  });
+  document.getElementById("toExport").addEventListener("click", function () {
+    document.getElementById("exportSection").scrollIntoView({ behavior: "smooth" });
+  });
+
+  document.getElementById("copy").addEventListener("click", function () {
+    var text = buildText();
+    var ta = document.getElementById("export");
+    function fallback() {
+      ta.removeAttribute("readonly");
+      ta.select();
+      var ok = false;
+      try { ok = document.execCommand("copy"); } catch (e) { ok = false; }
+      ta.setAttribute("readonly", "");
+      flash(ok ? "Copied." : "Select the text above and copy it.");
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function () { flash("Copied."); }, fallback);
+    } else {
+      fallback();
+    }
+  });
+
+  document.getElementById("download").addEventListener("click", function () {
+    try {
+      var blob = new Blob([buildJson()], { type: "application/json" });
+      var a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "djinterp_js_rulings_2026-11-16.json";
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 500);
+    } catch (e) {
+      flash("This viewer can't download files. Use Copy instead.");
+    }
+  });
+
+  load();
+  refresh();
+}());
+</script>
+</body>
+</html>

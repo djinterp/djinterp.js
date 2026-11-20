@@ -31,6 +31,20 @@ test('well-formed text is UTF-8, as the platform encodes it', () =>
     }
 });
 
+test('the edges of each length, and of the surrogate pairs', () =>
+{
+    // the first and last code point of each UTF-8 length; then the pairs
+    // whose high or low surrogate is the first or last there is
+    for (const point of [0x7F, 0x80, 0x7FF, 0x800, 0xD7FF, 0xE000, 0xFFFF,
+                         0x10000, 0x103FF, 0x10400, 0x10FC00, 0x10FFFF])
+    {
+        const text = String.fromCodePoint(point);
+
+        assert.equal(encode(text), bytes(text), point.toString(16));
+        assert.equal(decode(bytes(text)), text, point.toString(16));
+    }
+});
+
 test('every byte string survives a decode and an encode', () =>
 {
     // each single byte, then each pair with every lead
