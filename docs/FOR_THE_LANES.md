@@ -1,9 +1,9 @@
 # Notes for djinterp's lanes, from the port
 
-2026-11-16, measured again 2026-11-17. Each is for the owner to relay.
-The port follows djinterp at `3eb096c9`; everything here was measured on
-the reference built from `dfc793c4`, and again from `3eb096c9`, and
-holds at both.
+2026-11-16, measured again 2026-11-17 and 2026-11-18. Each is for the
+owner to relay. The port follows djinterp at `6fe35d43`; everything here
+was measured on the reference built from `dfc793c4`, from `3eb096c9` and
+from `6fe35d43`, and holds at all three.
 
 
 ## For lane E: the rows as JSON (the owner's ruling D15)
@@ -15,7 +15,9 @@ machine. The port keeps only its test drivers.
 
 **First, a question:** does desc already write `dj_option_env_var`, or
 values of it? The port could not ask. If it gives the type's shape and
-not a registry's rows, both are wanted.
+not a registry's rows, both are wanted. At `6fe35d43`, desc has a new
+`desc_machines.h`, which gives `describe` a JSON format; whether that is
+the answer is the lane's to say.
 
 **The kit**, in the port's `tools/`:
 
@@ -93,5 +95,5 @@ writer has it.
   as unexpected, so an argument that ends with a space is shown without
   it.
 
-The port copies the second and third, and its transcripts hold them. It
-does not model `--` yet, so it has not copied the first.
+The port copies all three, as the reference does them now, and its
+transcripts and fuzzers hold them.

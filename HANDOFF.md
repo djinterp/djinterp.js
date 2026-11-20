@@ -1,6 +1,7 @@
 # djinterp.js: handoff
 
-2026-11-17. The port follows djinterp at `3eb096c9`.
+2026-11-18. The port follows djinterp at `6fe35d43`, the tree of
+2026-11-18 (D1); section 3 says what that move changed.
 
 Read this, then `decisions.html`: its open decisions first, and every
 ruling so far below them, each with all that was put for it and where it
@@ -108,11 +109,38 @@ later, which the repository does not depend on.
 
 ## 3. Where the work stands
 
+### The move to 6fe35d43
+
+The tree of 2026-11-18 is 17 commits past `3eb096c9`; its working copy
+differs from its head only in line endings, so the port follows the head.
+Three things the reference does changed, and the port follows each:
+
+* **The option machine writes a real in the fewest digits that read back**
+  (its log's decision 51): `%.15g`, `%.16g` or `%.17g`, the first that
+  `strtod` reads as the same double, so `0.1` and not
+  `0.10000000000000001`. The port's `format` does the same with its own
+  `formatReal` (`src/option/option_env.js`). A description's default and
+  an origin's line still write `%.17g`, so the text module's `formatReal`
+  stays for them. Over the sweep's 6,711 distinct doubles, the
+  reference's own driver and the port agree on every one.
+* **Layers end with the row's default**, always counted: its declaring
+  frame, the global scope, unbound, and the `knob` its value came from.
+  A variable nothing binds has one layer. `get --show-origin` asks for up
+  to 64 layers (it was 8), passes the default's over among the "under it"
+  lines, and takes the default's line from it; its text is as before.
+* **The djin ABI is 2.** It comes from the generated data, so the port
+  followed by itself.
+
+The starting package's `bind` run printed `ratio=0.10000000000000001`;
+it was recorded again at `6fe35d43`, with a line in its `.meta` saying
+why, and the other three runs are as they came.
+
 ### What is ported, and how each part was checked
 
 | Part | Check | Result |
 |---|---|---|
 | real text (`%.17g`, `%.15g`, `%.6g`, `%.1g`; reading) | `tools/reals.c`: 6,798 doubles, exact ties at 17, 15 and 6 digits among them | 27,192 texts agree; every `%.17g` reads back to the same bits |
+| the option machine's own real writer (the fewest of 15 to 17 digits) | the reference's `option_driver` over the sweep's 6,711 distinct doubles | every one agrees |
 | the option machine | 7 hand-typed session transcripts, 2 fuzzed | byte for byte |
 | the registry, the djin records | `session_registry`, `session_djin` | byte for byte |
 | the program's commands, **through `run`** | 4 hand-typed program transcripts, 1 fuzzed | byte for byte |

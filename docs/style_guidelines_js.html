@@ -516,7 +516,7 @@ fields at the reference's columns.</p>
 * value or a status, and the statuses with the reference's own codes, names
 * and messages. An expected failure is a value here, as it is in the
 * reference; nothing in the machine throws one.
-*   reference: inc/djinterp/c/option/option_common.h, at 3eb096c9
+*   reference: inc/djinterp/c/option/option_common.h, at 6fe35d43
 *
 *
 * path:      /src/option/option_common.js
@@ -965,16 +965,20 @@ is a <code>bigint</code> if the reference holds it in 64 bits. 64-bit
 arithmetic is never done in <code>number</code>s.</li>
 <li><b>Reals as text</b>, the table below. JavaScript writes reals
 otherwise than the reference does.</li>
-<li><b>Reals as text: the writer.</b> Never <code>String(v)</code>,
-<code>toFixed</code> or <code>toPrecision</code>. The reference writes
-<code>snprintf("%.17g")</code> (<code>option_env.c</code>,
-<code>d_internal_option_env_format_real</code>); the port has one
-function that writes as it does, printf's <code>%.*g</code> written in
-JavaScript,
-<code>formatReal</code> in <code>src/text/real_format.js</code>, tested
-against the C library's own output, exact ties among them: a value
-halfway between two texts is written with the even digit, as C writes
-it, and never as JavaScript's rounding would.</li>
+<li><b>Reals as text: the writers.</b> Never <code>String(v)</code>,
+<code>toFixed</code> or <code>toPrecision</code>. The reference writes a
+real two ways: <code>snprintf("%.17g")</code> for a description's default
+and an origin's line, and, in the option machine, the fewest of 15, 16
+and 17 digits that read back as the same double (<code>0.1</code>; its
+<code>d_internal_option_env_format_real</code>, since
+<code>6fe35d43</code>). The port has one function that writes as printf
+does, printf's <code>%.*g</code> written in JavaScript:
+<code>formatG</code> in <code>src/text/real_format.js</code>, tested
+against the C library's own output, exact ties among them, so that a
+value halfway between two texts is written with the even digit, as C
+writes it, and never as JavaScript's rounding would. Both writers stand
+on it: <code>formatReal</code> beside it for <code>%.17g</code>, and the
+option machine's own in <code>src/option/option_env.js</code>.</li>
 <li><b>Reals from text.</b> Never <code>Number()</code> or
 <code>parseFloat</code>: <code>Number("")</code> is 0;
 <code>Number("0x10")</code> is 16 but <code>Number("0x1p3")</code> is
@@ -1019,9 +1023,12 @@ not a reason.</li>
 <tr><td><code>-2.75</code></td><td><code>-2.75</code></td>
 <td><code>-2.75</code></td></tr>
 </table>
-<p class="meta">Measured 2026-11-14 from the reference's own code.
-<code>tests/text/real_format.test.js</code> holds the port to it, and to
-a sweep of doubles the C library printed.</p>
+<p class="meta">Measured 2026-11-14 from the reference's own code: the
+<code>%.17g</code> a description's default is still written with; the
+option machine has written <code>0.1</code> for the first row since
+<code>6fe35d43</code>. <code>tests/text/real_format.test.js</code> holds
+the port to the table, and to a sweep of doubles the C library
+printed.</p>
 
 
 <h2 id="transcripts">14. Transcripts and generated data</h2>
