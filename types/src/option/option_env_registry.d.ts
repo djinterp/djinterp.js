@@ -187,24 +187,110 @@ export const inner: Readonly<{
 /**
  * A registry. Made by `init`; read through the functions here.
  */
-export type OptionEnvRegistry = object;
+export type OptionEnvRegistry = {
+    /**
+     * its root frame.
+     */
+    frame: optionEnv.OptionEnv;
+    /**
+     * the djins' frames it lists, each
+     * with a name, in the order they were added.
+     */
+    djins: Array<optionEnv.OptionEnv>;
+    /**
+     * the most djins it lists.
+     */
+    capacity: number;
+};
 import type { OptionResult } from './option_common.js';
 import * as optionEnv from './option_env.js';
-declare function findInner(_registry: any, _name: any): any;
-declare function targetInner(_registry: any, _name: any): any;
-declare function assignInner(_registry: any, _name: any, _value: any, _source: any): OptionResult;
-declare function putInner(_registry: any, _statement: any, _source: any): OptionResult;
-declare function loadInner(_registry: any, _script: any, _source: any): OptionResult | {
-    errorOffset: number;
-    isOk: boolean;
-    value?: number;
-    error?: number;
+/**
+ * findInner
+ *   `find`, for a name that is a string or null.
+ *
+ * @param {?OptionEnvRegistry} _registry  the registry.
+ * @param {?string}            _name      the name.
+ * @returns {?OptionEnv} the frame; null for no such djin.
+ */
+declare function findInner(_registry: OptionEnvRegistry | null, _name: string | null): optionEnv.OptionEnv | null;
+/**
+ * targetInner
+ *   `target`, for a name that is a string or null.
+ *
+ * @param {?OptionEnvRegistry} _registry  the registry.
+ * @param {?string}            _name      the full name.
+ * @returns {?OptionEnv} the frame; null for no registry, or no name.
+ */
+declare function targetInner(_registry: OptionEnvRegistry | null, _name: string | null): optionEnv.OptionEnv | null;
+/**
+ * assignInner
+ *   `assign`, for a name that is a string or null, and a value that is
+ * a string.
+ *
+ * @param {?OptionEnvRegistry} _registry  the registry.
+ * @param {?string}            _name      the full name.
+ * @param {string}             _value     the value's text.
+ * @param {number}             _source    the source.
+ * @returns {OptionResult}
+ */
+declare function assignInner(_registry: OptionEnvRegistry | null, _name: string | null, _value: string, _source: number): OptionResult;
+/**
+ * putInner
+ *   `put`, for a statement as the reference holds it, or null.
+ *
+ * @param {?OptionEnvRegistry} _registry   the registry.
+ * @param {?string}            _statement  the statement.
+ * @param {number}             _source     the source.
+ * @returns {OptionResult}
+ */
+declare function putInner(_registry: OptionEnvRegistry | null, _statement: string | null, _source: number): OptionResult;
+/**
+ * loadInner
+ *   `load`, for a script as the reference holds it, or null.
+ *
+ * @param {?OptionEnvRegistry} _registry  the registry.
+ * @param {?string}            _script    the script.
+ * @param {number}             _source    the source.
+ * @returns {OptionResult & {errorOffset?: number}}
+ */
+declare function loadInner(_registry: OptionEnvRegistry | null, _script: string | null, _source: number): OptionResult & {
+    errorOffset?: number;
 };
-declare function importInner(_registry: any, _prefix: any, _lookup: any): OptionResult;
-declare function takeOptionInner(_registry: any, _argv: any, _at: any): {
+/**
+ * importInner
+ *   `import`, for a prefix as the reference holds it, and a lookup.
+ *
+ * @param {?OptionEnvRegistry}                   _registry  the registry.
+ * @param {string}                               _prefix    what each name
+ *        follows.
+ * @param {function(string): (string|undefined)} _lookup    the environment, as
+ *        `optionEnv.lookupOf` makes one.
+ * @returns {OptionResult} how many were bound; or the first refusal.
+ */
+declare function importInner(_registry: OptionEnvRegistry | null, _prefix: string, _lookup: (arg0: string) => (string | undefined)): OptionResult;
+/**
+ * takeOptionInner
+ *   `takeOption`, for arguments as the reference holds them.
+ *
+ * @param {?OptionEnvRegistry} _registry  the registry.
+ * @param {*}                  _argv      the command line's
+ *        arguments; anything else takes nothing.
+ * @param {*}                  _at        which one to look at.
+ * @returns {{took: number, at: number, result: ?OptionResult}}
+ */
+declare function takeOptionInner(_registry: OptionEnvRegistry | null, _argv: any, _at: any): {
     took: number;
-    at: any;
-    result: OptionResult;
+    at: number;
+    result: OptionResult | null;
 };
-declare function suggestInner(_registry: any, _name: any): any;
+/**
+ * suggestInner
+ *   `suggest`, for a name that is a string or null.
+ *
+ * @param {?OptionEnvRegistry} _registry  the registry.
+ * @param {?string}            _name      the full name as
+ *        written.
+ * @returns {string} the full name; empty where none is near.
+ */
+declare function suggestInner(_registry: OptionEnvRegistry | null, _name: string | null): string;
 export { import_ as import, _import as import };

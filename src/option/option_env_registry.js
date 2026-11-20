@@ -65,10 +65,23 @@ const envInner    = optionEnv.inner;
  * A registry. Made by `init`; read through the functions here.
  *
  * @typedef {object} OptionEnvRegistry
+ * @property {OptionEnv} frame  its root frame.
+ * @property {Array<OptionEnv>} djins  the djins' frames it lists, each
+ *           with a name, in the order they were added.
+ * @property {number} capacity  the most djins it lists.
  */
 
+// the program's registry, made when it is first asked for
+/** @type {?OptionEnvRegistry} */
 let program = null;
 
+/**
+ * isRegistry
+ *   Whether a value is a registry `init` made.
+ *
+ * @param {*} _registry  the value.
+ * @returns {_registry is OptionEnvRegistry}
+ */
 function isRegistry(
     _registry
 )
@@ -146,6 +159,14 @@ export function frame(
     return isRegistry(_registry) ? _registry.frame : null;
 }
 
+/**
+ * findInner
+ *   `find`, for a name that is a string or null.
+ *
+ * @param {?OptionEnvRegistry} _registry  the registry.
+ * @param {?string}            _name      the name.
+ * @returns {?OptionEnv} the frame; null for no such djin.
+ */
 function findInner(
     _registry,
     _name
@@ -297,6 +318,14 @@ export function find(
                                                             : null);
 }
 
+/**
+ * targetInner
+ *   `target`, for a name that is a string or null.
+ *
+ * @param {?OptionEnvRegistry} _registry  the registry.
+ * @param {?string}            _name      the full name.
+ * @returns {?OptionEnv} the frame; null for no registry, or no name.
+ */
 function targetInner(
     _registry,
     _name
@@ -346,11 +375,15 @@ export function target(
 // 2.  SETTINGS BY FULL NAME
 //==============================================================================
 
-/*
-route
-  The frame a statement is for: that of the name it starts with, after any
-space and '-'.
-*/
+/**
+ * route
+ *   The frame a statement is for: that of the name it starts with,
+ * after any space and '-'.
+ *
+ * @param {?OptionEnvRegistry} _registry  the registry.
+ * @param {string}             _text      the statement.
+ * @returns {?OptionEnv} the frame; null for no registry.
+ */
 function route(
     _registry,
     _text
@@ -382,6 +415,17 @@ function route(
     return targetInner(_registry, _text.slice(start, i));
 }
 
+/**
+ * assignInner
+ *   `assign`, for a name that is a string or null, and a value that is
+ * a string.
+ *
+ * @param {?OptionEnvRegistry} _registry  the registry.
+ * @param {?string}            _name      the full name.
+ * @param {string}             _value     the value's text.
+ * @param {number}             _source    the source.
+ * @returns {OptionResult}
+ */
 function assignInner(
     _registry,
     _name,
@@ -423,6 +467,15 @@ export function assign(
                        _source);
 }
 
+/**
+ * putInner
+ *   `put`, for a statement as the reference holds it, or null.
+ *
+ * @param {?OptionEnvRegistry} _registry   the registry.
+ * @param {?string}            _statement  the statement.
+ * @param {number}             _source     the source.
+ * @returns {OptionResult}
+ */
 function putInner(
     _registry,
     _statement,
@@ -462,6 +515,15 @@ export function put(
                     _source);
 }
 
+/**
+ * loadInner
+ *   `load`, for a script as the reference holds it, or null.
+ *
+ * @param {?OptionEnvRegistry} _registry  the registry.
+ * @param {?string}            _script    the script.
+ * @param {number}             _source    the source.
+ * @returns {OptionResult & {errorOffset?: number}}
+ */
 function loadInner(
     _registry,
     _script,
@@ -554,6 +616,17 @@ export function load(
                      _source);
 }
 
+/**
+ * importInner
+ *   `import`, for a prefix as the reference holds it, and a lookup.
+ *
+ * @param {?OptionEnvRegistry}                   _registry  the registry.
+ * @param {string}                               _prefix    what each name
+ *        follows.
+ * @param {function(string): (string|undefined)} _lookup    the environment, as
+ *        `optionEnv.lookupOf` makes one.
+ * @returns {OptionResult} how many were bound; or the first refusal.
+ */
 function importInner(
     _registry,
     _prefix,
@@ -566,28 +639,31 @@ function importInner(
     }
 
     let result  = envInner.import(_registry.frame, _prefix, _lookup);
-    let total   = result.isOk ? result.value : 0;
+    let total   = result.isOk ? (result.value ?? 0) : 0;
     let failure = result.isOk ? ok(0) : result;
 
     for (const djin of _registry.djins)
     {
-        if (_prefix.length + djin.name.length + 1 >= PREFIX_ROOM)
+        // a djin is listed only with a name
+        const name = djin.name ?? '';
+
+        if (_prefix.length + name.length + 1 >= PREFIX_ROOM)
         {
             continue;
         }
 
         let prefix = _prefix;
 
-        for (let c = 0; c < djin.name.length; ++c)
+        for (let c = 0; c < name.length; ++c)
         {
-            prefix += ( (djin.name[c] >= 'a') &&
-                        (djin.name[c] <= 'z') )
-                          ? String.fromCharCode(djin.name.charCodeAt(c) - 32)
-                          : djin.name[c];
+            prefix += ( (name[c] >= 'a') &&
+                        (name[c] <= 'z') )
+                          ? String.fromCharCode(name.charCodeAt(c) - 32)
+                          : name[c];
         }
 
         result = envInner.import(djin, prefix + '_', _lookup);
-        total += result.isOk ? result.value : 0;
+        total += result.isOk ? (result.value ?? 0) : 0;
 
         if ( !result.isOk &&
              failure.isOk )
@@ -632,10 +708,15 @@ export function import_(
 
 export { import_ as import };
 
-/*
-isBool
-  1 where a full name is a BOOL's, 0 where another kind's, -1 where none's.
-*/
+/**
+ * isBool
+ *   Whether a full name is a BOOL's.
+ *
+ * @param {OptionEnvRegistry} _registry  the registry.
+ * @param {string}            _name      the full name.
+ * @returns {number} 1 where it is a BOOL's, 0 where another kind's, and
+ *          -1 where it is no setting's.
+ */
 function isBool(
     _registry,
     _name
@@ -665,6 +746,16 @@ function isBool(
     return (value.got.kind === optionEnv.KIND.BOOL) ? 1 : 0;
 }
 
+/**
+ * takeOptionInner
+ *   `takeOption`, for arguments as the reference holds them.
+ *
+ * @param {?OptionEnvRegistry} _registry  the registry.
+ * @param {*}                  _argv      the command line's
+ *        arguments; anything else takes nothing.
+ * @param {*}                  _at        which one to look at.
+ * @returns {{took: number, at: number, result: ?OptionResult}}
+ */
 function takeOptionInner(
     _registry,
     _argv,
@@ -758,6 +849,16 @@ export function takeOption(
                            _at);
 }
 
+/**
+ * nearest
+ *   The djin whose name is nearest a text, as the reference measures
+ * nearness: within one edit of a text of three characters or fewer, and
+ * two of a longer one.
+ *
+ * @param {OptionEnvRegistry} _registry  the registry.
+ * @param {string}            _text      the text.
+ * @returns {?OptionEnv} the frame; null for none near.
+ */
 function nearest(
     _registry,
     _text
@@ -781,11 +882,15 @@ function nearest(
     return best;
 }
 
-/*
-within
-  The name a mistyped one was meant to be, within one frame, whole: its
-scope kept or replaced, then its variable; null for none near.
-*/
+/**
+ * within
+ *   The name a mistyped one was meant to be, within one frame, whole:
+ * its scope kept or replaced, then its variable.
+ *
+ * @param {OptionEnv} _frame  the frame.
+ * @param {string}    _name   the name as written.
+ * @returns {?string} the name; null for none near.
+ */
 function within(
     _frame,
     _name
@@ -809,6 +914,15 @@ function within(
     return ((dot >= 0) ? _name.slice(0, dot + 1) : '') + near;
 }
 
+/**
+ * suggestInner
+ *   `suggest`, for a name that is a string or null.
+ *
+ * @param {?OptionEnvRegistry} _registry  the registry.
+ * @param {?string}            _name      the full name as
+ *        written.
+ * @returns {string} the full name; empty where none is near.
+ */
 function suggestInner(
     _registry,
     _name
