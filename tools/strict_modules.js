@@ -23,6 +23,7 @@ export const STRICT = Object.freeze([
     'event/event_handler_common.js',
     'event/event_registry_common.js',
     'event/event_table_common.js',
+    'modules/interp/djin.js',
     'option/option_common.js',
     'text/cut.js',
     'text/real_format.js',

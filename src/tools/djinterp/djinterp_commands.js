@@ -60,6 +60,7 @@ import { cutAt } from '../../text/cut.js';
 // the types of other modules that this one's comments name
 /** @import { DjinSet } from '../../modules/interp/djin.js' */
 /** @import { OptionEnvRegistry } from '../../option/option_env_registry.js' */
+/** @import { SettingsFile } from '../cli/cli_settings.js' */
 
 const ROOM     = 512;
 const envInner = optionEnv.inner;
@@ -98,8 +99,8 @@ export const COMMANDS = Object.freeze(['list', 'describe', 'get', 'set']);
  * @property {string} name  what it calls itself when it speaks.
  * @property {OptionEnvRegistry} registry  its settings.
  * @property {DjinSet} set  its djins.
- * @property {?import('../cli/cli_settings.js').SettingsFile} file  the
- *           user's settings file, or null for none.
+ * @property {?SettingsFile} file  the user's settings file, or null for
+ *           none.
  * @property {*} environment  the environment, as `optionEnv.import`
  *           takes one.
  * @property {boolean} colour  whether what shows its console draws

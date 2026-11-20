@@ -138,6 +138,59 @@ export function rowFlags(_name: string, _names: Array<{
  * through the functions here.
  *
  * @typedef {object} OptionEnv
+ * @property {?OptionEnv} parent  the frame it inherits from; null for none.
+ * @property {Array<OptionDecl>} vars  the rows it declares, in order.
+ * @property {Array<?string>} scopes  its scopes' names, by index.
+ * @property {?string} name  its name; null for none.
+ * @property {Map<string, OptionCell>} cells  its bindings, by scope,
+ *           source and variable (`cellKey`).
+ * @property {number} bindingCapacity  the most bindings it holds.
+ * @property {number} varCapacity      the most rows it declares.
+ * @property {number} textCapacity     the most text it keeps, counted as
+ *           the reference counts its block.
+ * @property {number} textUsed         the text it keeps now.
+ * @property {number} generation       moves with every change a reader
+ *           could see.
+ * @property {number} depth            its parents, counted.
+ * @property {number} childCount       the frames whose parent it is.
+ */
+/**
+ * A row as a frame holds it (`normalize`): the reference's struct, member
+ * for member, its texts checked and its integers BigInt.
+ *
+ * @typedef {object} OptionDecl
+ * @property {OptionRow} row  the caller's row it was declared from.
+ * @property {?string} name   an identifier.
+ * @property {?string} help   a line about it.
+ * @property {?string} alias  a second name.
+ * @property {?string} knob   the compile-time knob its default is.
+ * @property {?Array<{name: ?string, value: bigint}>} names  its named
+ *           values.
+ * @property {?Array<{name: ?string, value: bigint}>} unbuilt  named values
+ *           that are ruled and not built.
+ * @property {?string} text     a TEXT's default.
+ * @property {bigint}  integer  the default of every other kind but REAL.
+ * @property {bigint}  minimum  an INT's least value.
+ * @property {bigint}  maximum  an INT's greatest value.
+ * @property {number}  real     a REAL's default.
+ * @property {number}  name_count     how many of `names` there are.
+ * @property {number}  unbuilt_count  how many of `unbuilt` there are.
+ * @property {number}  kind     one of KIND.
+ * @property {number}  refused  the sources it refuses, by `refuses`.
+ * @property {boolean} exact    whether every value it can hold is an exact
+ *           integer of a double, and so handed out as a number.
+ */
+/**
+ * A binding, as a frame holds it.
+ *
+ * @typedef {object} OptionCell
+ * @property {number} scope   its scope's index.
+ * @property {number} source  one of SOURCE.
+ * @property {number} var     its variable's id.
+ * @property {bigint} integer its value, for every kind but REAL and TEXT.
+ * @property {number} real    a REAL's value.
+ * @property {?{chars: string, arena: boolean}} text  a TEXT's value: kept
+ *           in the frame's text where `arena` is set.
  */
 /**
  * A frame with no variables, scopes, bindings, parent or name.
@@ -886,7 +939,175 @@ export type OptionRow = {
  * A frame. Made by `init`; its members are the machine's own, and are read
  * through the functions here.
  */
-export type OptionEnv = object;
+export type OptionEnv = {
+    /**
+     * the frame it inherits from; null for none.
+     */
+    parent: OptionEnv | null;
+    /**
+     * the rows it declares, in order.
+     */
+    vars: Array<OptionDecl>;
+    /**
+     * its scopes' names, by index.
+     */
+    scopes: Array<string | null>;
+    /**
+     * its name; null for none.
+     */
+    name: string | null;
+    /**
+     * its bindings, by scope,
+     * source and variable (`cellKey`).
+     */
+    cells: Map<string, OptionCell>;
+    /**
+     * the most bindings it holds.
+     */
+    bindingCapacity: number;
+    /**
+     * the most rows it declares.
+     */
+    varCapacity: number;
+    /**
+     * the most text it keeps, counted as
+     * the reference counts its block.
+     */
+    textCapacity: number;
+    /**
+     * the text it keeps now.
+     */
+    textUsed: number;
+    /**
+     * moves with every change a reader
+     * could see.
+     */
+    generation: number;
+    /**
+     * its parents, counted.
+     */
+    depth: number;
+    /**
+     * the frames whose parent it is.
+     */
+    childCount: number;
+};
+/**
+ * A row as a frame holds it (`normalize`): the reference's struct, member
+ * for member, its texts checked and its integers BigInt.
+ */
+export type OptionDecl = {
+    /**
+     * the caller's row it was declared from.
+     */
+    row: OptionRow;
+    /**
+     * an identifier.
+     */
+    name: string | null;
+    /**
+     * a line about it.
+     */
+    help: string | null;
+    /**
+     * a second name.
+     */
+    alias: string | null;
+    /**
+     * the compile-time knob its default is.
+     */
+    knob: string | null;
+    /**
+     * its named
+     * values.
+     */
+    names: Array<{
+        name: string | null;
+        value: bigint;
+    }> | null;
+    /**
+     * named values
+     * that are ruled and not built.
+     */
+    unbuilt: Array<{
+        name: string | null;
+        value: bigint;
+    }> | null;
+    /**
+     * a TEXT's default.
+     */
+    text: string | null;
+    /**
+     * the default of every other kind but REAL.
+     */
+    integer: bigint;
+    /**
+     * an INT's least value.
+     */
+    minimum: bigint;
+    /**
+     * an INT's greatest value.
+     */
+    maximum: bigint;
+    /**
+     * a REAL's default.
+     */
+    real: number;
+    /**
+     * how many of `names` there are.
+     */
+    name_count: number;
+    /**
+     * how many of `unbuilt` there are.
+     */
+    unbuilt_count: number;
+    /**
+     * one of KIND.
+     */
+    kind: number;
+    /**
+     * the sources it refuses, by `refuses`.
+     */
+    refused: number;
+    /**
+     * whether every value it can hold is an exact
+     * integer of a double, and so handed out as a number.
+     */
+    exact: boolean;
+};
+/**
+ * A binding, as a frame holds it.
+ */
+export type OptionCell = {
+    /**
+     * its scope's index.
+     */
+    scope: number;
+    /**
+     * one of SOURCE.
+     */
+    source: number;
+    /**
+     * its variable's id.
+     */
+    var: number;
+    /**
+     * its value, for every kind but REAL and TEXT.
+     */
+    integer: bigint;
+    /**
+     * a REAL's value.
+     */
+    real: number;
+    /**
+     * a TEXT's value: kept
+     * in the frame's text where `arena` is set.
+     */
+    text: {
+        chars: string;
+        arena: boolean;
+    } | null;
+};
 /**
  * A value: the reference's struct dj_option_env_value.
  */

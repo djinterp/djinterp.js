@@ -6,8 +6,8 @@
  * @property {string} name  what it calls itself when it speaks.
  * @property {OptionEnvRegistry} registry  its settings.
  * @property {DjinSet} set  its djins.
- * @property {?import('../cli/cli_settings.js').SettingsFile} file  the
- *           user's settings file, or null for none.
+ * @property {?SettingsFile} file  the user's settings file, or null for
+ *           none.
  * @property {*} environment  the environment, as `optionEnv.import`
  *           takes one.
  * @property {boolean} colour  whether what shows its console draws
@@ -107,10 +107,10 @@ export type DjinterpProgram = {
      */
     set: djin.DjinSet;
     /**
-     * the
-     * user's settings file, or null for none.
+     * the user's settings file, or null for
+     * none.
      */
-    file: import("../cli/cli_settings.js").SettingsFile | null;
+    file: cliSettings.SettingsFile | null;
     /**
      * the environment, as `optionEnv.import`
      * takes one.
@@ -124,3 +124,4 @@ export type DjinterpProgram = {
 };
 import * as optionEnvRegistry from '../../option/option_env_registry.js';
 import * as djin from '../../modules/interp/djin.js';
+import * as cliSettings from '../cli/cli_settings.js';

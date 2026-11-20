@@ -9,6 +9,26 @@ export function statusName(_status: number): string;
  * A set of records. Made by `setInit`; read through the functions here.
  *
  * @typedef {object} DjinSet
+ * @property {Array<DjinHeld>} items  its records, in the order taken.
+ * @property {number} capacity  the most records it takes.
+ * @property {?OptionEnvRegistry} registry  the registry a record's settings
+ *           are listed in.
+ * @property {Array<string>} reserved  the names the program keeps.
+ */
+/**
+ * A record as the set and the writers hold it (`normal`): the caller's,
+ * kept, with its texts as the reference holds them.
+ *
+ * @typedef {object} DjinHeld
+ * @property {DjinRecord} record   the caller's record.
+ * @property {number}     abi      the ABI it was written to.
+ * @property {string}     name     its name.
+ * @property {string}     version  its version.
+ * @property {string}     summary  its summary.
+ * @property {Array<{command: DjinCommand, name: string,
+ *            summary: string}>} commands  its commands, each with its
+ *           texts as the reference holds them.
+ * @property {?OptionEnv} settings  its settings; null for none.
  */
 /**
  * A set with no records.
@@ -179,20 +199,106 @@ export type DjinCommand = {
 /**
  * A set of records. Made by `setInit`; read through the functions here.
  */
-export type DjinSet = object;
+export type DjinSet = {
+    /**
+     * its records, in the order taken.
+     */
+    items: Array<DjinHeld>;
+    /**
+     * the most records it takes.
+     */
+    capacity: number;
+    /**
+     * the registry a record's settings
+     * are listed in.
+     */
+    registry: optionEnvRegistry.OptionEnvRegistry | null;
+    /**
+     * the names the program keeps.
+     */
+    reserved: Array<string>;
+};
+/**
+ * A record as the set and the writers hold it (`normal`): the caller's,
+ * kept, with its texts as the reference holds them.
+ */
+export type DjinHeld = {
+    /**
+     * the caller's record.
+     */
+    record: DjinRecord;
+    /**
+     * the ABI it was written to.
+     */
+    abi: number;
+    /**
+     * its name.
+     */
+    name: string;
+    /**
+     * its version.
+     */
+    version: string;
+    /**
+     * its summary.
+     */
+    summary: string;
+    /**
+     * its commands, each with its
+     * texts as the reference holds them.
+     */
+    commands: Array<{
+        command: DjinCommand;
+        name: string;
+        summary: string;
+    }>;
+    /**
+     * its settings; null for none.
+     */
+    settings: optionEnv.OptionEnv | null;
+};
 import * as optionEnvRegistry from '../../option/option_env_registry.js';
 import * as optionEnv from '../../option/option_env.js';
-declare function normal(_djin: any): {
-    record: any;
-    abi: any;
-    name: any;
-    version: any;
-    summary: any;
-    commands: any;
-    settings: any;
-};
-declare function findNormal(_set: any, _name: any): any;
-declare function listInner(_set: any): string;
-declare function descriptionInner(_djin: any): string;
-declare function frameInner(_frame: any): string;
+/**
+ * normal
+ *   A caller's record as the writers and the set hold it.
+ *
+ * @param {DjinRecord} _djin  the record.
+ * @returns {DjinHeld}
+ */
+declare function normal(_djin: DjinRecord): DjinHeld;
+/**
+ * findNormal
+ *   The record of a name, as the set holds it.
+ *
+ * @param {DjinSet} _set   the set.
+ * @param {string}  _name  the name.
+ * @returns {?DjinHeld} the record; null for none.
+ */
+declare function findNormal(_set: DjinSet, _name: string): DjinHeld | null;
+/**
+ * listInner
+ *   `writeList`, for a set.
+ *
+ * @param {DjinSet} _set  the set.
+ * @returns {string}
+ */
+declare function listInner(_set: DjinSet): string;
+/**
+ * descriptionInner
+ *   `writeDescription`, for a record as the set holds it.
+ *
+ * @param {DjinHeld} _djin  the record.
+ * @returns {string}
+ */
+declare function descriptionInner(_djin: DjinHeld): string;
+/**
+ * frameInner
+ *   `writeFrame`, for a frame with a name; one with none is written with
+ * an empty one.
+ *
+ * @param {OptionEnv} _frame  the frame.
+ * @returns {string}
+ */
+declare function frameInner(_frame: optionEnv.OptionEnv): string;
 export {};

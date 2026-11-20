@@ -51,6 +51,10 @@ import * as optionEnvRegistry from '../../option/option_env_registry.js';
 import { cutAt } from '../../text/cut.js';
 
 // the types of other modules that this one's comments name
+/**
+ * @import { DjinterpProgram }
+ *         from '../djinterp/djinterp_commands.js'
+ */
 /** @import { OptionEnvRegistry } from '../../option/option_env_registry.js' */
 /** @import { OptionResult } from '../../option/option_common.js' */
 
@@ -313,9 +317,8 @@ function prefixOf(
  * as the reference passes it; a statement of the file that is refused is
  * said as a warning, `FILE:LINE: warning: MESSAGE`.
  *
- * @param {import('../djinterp/djinterp_commands.js').DjinterpProgram}
- *        _program  the program: its `registry`, `name`, `environment` and
- *        `file` are read.
+ * @param {DjinterpProgram} _program  the program: its `registry`, `name`,
+ *        `environment` and `file` are read.
  * @returns {string} the warnings, a line each.
  */
 export function start(

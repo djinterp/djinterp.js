@@ -95,6 +95,7 @@ import * as djinterpCommands from './tools/djinterp/djinterp_commands.js';
  * @import { OptionEnvRegistry }
  *         from './option/option_env_registry.js'
  */
+/** @import { OptionResult } from './option/option_common.js' */
 /** @import { OptionRow } from './option/option_env.js' */
 
 export { djin, event, optionEnv, optionEnvRegistry };
@@ -278,9 +279,8 @@ export function settingsFrame(
      * must
      *   Throws where a step was refused: the page's own mistake.
      *
-     * @param {import('./option/option_common.js').OptionResult} _result
-     *        what the step gave.
-     * @param {string} _what  what it was, for the message.
+     * @param {OptionResult} _result  what the step gave.
+     * @param {string}       _what    what it was, for the message.
      * @returns {void}
      */
     const must = (_result, _what) =>

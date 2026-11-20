@@ -9,6 +9,8 @@
 * tests/ or tools/, the banner's path is the file's own. A banner's
 * title, `created:` and `revised:` end on column 80, and it has all five
 * of its fields, as the C guide's do.
+*   Under src/, a comment names another module's type by an `@import`,
+* never an inline `import(...)`.
 *   In a module under src/ held to the strict mode (tools/strict_modules.js),
 * a function that is not exported has a JSDoc comment that names it on its
 * first line, ` * name`, as the C guide's definitions are named (the
@@ -172,6 +174,19 @@ for (const path of filesUnder(ROOT))
             {
                 say(file, index + 1, 'function ' + found[1] + ' has no ' +
                     'comment that names it first');
+            }
+        }
+    }
+
+    // another module's type comes by @import
+    if (/^src\/.*\.js$/.test(file))
+    {
+        for (const [index, line] of text.split('\n').entries())
+        {
+            if (/^\s*\*.*\bimport\(['"]/.test(line))
+            {
+                say(file, index + 1, 'a type named by import(...), and ' +
+                    'not by an @import');
             }
         }
     }

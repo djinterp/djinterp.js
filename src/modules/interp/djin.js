@@ -23,7 +23,7 @@
 * path:      /src/modules/interp/djin.js
 * link(s):   TBA
 * author(s): Samuel 'teer' Neal-Blim                         created: 2026.11.15
-*                                                            revised: 2026.11.17
+*                                                            revised: 2026.11.18
 *******************************************************************************/
 
 /*
@@ -33,13 +33,15 @@ TABLE OF CONTENTS
     ----------
     1.  ABI, STATUS
     2.  statusName
-2.  THE SET
+2.  CHECKING A RECORD
+    -----------------
+3.  THE SET
     -------
     1.  setInit
     2.  register
     3.  setCount, setAt, setFind
     4.  commandFind
-3.  AS TEXT
+4.  AS TEXT
     -------
     1.  writeList
     2.  writeDescription
@@ -53,6 +55,7 @@ import * as optionEnvRegistry from '../../option/option_env_registry.js';
 import { cutAt } from '../../text/cut.js';
 
 // the types of other modules that this one's comments name
+/** @import { OptionDecl } from '../../option/option_env.js' */
 /** @import { OptionEnv } from '../../option/option_env.js' */
 /** @import { OptionEnvRegistry } from '../../option/option_env_registry.js' */
 
@@ -122,9 +125,19 @@ export function statusName(
 
 
 //==============================================================================
-// CHECKING A RECORD
+// 2.  CHECKING A RECORD
 //==============================================================================
 
+/**
+ * isWord
+ *   Whether a text is a lowercase word: a letter, then letters, digits
+ * and one more character.
+ *
+ * @param {*}      _text   what may be a word.
+ * @param {string} _extra  the one more character: '_' or
+ *        '-'.
+ * @returns {boolean}
+ */
 function isWord(
     _text,
     _extra
@@ -153,6 +166,13 @@ function isWord(
     return true;
 }
 
+/**
+ * isLine
+ *   Whether a text is one line, and not empty.
+ *
+ * @param {*} _text  what may be a line.
+ * @returns {boolean}
+ */
 function isLine(
     _text
 )
@@ -163,11 +183,14 @@ function isLine(
              !_text.includes('\r') );
 }
 
-/*
-textOf
-  A record's text as the reference holds it: up to a NUL; what is
-not a string is left as it is, to fail its check.
-*/
+/**
+ * textOf
+ *   A record's text as the reference holds it: up to a NUL. What is not
+ * a string is left as it is, to fail its check.
+ *
+ * @param {*} _text  the text.
+ * @returns {*}
+ */
 function textOf(
     _text
 )
@@ -176,10 +199,13 @@ function textOf(
                                        : _text;
 }
 
-/*
-normal
-  A caller's record as the writers and the set hold it.
-*/
+/**
+ * normal
+ *   A caller's record as the writers and the set hold it.
+ *
+ * @param {DjinRecord} _djin  the record.
+ * @returns {DjinHeld}
+ */
 function normal(
     _djin
 )
@@ -201,6 +227,14 @@ function normal(
     };
 }
 
+/**
+ * commandsValid
+ *   Whether a record's commands are well formed: each a word with '-',
+ * with a line of summary, and no two of one name.
+ *
+ * @param {DjinHeld} _djin  the record.
+ * @returns {boolean}
+ */
 function commandsValid(
     _djin
 )
@@ -232,6 +266,16 @@ function commandsValid(
     return true;
 }
 
+/**
+ * recordValid
+ *   Whether a record is well formed, as the reference checks one: the
+ * current ABI, its name a word with '_', its version and summary lines,
+ * its commands well formed, and its settings, where it has them, a frame
+ * named as it is.
+ *
+ * @param {DjinHeld} _djin  the record.
+ * @returns {boolean}
+ */
 function recordValid(
     _djin
 )
@@ -249,16 +293,37 @@ function recordValid(
 
 
 //==============================================================================
-// 2.  THE SET
+// 3.  THE SET
 //==============================================================================
 
 /**
  * A set of records. Made by `setInit`; read through the functions here.
  *
  * @typedef {object} DjinSet
+ * @property {Array<DjinHeld>} items  its records, in the order taken.
+ * @property {number} capacity  the most records it takes.
+ * @property {?OptionEnvRegistry} registry  the registry a record's settings
+ *           are listed in.
+ * @property {Array<string>} reserved  the names the program keeps.
  */
 
-// 2.1
+/**
+ * A record as the set and the writers hold it (`normal`): the caller's,
+ * kept, with its texts as the reference holds them.
+ *
+ * @typedef {object} DjinHeld
+ * @property {DjinRecord} record   the caller's record.
+ * @property {number}     abi      the ABI it was written to.
+ * @property {string}     name     its name.
+ * @property {string}     version  its version.
+ * @property {string}     summary  its summary.
+ * @property {Array<{command: DjinCommand, name: string,
+ *            summary: string}>} commands  its commands, each with its
+ *           texts as the reference holds them.
+ * @property {?OptionEnv} settings  its settings; null for none.
+ */
+
+// 3.1
 /**
  * A set with no records.
  *
@@ -283,6 +348,17 @@ export function setInit(
     };
 }
 
+/**
+ * registerSettings
+ *   Lists a record's settings in the set's registry.
+ *
+ * @param {DjinSet}  _set   the set.
+ * @param {DjinHeld} _djin  the record.
+ * @returns {number} a STATUS: OK, for a record with no settings or
+ *          whose frame the registry lists already too; DUPLICATE for
+ *          another frame of its name; SETTINGS for no registry, or a
+ *          frame the registry refuses.
+ */
 function registerSettings(
     _set,
     _djin
@@ -311,6 +387,14 @@ function registerSettings(
                : STATUS.SETTINGS;
 }
 
+/**
+ * findNormal
+ *   The record of a name, as the set holds it.
+ *
+ * @param {DjinSet} _set   the set.
+ * @param {string}  _name  the name.
+ * @returns {?DjinHeld} the record; null for none.
+ */
 function findNormal(
     _set,
     _name
@@ -327,7 +411,7 @@ function findNormal(
     return null;
 }
 
-// 2.2
+// 3.2
 /**
  * Takes a record into a set, and lists its settings in the set's
  * registry.
@@ -388,7 +472,7 @@ export function register(
     return STATUS.OK;
 }
 
-// 2.3
+// 3.3
 /**
  * How many records a set has.
  *
@@ -443,7 +527,7 @@ export function setFind(
     return (found !== null) ? found.record : null;
 }
 
-// 2.4
+// 3.4
 /**
  * A djin's command of a name.
  *
@@ -475,14 +559,19 @@ export function commandFind(
 
 
 //==============================================================================
-// 3.  AS TEXT
+// 4.  AS TEXT
 //==============================================================================
 
-/*
-cell
-  One cell of a row: its text, then a line break where it is the row's
-last, else spaces to its column's width and two more.
-*/
+/**
+ * cell
+ *   One cell of a row: its text, then a line break where it is the row's
+ * last, else spaces to its column's width and two more.
+ *
+ * @param {string}  _text    the cell's text.
+ * @param {number}  _width   its column's width.
+ * @param {boolean} _isLast  whether it ends the row.
+ * @returns {string}
+ */
 function cell(
     _text,
     _width,
@@ -494,11 +583,16 @@ function cell(
                       ' '.repeat(Math.max(_width - _text.length, 0) + 2));
 }
 
-/*
-cut
-  A text as snprintf leaves one in a buffer of a capacity, with "..." for
-its last three characters where it did not fit.
-*/
+/**
+ * cut
+ *   A text as snprintf leaves one in a buffer of a capacity, with "..."
+ * for its last three characters where it did not fit.
+ *
+ * @param {string} _text      the text.
+ * @param {number} _capacity  the buffer's capacity, its NUL
+ *        counted.
+ * @returns {string}
+ */
 function cut(
     _text,
     _capacity
@@ -509,10 +603,13 @@ function cut(
                : _text;
 }
 
-/*
-defaultText
-  A row's default as a description shows it.
-*/
+/**
+ * defaultText
+ *   A row's default as a description shows it.
+ *
+ * @param {OptionDecl} _decl  the row, as its frame holds it.
+ * @returns {string}
+ */
 function defaultText(
     _decl
 )
@@ -550,11 +647,14 @@ function defaultText(
     }
 }
 
-/*
-writeSettings
-  A frame's own settings, a row each: full name, kind, default, knob and
-help, in columns. Nothing for a frame that declares none.
-*/
+/**
+ * writeSettings
+ *   A frame's own settings, a row each: full name, kind, default, knob
+ * and help, in columns.
+ *
+ * @param {OptionEnv} _frame  the frame.
+ * @returns {string} the text; empty for a frame that declares none.
+ */
 function writeSettings(
     _frame
 )
@@ -602,6 +702,13 @@ function writeSettings(
     return '\nsettings\n' + out;
 }
 
+/**
+ * listInner
+ *   `writeList`, for a set.
+ *
+ * @param {DjinSet} _set  the set.
+ * @returns {string}
+ */
 function listInner(
     _set
 )
@@ -623,8 +730,7 @@ function listInner(
     {
         const frame = optionEnvRegistry.at(_set.registry, i);
 
-        nameWidth = Math.max(nameWidth,
-                             (frame.name !== null) ? frame.name.length : 0);
+        nameWidth = Math.max(nameWidth, (frame?.name ?? '').length);
     }
 
     for (const item of _set.items)
@@ -639,7 +745,8 @@ function listInner(
     {
         const frame = optionEnvRegistry.at(_set.registry, i);
 
-        if ( (frame.name === null) ||
+        if ( (frame === null)      ||
+             (frame.name === null) ||
              (findNormal(_set, frame.name) !== null) )
         {
             continue;
@@ -653,7 +760,7 @@ function listInner(
     return out;
 }
 
-// 3.1
+// 4.1
 /**
  * The list of a set's djins, a line each: name, version and summary in
  * columns; then each frame of the registry that has settings and no
@@ -671,6 +778,13 @@ export function writeList(
     return (_set) ? listInner(_set) : null;
 }
 
+/**
+ * descriptionInner
+ *   `writeDescription`, for a record as the set holds it.
+ *
+ * @param {DjinHeld} _djin  the record.
+ * @returns {string}
+ */
 function descriptionInner(
     _djin
 )
@@ -703,7 +817,7 @@ function descriptionInner(
     return out;
 }
 
-// 3.2
+// 4.2
 /**
  * A djin's description: its name and version, its summary, its commands,
  * and its settings with their kinds, defaults, knobs and help.
@@ -718,15 +832,23 @@ export function writeDescription(
     return (_djin) ? descriptionInner(normal(_djin)) : null;
 }
 
+/**
+ * frameInner
+ *   `writeFrame`, for a frame with a name; one with none is written with
+ * an empty one.
+ *
+ * @param {OptionEnv} _frame  the frame.
+ * @returns {string}
+ */
 function frameInner(
     _frame
 )
 {
-    return cell(_frame.name, 0, true) + '  settings only\n' +
+    return cell(_frame.name ?? '', 0, true) + '  settings only\n' +
            writeSettings(_frame);
 }
 
-// 3.3
+// 4.3
 /**
  * The description of a frame of settings that has no record.
  *

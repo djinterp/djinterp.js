@@ -44,7 +44,7 @@
 * path:      /src/option/option_env.js
 * link(s):   TBA
 * author(s): Samuel 'teer' Neal-Blim                         created: 2026.11.15
-*                                                            revised: 2026.11.17
+*                                                            revised: 2026.11.18
 *******************************************************************************/
 
 /*
@@ -776,6 +776,61 @@ function alloc(
  * through the functions here.
  *
  * @typedef {object} OptionEnv
+ * @property {?OptionEnv} parent  the frame it inherits from; null for none.
+ * @property {Array<OptionDecl>} vars  the rows it declares, in order.
+ * @property {Array<?string>} scopes  its scopes' names, by index.
+ * @property {?string} name  its name; null for none.
+ * @property {Map<string, OptionCell>} cells  its bindings, by scope,
+ *           source and variable (`cellKey`).
+ * @property {number} bindingCapacity  the most bindings it holds.
+ * @property {number} varCapacity      the most rows it declares.
+ * @property {number} textCapacity     the most text it keeps, counted as
+ *           the reference counts its block.
+ * @property {number} textUsed         the text it keeps now.
+ * @property {number} generation       moves with every change a reader
+ *           could see.
+ * @property {number} depth            its parents, counted.
+ * @property {number} childCount       the frames whose parent it is.
+ */
+
+/**
+ * A row as a frame holds it (`normalize`): the reference's struct, member
+ * for member, its texts checked and its integers BigInt.
+ *
+ * @typedef {object} OptionDecl
+ * @property {OptionRow} row  the caller's row it was declared from.
+ * @property {?string} name   an identifier.
+ * @property {?string} help   a line about it.
+ * @property {?string} alias  a second name.
+ * @property {?string} knob   the compile-time knob its default is.
+ * @property {?Array<{name: ?string, value: bigint}>} names  its named
+ *           values.
+ * @property {?Array<{name: ?string, value: bigint}>} unbuilt  named values
+ *           that are ruled and not built.
+ * @property {?string} text     a TEXT's default.
+ * @property {bigint}  integer  the default of every other kind but REAL.
+ * @property {bigint}  minimum  an INT's least value.
+ * @property {bigint}  maximum  an INT's greatest value.
+ * @property {number}  real     a REAL's default.
+ * @property {number}  name_count     how many of `names` there are.
+ * @property {number}  unbuilt_count  how many of `unbuilt` there are.
+ * @property {number}  kind     one of KIND.
+ * @property {number}  refused  the sources it refuses, by `refuses`.
+ * @property {boolean} exact    whether every value it can hold is an exact
+ *           integer of a double, and so handed out as a number.
+ */
+
+/**
+ * A binding, as a frame holds it.
+ *
+ * @typedef {object} OptionCell
+ * @property {number} scope   its scope's index.
+ * @property {number} source  one of SOURCE.
+ * @property {number} var     its variable's id.
+ * @property {bigint} integer its value, for every kind but REAL and TEXT.
+ * @property {number} real    a REAL's value.
+ * @property {?{chars: string, arena: boolean}} text  a TEXT's value: kept
+ *           in the frame's text where `arena` is set.
  */
 
 // 2.1
@@ -810,7 +865,8 @@ export function init(
         return (_value === undefined) ? Infinity : _value;
     };
 
-    return {
+    // the mark is the machine's own, and is in no reader's type
+    return /** @type {OptionEnv} */ ({
         [ENV_MARK]:      true,
         parent:          null,
         vars:            [],
@@ -824,7 +880,7 @@ export function init(
         generation:      0,
         depth:           0,
         childCount:      0
-    };
+    });
 }
 
 /**

@@ -32,12 +32,11 @@ export function load(_registry: optionEnvRegistry.OptionEnvRegistry, _script: st
  * as the reference passes it; a statement of the file that is refused is
  * said as a warning, `FILE:LINE: warning: MESSAGE`.
  *
- * @param {import('../djinterp/djinterp_commands.js').DjinterpProgram}
- *        _program  the program: its `registry`, `name`, `environment` and
- *        `file` are read.
+ * @param {DjinterpProgram} _program  the program: its `registry`, `name`,
+ *        `environment` and `file` are read.
  * @returns {string} the warnings, a line each.
  */
-export function start(_program: import("../djinterp/djinterp_commands.js").DjinterpProgram): string;
+export function start(_program: DjinterpProgram): string;
 /**
  * What the kit says of a setting the command line gave and the registry
  * refused: the message of a usage error.
@@ -96,3 +95,4 @@ export type SettingsFile = {
     write: (arg0: string) => void;
 };
 import * as optionEnvRegistry from '../../option/option_env_registry.js';
+import type { DjinterpProgram } from '../djinterp/djinterp_commands.js';

@@ -303,6 +303,13 @@ come first, written with <code>node:</code>
 line, then the port's.</li>
 <li>An import that runs past 80 characters breaks after its closing
 brace, with <code>from</code> on the next line, indented four.</li>
+<li>A type another module declares, which only comments name, is
+imported by a JSDoc <code>@import</code>, one type to a line, after the
+imports, under the comment <code>// the types of other modules that this
+one's comments name</code>, in the order of the types' names. One that
+runs past 80 characters takes the block form, with <code>from</code> on
+its own line. A type is never named through an inline
+<code>import(...)</code>.</li>
 </ul>
 
 <p>The C guide's trailing comment on each include is not used: an import
@@ -313,6 +320,9 @@ import data from '../../generated/option.js';
 import { formatReal } from '../text/real_format.js';
 import { readReal } from '../text/real_read.js';
 import { STATUS, fail, ok } from './option_common.js';
+
+// the types of other modules that this one's comments name
+/** @import { OptionResult } from './option_common.js' */
 </pre>
 
 <h3 id="brackets">2.5 Brackets</h3>
