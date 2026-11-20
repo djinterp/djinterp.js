@@ -377,7 +377,7 @@ for (const step of steps)
 
     const lead = String(step.number).padStart(3) + '  ' +
                  step.commit.slice(0, 7) + '  ' + files.padEnd(9) + ' ' +
-                 marks.trimEnd().padEnd(10);
+                 marks.trimEnd().padEnd(11) + ' ';
 
     if ((lead.length + subject.length) > 79)
     {

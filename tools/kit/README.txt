@@ -20,7 +20,7 @@ from the port's only in who made them and when.
 
 @@GATES@@
 
-  #  port's   files     gates     subject
+  #  port's   files     gates       subject
 @@TABLE@@
 
 "files" counts the files a step writes, and after a minus those it
