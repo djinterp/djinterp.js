@@ -623,7 +623,7 @@ export function load(
  * @param {?OptionEnvRegistry}                   _registry  the registry.
  * @param {string}                               _prefix    what each name
  *        follows.
- * @param {function(string): (string|undefined)} _lookup    the environment, as
+ * @param {function(string): ?string} _lookup    the environment, as
  *        `optionEnv.lookupOf` makes one.
  * @returns {OptionResult} how many were bound; or the first refusal.
  */
@@ -736,14 +736,16 @@ function isBool(
         return -1;
     }
 
-    const value = envInner.get(frame_, found.scope, found.value);
+    // a result has its id where it is OK, and its value
+    const got = envInner.get(frame_, found.scope,
+                             found.value ?? optionEnv.NONE).got;
 
-    if (!value.isOk)
+    if (got === undefined)
     {
         return -1;
     }
 
-    return (value.got.kind === optionEnv.KIND.BOOL) ? 1 : 0;
+    return (got.kind === optionEnv.KIND.BOOL) ? 1 : 0;
 }
 
 /**
@@ -870,7 +872,8 @@ function nearest(
 
     for (const djin of _registry.djins)
     {
-        const far = envInner.distance(djin.name, _text);
+        // a djin is listed only with a name
+        const far = envInner.distance(djin.name ?? '', _text);
 
         if (far < most)
         {

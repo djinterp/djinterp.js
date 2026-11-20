@@ -263,11 +263,11 @@ declare function loadInner(_registry: OptionEnvRegistry | null, _script: string 
  * @param {?OptionEnvRegistry}                   _registry  the registry.
  * @param {string}                               _prefix    what each name
  *        follows.
- * @param {function(string): (string|undefined)} _lookup    the environment, as
+ * @param {function(string): ?string} _lookup    the environment, as
  *        `optionEnv.lookupOf` makes one.
  * @returns {OptionResult} how many were bound; or the first refusal.
  */
-declare function importInner(_registry: OptionEnvRegistry | null, _prefix: string, _lookup: (arg0: string) => (string | undefined)): OptionResult;
+declare function importInner(_registry: OptionEnvRegistry | null, _prefix: string, _lookup: (arg0: string) => string | null): OptionResult;
 /**
  * takeOptionInner
  *   `takeOption`, for arguments as the reference holds them.

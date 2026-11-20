@@ -340,7 +340,9 @@ function find(
         found = envInner.resolve(frame, _name.slice(dot + 1));
     }
 
-    const decl = found.isOk ? envInner.decl(frame, found.value) : null;
+    const decl = found.isOk ? envInner.decl(frame,
+                                            found.value ?? optionEnv.NONE)
+                            : null;
 
     // a result that found the row has its scope and its variable
     return (decl !== null) ? { frame: frame, scope: found.scope ?? 0,
@@ -482,11 +484,19 @@ function getOne(
 {
     const inForce = envInner.get(_setting.frame, _setting.scope,
                                  _setting.var).got;
+
+    // a setting found has its value
+    if (inForce === undefined)
+    {
+        return '';
+    }
+
     const unset    = ( (_setting.decl.kind === KIND.TEXT) &&
                        (inForce.text === null) );
     const value    = cutAt(envInner.formatQuoted(_setting.frame,
                                                  _setting.scope,
-                                                 _setting.var), ROOM - 1);
+                                                 _setting.var) ?? '',
+                           ROOM - 1);
     const room     = ROOM * 2;
     let   line     = cutAt(unset ? ('# ' + _name + ' is unset')
                                  : (_name + ' = ' + value), room - 1);
@@ -745,7 +755,7 @@ function compose(
         const text = name + ' = ' +
                         cutAt(envInner.formatQuoted(setting.frame,
                                                     setting.scope,
-                                                    setting.var),
+                                                    setting.var) ?? '',
                               ROOM - 1) + '\n';
 
         if (text.length >= capacity - out.length)

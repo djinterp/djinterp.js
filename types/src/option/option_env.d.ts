@@ -181,6 +181,12 @@ export function rowFlags(_name: string, _names: Array<{
  *           integer of a double, and so handed out as a number.
  */
 /**
+ * What a binding is made from (`bind`): the member its kind uses.
+ *
+ * @typedef {{integer?: bigint, real?: number,
+ *            text?: ?{chars: string, arena: boolean}}} OptionPayload
+ */
+/**
  * A binding, as a frame holds it.
  *
  * @typedef {object} OptionCell
@@ -416,6 +422,29 @@ export function distance(_name: string, _text: string): number;
  * @returns {?string} the name, bare; null where none is near.
  */
 export function suggest(_env: OptionEnv | null, _name: string): string | null;
+/**
+ * A layer of a variable's value: a binding that bears on it, as `layers`
+ * gives one.
+ *
+ * @typedef {object} OptionLayer
+ * @property {OptionEnv}   frame  the frame that holds the binding.
+ * @property {number}      scope  the binding's scope.
+ * @property {boolean}     shown  whether it is the one in force.
+ * @property {OptionValue} value  its value.
+ */
+/**
+ * A layer as the machine works it, its value an OptionValueInner.
+ *
+ * @typedef {Omit<OptionLayer, 'value'> & {value: OptionValueInner}}
+ *          OptionLayerInner
+ */
+/**
+ * A value as the machine works it, before a caller is handed it
+ * (`handed`): an OptionValue whose integer is a BigInt, whatever the row.
+ *
+ * @typedef {Omit<OptionValue, 'integer'> & {integer: bigint}}
+ *          OptionValueInner
+ */
 /**
  * A value: the reference's struct dj_option_env_value.
  *
@@ -848,7 +877,7 @@ export const DEPTH_MAX: number;
  */
 export const inner: Readonly<{
     cstr: typeof cstr;
-    decl: (_env: any, _var: any) => any;
+    decl: (_env: OptionEnv | null, _var: number) => OptionDecl;
     isIdentifier: typeof isIdentifier;
     find: typeof findInner;
     findScope: typeof findScopeInner;
@@ -1076,6 +1105,17 @@ export type OptionDecl = {
     exact: boolean;
 };
 /**
+ * What a binding is made from (`bind`): the member its kind uses.
+ */
+export type OptionPayload = {
+    integer?: bigint;
+    real?: number;
+    text?: {
+        chars: string;
+        arena: boolean;
+    } | null;
+};
+/**
  * A binding, as a frame holds it.
  */
 export type OptionCell = {
@@ -1107,6 +1147,41 @@ export type OptionCell = {
         chars: string;
         arena: boolean;
     } | null;
+};
+/**
+ * A layer of a variable's value: a binding that bears on it, as `layers`
+ * gives one.
+ */
+export type OptionLayer = {
+    /**
+     * the frame that holds the binding.
+     */
+    frame: OptionEnv;
+    /**
+     * the binding's scope.
+     */
+    scope: number;
+    /**
+     * whether it is the one in force.
+     */
+    shown: boolean;
+    /**
+     * its value.
+     */
+    value: OptionValue;
+};
+/**
+ * A layer as the machine works it, its value an OptionValueInner.
+ */
+export type OptionLayerInner = Omit<OptionLayer, "value"> & {
+    value: OptionValueInner;
+};
+/**
+ * A value as the machine works it, before a caller is handed it
+ * (`handed`): an OptionValue whose integer is a BigInt, whatever the row.
+ */
+export type OptionValueInner = Omit<OptionValue, "integer"> & {
+    integer: bigint;
 };
 /**
  * A value: the reference's struct dj_option_env_value.
@@ -1148,46 +1223,205 @@ export type OptionValue = {
     depth: number;
 };
 import type { OptionResult } from './option_common.js';
-declare function cstr(_text: any): any;
-declare function isIdentifier(_text: any): boolean;
-declare function findInner(_env: any, _name: any): OptionResult;
-declare function findScopeInner(_env: any, _name: any): OptionResult;
-declare function resolveInner(_env: any, _name: any): {
+/**
+ * cstr
+ *   A string as C reads one handed to it without a length: up to its first NUL.
+ *
+ * @param {string} _text  the string.
+ * @returns {string}
+ */
+declare function cstr(_text: string): string;
+/**
+ * isIdentifier
+ *   Whether a text is an identifier: name characters, at least one, the first
+ * not a digit.
+ *
+ * @param {?string} _text  the text.
+ * @returns {boolean}
+ */
+declare function isIdentifier(_text: string | null): boolean;
+/**
+ * findInner
+ *   `find`, for a name that is a string or null.
+ *
+ * @param {?OptionEnv} _env   the frame.
+ * @param {?string}    _name  the name.
+ * @returns {OptionResult}
+ */
+declare function findInner(_env: OptionEnv | null, _name: string | null): OptionResult;
+/**
+ * findScopeInner
+ *   `findScope`, for a name that is a string or null.
+ *
+ * @param {?OptionEnv} _env   the frame.
+ * @param {?string}    _name  the scope's name.
+ * @returns {OptionResult}
+ */
+declare function findScopeInner(_env: OptionEnv | null, _name: string | null): OptionResult;
+/**
+ * resolveInner
+ *   `resolve`, for a name that is a string or null.
+ *
+ * @param {?OptionEnv} _env   the frame.
+ * @param {?string}    _name  the name as written.
+ * @returns {OptionResult & {scope: number}}
+ */
+declare function resolveInner(_env: OptionEnv | null, _name: string | null): OptionResult & {
     scope: number;
-    isOk: boolean;
-    value?: number;
-    error?: number;
 };
-declare function distanceInner(_name: any, _text: any): any;
-declare function suggestInner(_env: any, _name: any): any;
-declare function scopeNameInner(_env: any, _scope: any): any;
+/**
+ * distanceInner
+ *   `distance`, for two strings.
+ *
+ * @param {string} _name  the name.
+ * @param {string} _text  the text.
+ * @returns {number}
+ */
+declare function distanceInner(_name: string, _text: string): number;
+/**
+ * suggestInner
+ *   `suggest`, for a name that is a string or null.
+ *
+ * @param {?OptionEnv} _env   the frame.
+ * @param {?string}    _name  the name as written.
+ * @returns {?string}
+ */
+declare function suggestInner(_env: OptionEnv | null, _name: string | null): string | null;
+/**
+ * scopeNameInner
+ *   `scopeName`, for a frame or anything in its place.
+ *
+ * @param {?OptionEnv} _env    the frame.
+ * @param {number}     _scope  the scope's id.
+ * @returns {?string}
+ */
+declare function scopeNameInner(_env: OptionEnv | null, _scope: number): string | null;
 /**
  * d_option_env_get, its value's text and its integer a BigInt.
  *
  * @returns {OptionResult & {got?: *, decl?: *, scope?: number}}
  */
-declare function getInner(_env: any, _scope: any, _var: any): OptionResult & {
-    got?: any;
-    decl?: any;
-    scope?: number;
+/**
+ * getInner
+ *   `get`, its value as the machine works it, with the row.
+ *
+ * @param {?OptionEnv} _env    the frame.
+ * @param {number}     _scope  the scope's id, or GLOBAL.
+ * @param {number}     _var    the variable's id.
+ * @returns {OptionResult & {got?: OptionValueInner, decl?: OptionDecl}}
+ */
+declare function getInner(_env: OptionEnv | null, _scope: number, _var: number): OptionResult & {
+    got?: OptionValueInner;
+    decl?: OptionDecl;
 };
-declare function layersInner(_env: any, _scope: any, _var: any, _capacity: any): {
+/**
+ * layersInner
+ *   d_option_env_layers, each layer's value; null for the reference's
+ * (size_t)-1.
+ *
+ * @param {?OptionEnv} _env       the frame.
+ * @param {number}     _scope     the scope's id, or GLOBAL.
+ * @param {number}     _var       the variable's id.
+ * @param {number}     _capacity  the most layers to give.
+ * @returns {?{count: number, layers: Array<OptionLayerInner>,
+ *            decl: OptionDecl}}
+ */
+declare function layersInner(_env: OptionEnv | null, _scope: number, _var: number, _capacity: number): {
     count: number;
-    layers: any[];
-    decl: any;
+    layers: Array<OptionLayerInner>;
+    decl: OptionDecl;
+} | null;
+/**
+ * assignFromInner
+ *   `assignFrom`, for a name and a value that are strings or null.
+ *
+ * @param {?OptionEnv} _env     the frame.
+ * @param {?string}    _name    the name as written.
+ * @param {?string}    _value   the value's text.
+ * @param {number}     _source  the source.
+ * @returns {OptionResult}
+ */
+declare function assignFromInner(_env: OptionEnv | null, _name: string | null, _value: string | null, _source: number): OptionResult;
+/**
+ * putNFromInner
+ *   `putNFrom`, for a statement that is a string or null.
+ *
+ * @param {?OptionEnv} _env        the frame.
+ * @param {?string}    _statement  the statement.
+ * @param {number}     _source     the source.
+ * @returns {OptionResult}
+ */
+declare function putNFromInner(_env: OptionEnv | null, _statement: string | null, _source: number): OptionResult;
+/**
+ * loadFromInner
+ *   `loadFrom`, for a script that is a string or null.
+ *
+ * @param {?OptionEnv} _env     the frame.
+ * @param {?string}    _script  the script.
+ * @param {number}     _source  the source.
+ * @returns {OptionResult & {errorOffset?: number}}
+ */
+declare function loadFromInner(_env: OptionEnv | null, _script: string | null, _source: number): OptionResult & {
+    errorOffset?: number;
 };
-declare function assignFromInner(_env: any, _name: any, _value: any, _source: any): OptionResult;
-declare function putNFromInner(_env: any, _statement: any, _source: any): OptionResult;
-declare function loadFromInner(_env: any, _script: any, _source: any): OptionResult | {
-    errorOffset: number;
-    isOk: boolean;
-    value?: number;
-    error?: number;
-};
-declare function statementEndInner(_script: any, _at: any): any;
-declare function importInner(_env: any, _prefix: any, _lookup: any): OptionResult;
-declare function lookupOf(_environment: any): (_key: any) => any;
-declare function formatInner(_env: any, _scope: any, _var: any): any;
-declare function formatQuotedInner(_env: any, _scope: any, _var: any): any;
-declare function formatValue(_decl: any, _value: any): any;
+/**
+ * statementEndInner
+ *   `statementEnd`, for a script that is a string: where the statement that
+ * starts at an offset ends, at the ';' or the line break after it, outside
+ * quotes, or at the end.
+ *
+ * @param {string} _script  the script.
+ * @param {number} _at      where the statement starts.
+ * @returns {number} the offset of its end.
+ */
+declare function statementEndInner(_script: string, _at: number): number;
+/**
+ * importInner
+ *   `import`, for a prefix as the reference holds it, and a lookup.
+ *
+ * @param {?OptionEnv}                _env     the frame.
+ * @param {string}                    _prefix  what each name follows.
+ * @param {function(string): ?string} _lookup  the environment, as `lookupOf`
+ *        makes one.
+ * @returns {OptionResult} how many were bound; or the first refusal.
+ */
+declare function importInner(_env: OptionEnv | null, _prefix: string, _lookup: (arg0: string) => string | null): OptionResult;
+/**
+ * lookupOf
+ *   An environment as a function from a variable's name to its value, or null:
+ * from a Map, an object or a function of strings.
+ *
+ * @param {*} _environment  the environment.
+ * @returns {function(string): ?string}
+ */
+declare function lookupOf(_environment: any): (arg0: string) => string | null;
+/**
+ * formatInner
+ *   `format`, without the room it is written into.
+ *
+ * @param {?OptionEnv} _env    the frame.
+ * @param {number}     _scope  the scope's id, or GLOBAL.
+ * @param {number}     _var    the variable's id.
+ * @returns {?string} the text; null for a variable the frame does not see.
+ */
+declare function formatInner(_env: OptionEnv | null, _scope: number, _var: number): string | null;
+/**
+ * formatQuotedInner
+ *   `formatQuoted`, without the room it is written into.
+ *
+ * @param {?OptionEnv} _env    the frame.
+ * @param {number}     _scope  the scope's id, or GLOBAL.
+ * @param {number}     _var    the variable's id.
+ * @returns {?string}
+ */
+declare function formatQuotedInner(_env: OptionEnv | null, _scope: number, _var: number): string | null;
+/**
+ * formatValue
+ *   A value as text, as `format` writes it.
+ *
+ * @param {OptionDecl}       _decl   the row.
+ * @param {OptionValueInner} _value  the value.
+ * @returns {string}
+ */
+declare function formatValue(_decl: OptionDecl, _value: OptionValueInner): string;
 export { import_ as import, _import as import };

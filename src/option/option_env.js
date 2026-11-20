@@ -56,38 +56,42 @@ TABLE OF CONTENTS
     2.  refuses, idDepth, idIndex
     3.  kindName, sourceName
     4.  rowBool ... rowFlags
-2.  SETTING UP
+2.  SMALL THINGS
+    ------------
+3.  THE TEXT ARENA
+    --------------
+4.  SETTING UP
     ----------
     1.  init, fromRecord
     2.  declare, declareAll
     3.  setScopes, setParent, setName
     4.  clear, detach, generation, root, name
-3.  FINDING
+5.  FINDING
     -------
     1.  varCount, varId, varIndex, varAt, varFrame
     2.  scopeName, find, findScope, resolve
     3.  distance, suggest
-4.  READING
+6.  READING
     -------
     1.  get, bool, int, real, text, source
     2.  isBound, scopeIsBound, layers
-5.  BINDING BY VALUE
+7.  BINDING BY VALUE
     ----------------
     1.  setBool, setInt, setReal, setText, setValue, setTextCopy
     2.  unset, unsetFrom, unsetSource
-6.  BINDING FROM TEXT
+8.  BINDING FROM TEXT
     -----------------
     1.  assignFrom, assign
     2.  putFrom, put, putNFrom
     3.  statementEnd, loadFrom, load
     4.  import
-7.  WRITING TEXT
+9.  WRITING TEXT
     ------------
     1.  format, formatQuoted
-8.  READING ON A HOT PATH
+10. READING ON A HOT PATH
     ---------------------
     1.  cached
-9.  INNER
+11. INNER
     -----
     1.  inner
 */
@@ -378,14 +382,16 @@ export function rowFlags(
 
 
 //==============================================================================
-// SMALL THINGS
+// 2.  SMALL THINGS
 //==============================================================================
 
-/*
-cstr
-  A string as C reads one handed to it without a length: up to its
-first NUL.
-*/
+/**
+ * cstr
+ *   A string as C reads one handed to it without a length: up to its first NUL.
+ *
+ * @param {string} _text  the string.
+ * @returns {string}
+ */
 function cstr(
     _text
 )
@@ -395,10 +401,14 @@ function cstr(
     return (nul < 0) ? _text : _text.slice(0, nul);
 }
 
-/*
-toInner
-  A caller's string, checked to be one; null for null or undefined.
-*/
+/**
+ * toInner
+ *   A caller's string, checked to be one; null for null or undefined.
+ *
+ * @param {*}      _text  the caller's value.
+ * @param {string} _what  what it is, for the TypeError.
+ * @returns {?string}
+ */
 function toInner(
     _text,
     _what
@@ -418,11 +428,15 @@ function toInner(
     return _text;
 }
 
-/*
-toInt64
-  A caller's integer as a BigInt: a bigint, a whole number, or a decimal
-string as generated JSON carries one.
-*/
+/**
+ * toInt64
+ *   A caller's integer as a BigInt: a bigint, a whole number, or a decimal
+ * string as generated JSON carries one.
+ *
+ * @param {*}      _value  the caller's value.
+ * @param {string} _what   what it is, for the TypeError.
+ * @returns {bigint}
+ */
 function toInt64(
     _value,
     _what
@@ -464,6 +478,13 @@ function toInt64(
     return value;
 }
 
+/**
+ * lower
+ *   A character in lower case where it is an ASCII capital; any other as it is.
+ *
+ * @param {string} _c  the character.
+ * @returns {string}
+ */
 function lower(
     _c
 )
@@ -472,6 +493,13 @@ function lower(
              (_c <= 'Z') ) ? String.fromCharCode(_c.charCodeAt(0) + 32) : _c;
 }
 
+/**
+ * isSpace
+ *   Whether a character is white space, as C's isspace has it in the C locale.
+ *
+ * @param {string|undefined} _c  the character; none is not.
+ * @returns {boolean}
+ */
 function isSpace(
     _c
 )
@@ -484,6 +512,13 @@ function isSpace(
              (_c === '\v') );
 }
 
+/**
+ * isNameChar
+ *   Whether a character may stand in a name: an ASCII letter, a digit or '_'.
+ *
+ * @param {string|undefined} _c  the character; none may not.
+ * @returns {boolean}
+ */
 function isNameChar(
     _c
 )
@@ -495,6 +530,14 @@ function isNameChar(
                (_c === '_') ) );
 }
 
+/**
+ * isIdentifier
+ *   Whether a text is an identifier: name characters, at least one, the first
+ * not a digit.
+ *
+ * @param {?string} _text  the text.
+ * @returns {boolean}
+ */
 function isIdentifier(
     _text
 )
@@ -518,10 +561,15 @@ function isIdentifier(
     return true;
 }
 
-/*
-equal
-  Whether a name is a text, wholly; folded, without regard to ASCII case.
-*/
+/**
+ * equal
+ *   Whether a name is a text, wholly; folded, without regard to ASCII case.
+ *
+ * @param {?string} _name    the name; none is no text.
+ * @param {string}  _text    the text.
+ * @param {boolean} _folded  whether ASCII case is let pass.
+ * @returns {boolean}
+ */
 function equal(
     _name,
     _text,
@@ -550,6 +598,14 @@ function equal(
     return true;
 }
 
+/**
+ * trim
+ *   A text less the white space at either end, and where what is left begins in
+ * it.
+ *
+ * @param {string} _text  the text.
+ * @returns {{text: string, start: number}}
+ */
 function trim(
     _text
 )
@@ -572,6 +628,15 @@ function trim(
     return { text: _text.slice(start, end), start: start };
 }
 
+/**
+ * atDepth
+ *   The frame at a depth on a frame's way to its root: itself, or one of its
+ * parents.
+ *
+ * @param {OptionEnv} _env    the frame.
+ * @param {number}    _depth  the depth, the root being 0.
+ * @returns {?OptionEnv} the frame; null for a depth past its own.
+ */
 function atDepth(
     _env,
     _depth
@@ -582,19 +647,27 @@ function atDepth(
         return null;
     }
 
-    for (let up = _env.depth - _depth; up > 0; --up)
+    /** @type {?OptionEnv} */
+    let frame = _env;
+
+    // a frame has as many parents as its depth counts
+    for (let up = _env.depth - _depth; (up > 0) && (frame !== null); --up)
     {
-        _env = _env.parent;
+        frame = frame.parent;
     }
 
-    return _env;
+    return frame;
 }
 
-/*
-declOf
-  The declaration of a variable's id, as a frame sees it; null for an id it
-does not see.
-*/
+/**
+ * declOf
+ *   The declaration of a variable's id, as a frame sees it; null for an id it
+ * does not see.
+ *
+ * @param {OptionEnv} _env  the frame.
+ * @param {number}    _var  the variable's id.
+ * @returns {?OptionDecl}
+ */
 function declOf(
     _env,
     _var
@@ -614,6 +687,15 @@ function declOf(
              (index < frame.vars.length) ) ? frame.vars[index] : null;
 }
 
+/**
+ * scopeOk
+ *   Whether a scope's id names a scope a frame sees: GLOBAL, or one of a frame
+ * on its way to the root.
+ *
+ * @param {OptionEnv} _env    the frame.
+ * @param {number}    _scope  the scope's id.
+ * @returns {boolean}
+ */
 function scopeOk(
     _env,
     _scope
@@ -640,10 +722,17 @@ function scopeOk(
              ((_scope >>> DEPTH_SHIFT) <= DEPTH_MAX) );
 }
 
-/*
-check
-  The status of naming a variable in a scope, and its declaration.
-*/
+/**
+ * check
+ *   The status of naming a variable in a scope, and its declaration.
+ *
+ * @param {?OptionEnv} _env   the frame.
+ * @param {number}    _scope  the scope's id.
+ * @param {number}    _var    the variable's id.
+ * @returns {{status: number, decl: ?OptionDecl}} OK and the declaration;
+ *          INVALID_ARGUMENT for a scope the frame does not see; KEY_ABSENT for
+ *          a variable.
+ */
 function check(
     _env,
     _scope,
@@ -666,6 +755,13 @@ function check(
     return { status: STATUS.OK, decl: decl };
 }
 
+/**
+ * sourceOk
+ *   Whether a source is one a binding may have: any but DEFAULT.
+ *
+ * @param {number} _source  the source.
+ * @returns {boolean}
+ */
 function sourceOk(
     _source
 )
@@ -677,6 +773,13 @@ function sourceOk(
 
 const ENV_MARK = Symbol('option_env');
 
+/**
+ * isEnv
+ *   Whether a value is a frame `init` made.
+ *
+ * @param {*} _env  the value.
+ * @returns {_env is OptionEnv}
+ */
 function isEnv(
     _env
 )
@@ -686,6 +789,15 @@ function isEnv(
              (_env[ENV_MARK] === true) );
 }
 
+/**
+ * makeId
+ *   A variable's id: the depth of the frame that declares it, and its place
+ * there.
+ *
+ * @param {number} _depth  the frame's depth.
+ * @param {number} _index  the place, from 0.
+ * @returns {number}
+ */
 function makeId(
     _depth,
     _index
@@ -694,6 +806,15 @@ function makeId(
     return ((_depth << DEPTH_SHIFT) | _index) >>> 0;
 }
 
+/**
+ * cellKey
+ *   The key of a binding among a frame's cells.
+ *
+ * @param {number} _scope   the scope's id.
+ * @param {number} _source  the source.
+ * @param {number} _var     the variable's id.
+ * @returns {string}
+ */
 function cellKey(
     _scope,
     _source,
@@ -705,17 +826,19 @@ function cellKey(
 
 
 //==============================================================================
-// THE TEXT ARENA
+// 3.  THE TEXT ARENA
 //==============================================================================
 //   The reference copies a text it must keep into a block of the frame's,
 // and packs the block when it is full. Here a kept text is an object with
 // `arena` set, counted by its length and its terminator; what the count
 // would be decides BUFFER_TOO_SMALL and when the generation moves.
 
-/*
-compactText
-  The count of the texts still bound, each once; the generation moves.
-*/
+/**
+ * compactText
+ *   The count of the texts still bound, each once; the generation moves.
+ *
+ * @param {OptionEnv} _env  the frame.
+ */
 function compactText(
     _env
 )
@@ -741,11 +864,15 @@ function compactText(
     return;
 }
 
-/*
-alloc
-  Room for a text of a size and its terminator; false where the frame has
-none even once packed.
-*/
+/**
+ * alloc
+ *   Room for a text of a size and its terminator; false where the frame has
+ * none even once packed.
+ *
+ * @param {OptionEnv} _env   the frame.
+ * @param {number}    _size  the text's length.
+ * @returns {boolean}
+ */
 function alloc(
     _env,
     _size
@@ -768,7 +895,7 @@ function alloc(
 
 
 //==============================================================================
-// 2.  SETTING UP
+// 4.  SETTING UP
 //==============================================================================
 
 /**
@@ -821,6 +948,13 @@ function alloc(
  */
 
 /**
+ * What a binding is made from (`bind`): the member its kind uses.
+ *
+ * @typedef {{integer?: bigint, real?: number,
+ *            text?: ?{chars: string, arena: boolean}}} OptionPayload
+ */
+
+/**
  * A binding, as a frame holds it.
  *
  * @typedef {object} OptionCell
@@ -833,7 +967,7 @@ function alloc(
  *           in the frame's text where `arena` is set.
  */
 
-// 2.1
+// 4.1
 /**
  * A frame with no variables, scopes, bindings, parent or name.
  *
@@ -851,7 +985,8 @@ export function init(
     _room = {}
 )
 {
-    const count = (_value, _what) =>
+    const count = (/** @type {number|undefined} */ _value,
+                   /** @type {string} */ _what) =>
     {
         if ( (_value !== undefined)                    &&
              (_value !== Infinity)                     &&
@@ -916,7 +1051,7 @@ export function fromRecord(
                                                    : ok(0) ),
         () => declareAll(env, _record.rows ?? []),
         () => ( ((_record.scopes ?? []).length !== 0)
-                    ? setScopes(env, _record.scopes) : ok(0) )
+                    ? setScopes(env, _record.scopes ?? []) : ok(0) )
     ];
 
     for (const step of steps)
@@ -932,10 +1067,15 @@ export function fromRecord(
     return { ...ok(0), env: env };
 }
 
-/*
-normalNames
-  A row's named values as the machine holds them: null for none given.
-*/
+/**
+ * normalNames
+ *   A row's named values as the machine holds them: null for none given.
+ *
+ * @param {*}                _names  the caller's named values.
+ * @param {number|undefined} _count  how many of them count; all where left out.
+ * @param {string}           _what   what they are, for the TypeError.
+ * @returns {?Array<{name: ?string, value: bigint}>}
+ */
 function normalNames(
     _names,
     _count,
@@ -963,11 +1103,14 @@ function normalNames(
     }));
 }
 
-/*
-normalize
-  A caller's row as the machine holds it: text checked, integers as
-BigInt, and every member the reference's struct has.
-*/
+/**
+ * normalize
+ *   A caller's row as the machine holds it: text checked, integers as BigInt,
+ * and every member the reference's struct has.
+ *
+ * @param {*} _row  the caller's row.
+ * @returns {OptionDecl}
+ */
 function normalize(
     _row
 )
@@ -1034,16 +1177,19 @@ function normalize(
     };
 }
 
-/*
-isExact
-  Whether every integer a row can hold lies within the exact integers of a
-double: whether its values are handed out as numbers.
-*/
+/**
+ * isExact
+ *   Whether every integer a row can hold lies within the exact integers of a
+ * double: whether its values are handed out as numbers.
+ *
+ * @param {OptionDecl} _decl  the row.
+ * @returns {boolean}
+ */
 function isExact(
     _decl
 )
 {
-    const safe  = (_value) => ( (_value >= -SAFE) &&
+    const safe  = (/** @type {bigint} */ _value) => ( (_value >= -SAFE) &&
                                 (_value <= SAFE) );
     const named = (_decl.names ?? []).every((_name) => safe(_name.value));
 
@@ -1079,6 +1225,14 @@ function isExact(
     }
 }
 
+/**
+ * isNamed
+ *   Whether a value is one of a row's named values.
+ *
+ * @param {OptionDecl} _decl   the row.
+ * @param {bigint}     _value  the value.
+ * @returns {boolean}
+ */
 function isNamed(
     _decl,
     _value
@@ -1099,6 +1253,16 @@ function isNamed(
 const REFUSABLE = ((refuses(SOURCE.OVERRIDE) << 1) -
                    refuses(SOURCE.PROGRAM)) >>> 0;
 
+/**
+ * wellFormed
+ *   Whether a row is one the reference declares: an identifier for its name,
+ * and for its alias where it has one; a kind it knows; counts that have their
+ * lists; sources it may refuse; and a default its kind allows: 0 or 1, within
+ * its range or among its names, among its names, or of its flags.
+ *
+ * @param {OptionDecl} _decl  the row.
+ * @returns {boolean}
+ */
 function wellFormed(
     _decl
 )
@@ -1152,6 +1316,14 @@ function wellFormed(
     }
 }
 
+/**
+ * declares
+ *   Whether a frame itself declares a variable of a name or an alias.
+ *
+ * @param {OptionEnv} _env   the frame.
+ * @param {?string}   _name  the name; none is not declared.
+ * @returns {boolean}
+ */
 function declares(
     _env,
     _name
@@ -1169,7 +1341,7 @@ function declares(
     return false;
 }
 
-// 2.2
+// 4.2
 /**
  * Declares a variable in a frame.
  *
@@ -1251,7 +1423,7 @@ export function declareAll(
     return ok(first);
 }
 
-// 2.3
+// 4.3
 /**
  * Names a frame's scopes; they replace any it had.
  *
@@ -1364,7 +1536,7 @@ export function setName(
     return ok(0);
 }
 
-// 2.4
+// 4.4
 /**
  * Drops every binding of a frame's own.
  *
@@ -1463,10 +1635,10 @@ export function name(
 
 
 //==============================================================================
-// 3.  FINDING
+// 5.  FINDING
 //==============================================================================
 
-// 3.1
+// 5.1
 /**
  * How many variables a frame sees: its own and its ancestors'.
  *
@@ -1540,9 +1712,10 @@ export function varIndex(
         return NONE;
     }
 
+    // an id the frame sees is of a frame on its way to the root
     const frame = atDepth(_env, _var >>> DEPTH_SHIFT);
 
-    return varCount(frame.parent) + (_var & LOCAL);
+    return varCount(frame?.parent ?? null) + (_var & LOCAL);
 }
 
 /**
@@ -1583,6 +1756,14 @@ export function varFrame(
     return atDepth(_env, _var >>> DEPTH_SHIFT);
 }
 
+/**
+ * scopeNameInner
+ *   `scopeName`, for a frame or anything in its place.
+ *
+ * @param {?OptionEnv} _env    the frame.
+ * @param {number}     _scope  the scope's id.
+ * @returns {?string}
+ */
 function scopeNameInner(
     _env,
     _scope
@@ -1595,11 +1776,12 @@ function scopeNameInner(
         return null;
     }
 
+    // a scope the frame sees is of a frame on its way to the root
     return atDepth(_env, _scope >>> DEPTH_SHIFT)
-              .scopes[(_scope & LOCAL) - 1];
+               ?.scopes[(_scope & LOCAL) - 1] ?? null;
 }
 
-// 3.2
+// 5.2
 /**
  * A scope's name.
  *
@@ -1618,6 +1800,14 @@ export function scopeName(
     return (name !== null) ? name : null;
 }
 
+/**
+ * findInner
+ *   `find`, for a name that is a string or null.
+ *
+ * @param {?OptionEnv} _env   the frame.
+ * @param {?string}    _name  the name.
+ * @returns {OptionResult}
+ */
 function findInner(
     _env,
     _name
@@ -1629,7 +1819,7 @@ function findInner(
         return fail(STATUS.INVALID_ARGUMENT);
     }
 
-    for (let f = _env; f !== null; f = f.parent)
+    for (let /** @type {?OptionEnv} */ f = _env; f !== null; f = f.parent)
     {
         for (let i = 0; i < f.vars.length; ++i)
         {
@@ -1659,6 +1849,14 @@ export function find(
     return findInner(_env, toInner(_name, 'the name'));
 }
 
+/**
+ * findScopeInner
+ *   `findScope`, for a name that is a string or null.
+ *
+ * @param {?OptionEnv} _env   the frame.
+ * @param {?string}    _name  the scope's name.
+ * @returns {OptionResult}
+ */
 function findScopeInner(
     _env,
     _name
@@ -1670,7 +1868,7 @@ function findScopeInner(
         return fail(STATUS.INVALID_ARGUMENT);
     }
 
-    for (let f = _env; f !== null; f = f.parent)
+    for (let /** @type {?OptionEnv} */ f = _env; f !== null; f = f.parent)
     {
         for (let i = 0; i < f.scopes.length; ++i)
         {
@@ -1699,23 +1897,35 @@ export function findScope(
     return findScopeInner(_env, toInner(_name, 'the name'));
 }
 
-/*
-unqualify
-  A name without the frame's own name and point before it.
-*/
+/**
+ * unqualify
+ *   A name without the frame's own name and point before it.
+ *
+ * @param {OptionEnv} _env   the frame.
+ * @param {string}    _name  the name.
+ * @returns {string}
+ */
 function unqualify(
     _env,
     _name
 )
 {
-    const own = (_env.name !== null) ? _env.name.length : 0;
+    const own = _env.name ?? '';
 
-    return ( (own !== 0)                  &&
-             (_name.length > own + 1)     &&
-             (_name[own] === '.')         &&
-             _name.startsWith(_env.name) ) ? _name.slice(own + 1) : _name;
+    return ( (own.length !== 0)              &&
+             (_name.length > own.length + 1) &&
+             (_name[own.length] === '.')     &&
+             _name.startsWith(own) ) ? _name.slice(own.length + 1) : _name;
 }
 
+/**
+ * resolveInner
+ *   `resolve`, for a name that is a string or null.
+ *
+ * @param {?OptionEnv} _env   the frame.
+ * @param {?string}    _name  the name as written.
+ * @returns {OptionResult & {scope: number}}
+ */
 function resolveInner(
     _env,
     _name
@@ -1742,7 +1952,9 @@ function resolveInner(
         return { ...scope, scope: GLOBAL };
     }
 
-    return { ...findInner(_env, name.slice(dot + 1)), scope: scope.value };
+    // a scope found has its id
+    return { ...findInner(_env, name.slice(dot + 1)),
+             scope: scope.value ?? GLOBAL };
 }
 
 /**
@@ -1763,6 +1975,14 @@ export function resolve(
     return resolveInner(_env, toInner(_name, 'the name'));
 }
 
+/**
+ * distanceInner
+ *   `distance`, for two strings.
+ *
+ * @param {string} _name  the name.
+ * @param {string} _text  the text.
+ * @returns {number}
+ */
 function distanceInner(
     _name,
     _text
@@ -1770,6 +1990,7 @@ function distanceInner(
 {
     const length = _name.length;
     const size   = _text.length;
+    /** @type {Array<Array<number>>} */
     const rows   = [[], [], []];
 
     if ( (length > NAME_MAX) ||
@@ -1818,6 +2039,18 @@ function distanceInner(
     return rows[(length + 1) % 3][size];
 }
 
+/**
+ * nearest
+ *   The name nearest a text among those a frame sees, its own and its parents':
+ * their scopes, or their variables' names and aliases. Near is within one edit
+ * of a text of three units or fewer, and two of a longer one.
+ *
+ * @param {OptionEnv} _env     the frame.
+ * @param {string}    _text    the text.
+ * @param {boolean}   _scopes  whether it is scopes' names that are looked
+ *        among.
+ * @returns {?string} the name; null for none near.
+ */
 function nearest(
     _env,
     _text,
@@ -1828,7 +2061,7 @@ function nearest(
     let   best  = null;
     let   most  = limit + 1;
 
-    for (let f = _env; f !== null; f = f.parent)
+    for (let /** @type {?OptionEnv} */ f = _env; f !== null; f = f.parent)
     {
         const count = _scopes ? f.scopes.length : (2 * f.vars.length);
 
@@ -1850,7 +2083,7 @@ function nearest(
     return best;
 }
 
-// 3.3
+// 5.3
 /**
  * How far a text is from a name: the edits -- a character put in, taken
  * out or changed, or two neighbours swapped -- that make one the other,
@@ -1877,6 +2110,14 @@ export function distance(
     return distanceInner(cstr(name), text);
 }
 
+/**
+ * suggestInner
+ *   `suggest`, for a name that is a string or null.
+ *
+ * @param {?OptionEnv} _env   the frame.
+ * @param {?string}    _name  the name as written.
+ * @returns {?string}
+ */
 function suggestInner(
     _env,
     _name
@@ -1927,13 +2168,17 @@ export function suggest(
 
 
 //==============================================================================
-// 4.  READING
+// 6.  READING
 //==============================================================================
 
-/*
-read
-  A binding's value into a value, with where it was bound.
-*/
+/**
+ * read
+ *   A binding's value into a value, with where it was bound.
+ *
+ * @param {OptionEnv}        _frame  the frame that holds the binding.
+ * @param {OptionCell}       _cell   the binding.
+ * @param {OptionValueInner} _value  the value, written over.
+ */
 function read(
     _frame,
     _cell,
@@ -1966,6 +2211,16 @@ function read(
     return;
 }
 
+/**
+ * bears
+ *   Whether a binding bears on a variable in a scope: it binds the variable, in
+ * the scope or globally.
+ *
+ * @param {OptionCell} _cell   the binding.
+ * @param {number}     _scope  the scope's id.
+ * @param {number}     _var    the variable's id.
+ * @returns {boolean}
+ */
 function bears(
     _cell,
     _scope,
@@ -1977,11 +2232,17 @@ function bears(
                (_cell.scope === GLOBAL) ) );
 }
 
-/*
-outranks
-  Whether binding a is in force over binding b: the higher source, then the
-deeper frame, then the scoped over the global.
-*/
+/**
+ * outranks
+ *   Whether binding a is in force over binding b: the higher source, then the
+ * deeper frame, then the scoped over the global.
+ *
+ * @param {OptionCell} _a       binding a.
+ * @param {number}     _aDepth  the depth of a's frame.
+ * @param {OptionCell} _b       binding b.
+ * @param {number}     _bDepth  the depth of b's frame.
+ * @returns {boolean}
+ */
 function outranks(
     _a,
     _aDepth,
@@ -2003,21 +2264,36 @@ function outranks(
              (_b.scope === GLOBAL) );
 }
 
+/**
+ * inForce
+ *   The binding in force for a variable in a scope, and the frame that holds
+ * it: of those that bear on it, in the frame and its parents, the one that
+ * outranks the rest.
+ *
+ * @param {OptionEnv} _env    the frame.
+ * @param {number}    _scope  the scope's id.
+ * @param {number}    _var    the variable's id.
+ * @returns {{cell: ?OptionCell, frame: ?OptionEnv}} both null for none.
+ */
 function inForce(
     _env,
     _scope,
     _var
 )
 {
+    /** @type {?OptionCell} */
     let best  = null;
+    /** @type {?OptionEnv} */
     let frame = null;
 
-    for (let f = _env; f !== null; f = f.parent)
+    for (let /** @type {?OptionEnv} */ f = _env; f !== null; f = f.parent)
     {
         for (const cell of f.cells.values())
         {
+            // the best so far was found in a frame
             if ( bears(cell, _scope, _var) &&
-                 ( (best === null) ||
+                 ( (best === null)  ||
+                   (frame === null) ||
                    outranks(cell, f.depth, best, frame.depth) ) )
             {
                 best  = cell;
@@ -2029,6 +2305,13 @@ function inForce(
     return { cell: best, frame: frame };
 }
 
+/**
+ * defaultValue
+ *   A row's default, as a value no binding gave.
+ *
+ * @param {OptionDecl} _decl  the row.
+ * @returns {OptionValueInner}
+ */
 function defaultValue(
     _decl
 )
@@ -2044,10 +2327,13 @@ function defaultValue(
     };
 }
 
-/*
-nameValue
-  For a CHOICE or an INT, the value's name as its text, or none.
-*/
+/**
+ * nameValue
+ *   For a CHOICE or an INT, the value's name as its text, or none.
+ *
+ * @param {OptionDecl}       _decl   the row.
+ * @param {OptionValueInner} _value  the value, its text written over.
+ */
 function nameValue(
     _decl,
     _value
@@ -2061,11 +2347,14 @@ function nameValue(
 
     _value.text = null;
 
+    // a row with no names counts none
+    const names = _decl.names ?? [];
+
     for (let i = 0; i < _decl.name_count; ++i)
     {
-        if (_decl.names[i].value === _value.integer)
+        if (names[i].value === _value.integer)
         {
-            _value.text = _decl.names[i].name;
+            _value.text = names[i].name;
 
             break;
         }
@@ -2079,6 +2368,15 @@ function nameValue(
  *
  * @returns {OptionResult & {got?: *, decl?: *, scope?: number}}
  */
+/**
+ * getInner
+ *   `get`, its value as the machine works it, with the row.
+ *
+ * @param {?OptionEnv} _env    the frame.
+ * @param {number}     _scope  the scope's id, or GLOBAL.
+ * @param {number}     _var    the variable's id.
+ * @returns {OptionResult & {got?: OptionValueInner, decl?: OptionDecl}}
+ */
 function getInner(
     _env,
     _scope,
@@ -2087,7 +2385,9 @@ function getInner(
 {
     const { status, decl } = check(_env, _scope, _var);
 
-    if (status !== STATUS.OK)
+    // a row found is a frame's
+    if ( (decl === null) ||
+         !isEnv(_env) )
     {
         return fail(status);
     }
@@ -2095,7 +2395,8 @@ function getInner(
     const { cell, frame } = inForce(_env, _scope, _var);
     const value           = defaultValue(decl);
 
-    if (cell !== null)
+    if ( (cell !== null) &&
+         (frame !== null) )
     {
         read(frame, cell, value);
     }
@@ -2105,11 +2406,15 @@ function getInner(
     return { ...ok(_var), got: value, decl: decl };
 }
 
-/*
-handed
-  A value as a caller is handed one: its text a string, its integer a
-number where the row's are exact and a bigint where not.
-*/
+/**
+ * handed
+ *   A value as a caller is handed one: its text a string, its integer a number
+ * where the row's are exact and a bigint where not.
+ *
+ * @param {OptionDecl}       _decl   the row.
+ * @param {OptionValueInner} _value  the value.
+ * @returns {OptionValue}
+ */
 function handed(
     _decl,
     _value
@@ -2125,6 +2430,32 @@ function handed(
         depth:        _value.depth
     };
 }
+
+/**
+ * A layer of a variable's value: a binding that bears on it, as `layers`
+ * gives one.
+ *
+ * @typedef {object} OptionLayer
+ * @property {OptionEnv}   frame  the frame that holds the binding.
+ * @property {number}      scope  the binding's scope.
+ * @property {boolean}     shown  whether it is the one in force.
+ * @property {OptionValue} value  its value.
+ */
+
+/**
+ * A layer as the machine works it, its value an OptionValueInner.
+ *
+ * @typedef {Omit<OptionLayer, 'value'> & {value: OptionValueInner}}
+ *          OptionLayerInner
+ */
+
+/**
+ * A value as the machine works it, before a caller is handed it
+ * (`handed`): an OptionValue whose integer is a BigInt, whatever the row.
+ *
+ * @typedef {Omit<OptionValue, 'integer'> & {integer: bigint}}
+ *          OptionValueInner
+ */
 
 /**
  * A value: the reference's struct dj_option_env_value.
@@ -2145,7 +2476,7 @@ function handed(
  *           NONE for none.
  */
 
-// 4.1
+// 6.1
 /**
  * The value in force for a variable in a scope.
  *
@@ -2161,11 +2492,13 @@ export function get(
     _var
 )
 {
-    const result = getInner(_env, _scope, _var);
+    const result      = getInner(_env, _scope, _var);
+    const { got, decl } = result;
 
-    return result.isOk ? { ...ok(_var),
-                           got: handed(result.decl, result.got) }
-                       : result;
+    // a value and its row come with an OK result, and only then
+    return ( (got !== undefined) &&
+             (decl !== undefined) ) ? { ...ok(_var), got: handed(decl, got) }
+                                    : result;
 }
 
 /**
@@ -2182,11 +2515,11 @@ export function bool(
     _var
 )
 {
-    const result = getInner(_env, _scope, _var);
+    const got = getInner(_env, _scope, _var).got;
 
-    return ( result.isOk                      &&
-             (result.got.kind === KIND.BOOL)  &&
-             (result.got.integer !== 0n) );
+    return ( (got !== undefined)       &&
+             (got.kind === KIND.BOOL)  &&
+             (got.integer !== 0n) );
 }
 
 /**
@@ -2203,18 +2536,18 @@ export function int(
     _var
 )
 {
-    const result = getInner(_env, _scope, _var);
+    const { got, decl } = getInner(_env, _scope, _var);
 
-    if ( !result.isOk                     ||
-         (result.got.kind === KIND.BOOL)  ||
-         (result.got.kind === KIND.REAL)  ||
-         (result.got.kind === KIND.TEXT) )
+    if ( (got === undefined)        ||
+         (decl === undefined)       ||
+         (got.kind === KIND.BOOL)   ||
+         (got.kind === KIND.REAL)   ||
+         (got.kind === KIND.TEXT) )
     {
         return 0;
     }
 
-    return result.decl.exact ? Number(result.got.integer)
-                             : result.got.integer;
+    return decl.exact ? Number(got.integer) : got.integer;
 }
 
 /**
@@ -2231,10 +2564,10 @@ export function real(
     _var
 )
 {
-    const result = getInner(_env, _scope, _var);
+    const got = getInner(_env, _scope, _var).got;
 
-    return ( result.isOk &&
-             (result.got.kind === KIND.REAL) ) ? result.got.real : 0;
+    return ( (got !== undefined) &&
+             (got.kind === KIND.REAL) ) ? got.real : 0;
 }
 
 /**
@@ -2252,13 +2585,13 @@ export function text(
     _var
 )
 {
-    const result = getInner(_env, _scope, _var);
+    const got = getInner(_env, _scope, _var).got;
 
-    return ( result.isOk &&
-             ( (result.got.kind === KIND.TEXT)   ||
-               (result.got.kind === KIND.CHOICE) ||
-               (result.got.kind === KIND.INT) )  &&
-             (result.got.text !== null) ) ? result.got.text : null;
+    return ( (got !== undefined) &&
+             ( (got.kind === KIND.TEXT)   ||
+               (got.kind === KIND.CHOICE) ||
+               (got.kind === KIND.INT) )  &&
+             (got.text !== null) ) ? got.text : null;
 }
 
 /**
@@ -2275,12 +2608,12 @@ export function source(
     _var
 )
 {
-    const result = getInner(_env, _scope, _var);
+    const got = getInner(_env, _scope, _var).got;
 
-    return result.isOk ? result.got.source : -1;
+    return (got !== undefined) ? got.source : -1;
 }
 
-// 4.2
+// 6.2
 /**
  * Whether a frame itself binds a variable in exactly a scope, from any
  * source.
@@ -2296,7 +2629,9 @@ export function isBound(
     _var
 )
 {
-    if (check(_env, _scope, _var).status !== STATUS.OK)
+    // a row found is a frame's
+    if ( (check(_env, _scope, _var).decl === null) ||
+         !isEnv(_env) )
     {
         return false;
     }
@@ -2339,11 +2674,18 @@ export function scopeIsBound(
     return false;
 }
 
-/*
-layersInner
-  d_option_env_layers, each layer's value; null for the
-reference's (size_t)-1.
-*/
+/**
+ * layersInner
+ *   d_option_env_layers, each layer's value; null for the reference's
+ * (size_t)-1.
+ *
+ * @param {?OptionEnv} _env       the frame.
+ * @param {number}     _scope     the scope's id, or GLOBAL.
+ * @param {number}     _var       the variable's id.
+ * @param {number}     _capacity  the most layers to give.
+ * @returns {?{count: number, layers: Array<OptionLayerInner>,
+ *            decl: OptionDecl}}
+ */
 function layersInner(
     _env,
     _scope,
@@ -2351,18 +2693,22 @@ function layersInner(
     _capacity
 )
 {
-    const { status, decl } = check(_env, _scope, _var);
-    const capacity         = Math.min(_capacity, 64);
-    const layers           = [];
-    const cells            = [];
-    let   count            = 0;
+    const { decl } = check(_env, _scope, _var);
+    const capacity = Math.min(_capacity, 64);
+    /** @type {Array<OptionLayerInner>} */
+    const layers   = [];
+    /** @type {Array<OptionCell>} */
+    const cells    = [];
+    let   count    = 0;
 
-    if (status !== STATUS.OK)
+    // a row found is a frame's
+    if ( (decl === null) ||
+         !isEnv(_env) )
     {
         return null;
     }
 
-    for (let f = _env; f !== null; f = f.parent)
+    for (let /** @type {?OptionEnv} */ f = _env; f !== null; f = f.parent)
     {
         for (const cell of f.cells.values())
         {
@@ -2451,20 +2797,27 @@ export function layers(
 
 
 //==============================================================================
-// 5.  BINDING BY VALUE
+// 7.  BINDING BY VALUE
 //==============================================================================
 
-/*
-accepts
-  The status of an integer for a row: OK, or why the row refuses it.
-*/
+/**
+ * accepts
+ *   The status of an integer for a row: OK, or why the row refuses it.
+ *
+ * @param {OptionDecl} _decl     the row.
+ * @param {bigint}     _integer  the integer.
+ * @returns {number} a STATUS.
+ */
 function accepts(
     _decl,
     _integer
 )
 {
-    let mask    = 0n;
-    let unbuilt = 0n;
+    // a row with no list counts none of it
+    const namesOf   = _decl.names ?? [];
+    const unbuiltOf = _decl.unbuilt ?? [];
+    let   mask      = 0n;
+    let   unbuilt   = 0n;
 
     if (_decl.kind === KIND.INT)
     {
@@ -2478,7 +2831,7 @@ function accepts(
 
         for (let i = 0; i < _decl.unbuilt_count; ++i)
         {
-            if (_decl.unbuilt[i].value === _integer)
+            if (unbuiltOf[i].value === _integer)
             {
                 return STATUS.POLICY_REJECTED;
             }
@@ -2495,10 +2848,10 @@ function accepts(
 
     for (let i = 0; i < _decl.name_count; ++i)
     {
-        mask |= _decl.names[i].value;
+        mask |= namesOf[i].value;
 
         if ( (_decl.kind === KIND.CHOICE) &&
-             (_decl.names[i].value === _integer) )
+             (namesOf[i].value === _integer) )
         {
             return STATUS.OK;
         }
@@ -2506,10 +2859,10 @@ function accepts(
 
     for (let i = 0; i < _decl.unbuilt_count; ++i)
     {
-        unbuilt |= _decl.unbuilt[i].value;
+        unbuilt |= unbuiltOf[i].value;
 
         if ( (_decl.kind === KIND.CHOICE) &&
-             (_decl.unbuilt[i].value === _integer) )
+             (unbuiltOf[i].value === _integer) )
         {
             return STATUS.POLICY_REJECTED;
         }
@@ -2530,11 +2883,19 @@ function accepts(
                                                  : STATUS.INVALID_ARGUMENT;
 }
 
-/*
-bind
-  Binds a variable in a scope, from a source, to a payload of a kind: the
-one place a binding is made.
-*/
+/**
+ * bind
+ *   Binds a variable in a scope, from a source, to a payload of a kind: the one
+ * place a binding is made.
+ *
+ * @param {?OptionEnv}    _env      the frame.
+ * @param {number}        _scope    the scope's id, or GLOBAL.
+ * @param {number}        _var      the variable's id.
+ * @param {number}        _source   the source.
+ * @param {number}        _kind     the kind the payload is of.
+ * @param {OptionPayload} _payload  the value.
+ * @returns {OptionResult} the variable's id; or why it was not bound.
+ */
 function bind(
     _env,
     _scope,
@@ -2546,7 +2907,9 @@ function bind(
 {
     const { status, decl } = check(_env, _scope, _var);
 
-    if (status !== STATUS.OK)
+    // a row found is a frame's
+    if ( (decl === null) ||
+         !isEnv(_env) )
     {
         return fail(status);
     }
@@ -2592,6 +2955,18 @@ function bind(
     return ok(_var);
 }
 
+/**
+ * bindInt
+ *   Binds an INT, a CHOICE or FLAGS to an integer its row accepts: the one
+ * place an integer is checked before it is bound.
+ *
+ * @param {?OptionEnv} _env      the frame.
+ * @param {number}     _scope    the scope's id, or GLOBAL.
+ * @param {number}     _var      the variable's id.
+ * @param {number}     _source   the source.
+ * @param {bigint}     _integer  the integer.
+ * @returns {OptionResult}
+ */
 function bindInt(
     _env,
     _scope,
@@ -2616,10 +2991,13 @@ function bindInt(
                 { integer: _integer });
 }
 
-/*
-borrowed
-  A caller's text as a binding holds one it does not copy; null for none.
-*/
+/**
+ * borrowed
+ *   A caller's text as a binding holds one it does not copy; null for none.
+ *
+ * @param {?string} _text  the caller's text.
+ * @returns {?{chars: string, arena: boolean}}
+ */
 function borrowed(
     _text
 )
@@ -2627,7 +3005,7 @@ function borrowed(
     return (_text !== null) ? { chars: cstr(_text), arena: false } : null;
 }
 
-// 5.1
+// 7.1
 /**
  * Binds a BOOL, as the program.
  *
@@ -2720,6 +3098,18 @@ export function setText(
                 { text: borrowed(toInner(_value, 'the value')) });
 }
 
+/**
+ * setValueInner
+ *   `setValue`, from a source: a value bound as its kind is.
+ *
+ * @param {?OptionEnv}   _env     the frame.
+ * @param {number}       _scope   the scope's id, or GLOBAL.
+ * @param {number}       _var     the variable's id.
+ * @param {number}       _source  the source.
+ * @param {?{kind: number, integer: bigint, real: number,
+ *         text: ?string}} _value   the value.
+ * @returns {OptionResult}
+ */
 function setValueInner(
     _env,
     _scope,
@@ -2795,10 +3185,17 @@ export function setValue(
     });
 }
 
-/*
-textCopy
-  Binds a TEXT to a copy of text the frame keeps.
-*/
+/**
+ * textCopy
+ *   Binds a TEXT to a copy of text the frame keeps.
+ *
+ * @param {?OptionEnv} _env     the frame.
+ * @param {number}     _scope   the scope's id, or GLOBAL.
+ * @param {number}     _var     the variable's id.
+ * @param {string}     _value   the text.
+ * @param {number}     _source  the source.
+ * @returns {OptionResult}
+ */
 function textCopy(
     _env,
     _scope,
@@ -2814,7 +3211,9 @@ function textCopy(
 
     const { status, decl } = check(_env, _scope, _var);
 
-    if (status !== STATUS.OK)
+    // a row found is a frame's
+    if ( (decl === null) ||
+         !isEnv(_env) )
     {
         return fail(status);
     }
@@ -2855,7 +3254,7 @@ export function setTextCopy(
                     SOURCE.PROGRAM);
 }
 
-// 5.2
+// 7.2
 /**
  * Drops a frame's own bindings of a variable in exactly a scope, from
  * every source.
@@ -2972,12 +3371,20 @@ export function unsetSource(
 
 
 //==============================================================================
-// 6.  BINDING FROM TEXT
+// 8.  BINDING FROM TEXT
 //==============================================================================
 
 const YES = ['1', 'true', 'yes', 'on', 'y'];
 const NO  = ['0', 'false', 'no', 'off', 'n'];
 
+/**
+ * readBool
+ *   A BOOL from a text, as the reference's words for true and false read,
+ * without regard to case.
+ *
+ * @param {string} _text  the text.
+ * @returns {?bigint} 1n, 0n, or null for a word that is neither.
+ */
 function readBool(
     _text
 )
@@ -2998,11 +3405,14 @@ function readBool(
     return null;
 }
 
-/*
-readInt
-  A 64-bit integer from a text: a sign, a base prefix 0x, 0o or 0b, and
-digits; null for anything else, and for a value that does not fit.
-*/
+/**
+ * readInt
+ *   A 64-bit integer from a text: a sign, a base prefix 0x, 0o or 0b, and
+ * digits; null for anything else, and for a value that does not fit.
+ *
+ * @param {string} _text  the text.
+ * @returns {?bigint}
+ */
 function readInt(
     _text
 )
@@ -3079,12 +3489,15 @@ function readInt(
     return negative ? -magnitude : magnitude;
 }
 
-/*
-readRealText
-  A real from a text, whole: C's alphabet, or one of the words, and what
-strtod makes of it; null for anything else, and for a value past the
-largest double.
-*/
+/**
+ * readRealText
+ *   A real from a text, whole: C's alphabet, or one of the words, and what
+ * strtod makes of it; null for anything else, and for a value past the largest
+ * double.
+ *
+ * @param {string} _text  the text.
+ * @returns {?{length: number, value: number, overflow: boolean}}
+ */
 function readRealText(
     _text
 )
@@ -3129,28 +3542,46 @@ function readRealText(
     return read;
 }
 
+/**
+ * namesValue
+ *   The value of a name among a row's named values, without regard to case.
+ *
+ * @param {?Array<{name: ?string, value: bigint}>} _names  the named
+ *        values; none for a row with none.
+ * @param {number} _count  how many count.
+ * @param {string} _text   the name.
+ * @returns {?bigint} the value; null for none of the name.
+ */
 function namesValue(
     _names,
     _count,
     _text
 )
 {
+    // a row with no list counts none of it
+    const names = _names ?? [];
+
     for (let i = 0; i < _count; ++i)
     {
-        if (equal(_names[i].name, _text, true))
+        if (equal(names[i].name, _text, true))
         {
-            return _names[i].value;
+            return names[i].value;
         }
     }
 
     return null;
 }
 
-/*
-readChoice
-  A named value by its name, without regard to case, or a number: for a
-CHOICE, an INT, and each term of FLAGS.
-*/
+/**
+ * readChoice
+ *   A named value by its name, without regard to case, or a number: for a
+ * CHOICE, an INT, and each term of FLAGS.
+ *
+ * @param {OptionDecl} _decl  the row.
+ * @param {string}     _text  the text.
+ * @returns {{status: number, value: ?bigint}} OK and the value; POLICY_REJECTED
+ *          for an unbuilt name; INVALID_ARGUMENT for none.
+ */
 function readChoice(
     _decl,
     _text
@@ -3176,11 +3607,18 @@ function readChoice(
                             : { status: STATUS.INVALID_ARGUMENT, value: 0n };
 }
 
-/*
-readFlags
-  Flags from terms separated by ',', '|' or space. A text that starts with
-a sign edits the value in force: "+name" sets bits and "-name" clears them.
-*/
+/**
+ * readFlags
+ *   Flags from terms separated by ',', '|' or space. A text that starts with a
+ * sign edits the value in force: "+name" sets bits and "-name" clears them.
+ *
+ * @param {OptionEnv}  _env    the frame.
+ * @param {number}     _scope  the scope's id, or GLOBAL.
+ * @param {number}     _var    the variable's id.
+ * @param {OptionDecl} _decl   the row.
+ * @param {string}     _text   the text.
+ * @returns {{status: number, value: ?bigint}}
+ */
 function readFlags(
     _env,
     _scope,
@@ -3197,9 +3635,9 @@ function readFlags(
          ( (_text[0] === '+') ||
            (_text[0] === '-') ) )
     {
-        const now = getInner(_env, _scope, _var);
+        const now = getInner(_env, _scope, _var).got;
 
-        value = now.isOk ? now.got.integer : 0n;
+        value = (now !== undefined) ? now.integer : 0n;
     }
 
     while (at < size)
@@ -3234,12 +3672,14 @@ function readFlags(
             ++at;
         }
 
-        /** @type {{status: number, value: bigint}} */
+        /** @type {{status: number, value: ?bigint}} */
         const term = (at === start)
                          ? { status: STATUS.INVALID_ARGUMENT, value: 0n }
                          : readChoice(_decl, _text.slice(start, at));
 
-        if (term.status !== STATUS.OK)
+        // an OK term has its value
+        if ( (term.status !== STATUS.OK) ||
+             (term.value === null) )
         {
             return term;
         }
@@ -3252,10 +3692,17 @@ function readFlags(
     return { status: STATUS.OK, value: value };
 }
 
-/*
-assignValue
-  Binds a variable from a value's text, read as its kind reads one.
-*/
+/**
+ * assignValue
+ *   Binds a variable from a value's text, read as its kind reads one.
+ *
+ * @param {OptionEnv}  _env     the frame, the variable found in it.
+ * @param {number}     _scope   the scope's id, or GLOBAL.
+ * @param {number}     _var     the variable's id.
+ * @param {string}     _value   the value's text.
+ * @param {number}     _source  the source.
+ * @returns {OptionResult}
+ */
 function assignValue(
     _env,
     _scope,
@@ -3265,6 +3712,12 @@ function assignValue(
 )
 {
     const decl = declOf(_env, _var);
+
+    // the variable was found in the frame
+    if (decl === null)
+    {
+        return fail(STATUS.KEY_ABSENT);
+    }
 
     if (decl.kind === KIND.TEXT)
     {
@@ -3300,13 +3753,13 @@ function assignValue(
             // a number, or one of the row's named values by its name
             read_         = readChoice(decl, text_);
             status        = read_.status;
-            value.integer = read_.value;
+            value.integer = read_.value ?? 0n;
             break;
 
         default:
             read_         = readFlags(_env, _scope, _var, decl, text_);
             status        = read_.status;
-            value.integer = read_.value;
+            value.integer = read_.value ?? 0n;
             break;
     }
 
@@ -3318,6 +3771,16 @@ function assignValue(
                : fail(status);
 }
 
+/**
+ * assignFromInner
+ *   `assignFrom`, for a name and a value that are strings or null.
+ *
+ * @param {?OptionEnv} _env     the frame.
+ * @param {?string}    _name    the name as written.
+ * @param {?string}    _value   the value's text.
+ * @param {number}     _source  the source.
+ * @returns {OptionResult}
+ */
 function assignFromInner(
     _env,
     _name,
@@ -3335,15 +3798,17 @@ function assignFromInner(
 
     const found = resolveInner(_env, _name);
 
+    // a result has its error where it is not OK, and its id where it is
     if (!found.isOk)
     {
-        return fail(found.error);
+        return fail(found.error ?? STATUS.INVALID_ARGUMENT);
     }
 
-    return assignValue(_env, found.scope, found.value, _value, _source);
+    return assignValue(_env, found.scope, found.value ?? NONE, _value,
+                       _source);
 }
 
-// 6.1
+// 8.1
 /**
  * Binds a variable by its written name from a value's text, from a source.
  * The value is read as the variable's kind reads one: a BOOL from "true",
@@ -3392,11 +3857,16 @@ export function assign(
     return assignFrom(_env, _name, _value, SOURCE.PROGRAM);
 }
 
-/*
-escape
-  One escape of a quoted value, after its backslash: the unit it stands
-for, and how far it reached; null for one that is none.
-*/
+/**
+ * escape
+ *   One escape of a quoted value, after its backslash: the unit it stands for,
+ * and how far it reached; null for one that is none.
+ *
+ * @param {string} _text  the quoted value.
+ * @param {number} _at    where the escape starts, after its backslash.
+ * @returns {?{unit: string, at: number}} the unit, and the last character of
+ *          the escape; null for one that is none.
+ */
 function escape(
     _text,
     _at
@@ -3431,6 +3901,13 @@ function escape(
     return { unit: String.fromCharCode(Number(code) & 0xFF), at: _at + 2 };
 }
 
+/**
+ * unescape
+ *   The inside of a quoted value with its escapes undone.
+ *
+ * @param {string} _text  the inside.
+ * @returns {?string} the text; null where an escape is none.
+ */
 function unescape(
     _text
 )
@@ -3461,10 +3938,17 @@ function unescape(
     return out;
 }
 
-/*
-quoted
-  Binds a variable from the inside of a quoted value.
-*/
+/**
+ * quoted
+ *   Binds a variable from the inside of a quoted value.
+ *
+ * @param {OptionEnv}  _env     the frame.
+ * @param {number}     _scope   the scope's id, or GLOBAL.
+ * @param {number}     _var     the variable's id.
+ * @param {string}     _text    the inside.
+ * @param {number}     _source  the source.
+ * @returns {OptionResult}
+ */
 function quoted(
     _env,
     _scope,
@@ -3474,6 +3958,12 @@ function quoted(
 )
 {
     const decl = declOf(_env, _var);
+
+    // the variable was found in the frame
+    if (decl === null)
+    {
+        return fail(STATUS.KEY_ABSENT);
+    }
 
     if (decl.kind === KIND.TEXT)
     {
@@ -3504,11 +3994,20 @@ function quoted(
     return assignValue(_env, _scope, _var, plain, _source);
 }
 
-/*
-act
-  What a statement does once its name is read: binds a bare BOOL true,
-unsets, or assigns what follows '='.
-*/
+/**
+ * act
+ *   What a statement does once its name is read: binds a bare BOOL true,
+ * unsets, or assigns what follows '='.
+ *
+ * @param {OptionEnv} _env     the frame.
+ * @param {string}    _text    the statement, trimmed.
+ * @param {number}    _at      where its name ends.
+ * @param {boolean}   _unset   whether it began with '-'.
+ * @param {number}    _scope   the scope's id, or GLOBAL.
+ * @param {number}    _var     the variable's id.
+ * @param {number}    _source  the source.
+ * @returns {OptionResult}
+ */
 function act(
     _env,
     _text,
@@ -3529,7 +4028,7 @@ function act(
             return unsetFrom(_env, _scope, _var, _source);
         }
 
-        return (declOf(_env, _var).kind === KIND.BOOL)
+        return (declOf(_env, _var)?.kind === KIND.BOOL)
                    ? bind(_env, _scope, _var, _source, KIND.BOOL,
                           { integer: 1n })
                    : fail(STATUS.INVALID_ARGUMENT);
@@ -3570,6 +4069,16 @@ function act(
     return quoted(_env, _scope, _var, _text.slice(at + 1, close), _source);
 }
 
+/**
+ * statement
+ *   Carries out one statement: its name read and resolved, then what follows
+ * it.
+ *
+ * @param {OptionEnv} _env     the frame.
+ * @param {string}    _text    the statement.
+ * @param {number}    _source  the source.
+ * @returns {OptionResult}
+ */
 function statement(
     _env,
     _text,
@@ -3598,16 +4107,27 @@ function statement(
         ++at;
     }
 
+    // a result has its error where it is not OK, and its id where it is
     if (!found.isOk)
     {
-        return (at === unset_) ? fail(STATUS.INVALID_ARGUMENT)
-                               : fail(found.error);
+        return (at === unset_)
+                   ? fail(STATUS.INVALID_ARGUMENT)
+                   : fail(found.error ?? STATUS.INVALID_ARGUMENT);
     }
 
-    return act(_env, text_, at, (unset_ !== 0), found.scope, found.value,
-               _source);
+    return act(_env, text_, at, (unset_ !== 0), found.scope,
+               found.value ?? NONE, _source);
 }
 
+/**
+ * putNFromInner
+ *   `putNFrom`, for a statement that is a string or null.
+ *
+ * @param {?OptionEnv} _env        the frame.
+ * @param {?string}    _statement  the statement.
+ * @param {number}     _source     the source.
+ * @returns {OptionResult}
+ */
 function putNFromInner(
     _env,
     _statement,
@@ -3624,7 +4144,7 @@ function putNFromInner(
     return statement(_env, _statement, _source);
 }
 
-// 6.2
+// 8.2
 /**
  * Carries out one statement, from a source: "name = value" binds; "name"
  * binds a BOOL true; "-name" drops the source's binding. A value in double
@@ -3685,6 +4205,16 @@ export function putNFrom(
                          _source);
 }
 
+/**
+ * statementEndInner
+ *   `statementEnd`, for a script that is a string: where the statement that
+ * starts at an offset ends, at the ';' or the line break after it, outside
+ * quotes, or at the end.
+ *
+ * @param {string} _script  the script.
+ * @param {number} _at      where the statement starts.
+ * @returns {number} the offset of its end.
+ */
 function statementEndInner(
     _script,
     _at
@@ -3717,7 +4247,7 @@ function statementEndInner(
     return at;
 }
 
-// 6.3
+// 8.3
 /**
  * Where the statement that starts at an offset ends: at the next ';',
  * line break or '#' outside double quotes, or the script's end.
@@ -3737,6 +4267,15 @@ export function statementEnd(
     return (script !== null) ? statementEndInner(cstr(script), _at) : _at;
 }
 
+/**
+ * loadFromInner
+ *   `loadFrom`, for a script that is a string or null.
+ *
+ * @param {?OptionEnv} _env     the frame.
+ * @param {?string}    _script  the script.
+ * @param {number}     _source  the source.
+ * @returns {OptionResult & {errorOffset?: number}}
+ */
 function loadFromInner(
     _env,
     _script,
@@ -3833,24 +4372,28 @@ export function load(
     return loadFrom(_env, _script, SOURCE.PROGRAM);
 }
 
-/*
-lookupOf
-  An environment as a function from a variable's name to its value, or
-null: from a Map, an object or a function of strings.
-*/
+/**
+ * lookupOf
+ *   An environment as a function from a variable's name to its value, or null:
+ * from a Map, an object or a function of strings.
+ *
+ * @param {*} _environment  the environment.
+ * @returns {function(string): ?string}
+ */
 function lookupOf(
     _environment
 )
 {
     const ask = (_environment instanceof Map)
-                    ? (_key) => _environment.get(_key)
+                    ? (/** @type {string} */ _key) => _environment.get(_key)
               : (typeof _environment === 'function')
                     ? _environment
               : ( (_environment !== null) &&
                   (typeof _environment === 'object') )
-                    ? (_key) => (Object.hasOwn(_environment, _key)
-                                     ? _environment[_key]
-                                     : undefined)
+                    ? (/** @type {string} */ _key) =>
+                          (Object.hasOwn(_environment, _key)
+                               ? _environment[_key]
+                               : undefined)
               : () => undefined;
 
     return (_key) =>
@@ -3861,11 +4404,17 @@ function lookupOf(
     };
 }
 
-/*
-getenv
-  The environment's value for a prefix and a row's name in upper case; null
-for no name, a name too long, or no such variable.
-*/
+/**
+ * getenv
+ *   The environment's value for a prefix and a row's name in upper case; null
+ * for no name, a name too long, or no such variable.
+ *
+ * @param {function(string): ?string} _lookup  the environment, as `lookupOf`
+ *        makes one.
+ * @param {string}                    _prefix  the prefix.
+ * @param {?string}                   _name    the row's name.
+ * @returns {?string}
+ */
 function getenv(
     _lookup,
     _prefix,
@@ -3891,6 +4440,16 @@ function getenv(
     return _lookup(key);
 }
 
+/**
+ * importInner
+ *   `import`, for a prefix as the reference holds it, and a lookup.
+ *
+ * @param {?OptionEnv}                _env     the frame.
+ * @param {string}                    _prefix  what each name follows.
+ * @param {function(string): ?string} _lookup  the environment, as `lookupOf`
+ *        makes one.
+ * @returns {OptionResult} how many were bound; or the first refusal.
+ */
 function importInner(
     _env,
     _prefix,
@@ -3911,6 +4470,13 @@ function importInner(
     {
         const id   = varId(_env, k);
         const decl = declOf(_env, id);
+
+        // every place the frame counts has its row
+        if (decl === null)
+        {
+            continue;
+        }
+
         const seen = findInner(_env, decl.name);
         let   value = getenv(_lookup, _prefix, decl.name);
 
@@ -3945,7 +4511,7 @@ function importInner(
     return failure.isOk ? ok(count) : failure;
 }
 
-// 6.4
+// 8.4
 /**
  * Binds, as the environment, every variable a frame sees that the
  * environment names: PREFIX and the row's name in upper case, or its
@@ -3978,7 +4544,7 @@ export { import_ as import };
 
 
 //==============================================================================
-// 7.  WRITING TEXT
+// 9.  WRITING TEXT
 //==============================================================================
 
 /**
@@ -4025,13 +4591,25 @@ function widest(
     return best;
 }
 
+/**
+ * formatFlags
+ *   FLAGS as text: the names of the bits set, joined by '|', each the name that
+ * covers the most bits still to be written; then any bits no name covers, in
+ * hexadecimal. Nothing set is the name for 0, or "0".
+ *
+ * @param {OptionDecl} _decl   the row.
+ * @param {bigint}     _value  the flags.
+ * @returns {string}
+ */
 function formatFlags(
     _decl,
     _value
 )
 {
-    let out  = '';
-    let left = _value;
+    // a row with no names has none to write
+    const names = _decl.names ?? [];
+    let   out   = '';
+    let   left  = _value;
 
     for (let first = true; left !== 0n; first = false)
     {
@@ -4048,8 +4626,8 @@ function formatFlags(
             return out + '0x' + BigInt.asUintN(64, left).toString(16);
         }
 
-        out  += _decl.names[best].name;
-        left &= ~_decl.names[best].value;
+        out  += names[best].name;
+        left &= ~names[best].value;
     }
 
     // nothing set: a name for 0, or 0
@@ -4059,9 +4637,9 @@ function formatFlags(
 
         for (let i = 0; i < _decl.name_count; ++i)
         {
-            if (_decl.names[i].value === 0n)
+            if (names[i].value === 0n)
             {
-                zero = _decl.names[i].name;
+                zero = names[i].name ?? zero;
 
                 break;
             }
@@ -4073,6 +4651,14 @@ function formatFlags(
     return out;
 }
 
+/**
+ * formatValue
+ *   A value as text, as `format` writes it.
+ *
+ * @param {OptionDecl}       _decl   the row.
+ * @param {OptionValueInner} _value  the value.
+ * @returns {string}
+ */
 function formatValue(
     _decl,
     _value
@@ -4100,17 +4686,35 @@ function formatValue(
     }
 }
 
+/**
+ * formatInner
+ *   `format`, without the room it is written into.
+ *
+ * @param {?OptionEnv} _env    the frame.
+ * @param {number}     _scope  the scope's id, or GLOBAL.
+ * @param {number}     _var    the variable's id.
+ * @returns {?string} the text; null for a variable the frame does not see.
+ */
 function formatInner(
     _env,
     _scope,
     _var
 )
 {
-    const result = getInner(_env, _scope, _var);
+    const { got, decl } = getInner(_env, _scope, _var);
 
-    return result.isOk ? formatValue(result.decl, result.got) : null;
+    return ( (got !== undefined) &&
+             (decl !== undefined) ) ? formatValue(decl, got) : null;
 }
 
+/**
+ * needsQuotes
+ *   Whether a TEXT must be quoted to load back as itself: empty, with space at
+ * either end, or holding what a statement reads otherwise.
+ *
+ * @param {string} _text  the text.
+ * @returns {boolean}
+ */
 function needsQuotes(
     _text
 )
@@ -4140,6 +4744,13 @@ function needsQuotes(
 
 const HEX = '0123456789ABCDEF';
 
+/**
+ * appendQuoted
+ *   A text in quotes, with what a quoted value cannot hold escaped.
+ *
+ * @param {string} _text  the text.
+ * @returns {string}
+ */
 function appendQuoted(
     _text
 )
@@ -4168,26 +4779,35 @@ function appendQuoted(
     return out + '"';
 }
 
+/**
+ * formatQuotedInner
+ *   `formatQuoted`, without the room it is written into.
+ *
+ * @param {?OptionEnv} _env    the frame.
+ * @param {number}     _scope  the scope's id, or GLOBAL.
+ * @param {number}     _var    the variable's id.
+ * @returns {?string}
+ */
 function formatQuotedInner(
     _env,
     _scope,
     _var
 )
 {
-    const result = getInner(_env, _scope, _var);
+    const got = getInner(_env, _scope, _var).got;
 
-    if ( !result.isOk                     ||
-         (result.got.kind !== KIND.TEXT)  ||
-         (result.got.text === null)       ||
-         !needsQuotes(result.got.text) )
+    if ( (got === undefined)        ||
+         (got.kind !== KIND.TEXT)   ||
+         (got.text === null)        ||
+         !needsQuotes(got.text) )
     {
         return formatInner(_env, _scope, _var);
     }
 
-    return appendQuoted(result.got.text);
+    return appendQuoted(got.text);
 }
 
-// 7.1
+// 9.1
 /**
  * The value in force as text: "true" or "false"; a number; a REAL as
  * "%.17g" writes it; a TEXT as it is, and a null one as nothing; a CHOICE
@@ -4237,10 +4857,10 @@ export function formatQuoted(
 
 
 //==============================================================================
-// 8.  READING ON A HOT PATH
+// 10. READING ON A HOT PATH
 //==============================================================================
 
-// 8.1
+// 10.1
 /**
  * The value in force, read again only when the frame's generation has
  * moved since the cache was filled.
@@ -4272,25 +4892,24 @@ export function cached(
     if ( !_cache.filled ||
          (_cache.generation !== now) )
     {
-        const result = get(_env, _scope, _var);
-
-        _cache.value      = result.isOk
-                                ? result.got
-                                : { text: null, integer: 0, real: 0, kind: 0,
-                                    bound: false, source: 0, depth: 0 };
+        // an OK result has its value
+        _cache.value      = get(_env, _scope, _var).got ??
+                            { text: null, integer: 0, real: 0, kind: 0,
+                              bound: false, source: 0, depth: 0 };
         _cache.generation = now;
         _cache.filled     = true;
     }
 
-    return _cache.value;
+    // a cache filled has its value
+    return _cache.value ?? null;
 }
 
 
 //==============================================================================
-// 9.  INNER
+// 11. INNER
 //==============================================================================
 
-// 9.1
+// 11.1
 /**
  * The machine without its checks of what a caller hands in: each takes
  * strings as they are, and integers as BigInt. For the modules that stand
@@ -4299,8 +4918,10 @@ export function cached(
  */
 export const inner = Object.freeze({
     cstr:          cstr,
-    decl:          (_env, _var) => (isEnv(_env) ? declOf(_env, _var)
-                                                : null),
+    decl:          (/** @type {?OptionEnv} */ _env,
+                    /** @type {number} */ _var) => (isEnv(_env)
+                                                       ? declOf(_env, _var)
+                                                       : null),
     isIdentifier: isIdentifier,
     find:         findInner,
     findScope:    findScopeInner,

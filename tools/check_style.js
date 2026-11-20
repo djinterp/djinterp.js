@@ -200,7 +200,7 @@ for (const path of filesUnder(ROOT))
         {
             const named   = lines[index + 1] ?? '';
             const divider = /^\/\/=+$/.test(lines[index])           &&
-                            /^\/\/ (\d+\.  )?[A-Z]/.test(named) &&
+                            /^\/\/ (\d+\.\s+)?[A-Z]/.test(named) &&
                             (lines[index - 1] !== '//' + '='.repeat(78));
 
             if ( divider &&
