@@ -16,6 +16,7 @@
 
 // the modules held to the strict mode
 export const STRICT = Object.freeze([
+    'djinterp.js',
     'event/event.js',
     'event/event_common.js',
     'event/event_dispatcher_common.js',

@@ -65,13 +65,13 @@ export function settingsFrame(_name: string, _rows: Array<optionEnv.OptionRow>, 
  * and the set of djins itself. `openNow` is this over a program it
  * makes.
  *
- * @param {object}  _program  the program.
+ * @param {DjinterpProgram} _program  the program.
  * @param {object}  [_options]
  * @param {?string} [_options.query=null]  a URL's query, bound as the
  *        command line of every line.
  * @returns {DjinterpSession}
  */
-export function openProgram(_program: object, _options?: {
+export function openProgram(_program: djinterpCommands.DjinterpProgram, _options?: {
     query?: string | null;
 }): DjinterpSession;
 /**
@@ -192,8 +192,8 @@ export type DjinterpSession = {
     off: (arg0: number) => boolean;
 };
 import * as optionEnv from './option/option_env.js';
+import * as djinterpCommands from './tools/djinterp/djinterp_commands.js';
 import * as djin from './modules/interp/djin.js';
 import * as event from './event/event.js';
 import * as optionEnvRegistry from './option/option_env_registry.js';
-import * as djinterpCommands from './tools/djinterp/djinterp_commands.js';
 export { djin, event, optionEnv, optionEnvRegistry };

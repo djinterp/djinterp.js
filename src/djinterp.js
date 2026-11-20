@@ -52,7 +52,7 @@
 * path:      /src/djinterp.js
 * link(s):   TBA
 * author(s): Samuel 'teer' Neal-Blim                         created: 2026.11.15
-*                                                            revised: 2026.11.17
+*                                                            revised: 2026.11.18
 *******************************************************************************/
 
 /*
@@ -273,7 +273,17 @@ export function settingsFrame(
 )
 {
     const frame = optionEnv.init();
-    const must  = (_result, _what) =>
+
+    /**
+     * must
+     *   Throws where a step was refused: the page's own mistake.
+     *
+     * @param {import('./option/option_common.js').OptionResult} _result
+     *        what the step gave.
+     * @param {string} _what  what it was, for the message.
+     * @returns {void}
+     */
+    const must = (_result, _what) =>
     {
         if (!_result.isOk)
         {
@@ -303,12 +313,15 @@ export function settingsFrame(
 // 4.  THE PROGRAM
 //==============================================================================
 
-/*
-takeQuery
-  Binds a URL's query as the command line: "name=value" as --set, a bare
-"name" as a bool made true and "no-name" as one made false. What is refused
-is said as a warning.
-*/
+/**
+ * takeQuery
+ *   Binds a URL's query as the command line: "name=value" as --set, a bare
+ * "name" as a bool made true and "no-name" as one made false.
+ *
+ * @param {DjinterpProgram} _program  the program.
+ * @param {string}          _query    the query, with its '?' or without.
+ * @returns {string} what was refused, said as a warning a line.
+ */
 function takeQuery(
     _program,
     _query
@@ -407,7 +420,7 @@ const RUN_SOURCES = [optionEnv.SOURCE.ENVIRONMENT, optionEnv.SOURCE.FILE,
  * and the set of djins itself. `openNow` is this over a program it
  * makes.
  *
- * @param {object}  _program  the program.
+ * @param {DjinterpProgram} _program  the program.
  * @param {object}  [_options]
  * @param {?string} [_options.query=null]  a URL's query, bound as the
  *        command line of every line.
@@ -442,6 +455,12 @@ export function openProgram(
 
         for (const frame of frames)
         {
+            // a registry has every frame it counts
+            if (frame === null)
+            {
+                continue;
+            }
+
             for (const source of RUN_SOURCES)
             {
                 optionEnv.unsetSource(frame, source);
@@ -593,8 +612,21 @@ export function openNow(
 )
 {
     const registry = optionEnvRegistry.init('djinterp').registry;
-    const root     = optionEnvRegistry.frame(registry);
-    const must     = (_ok, _what, _why) =>
+
+    // a registry just made has its root
+    const root = /** @type {OptionEnv} */
+                 (optionEnvRegistry.frame(registry));
+
+    /**
+     * must
+     *   Throws where a step was refused: the page's own mistake.
+     *
+     * @param {boolean} _ok    whether it was taken.
+     * @param {string}  _what  what it was, for the message.
+     * @param {string}  _why   the status it was refused with.
+     * @returns {void}
+     */
+    const must = (_ok, _what, _why) =>
     {
         if (!_ok)
         {
@@ -611,9 +643,11 @@ export function openNow(
              statusName(resultStatus(declared)));
     }
 
-    if ((_options.scopes ?? []).length !== 0)
+    const scopes = _options.scopes ?? [];
+
+    if (scopes.length !== 0)
     {
-        const named = optionEnv.setScopes(root, _options.scopes);
+        const named = optionEnv.setScopes(root, scopes);
 
         must(named.isOk, 'the scopes', statusName(resultStatus(named)));
     }
