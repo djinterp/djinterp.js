@@ -84,6 +84,62 @@ function mangle(
     }
 }
 
+// what the reference's parser knows by name and the port does not run:
+// never given as they are, since the port's answer to them is not the
+// reference's (HANDOFF.md, "what is not ported")
+const NOT_RUN = ['help', 'completion', '--quiet', '--verbose', '--color',
+                 '--help', '--version'];
+const KNOWN   = ['list', 'describe', 'get', 'set', '--show-origin',
+                 ...NOT_RUN];
+
+/*
+stray
+  A word that is nearly a name the parser knows, for its "did you mean":
+a name with a character dropped, added, doubled or swapped with its
+neighbour, once or twice. Never a name itself, never `--`, and never one
+dash before letters, which the reference reads as short options.
+*/
+function stray()
+{
+    for (;;)
+    {
+        let word = pick(KNOWN);
+
+        for (let i = next(2) + 1; i > 0; --i)
+        {
+            const at = next(word.length);
+
+            switch (next(4))
+            {
+                case 0:  word = word.slice(0, at) + word.slice(at + 1);
+                         break;
+                case 1:  word = word.slice(0, at) +
+                                pick(['x', '_', 'e', 't', 'S']) +
+                                word.slice(at);
+                         break;
+                case 2:  word = word.slice(0, at) + word[at] +
+                                word.slice(at);
+                         break;
+                default: word = (at + 1 < word.length)
+                                    ? (word.slice(0, at) + word[at + 1] +
+                                       word[at] + word.slice(at + 2))
+                                    : word;
+                         break;
+            }
+        }
+
+        if ( !KNOWN.includes(word)        &&
+             (word.length !== 0)          &&
+             (word !== '--')              &&
+             !word.startsWith('--color=') &&
+             ( !word.startsWith('-') ||
+               word.startsWith('--') ) )
+        {
+            return word;
+        }
+    }
+}
+
 /*
 full
   A setting's full name, or something near one.
@@ -181,6 +237,21 @@ function command()
     for (let i = (next(3) === 0) ? (next(2) + 1) : 0; i > 0; --i)
     {
         words.splice(next(words.length + 1), 0, option());
+    }
+
+    // words that are nearly names the parser knows, wherever they stand;
+    // now and then one in the command's own place
+    if (next(6) === 0)
+    {
+        if (next(4) === 0)
+        {
+            words[0] = stray();
+        }
+
+        for (let i = next(3); i > 0; --i)
+        {
+            words.splice(next(words.length + 1), 0, stray());
+        }
     }
 
     return words.join(' ');

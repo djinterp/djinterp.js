@@ -344,3 +344,289 @@ err: Try 'djinterp get --help' for more information.
 > get -
 exit 2
 err: djinterp: error: no setting is named '-'
+> # a word or an option that is nearly a name the parser knows
+> gte
+exit 2
+err: djinterp: error: 'gte' is not a command
+err: djinterp: note: did you mean 'get'?
+err: Try 'djinterp --help' for more information.
+> lst
+exit 2
+err: djinterp: error: 'lst' is not a command
+err: djinterp: note: did you mean 'list'?
+err: Try 'djinterp --help' for more information.
+> List
+exit 2
+err: djinterp: error: 'List' is not a command
+err: djinterp: note: did you mean 'list'?
+err: Try 'djinterp --help' for more information.
+> LIST
+exit 2
+err: djinterp: error: 'LIST' is not a command
+err: Try 'djinterp --help' for more information.
+> ilst
+exit 2
+err: djinterp: error: 'ilst' is not a command
+err: djinterp: note: did you mean 'list'?
+err: Try 'djinterp --help' for more information.
+> hepl
+exit 2
+err: djinterp: error: 'hepl' is not a command
+err: djinterp: note: did you mean 'help'?
+err: Try 'djinterp --help' for more information.
+> completio
+exit 2
+err: djinterp: error: 'completio' is not a command
+err: djinterp: note: did you mean 'completion'?
+err: Try 'djinterp --help' for more information.
+> complete
+exit 2
+err: djinterp: error: 'complete' is not a command
+err: Try 'djinterp --help' for more information.
+> desribe
+exit 2
+err: djinterp: error: 'desribe' is not a command
+err: djinterp: note: did you mean 'describe'?
+err: Try 'djinterp --help' for more information.
+> x
+exit 2
+err: djinterp: error: 'x' is not a command
+err: Try 'djinterp --help' for more information.
+> list widt
+exit 2
+err: djinterp: error: list: the following argument was not expected: widt
+err: djinterp: note: did you mean 'list'?
+err: Try 'djinterp list --help' for more information.
+> list gte
+exit 2
+err: djinterp: error: list: the following argument was not expected: gte
+err: djinterp: note: did you mean 'get'?
+err: Try 'djinterp list --help' for more information.
+> list st
+exit 2
+err: djinterp: error: list: the following argument was not expected: st
+err: djinterp: note: did you mean 'set'?
+err: Try 'djinterp list --help' for more information.
+> list te
+exit 2
+err: djinterp: error: list: the following argument was not expected: te
+err: Try 'djinterp list --help' for more information.
+> list et
+exit 2
+err: djinterp: error: list: the following argument was not expected: et
+err: Try 'djinterp list --help' for more information.
+> list gt
+exit 2
+err: djinterp: error: list: the following argument was not expected: gt
+err: djinterp: note: did you mean 'get'?
+err: Try 'djinterp list --help' for more information.
+> list describ lst
+exit 2
+err: djinterp: error: list: the following arguments were not expected: describ lst
+err: djinterp: note: did you mean 'describe' for 'describ'?
+err: djinterp: note: did you mean 'list' for 'lst'?
+err: Try 'djinterp list --help' for more information.
+> widt list
+exit 2
+err: djinterp: error: list: the following argument was not expected: widt
+err: djinterp: note: did you mean 'list'?
+err: Try 'djinterp list --help' for more information.
+> x get y
+exit 2
+err: djinterp: error: get: the following argument was not expected: x
+err: Try 'djinterp get --help' for more information.
+> x y z
+exit 2
+err: djinterp: error: 'x' is not a command
+err: Try 'djinterp --help' for more information.
+> describe printer gett
+exit 2
+err: djinterp: error: describe: the following argument was not expected: gett
+err: djinterp: note: did you mean 'get'?
+err: Try 'djinterp describe --help' for more information.
+> get sett
+exit 2
+err: djinterp: error: no setting is named 'sett'
+> set a=1 lis
+exit 2
+err: djinterp: error: no setting is named 'a'
+err: djinterp: error: set: 'lis' is not NAME=VALUE
+err: Try 'djinterp set --help' for more information.
+> get --shwo-origin
+exit 2
+err: djinterp: error: get: the following argument was not expected: --shwo-origin
+err: djinterp: note: did you mean '--show-origin'?
+err: Try 'djinterp get --help' for more information.
+> get --show-origni=x width
+exit 2
+err: djinterp: error: get: the following argument was not expected: --show-origni=x
+err: djinterp: note: did you mean '--show-origin'?
+err: Try 'djinterp get --help' for more information.
+> get --show_origin
+exit 2
+err: djinterp: error: get: the following argument was not expected: --show_origin
+err: djinterp: note: did you mean '--show-origin'?
+err: Try 'djinterp get --help' for more information.
+> get --Show-Origin
+exit 2
+err: djinterp: error: get: the following argument was not expected: --Show-Origin
+err: djinterp: note: did you mean '--show-origin'?
+err: Try 'djinterp get --help' for more information.
+> get --SHOW-ORIGIN
+exit 2
+err: djinterp: error: get: the following argument was not expected: --SHOW-ORIGIN
+err: Try 'djinterp get --help' for more information.
+> get -show-origin
+exit 2
+err: djinterp: error: get: the following argument was not expected: -show-origin
+err: djinterp: note: did you mean '--show-origin'?
+err: Try 'djinterp get --help' for more information.
+> get --show-origin --show-origi
+exit 2
+err: djinterp: error: get: the following argument was not expected: --show-origi
+err: djinterp: note: did you mean '--show-origin'?
+err: Try 'djinterp get --help' for more information.
+> get --hlep
+exit 2
+err: djinterp: error: get: the following argument was not expected: --hlep
+err: djinterp: note: did you mean '--help'?
+err: Try 'djinterp get --help' for more information.
+> get --versoin
+exit 2
+err: djinterp: error: get: the following argument was not expected: --versoin
+err: djinterp: note: did you mean '--version'?
+err: Try 'djinterp get --help' for more information.
+> list --quite
+exit 2
+err: djinterp: error: list: the following argument was not expected: --quite
+err: djinterp: note: did you mean '--quiet'?
+err: Try 'djinterp list --help' for more information.
+> --quite list
+exit 2
+err: djinterp: error: list: the following argument was not expected: --quite
+err: djinterp: note: did you mean '--quiet'?
+err: Try 'djinterp list --help' for more information.
+> --quite
+exit 2
+err: djinterp: error: the following argument was not expected: --quite
+err: djinterp: note: did you mean '--quiet'?
+err: Try 'djinterp --help' for more information.
+> --colr
+exit 2
+err: djinterp: error: the following argument was not expected: --colr
+err: djinterp: note: did you mean '--color'?
+err: Try 'djinterp --help' for more information.
+> --quite lst
+exit 2
+err: djinterp: error: the following arguments were not expected: --quite lst
+err: djinterp: note: did you mean '--quiet' for '--quite'?
+err: djinterp: note: did you mean 'list' for 'lst'?
+err: Try 'djinterp --help' for more information.
+> lst --quite
+exit 2
+err: djinterp: error: 'lst' is not a command
+err: djinterp: note: did you mean 'list' for 'lst'?
+err: djinterp: note: did you mean '--quiet' for '--quite'?
+err: Try 'djinterp --help' for more information.
+> list lst --quite
+exit 2
+err: djinterp: error: list: the following arguments were not expected: lst --quite
+err: djinterp: note: did you mean 'list' for 'lst'?
+err: djinterp: note: did you mean '--quiet' for '--quite'?
+err: Try 'djinterp list --help' for more information.
+> describe printer --verbos
+exit 2
+err: djinterp: error: describe: the following argument was not expected: --verbos
+err: djinterp: note: did you mean '--verbose'?
+err: Try 'djinterp describe --help' for more information.
+> set --quit
+exit 2
+err: djinterp: error: set: SETTING is required
+err: Try 'djinterp set --help' for more information.
+> get --st width=1
+exit 2
+err: djinterp: error: get: the following argument was not expected: --st
+err: Try 'djinterp get --help' for more information.
+> list --lst
+exit 2
+err: djinterp: error: list: the following argument was not expected: --lst
+err: Try 'djinterp list --help' for more information.
+> list -x
+exit 2
+err: djinterp: error: list: the following argument was not expected: -x
+err: Try 'djinterp list --help' for more information.
+> list -5
+exit 2
+err: djinterp: error: list: the following argument was not expected: -5
+err: Try 'djinterp list --help' for more information.
+> list ---color
+exit 2
+err: djinterp: error: list: the following argument was not expected: ---color
+err: Try 'djinterp list --help' for more information.
+> get ---color
+exit 2
+err: djinterp: error: no setting is named '---color'
+> ---color list
+exit 2
+err: djinterp: error: list: the following argument was not expected: ---color
+err: Try 'djinterp list --help' for more information.
+> list --=x
+exit 2
+err: djinterp: error: list: the following argument was not expected: --=x
+err: Try 'djinterp list --help' for more information.
+> list ""
+exit 2
+err: djinterp: error: list: the following argument was not expected: 
+err: Try 'djinterp list --help' for more information.
+> list "" lst
+exit 2
+err: djinterp: error: list: the following arguments were not expected:  lst
+err: djinterp: note: did you mean 'list' for 'lst'?
+err: Try 'djinterp list --help' for more information.
+> list 'ends with a space '
+exit 2
+err: djinterp: error: list: the following argument was not expected: ends with a space
+err: Try 'djinterp list --help' for more information.
+> 'ends with a space ' other
+exit 2
+err: djinterp: error: 'ends' is not a command
+err: Try 'djinterp --help' for more information.
+> 'two words'
+exit 2
+err: djinterp: error: 'two words' is not a command
+err: Try 'djinterp --help' for more information.
+> 'two words' --x
+exit 2
+err: djinterp: error: 'two' is not a command
+err: Try 'djinterp --help' for more information.
+> "" lst
+exit 2
+err: djinterp: error: '' is not a command
+err: djinterp: note: did you mean 'list' for 'lst'?
+err: Try 'djinterp --help' for more information.
+> ""
+exit 2
+err: djinterp: error: the following argument was not expected: 
+err: Try 'djinterp --help' for more information.
+> "" ""
+exit 2
+err: djinterp: error: the following arguments were not expected: 
+err: Try 'djinterp --help' for more information.
+> ' lst'
+exit 2
+err: djinterp: error: ' lst' is not a command
+err: djinterp: note: did you mean 'list'?
+err: Try 'djinterp --help' for more information.
+> ' ' lst
+exit 2
+err: djinterp: error: '' is not a command
+err: djinterp: note: did you mean 'list' for 'lst'?
+err: Try 'djinterp --help' for more information.
+> '-x y' z
+exit 2
+err: djinterp: error: the following arguments were not expected: -x y z
+err: Try 'djinterp --help' for more information.
+> x '-y z'
+exit 2
+err: djinterp: error: 'x' is not a command
+err: Try 'djinterp --help' for more information.

@@ -1,0 +1,134 @@
+<!doctype html>
+<!--
+  djinterp.js [examples]                                         console.html
+
+    A page with djinterp in it and no server behind it: a console over the
+  program's own commands (list, describe, get, set), two settings of the
+  page's and one djin with two of its own.
+    Serve the repository's directory with any static file server and open
+  /examples/console.html. Settings that `set` keeps are in the page's
+  localStorage, under "djinterp/settings", and are read as the settings
+  file when the page is opened again. The URL's query is bound as the
+  command line is: /examples/console.html?printer.style=json&no-color
+    The page's own, and no part of djinterp: lines after '#' in the URL,
+  separated by '|', are run as the page opens:
+  /examples/console.html#list|get --show-origin
+
+  path:      /examples/console.html
+  author(s): Samuel 'teer' Neal-Blim                       created: 2026.11.15
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>djinterp.js: a console</title>
+<style>
+  body  { font: 14px/1.4 ui-monospace, monospace; margin: 2rem; }
+  pre   { white-space: pre-wrap; margin: 0 0 1rem; }
+  .err  { color: #a40000; }
+  .line { color: #555; }
+  input { font: inherit; width: 100%; box-sizing: border-box; }
+</style>
+</head>
+<body>
+<pre id="out"></pre>
+<input id="line" autofocus
+       placeholder="list | describe DJIN | get [SETTING...] | set S=V...">
+<p id="heard"></p>
+<script type="module">
+import * as djinterp from '../src/djinterp.js';
+
+const { option_env } = djinterp;
+
+const out   = document.getElementById('out');
+const line  = document.getElementById('line');
+const heard = document.getElementById('heard');
+
+/*
+say
+  Adds text to the page, as one of its kinds.
+*/
+function say(
+    _kind,
+    _text
+)
+{
+    const span = document.createElement('span');
+
+    span.className   = _kind;
+    span.textContent = _text;
+    out.append(span);
+
+    return;
+}
+
+const dj = await djinterp.open({
+    settings: [
+        option_env.row_bool('color', true, 'coloured output'),
+        option_env.row_text('title', null, 'the page\'s title')
+    ],
+    djins: [{
+        name:     'printer',
+        version:  '0.9.0',
+        summary:  'prints descriptions',
+        commands: [{ name: 'run', summary: 'print a description' }],
+        settings: djinterp.settings_frame('printer', [
+            option_env.row_choice('style',
+                                  [{ name: 'plain', value: 0 },
+                                   { name: 'json', value: 1 }],
+                                  0, 'how it is written'),
+            option_env.row_int_range('key_width', 30, 1, 120,
+                                     'the width of a key')
+        ])
+    }],
+    file:  djinterp.storage_file(localStorage),
+    query: location.search
+});
+
+say('err', dj.warnings);
+
+dj.on('set', (_event) =>
+{
+    heard.textContent = 'set: ' + _event.names.join(', ');
+});
+
+/*
+run
+  Gives the program a line, and shows what it answered.
+*/
+async function run(
+    _line
+)
+{
+    const reply = await dj.run(_line);
+
+    say('line', '> ' + _line + '\n');
+    say('out', reply.out);
+    say('err', reply.err);
+
+    return;
+}
+
+line.addEventListener('keydown', async (_event) =>
+{
+    if ( (_event.key === 'Enter') &&
+         (line.value.trim().length !== 0) )
+    {
+        const typed = line.value;
+
+        line.value = '';
+        await run(typed);
+    }
+});
+
+for (const typed of decodeURIComponent(location.hash.slice(1)).split('|'))
+{
+    if (typed.trim().length !== 0)
+    {
+        await run(typed);
+    }
+}
+
+document.body.dataset.ready = 'yes';
+</script>
+</body>
+</html>

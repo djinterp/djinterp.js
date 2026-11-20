@@ -22,7 +22,7 @@ import { dirname, join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ROOT    = join(dirname(fileURLToPath(import.meta.url)), '..');
-const CHECKED = /\.(js|c|h|sh|md|json)$/;
+const CHECKED = /\.(js|c|h|sh|md|json|html)$/;
 const SKIPPED = new Set(['.git', 'node_modules', 'generated', 'transcripts']);
 
 // kept as they came: the style's own text, and the starting package's driver

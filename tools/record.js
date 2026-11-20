@@ -43,7 +43,7 @@ import { spawnSync } from 'node:child_process';
 import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync,
          writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const HERE        = dirname(fileURLToPath(import.meta.url));
 const TRANSCRIPTS = join(HERE, '..', 'tests', 'transcripts');
@@ -98,6 +98,33 @@ function write_transcript(
     return;
 }
 
+/**
+ * What BUILD/session answers a whole input with, in an empty environment.
+ *
+ * @param {string} _build  where the tools were built.
+ * @param {Buffer} _input  the session's lines.
+ * @returns {Buffer} its output.
+ * @throws {Error} where the program did not exit with 0.
+ */
+export function session_bytes(
+    _build,
+    _input
+)
+{
+    const run = spawnSync(join(_build, 'session'), [], {
+        input:     _input,
+        env:       {},
+        maxBuffer: 1 << 28
+    });
+
+    if (run.status !== 0)
+    {
+        throw new Error('tools/session exited ' + run.status);
+    }
+
+    return run.stdout;
+}
+
 /*
 record_session
   A session transcript: the whole input to BUILD/session.
@@ -108,17 +135,10 @@ function record_session(
     _name
 )
 {
-    const run = spawnSync(join(_build, 'session'), [], {
-        input: readFileSync(join(TRANSCRIPTS, _name + '.in')),
-        env:   {}
-    });
+    const bytes = session_bytes(_build, readFileSync(join(TRANSCRIPTS,
+                                                          _name + '.in')));
 
-    if (run.status !== 0)
-    {
-        throw new Error(_name + ': tools/session exited ' + run.status);
-    }
-
-    write_transcript(_name, run.stdout, 'tools/session.c',
+    write_transcript(_name, bytes, 'tools/session.c',
                      '(none; the input is its standard input)', _commit,
                      ['environment: empty']);
 
@@ -152,18 +172,37 @@ function stream_lines(
     return out;
 }
 
-/*
-record_program
-  A program transcript: BUILD/djinterp_fixture, a process a command line.
-*/
-function record_program(
-    _build,
-    _commit,
+/**
+ * Where a program transcript's home is, and its settings file in it.
+ *
+ * @param {string} _name  the transcript's name.
+ * @returns {{home: string, settings: string}}
+ */
+export function program_home(
     _name
 )
 {
-    const home     = join(HOME_ROOT, _name);
-    const settings = join(home, 'djinterp', 'settings');
+    const home = join(HOME_ROOT, _name);
+
+    return { home: home, settings: join(home, 'djinterp', 'settings') };
+}
+
+/**
+ * What BUILD/djinterp_fixture answers a program transcript's input with:
+ * a process a command line, in a home of the transcript's own, made anew.
+ *
+ * @param {string} _build  where the tools were built.
+ * @param {string} _name   the transcript's name: its home's.
+ * @param {string} _input  the input, a byte a code unit.
+ * @returns {Buffer} the transcript's `.out`.
+ */
+export function program_bytes(
+    _build,
+    _name,
+    _input
+)
+{
+    const { home, settings } = program_home(_name);
     const env      = { HOME: home, XDG_CONFIG_HOME: home };
     const out      = [];
     const unescape = (_text) => _text.replace(/\\([nt\\])/g, (_m, _c) =>
@@ -172,8 +211,7 @@ function record_program(
     rmSync(home, { recursive: true, force: true });
     mkdirSync(home, { recursive: true });
 
-    const lines = readFileSync(join(TRANSCRIPTS, _name + '.in'), 'latin1')
-                      .split('\n');
+    const lines = _input.split('\n');
 
     if (lines[lines.length - 1] === '')
     {
@@ -221,8 +259,25 @@ function record_program(
         }
     }
 
-    write_transcript(_name, Buffer.concat(out),
-                     'tools/djinterp_fixture_main.c',
+    return Buffer.concat(out);
+}
+
+/*
+record_program
+  A program transcript: BUILD/djinterp_fixture, a process a command line.
+*/
+function record_program(
+    _build,
+    _commit,
+    _name
+)
+{
+    const { home, settings } = program_home(_name);
+    const bytes = program_bytes(_build, _name,
+                                readFileSync(join(TRANSCRIPTS, _name + '.in'),
+                                             'latin1'));
+
+    write_transcript(_name, bytes, 'tools/djinterp_fixture_main.c',
                      '--line LINE, a process a command line', _commit,
                      ['home: ' + home, 'settings: ' + settings,
                       'environment: HOME and XDG_CONFIG_HOME are the home; ' +
@@ -231,36 +286,54 @@ function record_program(
     return;
 }
 
-const [build, commit, ...names] = process.argv.slice(2);
-
-if ( (build === undefined) ||
-     (commit === undefined) )
+/*
+main
+  Records the transcripts named, or every one.
+*/
+function main(
+    _arguments
+)
 {
-    console.error('usage: node tools/record.js BUILD COMMIT [NAME ...]');
-    process.exit(2);
+    const [build, commit, ...names] = _arguments;
+
+    if ( (build === undefined) ||
+         (commit === undefined) )
+    {
+        console.error('usage: node tools/record.js BUILD COMMIT [NAME ...]');
+        process.exit(2);
+    }
+
+    const all = (names.length !== 0)
+                    ? names
+                    : readdirSync(TRANSCRIPTS)
+                          .filter((_file) => _file.endsWith('.in'))
+                          .map((_file) => _file.slice(0, -3))
+                          .sort();
+
+    for (const name of all)
+    {
+        if (name.startsWith('session_'))
+        {
+            record_session(build, commit, name);
+        }
+        else if (name.startsWith('program_'))
+        {
+            record_program(build, commit, name);
+        }
+        else
+        {
+            throw new Error(name + ': neither session_ nor program_');
+        }
+
+        console.log('recorded ' + name);
+    }
+
+    return;
 }
 
-const all = (names.length !== 0)
-                ? names
-                : readdirSync(TRANSCRIPTS)
-                      .filter((_file) => _file.endsWith('.in'))
-                      .map((_file) => _file.slice(0, -3))
-                      .sort();
-
-for (const name of all)
+// run as a program, and not when imported (tools/fuzz_check.js)
+if ( (process.argv[1] !== undefined) &&
+     (import.meta.url === pathToFileURL(process.argv[1]).href) )
 {
-    if (name.startsWith('session_'))
-    {
-        record_session(build, commit, name);
-    }
-    else if (name.startsWith('program_'))
-    {
-        record_program(build, commit, name);
-    }
-    else
-    {
-        throw new Error(name + ': neither session_ nor program_');
-    }
-
-    console.log('recorded ' + name);
+    main(process.argv.slice(2));
 }

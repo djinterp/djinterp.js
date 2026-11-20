@@ -74,3 +74,66 @@ get -x
 get --show-origin=1 width
 - get
 get -
+# a word or an option that is nearly a name the parser knows
+gte
+lst
+List
+LIST
+ilst
+hepl
+completio
+complete
+desribe
+x
+list widt
+list gte
+list st
+list te
+list et
+list gt
+list describ lst
+widt list
+x get y
+x y z
+describe printer gett
+get sett
+set a=1 lis
+get --shwo-origin
+get --show-origni=x width
+get --show_origin
+get --Show-Origin
+get --SHOW-ORIGIN
+get -show-origin
+get --show-origin --show-origi
+get --hlep
+get --versoin
+list --quite
+--quite list
+--quite
+--colr
+--quite lst
+lst --quite
+list lst --quite
+describe printer --verbos
+set --quit
+get --st width=1
+list --lst
+list -x
+list -5
+list ---color
+get ---color
+---color list
+list --=x
+list ""
+list "" lst
+list 'ends with a space '
+'ends with a space ' other
+'two words'
+'two words' --x
+"" lst
+""
+"" ""
+' lst'
+' ' lst
+'-x y' z
+x '-y z'

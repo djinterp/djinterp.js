@@ -14,10 +14,11 @@
 * argument parser and its command-line kit. Neither is ported. This file
 * reads the four commands' own arguments itself, and says what the parser
 * says for a missing command, a word that is no command, arguments a
-* command does not expect and one it requires. What the kit adds to every
-* program -- `help`, `completion`, `--help`, `--version`, `-q`, `-v`,
-* `--color`, and "did you mean" for a mistyped command -- is not here
-* (HANDOFF.md, "what is not ported").
+* command does not expect and one it requires, with the parser's "did you
+* mean" for an argument that is nearly a name it knows. What the kit adds
+* to every program -- `help`, `completion`, `--help`, `--version`, `-q`,
+* `-v`, `--color` -- is not here, though their names are, since the
+* parser suggests them (HANDOFF.md, "what is not ported").
 *   reference: src/djinterp/tools/djinterp/djinterp_commands.c, at d20c0b23
 *
 *
@@ -154,18 +155,22 @@ function report(
 /*
 usage_error
   An error of how the program was called, as the kit says one: the command
-before the message where there is one, and where to read more.
+before the message where there is one, the parser's suggestions as notes,
+and where to read more.
 */
 function usage_error(
     _run,
     _command,
-    _message
+    _message,
+    _notes = []
 )
 {
     const name = _run.program.name;
 
     _run.err += name + ': error: ' +
                 ((_command !== null) ? (_command + ': ') : '') + _message +
+                _notes.map((_note) => ('\n' + name + ': note: ' + _note))
+                      .join('') +
                 '\nTry \'' + name +
                 ((_command !== null) ? (' ' + _command) : '') +
                 ' --help\' for more information.\n';
@@ -653,6 +658,195 @@ function work_set(
 // 2.  RUNNING
 //==============================================================================
 
+// the names the reference's parser knows in this program, as a person
+// types them: every command's, the kit's two among them; the options the
+// kit gives every command; and each command's own. They are here to be
+// suggested, whether or not the port runs them.
+const KNOWN_COMMANDS = ['list', 'describe', 'get', 'set', 'help',
+                        'completion'];
+const KNOWN_OPTIONS  = ['-q', '--quiet', '-v', '--verbose', '--color', '-h',
+                        '--help', '--version'];
+const OWN_OPTIONS    = { get: ['--show-origin'] };
+
+// the reference's D_CFG_ARG_PARSER_SUGGESTION_DISTANCE, at its default
+const SUGGESTION_DISTANCE = 2;
+
+/*
+dashes_of
+  How the parser takes an argument: 2 for a long option's, `--` and a
+name; 1 for a short one's, `-` and a name; 0 for any other, which is a
+word. A name's first character is not '-' and is above '!'. reference:
+d_arg_internal_parse_split_long, _split_short (arg_parse.c).
+*/
+function dashes_of(
+    _argument
+)
+{
+    const names = (_at) => ( (_argument.length > _at) &&
+                             (_argument[_at] !== '-') &&
+                             (_argument.charCodeAt(_at) > 33) );
+
+    return ( _argument.startsWith('--') &&
+             names(2) )                    ? 2
+         : ( _argument.startsWith('-') &&
+             names(1) )                    ? 1
+                                           : 0;
+}
+
+/*
+edit_distance
+  The optimal string alignment distance between two names: insertions,
+deletions, substitutions and swaps of two neighbours; a distance past the
+limit is the limit plus one. reference: d_arg_internal_edit_distance
+(arg_suggest.c), which computes only the band that can hold an answer.
+*/
+function edit_distance(
+    _a,
+    _b,
+    _limit
+)
+{
+    let earlier  = [];
+    let previous = Array.from({ length: _b.length + 1 }, (_, _j) => _j);
+
+    for (let i = 1; i <= _a.length; ++i)
+    {
+        const current = [i];
+
+        for (let j = 1; j <= _b.length; ++j)
+        {
+            let best = Math.min(previous[j - 1] +
+                                ((_a[i - 1] !== _b[j - 1]) ? 1 : 0),
+                                previous[j] + 1,
+                                current[j - 1] + 1);
+
+            // two neighbours swapped
+            if ( (i > 1)                    &&
+                 (j > 1)                    &&
+                 (_a[i - 1] === _b[j - 2])  &&
+                 (_a[i - 2] === _b[j - 1]) )
+            {
+                best = Math.min(best, earlier[j - 2] + 1);
+            }
+
+            current.push(best);
+        }
+
+        earlier  = previous;
+        previous = current;
+    }
+
+    return Math.min(previous[_b.length], _limit + 1);
+}
+
+/*
+suggestion
+  The name the parser suggests for an argument it did not expect, or null:
+for `-x` or `--name`, an option's, compared without its dashes and without
+a value after '='; for anything else that does not start with a dash, a
+command's. The one nearest name, when it is within the distance and half
+the longer name, no other is as near, and it is not the argument itself.
+reference: d_arg_internal_suggest (arg_suggest.c).
+*/
+function suggestion(
+    _given,
+    _command
+)
+{
+    const dashes = dashes_of(_given);
+    const option = (dashes !== 0);
+    const equals = _given.indexOf('=');
+    const name   = option
+                       ? _given.slice(dashes, (equals < dashes)
+                                                  ? _given.length : equals)
+                       : _given;
+    let   nearest = SUGGESTION_DISTANCE + 1;
+    let   tied    = false;
+    let   best    = '';
+
+    // an empty word, or one that starts with a dash, names nothing
+    if ( !option &&
+         ( (_given.length === 0) ||
+           _given.startsWith('-') ) )
+    {
+        return null;
+    }
+
+    for (const written of (option ? KNOWN_OPTIONS.concat(
+                                        OWN_OPTIONS[_command] ?? [])
+                                  : KNOWN_COMMANDS))
+    {
+        const candidate = written.replace(/^-+/, '');
+        const distance  = edit_distance(name, candidate,
+                                        SUGGESTION_DISTANCE);
+
+        // the argument itself, too far to resemble it, or no nearer
+        if ( (written === _given)                                     ||
+             ((2 * distance) > Math.max(name.length, candidate.length)) ||
+             (distance > nearest) )
+        {
+            continue;
+        }
+
+        if (distance === nearest)
+        {
+            tied = ( tied ||
+                     (written !== best) );
+        }
+        else
+        {
+            nearest = distance;
+            tied    = false;
+            best    = written;
+        }
+    }
+
+    return ( (best.length !== 0) &&
+             !tied ) ? best : null;
+}
+
+/*
+suggestions
+  The parser's notes for arguments it did not expect, a line for each that
+has a suggestion; among several, each says which argument it is for.
+*/
+function suggestions(
+    _command,
+    _extras
+)
+{
+    const notes = [];
+
+    for (const extra of _extras)
+    {
+        const name = suggestion(extra, _command);
+
+        if (name !== null)
+        {
+            notes.push('did you mean \'' + name + '\'' +
+                       ((_extras.length > 1) ? (' for \'' + extra + '\'')
+                                             : '') + '?');
+        }
+    }
+
+    return notes;
+}
+
+/*
+joined_extras
+  Unexpected arguments as the parser's message lists them: a space between
+each, and a space that ends them all dropped, as the reference's join
+drops it (d_arg_internal_parse_extras_join, after CLI11's).
+*/
+function joined_extras(
+    _extras
+)
+{
+    const joined = _extras.join(' ');
+
+    return joined.endsWith(' ') ? joined.slice(0, -1) : joined;
+}
+
 /*
 unexpected
   The usage error for the arguments a command does not expect, or the
@@ -668,7 +862,29 @@ function unexpected(
                        ((_extras.length === 1)
                             ? 'the following argument was not expected: '
                             : 'the following arguments were not expected: ') +
-                       _extras.join(' '));
+                       joined_extras(_extras),
+                       suggestions(_command, _extras));
+}
+
+/*
+stray_word
+  The word the kit says is no command, where the program was given
+arguments and no command: the one argument whole, or, of several, what
+they join to as far as its first space; null where that starts with a
+dash or there is nothing, when the parser's own message stands.
+reference: d_cli_internal_stray_word (cli_program.c).
+*/
+function stray_word(
+    _extras
+)
+{
+    const joined = joined_extras(_extras);
+    const space  = joined.indexOf(' ');
+    const word   = ( (_extras.length > 1) &&
+                     (space >= 0) ) ? joined.slice(0, space) : joined;
+
+    return ( (joined.length === 0) ||
+             word.startsWith('-') ) ? null : word;
 }
 
 /*
@@ -686,8 +902,7 @@ function read(
 
     for (const argument of _arguments)
     {
-        const option = ( argument.startsWith('-') &&
-                         (argument.length > 1) );
+        const option = (dashes_of(argument) !== 0);
 
         if (line.command === null)
         {
@@ -759,14 +974,15 @@ function run_bytes(
                        ' --help\' for more information.\n';
             status   = EXIT.TROUBLE;
         }
-        else if (line.extras[0].startsWith('-'))
+        else if (stray_word(line.extras) === null)
         {
             status = unexpected(run, null, line.extras);
         }
         else
         {
-            status = usage_error(run, null, '\'' + line.extras[0] +
-                                            '\' is not a command');
+            status = usage_error(run, null, '\'' + stray_word(line.extras) +
+                                            '\' is not a command',
+                                 suggestions(null, line.extras));
         }
     }
     else if ( (line.command === 'describe') &&
