@@ -6,8 +6,10 @@
 * "%.17g", "%.15g", "%.6g" and "%.1g" texts, separated by spaces.
 *     reals COUNT SEED
 *   The values are the edges -- zeros, the smallest and largest, the powers
-* of ten either side of where "%g" changes notation, halves that round --
-* and then COUNT more whose bits a generator gives from SEED, so that a run
+* of ten either side of where "%g" changes notation, halves that round, and
+* doubles that lie exactly halfway between two texts at 17, 15 and 6
+* digits, which the C library rounds to the even digit -- and then COUNT
+* more whose bits a generator gives from SEED, so that a run
 * is repeatable. The generator is xorshift64*, written out here so that the
 * values do not depend on a library's.
 *   This is the C library's printf, which is what option_env.c calls; it
@@ -17,7 +19,7 @@
 * path:      /tools/reals.c
 * link(s):   TBA
 * author(s): Samuel 'teer' Neal-Blim                         created: 2026.11.15
-*                                                            revised: 2026.11.15
+*                                                            revised: 2026.11.17
 *******************************************************************************/
 
 // std
@@ -68,7 +70,10 @@ int main(int argc, char** argv)
         9007199254740992.0, 9007199254740993.0, 0.000123456, 123456.0,
         1234567.5, 0.5e-4, 5e-5, 9.9999999999999995e-5, 99999999999999984.0,
         1e-6, 1.5e-6, 2.5e-5, 4.35, 0.285, 1.005, 8.345, 0.045, 1.45, 1e6,
-        1e5, 999999.0, 100000.0, 1000000.0, 10000000.0, 0.0001, 0.00001
+        1e5, 999999.0, 100000.0, 1000000.0, 10000000.0, 0.0001, 0.00001,
+        // exactly halfway at 17 digits (2^-25, 3 * 2^-25), at 15 (2^-22)
+        // and at 6 (2^-10, 1234565)
+        0x1p-25, 0x3p-25, 0x1p-22, 0x1p-10, 1234565.0
     };
     const long count = (argc > 1) ? strtol(argv[1], NULL, 10) : 0;
     uint64_t   state = (argc > 2) ? strtoull(argv[2], NULL, 10) : 1u;
