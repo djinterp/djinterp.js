@@ -243,37 +243,50 @@
   <h1>Decisions for the owner</h1>
   <div class="meta">
     <span>Wednesday 2026-11-18</span>
-    <span><code>main</code> at <code>ce65c16</code>, following djinterp at <code>6fe35d43</code></span>
-    <span>nothing open; 31 ruled, each with all that was put for it</span>
+    <span><code>main</code> at <code>d118a65</code>, following djinterp at <code>6fe35d43</code></span>
+    <span>1 open; 31 ruled, each with all that was put for it</span>
   </div>
-  <p class="meta" style="margin-top:10px">This page replaces the earlier one of 11-18. Every decision on that page was ruled, and so was every one before it: nothing is open. Below is every ruling you have made, each closed to a line: open one to see the question as it was put, every option with its advantages and disadvantages, the recommendation, the option you chose and where it stands now.</p>
+  <p class="meta" style="margin-top:10px">This page replaces the earlier one of 11-18. One decision is new: D29, put after your word of 14:49 with the wasm module&rsquo;s beta. Every decision before it is ruled. After the open one is every ruling you have made, each closed to a line: open one to see the question as it was put, every option with its advantages and disadvantages, the recommendation, the option you chose and where it stands now.</p>
   <p class="meta">Decisions now have one number across pages, as yours of the morning already did: the evening&rsquo;s 1 to 7 are D18 to D24, and each says so where it was put.</p>
 </header>
 
 <h2 id="standing">Where things stand</h2>
 <div class="standing">
-  <div class="cell"><div class="num">47 commits</div><div class="lbl">on <code>main</code>, nothing pushed (there is no remote), nothing uncommitted. You have them as a zip with the history.</div></div>
+  <div class="cell"><div class="num">49 commits</div><div class="lbl">on <code>main</code>, nothing pushed (there is no remote), nothing uncommitted. You have them as a zip with the history, and as a kit that makes them again, a zip a commit.</div></div>
   <div class="cell"><div class="num">Next</div><div class="lbl">The five functions past 100 lines, each given a reason or taken apart; then a terminal transcript for D27.</div></div>
   <div class="cell"><div class="num">29 of 31</div><div class="lbl">rulings built or in force. 99 tests and 16 transcripts pass; the type check, every module strict, and the style check have no finding.</div></div>
-  <div class="cell"><div class="num">Waiting on you</div><div class="lbl">No decision. Relaying <code>docs/FOR_THE_LANES.md</code> (D15, D18). CI in djinterp&rsquo;s tree, for D14.</div></div>
+  <div class="cell"><div class="num">Waiting on you</div><div class="lbl">D29. Relaying <code>docs/FOR_THE_LANES.md</code> (D15, D18, and the console&rsquo;s nouns for D29). CI in djinterp&rsquo;s tree, for D14.</div></div>
 </div>
 
 <h2 id="index">Open</h2>
 <table class="index">
   <thead><tr><th>#</th><th>Decision</th><th>Decide by</th><th>Recommended</th><th>Your ruling</th></tr></thead>
   <tbody>
-    <tr><td colspan="5">Nothing is open: every decision put so far is ruled.</td></tr>
+    <tr><td><a href="#d29">D29</a></td><td><a href="#d29">A wasm configuration: djinterp&rsquo;s own module behind the port&rsquo;s interface</a> <span class="flag new">New</span></td><td>2026-11-30, the wasm module&rsquo;s last window</td><td>A</td><td class="ruling none" data-for="d29">&mdash;</td></tr>
   </tbody>
 </table>
 
 <div class="toolbar" id="toolbar">
-  <span class="count" id="count">0 of 0 rulings chosen</span>
+  <span class="count" id="count">0 of 1 rulings chosen</span>
   <button type="button" id="agreeAll">Agree with every recommendation</button>
   <button type="button" id="clearAll">Clear</button>
   <button type="button" class="primary" id="toExport">Copy rulings &darr;</button>
 </div>
 
-
+<section class="decision" id="d29">
+  <header><span class="badge">D29</span><h3>A wasm configuration: djinterp&rsquo;s own module behind the port&rsquo;s interface <span class="flag new">New</span></h3></header>
+  <div class="facts"><span><b>Decide by</b> 2026-11-30, the wasm module&rsquo;s last window</span><span><b>Affects</b> <code>open</code>&rsquo;s options, a new <code>src/wasm/</code>, the transcripts, the page</span></div>
+  <p>You wrote on 11-18, at 14:49, with the wasm module&rsquo;s beta build: djinterp.js has opt-in features, and a wasm configuration would be one of them. It was in the cards. START drew the interface with <code>await</code> so that what answers it could change, to a wasm module in a Worker or to a remote engine, and the first version was to have neither. That much your word rules: the configuration is optional, and the port stays the default. What is open is its form.</p><p>The beta (seven steps on <code>6fe35d43</code>, for windows from 11-23 to 11-30) gives a console over five host imports declared in <code>host.h</code>: a configuration text in and a status out, a line in and a reply out. The program does not answer through it yet: the console asks for a program&rsquo;s handler, which is not built, and <code>log.c</code> does not build until a module has a mutex (a no-op, since a module has one thread). Until it does, none of this can be checked, so nothing is built before the ruling and the handler. What the port would ask of a reply (the status, the two streams apart, whether standard error is a terminal, and the names a <code>set</code> kept) is written up in <code>docs/FOR_THE_LANES.md</code>, for you to relay.</p>
+  <fieldset><legend>Decision D29</legend>
+  <div class="options">
+    <div class="opt head"><div></div><div>Option</div><div>Advantages</div><div>Disadvantages</div></div>
+    <label class="opt rec" data-rec="1"><span class="pick"><input type="radio" name="d29" value="A"></span><span class="name">A. An option of <code>open</code>, as colour is: <code>open({ wasm: module })</code><br><span class="tag">Recommended</span></span><span>One interface and one switch, like D27&rsquo;s colour. The page passes the compiled module (a <code>WebAssembly.Module</code>, its bytes, or a fetch&rsquo;s response), and only then is the driver loaded, by <code>import()</code> inside <code>open</code>: a page that does not ask loads none of it. The port gives the module its five imports itself, written from <code>host.h</code> as generated data, so it needs no file from djinterp&rsquo;s tree, only the module, which is djinterp. Every transcript runs both ways and must agree byte for byte: the module is the reference compiled, so in a page it is an oracle too.</span><span>The port follows <code>host.h</code> and the console&rsquo;s nouns as they change until they freeze. A second path through <code>open</code> for the tests to hold.</span></label>
+    <label class="opt"><span class="pick"><input type="radio" name="d29" value="B"></span><span class="name">B. An entry point of its own: <code>djinterp.js/wasm</code>, with the same interface</span><span>The opt-in is the import; the main module never names wasm.</span><span>Two entry points with one interface to keep the same. A page picks at import, not at <code>open</code>; every other opt-in is an option of <code>open</code>, so this one would be chosen another way.</span></label>
+    <label class="opt"><span class="pick"><input type="radio" name="d29" value="C"></span><span class="name">C. djinterp&rsquo;s own loader, <code>platform/wasm/js/load.mjs</code>, used as it is</span><span>Nothing to write in the port; it follows the module by definition.</span><span>The port would need a file from djinterp&rsquo;s tree, which it does not have outside it and which D14 has not yet put beside it. The loader is written for node and the module&rsquo;s checks, not for the page&rsquo;s promises and events.</span></label>
+  </div></fieldset>
+  <div class="recommend"><b class="lead">Recommendation: A.</b> It makes the wasm configuration an opt-in like the port&rsquo;s others, costs a page that does not ask nothing, and keeps djinterp.js needing only djinterp. Built when the program answers through the console; a Worker can come later without the interface changing.</div>
+  <div class="note-row"><label for="n-d29">Note</label><textarea class="note" id="n-d29" data-for="d29" placeholder="Optional"></textarea></div>
+</section>
 
 <h2 id="beyond">Done beyond the words of a ruling</h2>
 <p>Each of these follows from a ruling and was built with it. None needs a decision; they are here so nothing comes as a surprise.</p>
@@ -871,9 +884,9 @@
   "use strict";
 
   var TITLES = {
-
+    d29: "D29. A wasm configuration: djinterp's own module behind the port's interface"
   };
-  var ORDER = [];
+  var ORDER = ["d29"];
   var KEY = "djinterp-js-decisions-2026-11-18";
   function recOf(name) {
     var el = document.querySelector('label.opt[data-rec] input[name="' + name + '"]');
@@ -956,7 +969,7 @@
   function buildText() {
     var lines = [];
     var open = [];
-    lines.push("djinterp.js's decisions of 2026-11-18 (main at ce65c16, following djinterp at 6fe35d43): the owner's rulings");
+    lines.push("djinterp.js's decisions of 2026-11-18 (main at d118a65, following djinterp at 6fe35d43): the owner's rulings");
     lines.push("");
     ORDER.forEach(function (n) {
       var num = TITLES[n].split(".")[0];
@@ -979,7 +992,7 @@
   }
 
   function buildJson() {
-    var out = { page: "djinterp.js decisions 2026-11-18", base: "ce65c16", reference: "6fe35d43", rulings: {} };
+    var out = { page: "djinterp.js decisions 2026-11-18", base: "d118a65", reference: "6fe35d43", rulings: {} };
     ORDER.forEach(function (n) {
       out.rulings[n] = {
         title: TITLES[n],
