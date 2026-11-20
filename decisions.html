@@ -242,19 +242,19 @@
   <div class="eyebrow">djinterp.js &middot; the port of djinterp&rsquo;s front-end half</div>
   <h1>Decisions for the owner</h1>
   <div class="meta">
-    <span>Tuesday 2026-11-17</span>
-    <span><code>main</code> at <code>8204d7e</code>, following djinterp at <code>3eb096c9</code></span>
+    <span>Wednesday 2026-11-18</span>
+    <span><code>main</code> at <code>2686fe2</code>, following djinterp at <code>3eb096c9</code></span>
     <span>nothing open; 31 ruled, each with all that was put for it</span>
   </div>
-  <p class="meta" style="margin-top:10px">This page replaces the one of 11-17, evening. Every decision on that page is ruled, and so is every one before it: nothing is open. Below is every ruling you have made, each closed to a line: open one to see the question as it was put, every option with its advantages and disadvantages, the recommendation, the option you chose and where it stands now.</p>
+  <p class="meta" style="margin-top:10px">This page replaces the one of 11-17, night. Every decision on that page was ruled, and so was every one before it: nothing is open. Below is every ruling you have made, each closed to a line: open one to see the question as it was put, every option with its advantages and disadvantages, the recommendation, the option you chose and where it stands now.</p>
   <p class="meta">Decisions now have one number across pages, as yours of the morning already did: the evening&rsquo;s 1 to 7 are D18 to D24, and each says so where it was put.</p>
 </header>
 
 <h2 id="standing">Where things stand</h2>
 <div class="standing">
-  <div class="cell"><div class="num">36 commits</div><div class="lbl">on <code>main</code>, nothing pushed (there is no remote), nothing uncommitted. You have them as a zip with the history.</div></div>
-  <div class="cell"><div class="num">Next</div><div class="lbl">D24&rsquo;s second tranche goes on: the option machine and its registry, djin, the commands, the cli settings and the interface, 478 findings, 256 of them in <code>option_env.js</code>.</div></div>
-  <div class="cell"><div class="num">28 of 31</div><div class="lbl">rulings built or in force. 99 tests and 16 transcripts pass; the type check and the style check have no finding.</div></div>
+  <div class="cell"><div class="num">44 commits</div><div class="lbl">on <code>main</code>, nothing pushed (there is no remote), nothing uncommitted. You have them as a zip with the history.</div></div>
+  <div class="cell"><div class="num">Next</div><div class="lbl">The five functions past 100 lines, each given a reason or taken apart; then a terminal transcript for D27.</div></div>
+  <div class="cell"><div class="num">29 of 31</div><div class="lbl">rulings built or in force. 99 tests and 16 transcripts pass; the type check, every module strict, and the style check have no finding.</div></div>
   <div class="cell"><div class="num">Waiting on you</div><div class="lbl">No decision. Relaying <code>docs/FOR_THE_LANES.md</code> (D15, D18). CI in djinterp&rsquo;s tree, for D14.</div></div>
 </div>
 
@@ -278,6 +278,8 @@
 <h2 id="beyond">Done beyond the words of a ruling</h2>
 <p>Each of these follows from a ruling and was built with it. None needs a decision; they are here so nothing comes as a surprise.</p>
 <ul>
+  <li><b>D24 is done: every module is strict.</b> The six modules left on 11-17 took the strict mode on 11-18, the option machine last, and every function inside a module has D25&rsquo;s comment: 134 took it today. Typing the shared records first did most of it: the frame&rsquo;s fields alone took 60 findings. Where the checker cannot see that a value is there, the code now tests the value itself rather than a flag; nothing a caller sees changed, and both fuzzers agree with the reference over new seeds. The list of strict modules is gone, since it would name every one: a new module is strict from its first line.</li>
+  <li><b>The style check grew three checks</b> as the work found the need: each marker heads what its entry in the table names (it found two modules whose markers stood out of order), another module&rsquo;s type comes by <code>@import</code>, and a section numbered past 9 is written <code>10. NAME</code>, as the C guide has it.</li>
   <li><b>D28 moved everything that cited the style.</b> The guide took what only the old file held: the whole measured table of reals, the reader&rsquo;s every example, and a class among the braces. <code>JS_STYLE.md</code> keeps its sections on tests, generated data, and git and handing back word for word, as 1 to 3. The sources, tests and tools that cited its style sections cite the guide&rsquo;s.</li>
   <li><b>D27 was measured on the reference itself, on a terminal.</b> Run under a pseudo-terminal, it colours on <code>always</code> and not on <code>never</code>; <code>auto</code>, no word, and a word that is none of the three fall back to the terminal; and what is said before a line&rsquo;s options are read (a refused setting, the settings file&rsquo;s warnings, with the file and line bold) is coloured whatever the line&rsquo;s <code>--color</code> says. Only the error stream is coloured. The port with colour on agreed byte for byte on 400 lines: 30 chosen, 9 over a settings file with warnings, and 361 of the fuzzer&rsquo;s, 289 of them coloured. The page&rsquo;s own diagnostics, the query&rsquo;s warnings and an unclosed quote, are coloured the same way.</li>
   <li><b>D26&rsquo;s lines cannot be recorded</b>, since they differ from the reference&rsquo;s by design: a test holds them, and the fuzzer still keeps <code>--version</code> from <code>-v</code>.</li>
@@ -488,11 +490,11 @@
   
   </div>
 </details>
-<details class="ruled" id="r-d24" data-state="todo">
-  <summary><span class="badge">D24</span><span class="title">How strictly the types are checked</span><span class="ruling" title="Your ruling">B</span><span class="state">10 of 16 modules</span></summary>
+<details class="ruled" id="r-d24" data-state="done">
+  <summary><span class="badge">D24</span><span class="title">How strictly the types are checked</span><span class="ruling" title="Your ruling">B</span><span class="state done">built, 11-18</span></summary>
   <div class="body">
   <div class="facts"><span><b>Put</b> 2026-11-16, on the page of that evening, as 7</span><span><b>Ruled</b> 2026-11-16</span><span><b>Was to be decided by</b> before the next session</span><span><b>Affects</b> every function's comment under <code>src/</code></span></div>
-  <div class="yours"><b class="lead">Your ruling: B.</b> The strict mode, brought in a module at a time, with a type on every function's parameters. <span class="statel"><b>State:</b> the first tranche, 2026.11.17: seven modules held to the strict mode by <code>tools/check_types.js</code>; the second, begun the same day under D25, brought the event modules, all six, to it: 10 of 16. The other six have 478 findings, 256 of them in <code>option_env.js</code>.</span></div>
+  <div class="yours"><b class="lead">Your ruling: B.</b> The strict mode, brought in a module at a time, with a type on every function's parameters. <span class="statel"><b>State:</b> built, 2026.11.18: the first tranche, 2026.11.17, seven modules; the second, that day and the next, the other nine, the event modules first and the option machine last. Every module is held to the strict mode by <code>tools/check_types.js</code>, with no finding, and every function inside one has D25&rsquo;s comment.</span></div>
   <p>Ruling 17b's tool, <code>tools/check_types.js</code>, reads the JSDoc as types and fails on a mismatch. It runs the checker in its ordinary mode: a function with a JSDoc comment is held to it, and every type a comment names must exist. Exported functions have JSDoc. Functions inside a module have the C guide's plain comment, with no types, so the checker holds them to nothing. <b>Measured:</b> the ordinary mode's first run had 119 findings, now 0. The strict mode wasn't run.</p>
   <div class="options">
     <div class="opt head"><div></div><div>Option</div><div>Advantages</div><div>Disadvantages</div></div>
@@ -871,7 +873,7 @@
 
   };
   var ORDER = [];
-  var KEY = "djinterp-js-decisions-2026-11-17-night";
+  var KEY = "djinterp-js-decisions-2026-11-18";
   function recOf(name) {
     var el = document.querySelector('label.opt[data-rec] input[name="' + name + '"]');
     return el ? el.value : null;
@@ -953,7 +955,7 @@
   function buildText() {
     var lines = [];
     var open = [];
-    lines.push("djinterp.js's decisions of 2026-11-17, night (main at 8204d7e, following djinterp at 3eb096c9): the owner's rulings");
+    lines.push("djinterp.js's decisions of 2026-11-18 (main at 2686fe2, following djinterp at 3eb096c9): the owner's rulings");
     lines.push("");
     ORDER.forEach(function (n) {
       var num = TITLES[n].split(".")[0];
@@ -976,7 +978,7 @@
   }
 
   function buildJson() {
-    var out = { page: "djinterp.js decisions 2026-11-17, night", base: "8204d7e", reference: "3eb096c9", rulings: {} };
+    var out = { page: "djinterp.js decisions 2026-11-18", base: "2686fe2", reference: "3eb096c9", rulings: {} };
     ORDER.forEach(function (n) {
       out.rulings[n] = {
         title: TITLES[n],
@@ -1043,7 +1045,7 @@
       var blob = new Blob([buildJson()], { type: "application/json" });
       var a = document.createElement("a");
       a.href = URL.createObjectURL(blob);
-      a.download = "djinterp_js_rulings_2026-11-17_night.json";
+      a.download = "djinterp_js_rulings_2026-11-18.json";
       document.body.appendChild(a);
       a.click();
       setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 500);
