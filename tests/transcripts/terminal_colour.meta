@@ -1,0 +1,8 @@
+program: tools/djinterp_fixture_main.c
+arguments: --line LINE, a process a command line, its standard error a terminal (script from util-linux, TERM=xterm) and its output dropped
+reference: djinterp
+commit: 6fe35d43
+recorded: 2026-11-20
+home: /tmp/djinterp.js/home/terminal_colour
+settings: /tmp/djinterp.js/home/terminal_colour/djinterp/settings
+environment: HOME and XDG_CONFIG_HOME are the home; then as the input's env lines set it

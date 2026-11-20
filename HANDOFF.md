@@ -37,7 +37,7 @@ server.
 | `src/text/` | printf's `%.*g`, and strtod's reading |
 | `generated/` | the reference's data, written by `tools/`; never edited |
 | `types/` | declarations, written by `tools/check_types.js`; never edited |
-| `tests/` | 99 tests; `tests/transcripts/` holds the reference's answers |
+| `tests/` | 100 tests; `tests/transcripts/` holds the reference's answers |
 | `tools/` | C drivers over the reference, the recorder, fuzzers, checks, and the kit maker (`make_kit.js`, its templates in `tools/kit/`) |
 | `examples/console.html` | the port in a page |
 | `decisions.html` | the decisions for the owner, open and decided |
@@ -52,7 +52,7 @@ A function's name is the reference's in camelCase, less `d_` or `dj_`:
 There is nothing to build. node 22 or later, and no dependency:
 
 ```sh
-node --test                  # 99 tests
+node --test                  # 100 tests
 node tools/check_style.js    # 80 columns, tabs, banners
 ```
 
@@ -88,9 +88,10 @@ node --test       # whether the port still follows
 ```
 
 It builds the reference's program and the tools, writes `generated/`,
-makes the fuzzed inputs again from their seeds, records all sixteen
-transcripts, checks the starting package's four runs, and writes the
-commit into the banners. Run twice at one commit it changes nothing.
+makes the fuzzed inputs again from their seeds, records all seventeen
+transcripts (the terminal one where `script` is there), checks the
+starting package's four runs, and writes the commit into the banners.
+Run twice at one commit it changes nothing.
 
 **The other checks**, none of which `node --test` runs:
 
@@ -162,7 +163,7 @@ why, and the other three runs are as they came.
 | the registry, the djin records | `session_registry`, `session_djin` | byte for byte |
 | the program's commands, **through `run`** | 4 hand-typed program transcripts, 1 fuzzed | byte for byte |
 | the parser and the kit, as the program reads its command line | `program_kit`, 198 lines; 450,000 fuzzed command lines (seeds 1 to 1,500) | byte for byte, but `--version` at `-v`, which says the port's own facts (D26) and a test holds |
-| colour on a terminal (D27) | the reference under a pseudo-terminal, against the port with `colour: true`: 400 lines, 9 over a settings file with warnings | byte for byte; not yet recorded as a transcript (section 4) |
+| colour on a terminal (D27) | `terminal_colour`, 33 command lines recorded with the reference's standard error a terminal, replayed with `colour: true`; and before it, 400 lines measured outside the repository | byte for byte |
 | both, on fresh seeds | `tools/fuzz_check.js` | agree; see below |
 | the event core | `t_event_core.c`'s cases, as 13 tests | pass |
 | the reference's option suite | `tests/option/suite.test.js` | four groups written out; a table of which transcript holds each other group |
@@ -177,6 +178,10 @@ A transcript is a file of lines in (`.in`), the reference's bytes out
 and the djin set. `program_*` are given a command line a process to the
 reference's program with the fixture's frames
 (`tools/djinterp_fixture_main.c`), in a home of the transcript's own.
+`terminal_*` are the same with the program's standard error a terminal,
+made by `script` (util-linux), and its output dropped: what it said as a
+person at a terminal sees it. Recording one needs `script`; where there
+is none, `tools/record.js` leaves it as it was.
 
 Fuzzing. Before the rulings, 401,400 session lines and 60,000 command
 lines agreed. After each ruling that touched the machine the fuzzers
@@ -273,20 +278,16 @@ These are differences on purpose. Each has a test that names it.
 
 ## 4. What is next
 
-1. **A terminal transcript for D27.** The comparison that proved it ran
-   the reference under `script` (a Linux utility) outside the
-   repository. Recording it would make it an oracle like the rest, at
-   the price of `tools/record.js` needing `script` where it records.
-2. **Relay `docs/FOR_THE_LANES.md`** (D15, D4, D18, and what was found in
+1. **Relay `docs/FOR_THE_LANES.md`** (D15, D4, D18, and what was found in
    the program and the kit). When lane E lands the rows' writer,
    regenerate and bring the port's reader after it.
-3. **D14:** the move into djinterp's tree, when the tree has CI to run
+2. **D14:** the move into djinterp's tree, when the tree has CI to run
    the transcripts.
-4. **REAL rows' range and step**, when lane E lands them: regenerate,
+3. **REAL rows' range and step**, when lane E lands them: regenerate,
    read the diff, follow.
-5. **After 12-11:** the command language from the frozen grammar, desc's
+4. **After 12-11:** the command language from the frozen grammar, desc's
    JSON as data, and D11's question of the parser whole.
-6. **D29, the wasm configuration**, open: an opt-in way to answer through
+5. **D29, the wasm configuration**, open: an opt-in way to answer through
    djinterp's own module (the owner's word of 11-18). Nothing is built
    before the ruling and before the program answers through the module's
    console; what the port asks of the console's reply is in

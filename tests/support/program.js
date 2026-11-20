@@ -9,12 +9,15 @@
 * and the environment the lines before it left, as each of the reference's
 * runs is a new process.
 *   The lines and what is written for each are set out in tools/record.js.
+* A terminal transcript is replayed through a program whose console draws
+* colour (the owner's ruling D27), with what it writes left out, as the
+* reference's was recorded with its output dropped.
 *
 *
 * path:      /tests/support/program.js
 * link(s):   TBA
 * author(s): Samuel 'teer' Neal-Blim                         created: 2026.11.15
-*                                                            revised: 2026.11.16
+*                                                            revised: 2026.11.20
 *******************************************************************************/
 
 import * as optionEnv from '../../src/option/option_env.js';
@@ -46,11 +49,13 @@ function must(
  *
  * @param {object} _file         the settings file.
  * @param {Map<string, string>} _environment  the environment.
+ * @param {boolean} [_colour=false]  whether its console draws colour.
  * @returns {object} the program.
  */
 export function makeProgram(
     _file,
-    _environment
+    _environment,
+    _colour = false
 )
 {
     const data     = generated('program.json');
@@ -81,7 +86,8 @@ export function makeProgram(
     }
 
     const program = djinterpCommands.programMake({
-        registry: registry, file: _file, environment: _environment
+        registry: registry, file: _file, environment: _environment,
+        colour: _colour
     });
 
     return program;
@@ -119,11 +125,14 @@ function streamLines(
  * @param {string} _input     the `.in` file's bytes, as a byte string.
  * @param {string} _settings  what the settings file is called: the path
  *        the transcript's `.meta` names.
+ * @param {boolean} [_terminal=false]  whether it is a terminal
+ *        transcript: colour drawn, and what is written left out.
  * @returns {string} the `.out` file's bytes, as a byte string.
  */
 export function runProgram(
     _input,
-    _settings
+    _settings,
+    _terminal = false
 )
 {
     const environment = new Map();
@@ -144,7 +153,8 @@ export function runProgram(
 
     // one program for the whole transcript, as a page has one: `run` is
     // what makes each line a process of the reference's
-    const dj          = openProgram(makeProgram(file, environment));
+    const dj          = openProgram(makeProgram(file, environment,
+                                                    _terminal));
 
     if (lines[lines.length - 1] === '')
     {
@@ -185,7 +195,7 @@ export function runProgram(
             const ran = dj.runNow(line);
 
             out += 'exit ' + ran.status + '\n' +
-                   streamLines('out', ran.out) +
+                   (_terminal ? '' : streamLines('out', ran.out)) +
                    streamLines('err', ran.err);
         }
     }

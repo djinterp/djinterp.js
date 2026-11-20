@@ -10,6 +10,11 @@
 *     session_NAME   BUILD/session, the whole `.in` as its input
 *     program_NAME   BUILD/djinterp_fixture, once a line, as a new process
 *                    each, as a shell would run the reference's program
+*     terminal_NAME  the same, with the program's standard error a
+*                    terminal and its output dropped: only what it said,
+*                    as a person at a terminal sees it (the owner's ruling
+*                    D27). It needs script(1), from util-linux; where
+*                    there is none, the transcript is left as recorded.
 *   For each it writes NAME.out, the program's bytes, and NAME.meta.
 *   A `.meta` is written so that recording again what has not changed
 * changes nothing: where the program's bytes and the commit are those of
@@ -30,13 +35,17 @@
 * has, for each line: the line after "> "; for a command line, "exit N",
 * then the program's output a line each after "out: ", then its errors
 * after "err: ". A last line with no line break is written after "out\ "
-* or "err\ ".
+* or "err\ ". A terminal transcript's `.out` has no "out: " lines; its
+* "err: " lines are the terminal's bytes, but for the carriage return the
+* terminal puts before each line break, which is taken out. Its command
+* lines are ASCII, since each is handed to the terminal in the
+* environment.
 *
 *
 * path:      /tools/record.js
 * link(s):   TBA
 * author(s): Samuel 'teer' Neal-Blim                         created: 2026.11.15
-*                                                            revised: 2026.11.17
+*                                                            revised: 2026.11.20
 *******************************************************************************/
 
 import { spawnSync } from 'node:child_process';
@@ -187,19 +196,53 @@ export function programHome(
     return { home: home, settings: join(home, 'djinterp', 'settings') };
 }
 
+/*
+onTerminal
+  A command line run with the program's standard error a terminal, as
+script(1) makes one, and its output dropped: its exit status, and what it
+said, without the carriage return the terminal puts before a line break.
+*/
+function onTerminal(
+    _build,
+    _env,
+    _line
+)
+{
+    if (!/^[\x20-\x7E]*$/.test(_line))
+    {
+        throw new Error('a terminal transcript\'s line is ASCII: ' + _line);
+    }
+
+    const run = spawnSync('script',
+                          ['-qec', '"$FIXTURE" --line "$LINE" 2>&1 >/dev/null',
+                           '/dev/null'],
+                          { env: { ..._env, PATH: process.env.PATH,
+                                   SHELL: '/bin/sh', TERM: 'xterm',
+                                   FIXTURE: join(_build, 'djinterp_fixture'),
+                                   LINE: _line } });
+
+    return { status: run.status,
+             stdout: Buffer.alloc(0),
+             stderr: Buffer.from(run.stdout.toString('latin1')
+                                     .replaceAll('\r\n', '\n'), 'latin1') };
+}
+
 /**
  * What BUILD/djinterp_fixture answers a program transcript's input with:
  * a process a command line, in a home of the transcript's own, made anew.
  *
- * @param {string} _build  where the tools were built.
- * @param {string} _name   the transcript's name: its home's.
- * @param {string} _input  the input, a byte a code unit.
+ * @param {string}  _build  where the tools were built.
+ * @param {string}  _name   the transcript's name: its home's.
+ * @param {string}  _input  the input, a byte a code unit.
+ * @param {boolean} [_terminal=false]  whether the program's standard error
+ *        is a terminal, and its output dropped.
  * @returns {Buffer} the transcript's `.out`.
  */
 export function programBytes(
     _build,
     _name,
-    _input
+    _input,
+    _terminal = false
 )
 {
     const { home, settings } = programHome(_name);
@@ -249,9 +292,11 @@ export function programBytes(
         }
         else
         {
-            const run = spawnSync(join(_build, 'djinterp_fixture'),
-                                  ['--line', Buffer.from(line, 'latin1')],
-                                  { env: env });
+            const run = _terminal
+                ? onTerminal(_build, env, line)
+                : spawnSync(join(_build, 'djinterp_fixture'),
+                            ['--line', Buffer.from(line, 'latin1')],
+                            { env: env });
 
             out.push(Buffer.from('exit ' + run.status + '\n'),
                      ...streamLines('out', run.stdout),
@@ -264,21 +309,29 @@ export function programBytes(
 
 /*
 recordProgram
-  A program transcript: BUILD/djinterp_fixture, a process a command line.
+  A program transcript: BUILD/djinterp_fixture, a process a command line;
+for a terminal transcript, with its standard error a terminal.
 */
 function recordProgram(
     _build,
     _commit,
-    _name
+    _name,
+    _terminal = false
 )
 {
     const { home, settings } = programHome(_name);
     const bytes = programBytes(_build, _name,
                                readFileSync(join(TRANSCRIPTS, _name + '.in'),
-                                            'latin1'));
+                                            'latin1'),
+                               _terminal);
 
     writeTranscript(_name, bytes, 'tools/djinterp_fixture_main.c',
-                    '--line LINE, a process a command line', _commit,
+                    '--line LINE, a process a command line' +
+                    (_terminal ? ', its standard error a terminal (script ' +
+                                 'from util-linux, TERM=xterm) and its ' +
+                                 'output dropped'
+                               : ''),
+                    _commit,
                     ['home: ' + home, 'settings: ' + settings,
                      'environment: HOME and XDG_CONFIG_HOME are the home; ' +
                      'then as the input\'s env lines set it']);
@@ -320,9 +373,19 @@ function main(
         {
             recordProgram(build, commit, name);
         }
+        else if (name.startsWith('terminal_'))
+        {
+            if (spawnSync('script', ['--version']).status !== 0)
+            {
+                console.log(name + ': no script(1) here; left as recorded');
+                continue;
+            }
+
+            recordProgram(build, commit, name, true);
+        }
         else
         {
-            throw new Error(name + ': neither session_ nor program_');
+            throw new Error(name + ': not session_, program_ or terminal_');
         }
 
         console.log('recorded ' + name);

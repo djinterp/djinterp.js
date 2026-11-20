@@ -1,0 +1,34 @@
+# the program at a terminal (the owner's ruling D27): its standard error a
+# terminal and its output dropped, so what is here is what it said, as a
+# person sees it; --color is auto unless given
+get nothing
+lst
+get --show-origin nothing
+describe nothing
+set nothing=1
+set
+completion fish
+-- get
+--set
+--set nothing=1 get color
+--color=never get nothing
+--color=always get nothing
+--color=auto get nothing
+--color get nothing
+--color=bright get color
+--color=never --color=bright get x
+--color=never --set
+-v --color=never --color=always get color
+-v --color=always --color=never get nothing
+list
+get color
+# the settings file's warnings, said as the program starts
+file color = maybe\nnothing = 1\nprinter.stlye = json\n
+get color
+--color=never get color
+nofile
+# the environment's
+env DJINTERP_WIDTH=lots
+get width
+--color=never get width
+unenv DJINTERP_WIDTH

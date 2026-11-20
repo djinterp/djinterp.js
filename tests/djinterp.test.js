@@ -10,7 +10,7 @@
 * path:      /tests/djinterp.test.js
 * link(s):   TBA
 * author(s): Samuel 'teer' Neal-Blim                         created: 2026.11.15
-*                                                            revised: 2026.11.17
+*                                                            revised: 2026.11.20
 *******************************************************************************/
 
 import assert from 'node:assert/strict';
@@ -521,8 +521,9 @@ test('--version at -v names the port and the djinterp it follows',
 
 test('a console that draws colour is coloured as a terminal is', async () =>
 {
-    // the bytes are the reference's own, as it wrote them on a terminal
-    // (measured 2026-11-17, every line here among them)
+    // the bytes are the reference's own, as it wrote them on a terminal:
+    // tests/transcripts/terminal_colour holds them, recorded, and this
+    // holds the page's own ways in -- open's colour, its query, a file
     const bold    = (_text) => '\x1B[1m' + _text + '\x1B[0m';
     const error   = bold('djinterp:') + ' \x1B[1;31merror:\x1B[0m ';
     const note    = bold('djinterp:') + ' \x1B[1;36mnote:\x1B[0m ';

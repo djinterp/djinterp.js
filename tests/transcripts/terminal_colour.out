@@ -1,0 +1,94 @@
+> # the program at a terminal (the owner's ruling D27): its standard error a
+> # terminal and its output dropped, so what is here is what it said, as a
+> # person sees it; --color is auto unless given
+> get nothing
+exit 2
+err: [1mdjinterp:[0m [1;31merror:[0m no setting is named 'nothing'
+> lst
+exit 2
+err: [1mdjinterp:[0m [1;31merror:[0m 'lst' is not a command
+err: [1mdjinterp:[0m [1;36mnote:[0m did you mean 'list'?
+err: Try 'djinterp --help' for more information.
+> get --show-origin nothing
+exit 2
+err: [1mdjinterp:[0m [1;31merror:[0m no setting is named 'nothing'
+> describe nothing
+exit 2
+err: [1mdjinterp:[0m [1;31merror:[0m describe: no djin is named 'nothing'
+err: Try 'djinterp describe --help' for more information.
+> set nothing=1
+exit 2
+err: [1mdjinterp:[0m [1;31merror:[0m no setting is named 'nothing'
+> set
+exit 2
+err: [1mdjinterp:[0m [1;31merror:[0m set: SETTING is required
+err: Try 'djinterp set --help' for more information.
+> completion fish
+exit 0
+> -- get
+exit 2
+err: [1mdjinterp:[0m [1;31merror:[0m 'get' follows '--': a command comes before it
+err: Try 'djinterp --help' for more information.
+> --set
+exit 2
+err: [1mdjinterp:[0m [1;31merror:[0m --set: NAME=VALUE is required
+err: Try 'djinterp --help' for more information.
+> --set nothing=1 get color
+exit 2
+err: [1mdjinterp:[0m [1;31merror:[0m --set: no setting is named 'nothing'
+err: Try 'djinterp --help' for more information.
+> --color=never get nothing
+exit 2
+err: djinterp: error: no setting is named 'nothing'
+> --color=always get nothing
+exit 2
+err: [1mdjinterp:[0m [1;31merror:[0m no setting is named 'nothing'
+> --color=auto get nothing
+exit 2
+err: [1mdjinterp:[0m [1;31merror:[0m no setting is named 'nothing'
+> --color get nothing
+exit 2
+err: [1mdjinterp:[0m [1;31merror:[0m no setting is named 'nothing'
+> --color=bright get color
+exit 2
+err: [1mdjinterp:[0m [1;31merror:[0m --color: 'bright' is not auto, always or never
+err: Try 'djinterp --help' for more information.
+> --color=never --color=bright get x
+exit 2
+err: [1mdjinterp:[0m [1;31merror:[0m --color: 'bright' is not auto, always or never
+err: Try 'djinterp --help' for more information.
+> --color=never --set
+exit 2
+err: [1mdjinterp:[0m [1;31merror:[0m --set: NAME=VALUE is required
+err: Try 'djinterp --help' for more information.
+> -v --color=never --color=always get color
+exit 0
+err: [1mdjinterp:[0m [1;35mwarning:[0m --color was given twice; the last, 'always', is taken
+> -v --color=always --color=never get nothing
+exit 2
+err: djinterp: warning: --color was given twice; the last, 'never', is taken
+err: djinterp: error: no setting is named 'nothing'
+> list
+exit 0
+> get color
+exit 0
+> # the settings file's warnings, said as the program starts
+> file color = maybe\nnothing = 1\nprinter.stlye = json\n
+> get color
+exit 0
+err: [1m/tmp/djinterp.js/home/terminal_colour/djinterp/settings:1:[0m [1;35mwarning:[0m 'maybe' is not a value 'color' takes
+err: [1m/tmp/djinterp.js/home/terminal_colour/djinterp/settings:2:[0m [1;35mwarning:[0m no setting is named 'nothing'
+err: [1m/tmp/djinterp.js/home/terminal_colour/djinterp/settings:3:[0m [1;35mwarning:[0m no setting is named 'printer.stlye'; did you mean 'printer.style'?
+> --color=never get color
+exit 0
+err: [1m/tmp/djinterp.js/home/terminal_colour/djinterp/settings:1:[0m [1;35mwarning:[0m 'maybe' is not a value 'color' takes
+err: [1m/tmp/djinterp.js/home/terminal_colour/djinterp/settings:2:[0m [1;35mwarning:[0m no setting is named 'nothing'
+err: [1m/tmp/djinterp.js/home/terminal_colour/djinterp/settings:3:[0m [1;35mwarning:[0m no setting is named 'printer.stlye'; did you mean 'printer.style'?
+> nofile
+> # the environment's
+> env DJINTERP_WIDTH=lots
+> get width
+exit 0
+> --color=never get width
+exit 0
+> unenv DJINTERP_WIDTH

@@ -12,7 +12,7 @@
 * path:      /tests/program.test.js
 * link(s):   TBA
 * author(s): Samuel 'teer' Neal-Blim                         created: 2026.11.15
-*                                                            revised: 2026.11.15
+*                                                            revised: 2026.11.20
 *******************************************************************************/
 
 import assert from 'node:assert/strict';
@@ -24,7 +24,8 @@ import { runProgram } from './support/program.js';
 
 const DIRECTORY = new URL('./transcripts/', import.meta.url);
 const NAMES     = readdirSync(DIRECTORY)
-                      .filter((_file) => ( _file.startsWith('program_') &&
+                      .filter((_file) => ( ( _file.startsWith('program_') ||
+                                             _file.startsWith('terminal_') ) &&
                                            _file.endsWith('.in') ))
                       .map((_file) => _file.slice(0, -3))
                       .sort();
@@ -84,7 +85,8 @@ for (const name of NAMES)
                   'recorded at the generated data\'s commit');
         assert.notEqual(settings, null);
 
-        const got = runProgram(read('.in'), settings[1]);
+        const got = runProgram(read('.in'), settings[1],
+                               name.startsWith('terminal_'));
 
         assert.equal(firstDifference(got, read('.out')), null);
         assert.equal(got.length, read('.out').length);
