@@ -188,3 +188,11 @@ help a b
 -- get --version
 -- get -h
 lst --color=bad --color
+# a command misplaced again goes on with the words it took, and gives way
+# after its own `--` as before it
+-- help x -- help describe get
+-- help x y -- help describe
+-- help --set a.b=9 -- help describe list
+-- completion -- bash set
+-- completion -- --color=bad zsh set
+-- describe -- x list

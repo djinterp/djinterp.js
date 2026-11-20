@@ -14,16 +14,17 @@
 * apart, and their long forms, `--color` with and without a word,
 * `--version`), `--` wherever it may stand, and words that are nearly
 * any of these, which the reference's parser answers with "did you mean".
-*   One thing it keeps from: `--version` with `-v`. There the reference
-* names its own file and compiler, and the port its module and the commit
-* it follows (the owner's ruling D26), so the two differ by design;
-* tests/djinterp.test.js holds the port's lines.
+*   One thing it keeps from: `--version` with `-v`, however it is spelt
+* (`-v-version` is both). There the reference names its own file and
+* compiler, and the port its module and the commit it follows (the
+* owner's ruling D26), so the two differ by design; tests/djinterp.test.js
+* holds the port's lines.
 *
 *
 * path:      /tools/fuzz_program.js
 * link(s):   TBA
 * author(s): Samuel 'teer' Neal-Blim                         created: 2026.11.15
-*                                                            revised: 2026.11.17
+*                                                            revised: 2026.11.20
 *******************************************************************************/
 
 let state = (Number(process.argv[2]) >>> 0) || 1;
@@ -294,8 +295,11 @@ function command()
     }
 
     // `--version` at -v names each one's own build (D26): kept from, by
-    // leaving out every short option and every `--verbose` of such a line
-    if (words.some((_word) => /^--version(=|$)/.test(_word)))
+    // leaving out every short option and every `--verbose` of such a line.
+    // A group of short flags ending in `-version` reads as one, since
+    // what is left after a flag is read again as `-REST`: `-v-version`
+    // is -v and --version
+    if (words.some((_word) => /^-[hqv]*-version(=|$)/.test(_word)))
     {
         return words.filter((_word) => !( /^-[^-]/.test(_word) ||
                                           _word.startsWith('--verbose') ))

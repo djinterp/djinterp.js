@@ -249,6 +249,13 @@ export type DjinterpReading = {
      * whether the program's own `--` has been read.
      */
     only: boolean;
+    /**
+     * the words each command
+     * misplaced has taken. A command misplaced again goes on with
+     * its own, as the reference's parser keeps a command's results
+     * however often it is entered.
+     */
+    held: Map<string, Array<string>>;
 };
 /**
  * What a run of the program comes to.

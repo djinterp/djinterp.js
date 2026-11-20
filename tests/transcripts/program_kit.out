@@ -5853,3 +5853,29 @@ exit 2
 err: [1mdjinterp:[0m [1;31merror:[0m 'lst' is not a command
 err: [1mdjinterp:[0m [1;36mnote:[0m did you mean 'list'?
 err: Try 'djinterp --help' for more information.
+> # a command misplaced again goes on with the words it took, and gives way
+> # after its own `--` as before it
+> -- help x -- help describe get
+exit 2
+err: djinterp: error: 'get' follows '--': a command comes before it
+err: Try 'djinterp --help' for more information.
+> -- help x y -- help describe
+exit 2
+err: djinterp: error: 'describe' follows '--': a command comes before it
+err: Try 'djinterp --help' for more information.
+> -- help --set a.b=9 -- help describe list
+exit 2
+err: djinterp: error: 'list' follows '--': a command comes before it
+err: Try 'djinterp --help' for more information.
+> -- completion -- bash set
+exit 2
+err: djinterp: error: 'set' follows '--': a command comes before it
+err: Try 'djinterp --help' for more information.
+> -- completion -- --color=bad zsh set
+exit 2
+err: djinterp: error: 'set' follows '--': a command comes before it
+err: Try 'djinterp --help' for more information.
+> -- describe -- x list
+exit 2
+err: djinterp: error: 'list' follows '--': a command comes before it
+err: Try 'djinterp --help' for more information.

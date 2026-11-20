@@ -910,6 +910,10 @@ function workSet(
  *           'command' in one; 'operands' after a command's `--` where it
  *           still needs an operand; 'ended' after one where it needs none.
  * @property {boolean} only  whether the program's own `--` has been read.
+ * @property {Map<string, Array<string>>} held  the words each command
+ *           misplaced has taken. A command misplaced again goes on with
+ *           its own, as the reference's parser keeps a command's results
+ *           however often it is entered.
  */
 
 /**
@@ -1257,8 +1261,9 @@ function readExtra(
 /**
  * readMisplace
  *   A command's name taken where a command cannot stand. It is read on as
- * a command is; the one named is the first of those misplaced as the
- * program lists its commands.
+ * a command is, with the words it took before where it was misplaced
+ * before; the one named is the first of those misplaced as the program
+ * lists its commands.
  *
  * @param {DjinterpReading} _reading   the reading.
  * @param {string}          _argument  the command's name.
@@ -1277,8 +1282,10 @@ function readMisplace(
                         KNOWN_COMMANDS.indexOf(line.misplaced)) )
                          ? _argument : line.misplaced;
     line.command   = _argument;
-    line.operands  = [];
+    line.operands  = _reading.held.get(_argument) ?? [];
     _reading.mode  = 'command';
+
+    _reading.held.set(_argument, line.operands);
 
     return;
 }
@@ -1306,9 +1313,9 @@ function readOperand(
            (line.operands.length === 2) ) )
     {
         // a word a misplaced command cannot take is the program's again,
-        // where a command's name is another one misplaced
-        if ( (line.misplaced !== null)     &&
-             (_reading.mode === 'command') &&
+        // where a command's name is another one misplaced: after the
+        // command's `--` as before it
+        if ( (line.misplaced !== null) &&
              KNOWN_COMMANDS.includes(_argument) )
         {
             readMisplace(_reading, _argument);
@@ -1522,7 +1529,8 @@ function read(
                               misplaced: null, helped: false,
                               words: new Set() },
                       mode: 'program',
-                      only: false };
+                      only: false,
+                      held: new Map() };
     const line    = reading.line;
     const queue   = [..._arguments];
 
