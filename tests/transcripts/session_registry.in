@@ -1,0 +1,164 @@
+# settings by full name
+reg_target	printer.style
+reg_target	style
+reg_target	net.host
+reg_target	nothing.host
+reg_target	debug.color
+reg_target	printer.summary.style
+reg_target	printer_two.verbose
+reg_target	
+reg_assign	1	printer.style	json
+get	printer	style
+reg_assign	1	style	json
+reg_assign	1	color	no
+get	app	color
+reg_assign	1	debug.color	yes
+get	app	debug.color
+reg_assign	1	printer.summary.style	table
+get	printer	summary.style
+reg_assign	1	printer.debug.color	no
+get	printer	debug.color
+layers	printer	debug.color
+reg_assign	1	printer.color	yes
+layers	printer	color
+reg_assign	1	nothing.color	yes
+reg_assign	1	app.color	yes
+reg_assign	1	net.port	70000
+reg_assign	1	net.port	443
+reg_assign	1	net.p	8443
+get	net	port
+reg_assign	0	net.port	443
+reg_assign	1	printer_two.verbose	yes
+reg_put	1	printer.style = plain
+reg_put	1	  printer.banner
+get	printer	banner
+reg_put	1	-printer.banner
+get	printer	banner
+reg_put	1	- printer.banner
+reg_put	3	printer.banner
+reg_put	1	width = 111
+get	app	width
+get	printer	width
+reg_put	1	printer.width = 111
+get	printer	width
+reg_put	1	cache.path = "/var/cache; x"
+get	cache	path
+reg_put	1	cache.size = 5000
+reg_put	1	
+reg_put	1	= 1
+reg_load	2	color = yes\nprinter.style = json\nnet.host = example.org # a comment\ncache.size = 128
+get	app	color
+get	printer	style
+get	net	host
+get	cache	size
+reg_load	2	printer.style = table; printer.style = yaml; printer.style = plain
+get	printer	style
+reg_load	2	\n\n  net.port = 1;\n  net.port = 0\n
+reg_load	2	# only a comment\n
+reg_load	2	\x0c
+reg_load	2	title = caf\xc3\xa9\nnet.host = "\xe2\x82\xac"\nnet.port = x
+get	app	title
+get	net	host
+reg_load	0	color = yes
+# the environment
+env	APP_WIDTH	333
+env	APP_COLOR	off
+env	APP_MAX_DEPTH	5
+env	APP_TITLE	from the environment
+env	APP_PRINTER_STYLE	json
+env	APP_PRINTER_FORMAT	table
+env	APP_PRINTER_BANNER	yes
+env	APP_PRINTER_WIDTH	55
+env	APP_PRINTER_SEED	0x10
+env	APP_NET_P	2222
+env	APP_NET_PORT	99999
+env	APP_CACHE_SIZE	lots
+env	APP_PRINTER_TWO_VERBOSE	yes
+env	WIDTH	444
+reg_import	APP_
+get	app	width
+get	app	color
+get	app	depth
+get	app	title
+get	printer	style
+get	printer	banner
+get	printer	width
+get	printer	seed
+get	net	port
+get	cache	size
+get	printer_two	verbose
+layers	printer	style
+unenv	APP_PRINTER_BANNER
+unenv	APP_NET_PORT
+unenv	APP_CACHE_SIZE
+reg_import	APP_
+get	net	port
+reg_import	
+get	app	width
+import	printer_two	APP_PRINTER_TWO_
+get	printer_two	verbose
+import	printer_two	
+get	printer_two	width
+import	net	NOTHING_
+# a command line's options
+reg_take	--set	printer.style=table
+get	printer	style
+reg_take	--set	printer.style
+reg_take	--set
+reg_take	--set	printer.style=yaml
+reg_take	--printer.style=plain
+get	printer	style
+reg_take	--printer.banner
+get	printer	banner
+reg_take	--no-printer.banner
+get	printer	banner
+reg_take	--printer.style
+reg_take	--no-printer.style
+reg_take	--color
+reg_take	--no-color
+get	app	color
+reg_take	--width=123
+get	app	width
+reg_take	--width
+reg_take	--nothing
+reg_take	--nothing=1
+reg_take	--no-nothing
+reg_take	--
+reg_take	-x
+reg_take	width=1
+reg_take	--=1
+reg_take	--no-
+reg_take	--printer.module=cli
+get	printer	module
+reg_take	--title=a=b=c
+get	app	title
+reg_take	--title=
+get	app	title
+reg_take	--debug.color
+get	app	debug.color
+layers	printer	style
+# suggesting a full name
+reg_suggest	printer.stlye
+reg_suggest	printr.style
+reg_suggest	printr.stlye
+reg_suggest	pinter.summary.style
+reg_suggest	printer.sumary.style
+reg_suggest	printer.summary.stlye
+reg_suggest	printer.summry.stlye
+reg_suggest	colr
+reg_suggest	debgu.color
+reg_suggest	debug.colr
+reg_suggest	nte.host
+reg_suggest	net.hots
+reg_suggest	cach.size
+reg_suggest	cache.siz
+reg_suggest	xyz.abc
+reg_suggest	printer.xyzxyz
+reg_suggest	xyzxyz
+reg_suggest	printer.
+reg_suggest	.style
+reg_suggest	
+reg_suggest	printer.color
+reg_suggest	printer.colr
+reg_suggest	net.widht
+reg_suggest	tiny.n

@@ -1,0 +1,1500 @@
+reg_add	net
+raw_get	net	1048577	2097152
+put	net	1	\tkey_width =  8 
+assign	app	0	djinterp.seed	cafÃ©
+reg_target	n
+djin_describe	cache
+reg_target	format
+load	tiny	5	\tSEED= posix  # c\n -  select;cache.nothing.module =-2.75   # c\n ne  =\t-1  \n\tprefix = "a\"b" # c\n
+reg_remove	net
+reg_put	2	 scale =x=y\t
+put	printer	1	 u =\t9007199254740993 
+reg_take	--setprefix
+suggest	tiny	big
+clear	printer_two
+djin_list
+get	tiny	djineterp.seed
+reg_import	APP_
+reg_put	5	  - seed_
+unset_from	nothing	6	.port
+reg_target	title
+get	tiny	depth
+reg_load	1	  elocal.bits =  .5 # c\n
+djin_frame	app
+reg_take	--set	.=false
+generation	printer
+reg_assign	5	n	off
+reg_suggest	scale
+unset_from	printer_two	1	big
+reg_import	APP_
+text_copy	cache	big	it's
+get	app	debug.u
+clear	printer_two
+djin_describe	net
+djin_frame	printer_two
+reg_assign	5	t	-9223372036854775808
+reg_count
+layers	app	LOCAL.bits
+text_copy	app	dbug.p	3.14159
+reg_assign	1	size	3
+reg_load	5	 sclae= 7\r\n
+distance	width	ormat
+import	printer	APP_
+attach	tiny	printer_two
+set	printer_two	3	app.depth	flags	nan
+put	printer	1	host\t=  ÿ
+reg_put	1	 title =  " "
+import	cache	
+layers	printer	select	8
+reg_put	6	-maxe_depth
+reg_count
+djin_list
+reg_target	color
+set	tiny	6	djinterp.sacle	int	plain
+statement_end	SUMMARY.depth =  3 ;	0
+djin_describe	printer_two
+djin_register	net
+layers	app	style	0
+unset_from	printer	1	module
+put	printer	5	  nothing.omde\t=  601 
+assign	app	6	title	unbounded
+set	tiny	2	nt.DEBUG.mode	real	wide
+env	APP_NET_T	0o17
+assign	tiny	3	cpp_features.meax_depth	-all
+vars	net
+unenv	APP_KEY_WIDTH
+djin_register	printer_again
+detach	tiny
+djin_list
+env	APP_CACHE_T	""
+import	printer_two	
+get	nothing	mx_depth
+djin_register	net
+import	printer	APP_
+reg_target	max_depth
+bound	nothing	title
+text_copy	printer	nothing.depth	16
+reg_assign	4	P	601
+layers	net	nothingi.width
+reg_import	APP_
+djin_describe	cache
+reg_load	0	.ptah 600\n printer_two.debug.color  = 5.  ;  ratio=\ \r\n
+get	app	t
+get	cache	cache.title
+vars	printer_two
+reg_load	1	 dpeth\t=  ;\tnet.path\t=1.5;
+statement_end	color = " "  \n  deubg.ratieo  =+c \r\n djinterp.cpp_featues.bits  =600  # c\n format. =  121  ;	0
+bound	app	app.summary.style
+load	tiny	6	  BANNER= 1e21 ;printer_two.depth = true \nmode table\r\n  printer_two.u\t=\t"a b"   ; -PRINTER_TWO.debug.bits;
+unset	app	scale
+suggest	cache	printer.p
+unset	net	depth
+djin_list
+djin_register	cache_named
+scope	cache	debug
+unset_from	app	2	PRINTER_TWO.verbose
+unenv	MODULE
+put	cache	6	verbose  = =
+put	printer_two	3	 seed=120
+reg_suggest	u
+reg_remove	tiny
+detach	tiny
+vars	printer
+reg_add	tiny
+put	printer	5	style 1
+reg_remove	printer
+reg_assign	1	.	1e309
+unset_from	printer	1	.
+reg_count
+layers	app	local_.big
+generation	printer
+get	app	max_depth
+vars	net
+djin_frame	app
+detach	tiny
+unenv	APP_MAX_DEPTH
+unset	net	ne.module
+put	tiny	0	n .5
+get	printer	pateh
+generation	printer
+djin_describe	app
+put	tiny	0	 PRINTER_TWO.debug.prefixi =\tx=y  
+scope	printer	NOTHING
+assign	net	1	title	2
+reg_count
+reg_suggest	SEED
+load	printer	5	-select ; \tewidth=JSON  # c\n seed =16\t\r\n cpp_features.host  =\t-1  \r\n  xscale\t=\tcpp \r\n
+reg_take	--no-size
+import	nothing	APP_
+djin_describe	app
+reg_load	1	\tselect ="tab\t"\r\n ig\t=two words ; 
+djin_describe	printer
+put	printer	1	\tselect =" "\t
+reg_take	--set	SELECT
+reg_import	APP_
+djin_register	printer_again
+attach	tiny	app
+get	nothing	PATH
+put	nothing	1	 -  djinterp.N
+scope	printer	cpp_features
+reg_target	seummary.bits
+reg_suggest	width
+reg_assign	0	styl	x=y
+reg_take	--no-scale=0.5
+reg_remove	net
+reg_take	--.select
+layers	printer	bits	0
+text_copy	app	u	9007199254740992
+reg_add	app
+bound	tiny	big
+env	NET_PATH	0.5
+generation	net
+detach	printer_two
+raw_get	cache	1	2097153
+attach	tiny	tiny
+layers	cache	.PORT	8
+reg_load	6	summary.=\t"a" b\t ; 
+bound	printer	t
+text_copy	tiny	key_width	-
+unenv	APP_FORMAT
+get	printer_two	moudle
+djin_describe	net
+reg_target	max_depth
+assign	app	6	tiny.module	64
+reg_take	--amx_depth
+assign	printer	6	WIDTH	121
+generation	net
+distance	moxde	p
+put	printer	6	\tTINY.cpp_faetures.path =  JSON 
+reg_add	cache
+raw_get	nothing	2	1048584
+reg_add	tiny
+reg_add	cache
+assign	tiny	5	key_width.	600
+reg_take	--no-net.NOTHING.select
+djin_describe	tiny
+generation	cache
+reg_suggest	bits
+raw_get	printer	1048578	1048584
+unset	printer_two	verbose
+put	printer	4	-color
+assign	app	4	p	true
+reg_count
+reg_suggest	
+reg_count
+distance	formate	banner
+import	net	APP_
+bound	cache	prefix
+attach	cache	net
+raw_get	printer	0	1048585
+assign	net	1	width	2.5e-5
+put	printer_two	6	  printer_two.cpp_fatures.u\t=\t65 
+detach	printer_two
+layers	printer	local.max_depth
+get	tiny	local.module
+detach	tiny
+reg_remove	cache
+distance	hot	et
+reg_remove	net
+get	tiny	cache.cpp_eatures.prefix
+set	printer	5	banner	text	b
+scope	printer_two	localx
+assign	printer	2	title	"\0x"
+import	app	
+reg_add	printer
+unenv	X_P
+reg_target	port
+detach	tiny
+detach	tiny
+bound	nothing	.
+reg_count
+put	printer	6	maxx_depth
+attach	tiny	tiny
+layers	tiny	host	0
+suggest	nothing	PRINTER.sumary.host
+detach	tiny
+statement_end	 u  = 3   ; 	0
+reg_import	APP_
+layers	cache	color
+layers	printer	depth
+unenv	APP_PREFIX
+djin_frame	app
+djin_register	cache_named
+suggest	app	djinterp.size
+reg_assign	2	banner	sign
+scope	net	summary
+assign	printer	1	scal	c|posix
+clear	cache
+reg_target	prefxix
+scope	app	nothing
+unset	cache	PRINTER.nothing.n
+get	nothing	RATIO
+clear	cache
+reg_import	APP_
+djin_frame	printer
+bound	tiny	size
+layers	printer	depth
+env	APP_CACHE_T	0x
+reg_remove	cache
+bound	net	banner
+reg_take	--setmode=plain
+reg_remove	cache
+text_copy	net	stye	a#b
+get	printer	summary.verbose
+djin_describe	tiny
+djin_register	cache_named
+scope	tiny	idebug
+statement_end	 local.xp= 8  # c\n big=c,cpp\nstyle n; k_ey_width =\t240  ;	1
+get	app	
+unenv	X_SCALE
+clear	tiny
+reg_count
+reg_add	net
+reg_load	1	-max_depth # c\n  p =b\n - forma;-t ; 
+reg_add	net
+assign	cache	4	dept	65
+vars	app
+reg_take	--set	style=yaml
+reg_count
+assign	cache	1	u	""
+reg_import	APP_
+djin_describe	printer
+layers	nothing	FORMAT
+unset	tiny	itle
+djin_list
+reg_count
+generation	nothing
+set	nothing	1	verbose	none	nan
+reg_count
+assign	app	5	bits	none
+detach	tiny
+raw_get	app	0	5
+distance	host	sxize
+bound	app	size
+assign	cache	4	size	3
+load	app	5	width\r\n  -\tpath # c\n\tverbose  = hello\r\n
+reg_target	.
+set	app	3	select	flags	-2.75
+assign	cache	3	depth	5e-324
+assign	printer_two	5	.	"open
+djin_register	reserved
+put	app	1	 port  = 0x
+reg_count
+djin_frame	printer_two
+reg_target	select
+unset_from	printer_two	3	u
+unenv	APP_SIZE
+djin_describe	net
+layers	printer	summary.siez	0
+env	APP_NET_MODE	inf
+reg_add	printer
+reg_take	--set	summary.PATH=-all
+reg_load	4	big\t= JSON   ; \tcache.summay.big =\t0x\t\nnet.style=600 ; -  t # c\ndebug.max_depth "tab\t" ; 
+detach	printer_two
+djin_describe	printer_two
+get	printer	cache.nothing.key_width
+unenv	APP_MODE
+put	printer	1	 big =\tÿ  
+load	net	2	 -  key_width # c\n\tmode= 65\r\nsize # c\n  summayr.ratio = 120 \n
+djin_describe	printer
+unset	nothing	seed
+assign	nothing	4	tilte	
+unset_from	nothing	3	t
+load	printer	2	  tiny.nothing.MODULE\t="\x41"   ;   .host =\ta#b   ;   app.debug.mode  = off   # c\n n=8 \n
+env	X_HOST	-nan
+detach	printer_two
+reg_import	
+put	printer	4	 format  =  ""
+get	printer_two	ratio
+reg_take	--set	edbug.seed
+distance	seed	SCALE
+detach	tiny
+reg_take	--set	anner
+assign	printer	0	printer_two.SIZE	c|posix
+reg_count
+env	APP_PRINTER_MODE	c|posix
+layers	nothing	neit.usmmary.porit	8
+djin_describe	cache
+vars	printer
+djin_list
+get	app	host.
+reg_put	1	-app.N
+djin_frame	net
+djin_list
+load	app	1	  path\t=-nan\r\n.scale  =\t"\x41"  ;app.seed 65536 ; path\t=  1e-7 ; seed hello\n
+reg_put	4	host = low\t
+attach	printer_two	printer
+bound	net	summary.path
+scope	app	summary
+load	net	6	 banner = -1  ; \t- t. # c\nkey_width = "\q"\n djintrp.NOTHING.size= -inf \nprinter_two.nothig.MODULE=\t"" ;
+reg_load	5	\tprinter.ize=\t4096  \n TITLE =\t99 ; net.format = posix   ; -printer_two.nothing.mode\r\n.mode 600;
+text_copy	printer	ratio	601
+layers	nothing	printeri.key_width	3
+reg_add	net
+reg_remove	net
+layers	cache	bits	3
+reg_target	key_with
+assign	net	1	style	200
+distance	title	port
+import	tiny	APP_
+vars	printer_two
+reg_target	app.cpp_features.etitle
+put	tiny	3	-max_depht
+assign	printer	0	verbose	2
+raw_get	net	1048578	5
+unset	printer	bits
+reg_load	2	\tn= shallow  ;tin.color 99;
+assign	cache	0	bits	16
+djin_register	printer_again
+env	X_PRINTER_SCALE	4096
+reg_take	--set	tilte=600
+reg_assign	1	color	200
+reg_assign	4	banner	"a b"
+djin_describe	tiny
+reg_target	ode
+djin_list
+unenv	X_WIDTH
+layers	printer_two	tiny.STYLE	3
+clear	cache
+reg_take	--set	.
+distance	style	RATIO
+reg_take	--nothing.banner
+put	tiny	0	\tmodule  =  "\x41" 
+reg_count
+djin_list
+reg_target	ca_che.nothing.port
+reg_remove	net
+generation	app
+statement_end	 verbose  =\t2.5e-5 \r\n priner.debug.banner =  9223372036854775808 \n	2
+attach	tiny	net
+put	cache	2	NOTHING.format= x=y\t
+reg_target	seelect
+reg_count
+scope	printer_two	nothing
+env	PRINTER_U	0b101
+reg_take	--no-ath=legacy
+get	cache	preefix
+load	cache	1	-host; select =  4294967296  ;\tp=\t"\x41" \r\ndepth =\t1e-7  ;-title # c\n
+get	printer	verbose
+reg_target	djinterep.DEBUG.format
+reg_add	cache
+suggest	app	verbose
+get	printer	max_depth
+get	cache	module
+get	net	format
+detach	tiny
+suggest	printer_two	etitle
+assign	tiny	3	printer.COLOR	plain
+unset	app	t
+set	printer_two	5	net.nothing.BITS	real	"quoted"
+suggest	tiny	summary.u
+put	app	5	PRINTER_TWO.color\t= all\t
+layers	printer_two	u
+unset_from	app	5	prefix
+djin_frame	app
+text_copy	tiny	printer.xlocal.module	a
+reg_take	--app.BANNER
+env	APP_PRINTER_BIG	9223372036854775808
+assign	cache	5	raito	yaml
+raw_get	app	2097153	1048585
+djin_list
+detach	printer_two
+assign	tiny	4	seed	off
+distance	title	scale
+reg_import	
+statement_end	-format ; 	0
+scope	printer	notihng
+layers	printer	size
+assign	app	4		0x10
+reg_remove	net
+distance	size	color
+assign	app	2	MODULE	-
+reg_add	cache
+bound	net	app.local.t
+reg_take	--no-verbose=1e309
+clear	app
+assign	printer	3	app.MAX_DEPTH	Y
+reg_remove	printer
+assign	printer	6	nothing.raxtio	0
+reg_add	net
+put	printer	4	summary._bits=  5e-324 
+reg_count
+generation	app
+distance	color	wi_dth
+text_copy	printer	cpp_features.seed	cpp
+reg_import	X_
+unset_from	app	3	loacl.format
+reg_import	APP_
+put	app	3	nothing.mode
+suggest	app	tiny.style
+bound	tiny	app.ti_tle
+detach	tiny
+reg_suggest	djnterp.width
+assign	app	3	style	0o17
+suggest	nothing	hsot
+put	app	1	KEY_WIDTH = -nan 
+scope	printer_two	debug
+import	cache	APP_
+unenv	BITS
+djin_list
+load	tiny	6	-key_width\n  key_wxidth = 65\t\r\n\tprinter.summary.style =1e15  \n
+attach	tiny	printer
+distance	PATH	prefix
+djin_frame	printer_two
+load	printer_two	1	printer_two.debug.module= +wide,-c \r\nprinteri.p\t= JSON\t # c\nmax_depth; bit_s=\tno ; 
+vars	net
+scope	tiny	olcal
+text_copy	nothing	nothing.t	3
+env	X_CACHE_DEPTH	cafÃ©
+reg_take	--set	printre_two.summary.p=true
+djin_register	upper
+get	app	size
+vars	nothing
+set	nothing	1	t	choice	1e15
+reg_put	5	   =  1e21\t
+reg_count
+reg_count
+detach	tiny
+attach	cache	printer_two
+reg_put	4	 u =  sign 
+reg_take	--set	bits="a\"b"
+layers	tiny	prefix	0
+assign	app	5		"\0x"
+get	cache	scale
+distance	SELECT	host
+reg_add	cache
+reg_import	
+unset_from	app	4	color
+reg_suggest	p
+env	APP_PRINTER_N	"a\"b"
+unset	cache	u
+raw_get	printer	1048578	0
+env	APP_RATIO	cpp
+reg_take	--max_depth=off
+reg_import	APP_
+assign	app	1	verbose	.5
+djin_describe	cache
+unset_from	app	3	nothing.bits
+djin_register	cache_named
+reg_import	APP_
+detach	printer_two
+put	net	5	\tmaxd_epth= cafÃ© 
+reg_add	net
+statement_end	  djinterp.notxhing.n =  ""  # c\n-debug.scale\n cache.olcal.port\t= shallow  ;\t.= no \r\n path =  7\t\r\n	0
+assign	printer_two	1	p	8080
+text_copy	printer	path	9223372036854775807
+attach	tiny	app
+unenv	APP_HOST
+vars	printer_two
+get	printer_two	seed
+set	tiny	1	.max_dept	flags	yaml
+put	printer_two	1	  module = off\t
+layers	tiny	n
+reg_import	
+scope	printer	debug
+unenv	APP_MODE
+djin_describe	printer
+put	net	5	-width
+reg_suggest	app.t
+reg_target	format
+get	tiny	CACHE.max_depth
+put	printer	1	\tbig = 16\t
+reg_remove	printer
+get	printer	port
+reg_load	4	SCALE=  xml\t\r\n  mode =-9223372036854775808\t\nn = 4096 \r\n printer_two.summary.port = a#b ;-  ma_xdepth\r\n
+assign	nothing	5	verbose	cafÃ©
+put	app	5	printer.verbose =120 
+assign	app	5	djinterp.nothing.txitle	65536
+reg_put	0	 port =  \t
+reg_add	tiny
+djin_describe	tiny
+detach	tiny
+get	net	printer.SUMMARY.u
+djin_register	printer_again
+distance	style	port
+reg_take	--set	app.debug.mode
+unset	net	format
+env	X_CACHE_SCALE	0x
+attach	tiny	printer
+suggest	printer	mode
+djin_register	printer
+unenv	APP_BIG
+get	printer	u
+reg_take	--set	verbose="\x41"
+get	net	title
+reg_suggest	seed
+unset	printer_two	port
+djin_frame	printer_two
+reg_remove	tiny
+scope	app	summary
+djin_register	cache_named
+load	tiny	5	 net.nothing.size = yaml  \n\tcpp_features.RATIO  = .  \r\n\t.\t=2  # c\n ne.ratiox = .5  # c\nmodule;
+raw_get	tiny	1048578	1
+reg_put	5	 -local.width
+scope	tiny	cpp_feautres
+layers	nothing	cache.banner
+put	app	6	path
+unset	printer_two	banner
+assign	printer_two	1	u	shallow
+set	cache	2	color	int	a
+generation	printer
+reg_take	--setbits
+reg_assign	2	style	none
+reg_take	--no-cache.p
+reg_remove	cache
+get	cache	DJINTERP.mode
+statement_end	\tdjinterp.debug.title = 30 # c\n\tsummary.width=a\t;\tmaxx_depth =\t0  ;  path\t=\t8080  \r\n cpp_features.u =1e21  \n	0
+import	tiny	APP_
+import	app	APP_
+statement_end	-\tbig # c\n 9007199254740993 ;  printer.ratio=-all\t # c\ntiny.title 65535\n	1
+put	nothing	3	debug.title = 200  
+get	cache	porxt
+import	app	APP_
+assign	printer_two	6	bits	table
+reg_import	
+vars	printer
+reg_count
+assign	nothing	4	big	true
+reg_load	1	width_ .5;
+assign	net	5	ratio	0o17
+suggest	nothing	verbose
+get	printer	local.module_
+suggest	nothing	t
+reg_remove	tiny
+scope	tiny	debug
+djin_describe	app
+get	net	summary.depth
+attach	tiny	tiny
+reg_suggest	port
+reg_suggest	.seed
+suggest	app	host
+reg_add	net
+layers	printer_two	mode
+reg_assign	1	n	65536
+reg_suggest	bits
+get	net	seed
+reg_import	APP_
+suggest	tiny	cpp_featurse.U
+djin_frame	nothing
+get	net	bits
+statement_end	 size  = all\t\r\n - s_eed\r\n	1
+assign	tiny	3	ap.nothing.size	2.5e-5
+set	printer	5	app.veirbose	choice	65536
+reg_import	APP_
+unset	cache	style
+unset_from	nothing	5	cach.key_width
+djin_describe	net
+layers	printer	local.BIG	0
+raw_get	printer	0	0
+reg_count
+set	app	5		choice	nan
+generation	cache
+suggest	printer	seed.
+reg_put	0	-  FORMAT
+clear	nothing
+import	app	APP_
+get	nothing	depth
+get	app	modue
+assign	tiny	4	eslect	"\x41"
+distance	moe	title
+distance	path	TITLE
+reg_count
+import	app	
+reg_assign	1	kiey_width	-
+get	cache	host
+reg_add	printer
+generation	cache
+suggest	tiny	select
+attach	printer_two	-
+generation	tiny
+reg_count
+reg_target	P
+raw_get	tiny	1048578	5
+distance	depth	bits
+reg_load	0	 = auto \r\n
+reg_import	X_
+reg_load	0	 tiny.debug.ve_rbose= shallow  \r\n depth\t=\tnan  # c\n u\t=65  \r\nratio Y\n   = 0;
+reg_target	host.
+reg_remove	net
+djin_list
+import	app	X_
+layers	nothing	ratio
+get	app	rato
+detach	printer_two
+attach	printer_two	printer_two
+reg_count
+put	printer_two	0	u
+reg_import	X_
+suggest	nothing	veirbose
+bound	app	scale
+text_copy	tiny	debug.host	c legacy
+layers	tiny	djinterp.cpp_features.select	1
+put	printer	4	 key_iwdth= 0x 
+reg_suggest	color
+vars	app
+raw_get	app	1	1048585
+scope	net	summary
+attach	tiny	app
+reg_load	3	- tiny.depth ; 
+layers	app	seed	8
+unset	net	format
+distance	seed	scale
+unset	app	deth
+unenv	X_VERBOSE
+assign	app	2	tiny.local.sede	1e21
+put	tiny	0	net.max_depth\t= wide
+reg_target	depth
+attach	cache	-
+scope	printer	summary
+unset_from	printer_two	4	SIZE.
+scope	printer	summary
+djin_frame	printer_two
+distance	cloor	scale
+djin_register	net
+vars	cache
+generation	printer
+put	printer	3	  net.SUMMARY.path=\toff 
+assign	net	5	printer_two.local.title	1.5
+reg_put	1	mode
+djin_register	upper
+reg_suggest	printer_tow.cpp_features.style
+put	tiny	2	 printer.banner_ = -1 
+djin_describe	djinterp
+assign	tiny	4	preifx	two words
+assign	printer	1	_n	120
+unenv	X_BIG
+load	cache	2	t=it's  ;   style = all  ; - select;scale =\t121  \r\napp.debug.t "quoted" ; 
+layers	app	path	0
+layers	cache	MAX_DEPTH
+set	printer_two	4	color	text	4294967296
+get	cache	paith
+load	cache	1	\tcpp_features.select =  "quoted"  \r\n color =\tjson\t # c\n-host ; stiyle =  grid  \n nothing.max_depth  =\t017  ;
+set	cache	1	nothing.widht	int	0x100000000
+djin_register	upper
+reg_put	5	bits =\t017\t
+get	cache	netx.debug.title
+assign	nothing	1	mode	shallow
+unset	printer	prefix
+detach	printer_two
+reg_count
+set	app	4	host	flags	-1
+unset	cache	riatio
+reg_take	--set	width.
+text_copy	nothing	module	-cpp
+get	printer	style
+text_copy	net	path	cafÃ©
+djin_describe	cache
+get	app	style
+djin_register	wrong_frame
+reg_assign	3	style	off
+text_copy	net	banner	+c
+djin_frame	printer
+reg_count
+raw_get	cache	1048578	1
+set	net	0	host	bool	3
+reg_take	--size
+put	printer	1	-.u
+scope	tiny	summary
+reg_target	SCALE
+set	printer	5	width	choice	9223372036854775808
+get	printer_two	printer.CPP_FEATURES.banenr
+assign	tiny	5	banner	b
+reg_put	0	 summary.SELECT\t= xml 
+reg_put	0	N "\0x"
+bound	app	host
+assign	tiny	5	app.max_depth	65535
+unenv	X_PREFIX
+get	printer	printer.title
+detach	printer_two
+attach	printer_two	printer
+distance	p	select
+reg_import	
+clear	printer
+assign	printer_two	4	big	-1
+scope	app	cpp_featrues
+text_copy	cache	printer_two.format	1e15
+reg_target	cpp_features.banner
+distance	max_depth	n
+layers	printer	p	64
+reg_count
+put	app	3	  =017  
+unset_from	tiny	6	style
+put	printer_two	0	 title\t= 601  
+reg_add	net
+reg_suggest	cpp_features.seed
+unenv	APP_U
+assign	nothing	1	t	-2.75
+suggest	net	app.cpp_features.banner
+clear	nothing
+put	printer	5	 ratio\t=80 
+reg_take	--set	port=0x100000000
+get	cache	path
+detach	tiny
+attach	tiny	-
+scope	nothing	_debug
+reg_target	scale
+reg_remove	net
+djin_register	reserved
+put	app	4	prixnter.nothing.path  =\t4294967296\t
+load	printer_two	5	  max_depth =  a,sign  \n nothing.big\t=  4294967296  ;  APP.nothing.eky_width  =  x=y ;     = 2\t # c\n  host  =  3.14159 # c\n
+generation	cache
+unset_from	app	1	cpp_features.host
+reg_assign	6	local.width	1e
+suggest	printer	tiny.summary.eslect
+djin_describe	app
+reg_add	net
+get	printer	print_er.NOTHING.color
+unset_from	tiny	2	summayr.seexd
+clear	net
+put	cache	5	 .banner\t=\t"\x41"
+unset	printer	printerx.summary.paith
+reg_target	bnner
+reg_target	pah
+vars	cache
+djin_register	printer
+reg_suggest	app.summary.module
+assign	printer_two	5	style	=
+distance	p	epth
+reg_count
+reg_target	nothing.port
+statement_end	p\r\nwidth  padded \n	0
+reg_assign	0	CPP_FEATURES.m_odule	huge
+layers	app	title
+reg_add	net
+reg_assign	3	seed	xml
+layers	printer	SUMMARY.style	1
+attach	tiny	printer
+reg_target	seed
+reg_take	--set	bitis
+put	printer	3	 - cpp_features.MODE
+unset_from	cache	1	idebug.t
+unenv	WIDTH
+layers	net	port	3
+unset	printer	
+clear	printer
+reg_count
+assign	printer	1	djinterp.formeat	120
+djin_describe	djinterp
+reg_add	app
+attach	cache	-
+suggest	printer_two	heost
+scope	printer	summary
+put	printer_two	1	  . =  hello  
+djin_list
+reg_put	1	 NET.nothing.u =1e-7\t
+get	printer	apth
+import	cache	X_
+reg_suggest	printer_two.color
+unset_from	printer_two	1	prt
+reg_take	--set	u
+layers	nothing	.host	64
+statement_end	 module =  a#b  ; 	2
+put	printer	0	prefix = xml 
+reg_add	cache
+reg_take	--set	n.=all
+layers	app	cache.max_depth
+get	nothing	
+reg_suggest	app.bits
+put	app	3	-t
+put	printer_two	5	\tstyle = -nan 
+put	tiny	0	 ratio =Y 
+reg_target	pinter_two.MAX_DEPTH
+reg_assign	0	n	two words
+assign	printer	4	net.summary.bits	9007199254740992
+reg_add	app
+import	nothing	APP_
+reg_import	APP_
+reg_remove	net
+reg_count
+reg_count
+bound	printer	port
+assign	tiny	5	path	TRUE
+reg_import	APP_
+get	net	cache.cpp_features.mode
+put	printer	4	djinterp.big 8
+get	cache	max_depth
+reg_assign	1	app.cpp_features.path	1e15
+assign	printer	1	CACHE.verbose	3
+attach	tiny	net
+set	app	3	color	none	a#b
+reg_put	0	\thost = 0.5
+reg_import	X_
+assign	printer_two	1	PATH	c,cpp
+unenv	X_PREFIX
+get	app	titele
+unset_from	net	2	size
+layers	nothing	bainner
+vars	tiny
+reg_import	APP_
+put	printer	5	size\t=3  
+djin_frame	app
+set	app	2	verbose	bool	4294967296
+get	nothing	SELECT
+unenv	PREFIX
+reg_remove	cache
+clear	net
+attach	cache	net
+djin_register	plain
+vars	printer_two
+layers	printer	printer.bits
+put	net	0	  format = 99 
+load	nothing	4	  path\t= false   ;   nxet.cpp_features.depth  =  1e15\t\n
+raw_get	app	0	1048585
+layers	printer_two	style	8
+scope	cache	summary
+unenv	P
+djin_register	printer
+env	X_PRINTER_VERBOSE	grid
+env	APP_NET_SIZE	 padded 
+raw_get	net	2	2097153
+unset_from	printer_two	6	neit.debug.ratio
+suggest	app	printer_two.tilte
+reg_put	5	  n  = "\q" 
+reg_target	cp_pfeatures.n
+attach	tiny	printer
+bound	printer	.
+distance	_u	big
+unset_from	nothing	5	modul
+statement_end	U  = yaml ;	0
+unenv	HOST
+reg_load	1	\twidth\t=  a#b  ; noting.prefix= a#b  ; 
+put	app	0	\tformat\t=\t.5
+reg_load	4	 ize\t=\t""  # c\n  -  .;\tverbose\t= inf  \r\n WIDTH= -9223372036854775808  # c\n . =  0x\t\n
+get	printer_two	APP.cpp_features.ratio
+layers	net	wdth	8
+load	tiny	5	 t\t= a\t\n  -verbose # c\n\tnet.debug.n  =  xml\t ; port  = 3.14159;tiny.VERBOSE\n
+assign	printer_two	1	scale	1e
+get	cache	path
+assign	tiny	5	CPP_FEATURES.PATH	64
+attach	printer_two	printer
+reg_assign	3	BIG	infinity
+djin_frame	tiny
+assign	tiny	0	banner	-
+put	app	5	format
+assign	nothing	6	module	all
+get	tiny	nothing.path
+reg_remove	cache
+reg_count
+put	app	4	-local_.n
+reg_take	--no-debug.n=posix
+attach	tiny	tiny
+env	APP_NET_STYLE	-1
+reg_take	--set	debug.p=65536
+reg_take	--no-wdith
+djin_register	wrong_frame
+get	printer_two	key_width
+reg_take	--set	local.bits=+wide,-c
+put	net	4	 seummary.t= 0o17 
+reg_load	2	 host\t=\t-nan  # c\n-cache.hots;title\n-ode.;cpp_features.p\n
+attach	printer_two	printer_two
+reg_count
+reg_suggest	.
+reg_count
+set	printer	4		choice	65536
+load	app	0	-prefix ;  max_depth = xml \n
+reg_count
+djin_describe	cache
+reg_remove	net
+reg_target	port
+djin_frame	printer_two
+reg_target	printer.style
+get	app	p
+generation	net
+djin_describe	cache
+reg_add	cache
+bound	app	printer_two.n
+put	cache	6	key_width 9223372036854775807
+unset	net	p
+reg_import	X_
+reg_take	--set	big=false
+reg_count
+reg_take	--set	title
+distance	PATH	SCALE
+reg_put	5	 printer_two.host\t= "a" b  
+assign	net	6	module	off
+assign	app	3	mode	no
+clear	printer
+reg_add	tiny
+unset_from	printer_two	5	DJINTERP.big
+import	app	X_
+reg_suggest	style
+layers	printer	bits	8
+reg_remove	cache
+djin_list
+reg_count
+reg_import	
+put	cache	6	-bannr
+put	app	6	\t= 80 
+layers	app	xselect
+set	printer_two	5	prefix	none	99
+assign	app	3	size	plain
+djin_list
+load	net	5	prefix ; seed +wide,-c # c\nprefix off\r\nmodule wide ; 
+get	printer	size
+reg_assign	5	max_depth	0o17
+scope	printer	local
+bound	net	foermat
+unset	app	size.
+scope	nothing	debug
+load	printer_two	1	 ne.local.scale= 240 \n format  =3.14159;  cpp_featurs.PATH=all\t\r\n
+text_copy	app	module	a#b
+reg_assign	2	hoxst	"a b"
+scope	app	SUMMARY
+reg_remove	printer
+reg_load	5	 SIZE = c\t;
+reg_take	--setkey_width=c
+put	printer_two	0	-max_depth
+scope	app	LOCAL
+assign	app	1	cache.xstyle	TRUE
+layers	printer	title
+djin_register	printer
+reg_target	max_depth
+assign	printer_two	0	ma_depth	1
+unset_from	tiny	1	module
+reg_count
+djin_frame	cache
+assign	printer	5	host	"quoted"
+statement_end	 bits =  7 ;  tiny.nothing.p  =  yaml \n	1
+layers	printer_two	app.local.p	8
+scope	nothing	ummary
+reg_target	.
+get	net	olcal.PATH
+reg_take	--set	app.debug.host=-inf
+load	printer	3	  bits. =yes   # c\n
+layers	printer_two	host	1
+reg_assign	1	style	=
+scope	net	NOTHING
+put	nothing	0	\tdepth =cpp  
+scope	printer	summary
+assign	tiny	3	max_depth	grid
+unenv	X_PREFIX
+reg_count
+suggest	printer_two	max_depth
+reg_take	--set	style
+unset_from	cache	4	NOTHING.selet
+djin_describe	cache
+djin_describe	cache
+assign	app	6	color	
+reg_put	0	\t- ap.local.ratio
+set	cache	1		int	legacy
+generation	printer
+reg_count
+reg_load	0	-tiny.nothing.scle ;   big  = yaml \r\n HOST=xml ;  summary.bitis = ÿ  ;
+reg_take	--set	HOST=.
+reg_take	--no-scale
+detach	printer_two
+get	printer	printer.LOCAL.banner
+bound	printer	
+djin_describe	app
+reg_remove	tiny
+djin_register	printer_again
+djin_register	upper
+detach	tiny
+load	printer_two	1	-prefiix\r\n\tdjinterp.deebug.PATH = it's\t;n\t=\tnan\r\n
+djin_list
+reg_count
+env	X_BIG	0
+text_copy	tiny	printexr.PREFIX	low
+get	printer	printer_two.local.ban_ner
+distance	elect	title
+djin_register	plain
+raw_get	printer	1	2097153
+reg_take	--no-color="quoted"
+vars	cache
+vars	net
+reg_take	--no-host.
+load	printer	5	\t-tiny.local.host # c\n path  =.5\t\nprinter.s_cale\t=\tÿ  ; 
+attach	tiny	net
+reg_take	--set	depth
+vars	printer
+unset_from	nothing	6	t
+bound	printer	.mode
+reg_remove	tiny
+suggest	app	debug.title
+assign	app	3	p	sign
+layers	printer_two	mode	1
+env	APP_PRINTER_TWO_HOST	9223372036854775807
+load	printer	1	 -net.debug.format;  \t=\t100 ; host =  240\n-summary.width # c\n- ;
+bound	tiny	depth
+suggest	printer	net.key_width
+env	X_NET_RATIO	""
+djin_frame	nothing
+assign	tiny	1	local.mde	5e-324
+scope	app	debug
+generation	printer_two
+put	printer_two	1	 mode = sign 
+reg_import	
+reg_load	2	 cace.summary.banner =cpp  \n-caceh.cpp_featuers.its ;  scale ="\0x"  # c\n
+put	printer_two	1	- KEY_WIDTH
+put	app	1	bgi
+put	tiny	1	prefix =  yaml
+unenv	X_RATIO
+get	printer_two	idth
+put	printer	5	  seelct = c\t
+distance		ratio
+clear	printer
+unenv	X_DEPTH
+bound	printer_two	djintep.nothing.seed
+reg_remove	net
+vars	cache
+text_copy	net	printer_two.sieze	a,sign
+reg_assign	5		legacy
+detach	tiny
+reg_target	color
+put	nothing	0	  sacle= 200 
+djin_register	reserved
+unset_from	nothing	1	.xbits
+reg_take	--no-seed=plain
+reg_load	1	\tapp.debug.key_width=+c \r\n
+djin_frame	printer
+djin_frame	cache
+reg_suggest	scale
+bound	printer	mode
+djin_frame	nothing
+unenv	X_TITLE
+put	printer_two	1	title
+reg_suggest	.
+djin_list
+attach	printer_two	-
+unenv	MODE
+get	nothing	depth.
+reg_add	printer
+text_copy	printer	depth	"quoted"
+import	cache	
+detach	tiny
+reg_put	5	  -t
+layers	tiny	scale
+detach	printer_two
+reg_load	5	  module\t=true\t\n\tbanner="tab\t"   # c\n  APP.debug.seed= 0x100000000 ;
+djin_register	cache_named
+layers	printer	printer.host
+scope	printer	debug
+env	X_NET_PREFIX	240
+unenv	RATIO
+layers	app	seed	1
+reg_add	printer
+djin_register	plain
+unset	cache	NOTHING.max_depth
+reg_add	app
+unset	app	summary.path
+put	net	5	 style\t= ÿ\t
+reg_add	tiny
+layers	app	PATH	8
+reg_remove	printer
+text_copy	printer	cache.path	-2.75
+reg_suggest	tilte
+get	printer_two	verboes
+reg_assign	4	cpp_features.seed	two words
+djin_describe	printer
+scope	tiny	NOTHING
+detach	printer_two
+generation	printer_two
+reg_put	1	-cache.sumary.prefix
+detach	printer_two
+env	APP_NET_BIG	a#b
+reg_count
+statement_end	  max_depth=  80  \n   = 1e309 \r\n .  = JSON # c\n  key_width =-1  \r\n	2
+get	printer	sze
+get	printer	module
+scope	nothing	nthing
+attach	tiny	tiny
+put	printer_two	4	cache.cpp_features.p
+clear	app
+reg_put	1	  ratio =\t5.
+raw_get	printer	2	1048578
+get	printer	format
+djin_describe	app
+reg_target	app.n
+distance	bits	xp
+bound	nothing	nte.baxnner
+reg_target	u
+statement_end	xkey_width -1 # c\n path =\tyes\t\r\n	1
+suggest	app	printer_two.local.bits
+reg_put	0	\tsize\t="\0x"\t
+djin_describe	app
+distance	max_depth	color
+reg_assign	1	tiny.debug.mode	80
+reg_count
+get	printer_two	
+get	cache	cpp_features.wdith
+statement_end	  COLOR= b \r\n cche.nothing.n\t= =\t\r\n scale\t=\t0x  ; \tverbose =  0.5  # c\n	0
+statement_end	verobse\n	1
+put	printer	5	  size = c legacy
+unenv	APP_SIZE
+statement_end	 app.sumary.TITLE= off  \r\n\tdept_h.= 0.1  ; 	2
+get	printer	cpp_features.WIDTH
+text_copy	cache	printer_two.U	cafÃ©
+layers	tiny	title	8
+unset	printer	
+statement_end	MODE ;   big= 9007199254740992 # c\n\tscle\t=  30  ;   u =\t"\q" ;	2
+djin_frame	cache
+scope	printer	LOCAL
+get	app	.format
+statement_end	 hosit=\tplain   ; \tapp.p =legacy \n  smmary.port ="a b"\t\n\tsummary.host\t=  600  \r\nformat # c\n	0
+reg_add	tiny
+djin_register	cache_named
+djin_describe	net
+suggest	app	bits
+reg_add	net
+set	printer	6	printer.local.verbose	flags	80
+get	tiny	
+djin_register	upper
+reg_suggest	cache.big
+reg_take	--set	nothing.HOST
+reg_put	2	 si_ze=  a,sign 
+unset	app	djinerp.u
+get	printer_two	cache.ratio
+scope	printer	cp_features
+reg_remove	net
+reg_import	APP_
+reg_remove	net
+import	printer	
+statement_end	\tlo_cal.p= 65536  ; .\ntitle = 8\t ;   .= +c \n	0
+attach	tiny	app
+clear	cache
+get	nothing	keey_width
+assign	printer_two	1	net.SIZE	"open
+reg_add	cache
+import	app	APP_
+reg_assign	5	color	"a\"b"
+get	app	vebose
+clear	app
+reg_count
+vars	printer
+reg_add	net
+scope	tiny	summay
+load	app	1	\t= " " ;   n=-9223372036854775808 \r\n seed\t= a ;  - port ; 
+reg_add	tiny
+layers	nothing	WIDTH
+djin_register	net
+distance	color	p
+reg_suggest	ittle
+generation	cache
+assign	net	1	width	-all
+reg_suggest	module.
+load	tiny	0	  = 9007199254740993 ;   - summary.style\n. = 0.1 \r\n
+djin_register	reserved
+get	cache	.
+djin_register	wrong_frame
+generation	app
+detach	printer_two
+vars	app
+reg_put	3	  app.debug.big  = unbounded
+detach	tiny
+import	printer_two	
+unset_from	app	5	.
+generation	printer
+vars	nothing
+reg_count
+reg_take	--no-u
+unenv	X_DEPTH
+djin_frame	app
+import	cache	APP_
+scope	printer	DEBUG
+env	X_CACHE_BITS	1e-7
+generation	cache
+reg_count
+djin_list
+assign	app	0	key_width	b
+layers	tiny	nothing.verbose
+raw_get	cache	1048577	1
+load	app	5	 summary.sieed=-2.75 ;
+reg_assign	1	tiny.width	" "
+reg_remove	printer
+clear	nothing
+attach	cache	app
+statement_end	 vebrose\t= n\n-net.module # c\n\tsacle =\t120  \n tiny.debug.max_depth==   # c\n port  =1e-7 # c\n	2
+reg_import	X_
+scope	net	local
+raw_get	app	2097153	1048584
+djin_frame	app
+reg_target	
+clear	nothing
+unenv	X_RATIO
+clear	cache
+unset	cache	KEY_WIDTH
+djin_register	plain
+reg_take	--set	cache.width=off
+reg_suggest	.style
+get	net	net.p
+put	tiny	0	-t
+layers	cache	local.depth	8
+layers	tiny	djinterp.nothing.depth	8
+layers	app	verbose
+text_copy	net	tite	9007199254740992
+text_copy	printer_two	tiny.local.key_width	9223372036854775808
+assign	app	1	dinterp.p	-9223372036854775808
+statement_end	 MAX_DEPTH=on\t\r\n	1
+vars	net
+djin_list
+suggest	net	local.module
+reg_assign	5	patxh	yaml
+reg_take	--no-nothing.p
+bound	printer_two	host
+bound	tiny	scale
+reg_assign	2	.banner	wide
+reg_add	cache
+detach	tiny
+reg_count
+generation	printer_two
+reg_load	1	-port. # c\n  path =  auto  ;
+unset_from	net	0	key_width
+detach	printer_two
+unset_from	nothing	5	BANNER
+get	nothing	nothing.select
+reg_add	net
+layers	app	select
+raw_get	printer_two	0	268435456
+reg_count
+reg_load	4	\tFORMAT = 1e15\t;-verbose\n max_depth=\tn   ;  size  = 1.5 ; \tbanner =unbounded   # c\n
+reg_take	--set	debu.module=true
+unset	net	local.path
+djin_describe	cache
+reg_import	X_
+djin_frame	cache
+text_copy	nothing	djinterp.ratio	9007199254740993
+text_copy	nothing	n	xml
+reg_assign	6	.	""
+unset	printer_two	seect
+reg_count
+reg_suggest	local.color
+unenv	APP_HOST
+reg_import	APP_
+scope	printer_two	summary
+raw_get	net	0	0
+djin_describe	app
+reg_put	4	. all
+get	tiny	path
+reg_suggest	deipth
+get	printer_two	width
+generation	printer
+reg_load	2	module c\n path=  a,sign;scale\n
+bound	app	djinterp.title
+reg_take	--settitel=table
+unenv	DEPTH
+statement_end	debuge.size off\r\n	2
+layers	cache	local.xkey_width
+layers	nothing	net.scale
+clear	nothing
+vars	printer_two
+reg_target	iformat
+assign	net	2	path	c legacy
+reg_count
+unset	printer_two	key_width
+put	cache	3	\tprinter.pth\t= "a" b 
+reg_import	APP_
+get	cache	scale
+bound	printer	seed
+clear	printer
+put	printer_two	6	-select
+reg_take	--no-depth
+unenv	APP_RATIO
+env	APP_COLOR	grid
+layers	printer	depth	3
+set	app	3	size	flags	off
+assign	app	5	cche.depth	\
+statement_end	printer_two.LOCAL.stye\nBITS\r\nmax_depth\r\n -t\n  ratio =\t"\0x" ;	2
+put	printer_two	2	 stylee  =  0x10
+reg_target	debug.banner
+djin_frame	net
+reg_load	2	 prefix\t= a#b  ;.big=\t2.5e-5 \r\nne.HOST -cpp;p;\tverbose  = "open ;
+raw_get	app	1048577	2097152
+vars	app
+generation	tiny
+djin_describe	tiny
+vars	cache
+reg_add	cache
+reg_add	cache
+djin_describe	net
+text_copy	printer	sexlect	c
+unenv	APP_BIG
+reg_put	2	title
+djin_list
+put	tiny	6	\t  =0.1 
+reg_import	APP_
+get	printer	bi
+put	printer_two	6	 net.module= a  
+reg_take	--no-bannexr
+put	app	1	  summary.t=  121 
+vars	app
+scope	nothing	local
+set	cache	5	mode	choice	on
+get	printer	seeed
+raw_get	nothing	1048577	0
+vars	printer_two
+scope	net	nothing
+generation	printer_two
+assign	tiny	3	local.bits	none
+reg_count
+reg_target	bits
+djin_describe	printer_two
+assign	app	1	width	120
+put	printer_two	4	 n\t=  99\t
+attach	printer_two	-
+djin_frame	printer
+set	tiny	0	_p	flags	yes
+reg_put	1	port =  "open  
+reg_target	width
+put	cache	4	.
+attach	tiny	app
+get	printer	net.debug.diepth
+reg_take	--no-seed
+djin_list
+text_copy	app	depth	017
+clear	printer
+get	nothing	select
+put	nothing	3	max_depth =\t30 
+set	app	3	summary.depth	int	-9223372036854775808
+vars	app
+reg_suggest	PRINTER_TWO.summary.width
+scope	nothing	nothing
+reg_load	5	 scal=  3.14159  # c\n
+assign	cache	0	MODE	xml
+unset	nothing	tiny.othing.t
+assign	nothing	4	p	a|b
+clear	printer
+layers	printer_two		1
+reg_suggest	verbose
+get	app	RATIO.
+put	printer	6	\tp =  cafÃ©  
+import	net	X_
+get	tiny	tiny.local.ptah
+assign	cache	0	STYLE	it's
+assign	printer_two	6	format	off
+bound	printer	title
+reg_count
+statement_end	style = 1 \n\t-  scale\r\nport 80 ; select  =\t-9223372036854775808\t ; 	1
+put	printer	6	prefix
+assign	printer	5	prefix	c,cpp
+get	app	printer_two.cpp_f_eatures.BIG
+unset	tiny	printer_two.PATH
+djin_frame	nothing
+put	printer	5	cache.ratio wide
+reg_put	6	cpp_features.n=  a|b\t
+clear	printer_two
+get	cache	
+vars	net
+reg_remove	tiny
+unenv	APP_PATH
+djin_register	upper
+import	printer	APP_
+generation	net
+djin_frame	tiny
+layers	printer_two	
+reg_add	tiny
+reg_take	--setapp.n=
+clear	nothing
+unset	app	cpp_features.stye
+text_copy	printer_two	format.	nan
+vars	nothing
+djin_frame	tiny
+reg_count
+assign	printer	3	caiche.cpp_features.seed	=
+reg_assign	5	bits	240
+djin_describe	djinterp
+generation	tiny
+unset	tiny	path
+set	app	2	net_.coloer	flags	1e15
+reg_take	--set	MODULE=false
+unenv	X_KEY_WIDTH
+unenv	WIDTH
+set	net	2	prefix.	int	huge
+get	printer	banner
+env	X_PRINTER_DEPTH	8080
+get	printer_two	locxal.big
+get	net	verbose
+put	app	6	cache.ratio yes
+env	NET_KEY_WIDTH	b
+reg_remove	net
+reg_take	--set	prefix
+djin_describe	printer
+reg_assign	6	host	-inf
+djin_frame	nothing
+get	net	nothing.format
+bound	cache	banner
+put	printer	5	  select =\t0 
+assign	net	3	scael	a,sign
+reg_load	3	SUMMARY.size= Y  # c\n  - depth ;  max_depth  =200\t\r\n ratio  =  inf  ; 
+djin_list
+layers	nothing	ratio	3
+raw_get	net	2	2097152
+reg_suggest	vebose
+djin_register	plain
+reg_target	bits
+put	tiny	1	\t =\tno  
+reg_add	cache
+raw_get	printer	1	2097153
+scope	tiny	debug
+unenv	N
+reg_count
+reg_take	--set	select
+reg_add	printer
+reg_import	APP_
+env	APP_PRINTER_PORT	-9223372036854775808
+text_copy	nothing	n	=
+reg_count
+reg_assign	0	path	601
+djin_list
+text_copy	net	nothing.key_width	.
+unenv	X_KEY_WIDTH
+vars	app
+bound	tiny	scale
+reg_take	--set	summary.seed
+assign	printer	5	tiny.debug.verbose	yaml
+clear	printer
+suggest	printer	net.verbose
+raw_get	nothing	0	1048585
+layers	app	.	64
+reg_assign	6	key_widthi.	x=y
+reg_take	--setsize=low
+reg_suggest	sleect
+reg_suggest	path
+reg_target	prefix
+distance	path	moede
+distance	t	modle
+get	net	size
+assign	cache	6	verobse	64
+get	app	SEED.
+reg_take	--setcolor
+set	printer_two	2	TINY.max_depth	real	json
+load	printer_two	4	 max_depth  =\t5. ;nte.bits;u # c\n
+reg_remove	tiny
+put	nothing	3	  path =\t+wide,-c\t
+vars	tiny
+reg_take	--setcache.depth
+assign	nothing	4	max_depth	TRUE
+raw_get	net	0	2097153
+djin_describe	net
+get	nothing	p
+layers	nothing	U	8
+reg_take	--no-N=7
+statement_end	 bnner  = grid; size =1   # c\nverbose\t= "\0x"\n\tAPP.host = 64 # c\n	2
+unenv	X_U
+reg_add	app
+reg_take	--no-nothing.stye=true
+reg_count
+layers	cache	.size	1
+clear	app
+get	net	depth
+layers	app	title
+reg_assign	3	style	0
+put	app	3	\t= 1.5 
+assign	app	6		-9223372036854775808
+set	printer_two	5	ke_ywidth	none	1e
+load	app	5	l_ocal.kye_width  = inf\t\r\n
+layers	cache	big	3
+load	printer_two	5	p =  . \r\n
+bound	app	mode
+detach	printer_two
+reg_count
+assign	cache	5	VERBOSE.	b
+layers	net	.	1
+statement_end	   =0b101 ;\teapp.loca.t  = "\q"  ;\tnet.U =\t120  \r\n	1
+env	NET_PATH	1
+set	nothing	6	seed	choice	8080
+clear	nothing
+clear	printer_two
+layers	net	style.
+distance	module	n
+distance	depth	seed
+statement_end	  title ="\x41"  \r\n	2

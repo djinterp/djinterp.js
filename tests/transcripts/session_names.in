@@ -1,0 +1,98 @@
+# finding
+vars	app
+vars	printer
+vars	net
+vars	tiny
+get	app	nothing
+get	app	COLOR
+get	app	Color
+get	app	app.color
+get	app	app.debug.color
+get	app	debug.color
+get	app	app.
+get	app	app
+get	app	.
+get	app	
+get	printer	printer.style
+get	printer	printer.summary.style
+get	printer	summary.style
+get	printer	app.style
+get	printer	style.
+get	printer	format
+get	printer	printer.format
+get	printer	color
+get	printer	printer.color
+get	printer	debug.color
+get	net	p
+get	net	net.p
+get	printer_two	printer_two.width
+get	printer_two	printer.width
+get	printer_two	key_width
+root	printer_two
+root	printer
+root	app
+root	tiny
+scope	app	debug
+scope	app	Debug
+scope	app	
+scope	printer	cpp_features
+scope	printer	summary
+scope	printer	debug
+scope	printer	local
+# suggesting
+suggest	app	colour
+suggest	app	colr
+suggest	app	wdith
+suggest	app	widht
+suggest	app	WIDTH
+suggest	app	wid
+suggest	app	w
+suggest	app	rati
+suggest	app	ratios
+suggest	app	titel
+suggest	app	max_dept
+suggest	app	maxdepth
+suggest	app	dep
+suggest	app	de
+suggest	app	xyz
+suggest	app	
+suggest	app	debgu.color
+suggest	app	debug.colr
+suggest	app	dbg.color
+suggest	app	app.colr
+suggest	app	app.debug.colr
+suggest	printer	stlye
+suggest	printer	fromat
+suggest	printer	sumary.style
+suggest	printer	summary.stlye
+suggest	printer	printer.stlye
+suggest	printer	colr
+suggest	printer	keywidth
+suggest	printer	key_widht
+suggest	printer	sed
+suggest	printer	see
+suggest	printer	modul
+suggest	printer_two	verbos
+suggest	printer_two	lcal.verbose
+suggest	printer_two	cpp_feature.style
+suggest	net	hots
+suggest	net	prot
+suggest	net	q
+suggest	net	pp
+suggest	net	mod
+suggest	net	bit
+suggest	net	bi
+distance	width	width
+distance	width	WIDTH
+distance	width	widht
+distance	width	wdith
+distance	width	wid
+distance	width	
+distance		width
+distance	abc	cba
+distance	ab	ba
+distance	kitten	sitting
+distance	a_name_of_sixty_three_characters_exactly_and_not_one_more_xxxxxx	a_name_of_sixty_three_characters_exactly_and_not_one_more_xxxxxy
+distance	a_name_of_sixty_four_characters_exactly_and_not_one_more_xxxxxxxx	a
+distance	a	a_name_of_sixty_four_characters_exactly_and_not_one_more_xxxxxxxx
+declare_bad

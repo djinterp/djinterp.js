@@ -1,0 +1,577 @@
+registry ok 0
+frame app declare=ok 0 scopes=ok 1
+frame printer init=ok 0 name=ok 0 declare=ok 0 scopes=ok 1 attach=ok 0
+frame net init=ok 0 name=ok 0 declare=ok 0 attach=ok 1
+frame cache init=ok 0 name=ok 0 declare=ok 0 attach=ok 2
+frame printer_two init=ok 0 name=ok 0 declare=ok 0 scopes=ok 1 attach=ok 0
+frame tiny init=ok 0 name=ok 0 declare=ok 0
+djins 0
+> # bool spellings
+> assign	app	1	color	TRUE
+assign ok 0
+> assign	app	1	color	Yes
+assign ok 0
+> assign	app	1	color	on
+assign ok 0
+> assign	app	1	color	y
+assign ok 0
+> assign	app	1	color	1
+assign ok 0
+> get	app	color
+get id=0 scope=0 kind=bool bound=1 source=program depth=0 integer=1 real=0 text=(null) | 4 true | 4 true
+> assign	app	1	color	False
+assign ok 0
+> assign	app	1	color	NO
+assign ok 0
+> assign	app	1	color	Off
+assign ok 0
+> assign	app	1	color	N
+assign ok 0
+> assign	app	1	color	0
+assign ok 0
+> get	app	color
+get id=0 scope=0 kind=bool bound=1 source=program depth=0 integer=0 real=0 text=(null) | 5 false | 5 false
+> assign	app	1	color	2
+assign fail 8 INVALID_ARGUMENT
+> assign	app	1	color	tru
+assign fail 8 INVALID_ARGUMENT
+> assign	app	1	color	
+assign fail 8 INVALID_ARGUMENT
+> assign	app	1	color	 true 
+assign ok 0
+> # ints: bases, signs, limits
+> assign	printer	1	seed	0
+assign ok 1048581
+> assign	printer	1	seed	-0
+assign ok 1048581
+> assign	printer	1	seed	+17
+assign ok 1048581
+> get	printer	seed
+get id=1048581 scope=0 kind=int bound=1 source=program depth=1 integer=17 real=0 text=(null) | 2 17 | 2 17
+> assign	printer	1	seed	0x7fffffffffffffff
+assign ok 1048581
+> get	printer	seed
+get id=1048581 scope=0 kind=int bound=1 source=program depth=1 integer=9223372036854775807 real=0 text=(null) | 19 9223372036854775807 | 19 9223372036854775807
+> assign	printer	1	seed	0x8000000000000000
+assign fail 8 INVALID_ARGUMENT
+> assign	printer	1	seed	-0x8000000000000000
+assign ok 1048581
+> get	printer	seed
+get id=1048581 scope=0 kind=int bound=1 source=program depth=1 integer=-9223372036854775808 real=0 text=(null) | 20 -9223372036854775808 | 20 -9223372036854775808
+> assign	printer	1	seed	9223372036854775807
+assign ok 1048581
+> get	printer	seed
+get id=1048581 scope=0 kind=int bound=1 source=program depth=1 integer=9223372036854775807 real=0 text=(null) | 19 9223372036854775807 | 19 9223372036854775807
+> assign	printer	1	seed	9223372036854775808
+assign fail 8 INVALID_ARGUMENT
+> assign	printer	1	seed	-9223372036854775808
+assign ok 1048581
+> get	printer	seed
+get id=1048581 scope=0 kind=int bound=1 source=program depth=1 integer=-9223372036854775808 real=0 text=(null) | 20 -9223372036854775808 | 20 -9223372036854775808
+> assign	printer	1	seed	-9223372036854775809
+assign fail 8 INVALID_ARGUMENT
+> assign	printer	1	seed	18446744073709551615
+assign fail 8 INVALID_ARGUMENT
+> assign	printer	1	seed	18446744073709551616
+assign fail 8 INVALID_ARGUMENT
+> assign	printer	1	seed	0b1011
+assign ok 1048581
+> get	printer	seed
+get id=1048581 scope=0 kind=int bound=1 source=program depth=1 integer=11 real=0 text=(null) | 2 11 | 2 11
+> assign	printer	1	seed	0B1011
+assign ok 1048581
+> assign	printer	1	seed	0o777
+assign ok 1048581
+> get	printer	seed
+get id=1048581 scope=0 kind=int bound=1 source=program depth=1 integer=511 real=0 text=(null) | 3 511 | 3 511
+> assign	printer	1	seed	0777
+assign ok 1048581
+> get	printer	seed
+get id=1048581 scope=0 kind=int bound=1 source=program depth=1 integer=777 real=0 text=(null) | 3 777 | 3 777
+> assign	printer	1	seed	0X1f
+assign ok 1048581
+> get	printer	seed
+get id=1048581 scope=0 kind=int bound=1 source=program depth=1 integer=31 real=0 text=(null) | 2 31 | 2 31
+> assign	printer	1	seed	0x
+assign fail 8 INVALID_ARGUMENT
+> assign	printer	1	seed	0b2
+assign fail 8 INVALID_ARGUMENT
+> assign	printer	1	seed	0o8
+assign fail 8 INVALID_ARGUMENT
+> assign	printer	1	seed	1f
+assign fail 8 INVALID_ARGUMENT
+> assign	printer	1	seed	1_000
+assign fail 8 INVALID_ARGUMENT
+> assign	printer	1	seed	1.0
+assign fail 8 INVALID_ARGUMENT
+> assign	printer	1	seed	1e3
+assign fail 8 INVALID_ARGUMENT
+> assign	printer	1	seed	+
+assign fail 8 INVALID_ARGUMENT
+> assign	printer	1	seed	-
+assign fail 8 INVALID_ARGUMENT
+> assign	printer	1	seed	--1
+assign fail 8 INVALID_ARGUMENT
+> assign	printer	1	seed	9007199254740993
+assign ok 1048581
+> get	printer	seed
+get id=1048581 scope=0 kind=int bound=1 source=program depth=1 integer=9007199254740993 real=0 text=(null) | 16 9007199254740993 | 16 9007199254740993
+> assign	net	1	big	9007199254740992
+assign ok 1048580
+> get	net	big
+get id=1048580 scope=0 kind=int bound=1 source=program depth=1 integer=9007199254740992 real=0 text=(null) | 16 9007199254740992 | 16 9007199254740992
+> assign	net	1	big	-9007199254740992
+assign ok 1048580
+> get	net	big
+get id=1048580 scope=0 kind=int bound=1 source=program depth=1 integer=-9007199254740992 real=0 text=(null) | 17 -9007199254740992 | 17 -9007199254740992
+> assign	net	1	big	9007199254740993
+assign fail 8 INVALID_ARGUMENT
+> assign	net	1	port	65535
+assign ok 1048577
+> assign	net	1	port	65536
+assign fail 8 INVALID_ARGUMENT
+> assign	net	1	port	0
+assign fail 8 INVALID_ARGUMENT
+> assign	net	1	p	22
+assign ok 1048577
+> get	net	port
+get id=1048577 scope=0 kind=int bound=1 source=program depth=1 integer=22 real=0 text=(null) | 2 22 | 2 22
+> # an int's named values
+> assign	app	1	depth	64
+assign ok 4
+> assign	app	1	depth	0
+assign ok 4
+> assign	app	1	depth	unbounded
+assign ok 4
+> get	app	depth
+get id=4 scope=0 kind=int bound=1 source=program depth=0 integer=9223372036854775807 real=0 text=unbounded | 9 unbounded | 9 unbounded
+> assign	app	1	depth	9223372036854775807
+assign ok 4
+> get	app	depth
+get id=4 scope=0 kind=int bound=1 source=program depth=0 integer=9223372036854775807 real=0 text=unbounded | 9 unbounded | 9 unbounded
+> assign	app	1	depth	2
+assign ok 4
+> get	app	depth
+get id=4 scope=0 kind=int bound=1 source=program depth=0 integer=2 real=0 text=shallow | 7 shallow | 7 shallow
+> assign	app	1	depth	auto
+assign fail 6 POLICY_REJECTED
+> assign	app	1	depth	AUTO
+assign fail 6 POLICY_REJECTED
+> assign	app	1	depth	-1
+assign fail 6 POLICY_REJECTED
+> assign	app	1	depth	100
+assign fail 8 INVALID_ARGUMENT
+> # reals
+> assign	app	1	ratio	1
+assign ok 2
+> get	app	ratio
+get id=2 scope=0 kind=real bound=1 source=program depth=0 integer=0 real=1 text=(null) | 1 1 | 1 1
+> assign	app	1	ratio	1.5
+assign ok 2
+> get	app	ratio
+get id=2 scope=0 kind=real bound=1 source=program depth=0 integer=0 real=1.5 text=(null) | 3 1.5 | 3 1.5
+> assign	app	1	ratio	-2.75
+assign ok 2
+> get	app	ratio
+get id=2 scope=0 kind=real bound=1 source=program depth=0 integer=0 real=-2.75 text=(null) | 5 -2.75 | 5 -2.75
+> assign	app	1	ratio	1e21
+assign ok 2
+> get	app	ratio
+get id=2 scope=0 kind=real bound=1 source=program depth=0 integer=0 real=1e+21 text=(null) | 5 1e+21 | 5 1e+21
+> assign	app	1	ratio	1E15
+assign ok 2
+> get	app	ratio
+get id=2 scope=0 kind=real bound=1 source=program depth=0 integer=0 real=1000000000000000 text=(null) | 16 1000000000000000 | 16 1000000000000000
+> assign	app	1	ratio	1.5e-7
+assign ok 2
+> get	app	ratio
+get id=2 scope=0 kind=real bound=1 source=program depth=0 integer=0 real=1.4999999999999999e-07 text=(null) | 22 1.4999999999999999e-07 | 22 1.4999999999999999e-07
+> assign	app	1	ratio	2.5e-5
+assign ok 2
+> get	app	ratio
+get id=2 scope=0 kind=real bound=1 source=program depth=0 integer=0 real=2.5000000000000001e-05 text=(null) | 22 2.5000000000000001e-05 | 22 2.5000000000000001e-05
+> assign	app	1	ratio	.5
+assign ok 2
+> get	app	ratio
+get id=2 scope=0 kind=real bound=1 source=program depth=0 integer=0 real=0.5 text=(null) | 3 0.5 | 3 0.5
+> assign	app	1	ratio	5.
+assign ok 2
+> get	app	ratio
+get id=2 scope=0 kind=real bound=1 source=program depth=0 integer=0 real=5 text=(null) | 1 5 | 1 5
+> assign	app	1	ratio	+.5e+1
+assign ok 2
+> get	app	ratio
+get id=2 scope=0 kind=real bound=1 source=program depth=0 integer=0 real=5 text=(null) | 1 5 | 1 5
+> assign	app	1	ratio	0.1
+assign ok 2
+> get	app	ratio
+get id=2 scope=0 kind=real bound=1 source=program depth=0 integer=0 real=0.10000000000000001 text=(null) | 19 0.10000000000000001 | 19 0.10000000000000001
+> assign	app	1	ratio	0.30000000000000004
+assign ok 2
+> get	app	ratio
+get id=2 scope=0 kind=real bound=1 source=program depth=0 integer=0 real=0.30000000000000004 text=(null) | 19 0.30000000000000004 | 19 0.30000000000000004
+> assign	app	1	ratio	123456789012345678901234567890
+assign ok 2
+> get	app	ratio
+get id=2 scope=0 kind=real bound=1 source=program depth=0 integer=0 real=1.2345678901234568e+29 text=(null) | 22 1.2345678901234568e+29 | 22 1.2345678901234568e+29
+> assign	app	1	ratio	0.000000000000000000000000000001
+assign ok 2
+> get	app	ratio
+get id=2 scope=0 kind=real bound=1 source=program depth=0 integer=0 real=1.0000000000000001e-30 text=(null) | 22 1.0000000000000001e-30 | 22 1.0000000000000001e-30
+> assign	app	1	ratio	1.7976931348623157e308
+assign ok 2
+> get	app	ratio
+get id=2 scope=0 kind=real bound=1 source=program depth=0 integer=0 real=1.7976931348623157e+308 text=(null) | 23 1.7976931348623157e+308 | 23 1.7976931348623157e+308
+> assign	app	1	ratio	1.7976931348623159e308
+assign fail 8 INVALID_ARGUMENT
+> assign	app	1	ratio	1e309
+assign fail 8 INVALID_ARGUMENT
+> assign	app	1	ratio	-1e309
+assign fail 8 INVALID_ARGUMENT
+> assign	app	1	ratio	4.9e-324
+assign ok 2
+> get	app	ratio
+get id=2 scope=0 kind=real bound=1 source=program depth=0 integer=0 real=4.9406564584124654e-324 text=(null) | 23 4.9406564584124654e-324 | 23 4.9406564584124654e-324
+> assign	app	1	ratio	2.4703282292062328e-324
+assign ok 2
+> get	app	ratio
+get id=2 scope=0 kind=real bound=1 source=program depth=0 integer=0 real=4.9406564584124654e-324 text=(null) | 23 4.9406564584124654e-324 | 23 4.9406564584124654e-324
+> assign	app	1	ratio	2.4703282292062327e-324
+assign ok 2
+> get	app	ratio
+get id=2 scope=0 kind=real bound=1 source=program depth=0 integer=0 real=0 text=(null) | 1 0 | 1 0
+> assign	app	1	ratio	1e-400
+assign ok 2
+> get	app	ratio
+get id=2 scope=0 kind=real bound=1 source=program depth=0 integer=0 real=0 text=(null) | 1 0 | 1 0
+> assign	app	1	ratio	-1e-400
+assign ok 2
+> get	app	ratio
+get id=2 scope=0 kind=real bound=1 source=program depth=0 integer=0 real=-0 text=(null) | 2 -0 | 2 -0
+> assign	app	1	ratio	2.2250738585072011e-308
+assign ok 2
+> get	app	ratio
+get id=2 scope=0 kind=real bound=1 source=program depth=0 integer=0 real=2.2250738585072009e-308 text=(null) | 23 2.2250738585072009e-308 | 23 2.2250738585072009e-308
+> assign	app	1	ratio	9007199254740993
+assign ok 2
+> get	app	ratio
+get id=2 scope=0 kind=real bound=1 source=program depth=0 integer=0 real=9007199254740992 text=(null) | 16 9007199254740992 | 16 9007199254740992
+> assign	app	1	ratio	inf
+assign ok 2
+> get	app	ratio
+get id=2 scope=0 kind=real bound=1 source=program depth=0 integer=0 real=inf text=(null) | 3 inf | 3 inf
+> assign	app	1	ratio	-INF
+assign ok 2
+> get	app	ratio
+get id=2 scope=0 kind=real bound=1 source=program depth=0 integer=0 real=-inf text=(null) | 4 -inf | 4 -inf
+> assign	app	1	ratio	+Infinity
+assign ok 2
+> get	app	ratio
+get id=2 scope=0 kind=real bound=1 source=program depth=0 integer=0 real=inf text=(null) | 3 inf | 3 inf
+> assign	app	1	ratio	nan
+assign ok 2
+> get	app	ratio
+get id=2 scope=0 kind=real bound=1 source=program depth=0 integer=0 real=nan text=(null) | 3 nan | 3 nan
+> assign	app	1	ratio	-NaN
+assign ok 2
+> get	app	ratio
+get id=2 scope=0 kind=real bound=1 source=program depth=0 integer=0 real=-nan text=(null) | 4 -nan | 4 -nan
+> assign	app	1	ratio	infinit
+assign fail 8 INVALID_ARGUMENT
+> assign	app	1	ratio	nan(1)
+assign fail 8 INVALID_ARGUMENT
+> assign	app	1	ratio	0x10
+assign fail 8 INVALID_ARGUMENT
+> assign	app	1	ratio	0x1p3
+assign fail 8 INVALID_ARGUMENT
+> assign	app	1	ratio	1e
+assign fail 8 INVALID_ARGUMENT
+> assign	app	1	ratio	1e+
+assign fail 8 INVALID_ARGUMENT
+> assign	app	1	ratio	e5
+assign fail 8 INVALID_ARGUMENT
+> assign	app	1	ratio	.
+assign fail 8 INVALID_ARGUMENT
+> assign	app	1	ratio	-.
+assign fail 8 INVALID_ARGUMENT
+> assign	app	1	ratio	1..2
+assign fail 8 INVALID_ARGUMENT
+> assign	app	1	ratio	1.2.3
+assign fail 8 INVALID_ARGUMENT
+> assign	app	1	ratio	1 2
+assign fail 8 INVALID_ARGUMENT
+> assign	app	1	ratio	1,5
+assign fail 8 INVALID_ARGUMENT
+> assign	app	1	ratio	+-1
+assign fail 8 INVALID_ARGUMENT
+> assign	app	1	ratio	1f
+assign fail 8 INVALID_ARGUMENT
+> assign	app	1	ratio	
+assign fail 8 INVALID_ARGUMENT
+> assign	app	1	ratio	0.000000000000000000000000000000000000000000000000000000000000001
+assign fail 8 INVALID_ARGUMENT
+> assign	app	1	ratio	0.00000000000000000000000000000000000000000000000000000000000001
+assign fail 8 INVALID_ARGUMENT
+> get	app	ratio
+get id=2 scope=0 kind=real bound=1 source=program depth=0 integer=0 real=-nan text=(null) | 4 -nan | 4 -nan
+> assign	printer	1	scale	  3.25  
+assign ok 1048582
+> get	printer	scale
+get id=1048582 scope=0 kind=real bound=1 source=program depth=1 integer=0 real=3.25 text=(null) | 4 3.25 | 4 3.25
+> # choices
+> assign	printer	1	style	json
+assign ok 1048577
+> get	printer	style
+get id=1048577 scope=0 kind=choice bound=1 source=program depth=1 integer=1 real=0 text=json | 4 json | 4 json
+> assign	printer	1	style	TABLE
+assign ok 1048577
+> get	printer	style
+get id=1048577 scope=0 kind=choice bound=1 source=program depth=1 integer=2 real=0 text=table | 5 table | 5 table
+> assign	printer	1	style	grid
+assign ok 1048577
+> get	printer	style
+get id=1048577 scope=0 kind=choice bound=1 source=program depth=1 integer=2 real=0 text=table | 5 table | 5 table
+> assign	printer	1	style	1
+assign ok 1048577
+> get	printer	style
+get id=1048577 scope=0 kind=choice bound=1 source=program depth=1 integer=1 real=0 text=json | 4 json | 4 json
+> assign	printer	1	style	0x2
+assign ok 1048577
+> get	printer	style
+get id=1048577 scope=0 kind=choice bound=1 source=program depth=1 integer=2 real=0 text=table | 5 table | 5 table
+> assign	printer	1	style	xml
+assign fail 6 POLICY_REJECTED
+> assign	printer	1	style	3
+assign fail 6 POLICY_REJECTED
+> assign	printer	1	style	4
+assign fail 8 INVALID_ARGUMENT
+> assign	printer	1	style	yaml
+assign fail 8 INVALID_ARGUMENT
+> assign	printer	1	style	
+assign fail 8 INVALID_ARGUMENT
+> assign	printer	1	format	plain
+assign ok 1048577
+> get	printer	format
+get id=1048577 scope=0 kind=choice bound=1 source=program depth=1 integer=0 real=0 text=plain | 5 plain | 5 plain
+> assign	net	1	mode	huge
+assign ok 1048578
+> get	net	mode
+get id=1048578 scope=0 kind=choice bound=1 source=program depth=1 integer=9223372036854775807 real=0 text=huge | 4 huge | 4 huge
+> assign	net	1	mode	low
+assign ok 1048578
+> get	net	mode
+get id=1048578 scope=0 kind=choice bound=1 source=program depth=1 integer=-9223372036854775808 real=0 text=low | 3 low | 3 low
+> assign	net	1	mode	-9223372036854775808
+assign ok 1048578
+> get	net	mode
+get id=1048578 scope=0 kind=choice bound=1 source=program depth=1 integer=-9223372036854775808 real=0 text=low | 3 low | 3 low
+> assign	net	1	mode	1
+assign fail 8 INVALID_ARGUMENT
+> # flags
+> get	printer	select
+get id=1048578 scope=0 kind=flags bound=0 source=default depth=none integer=3 real=0 text=(null) | 5 c|cpp | 5 c|cpp
+> assign	printer	1	select	c
+assign ok 1048578
+> get	printer	select
+get id=1048578 scope=0 kind=flags bound=1 source=program depth=1 integer=1 real=0 text=(null) | 1 c | 1 c
+> assign	printer	1	select	c,cpp
+assign ok 1048578
+> get	printer	select
+get id=1048578 scope=0 kind=flags bound=1 source=program depth=1 integer=3 real=0 text=(null) | 5 c|cpp | 5 c|cpp
+> assign	printer	1	select	c	posix
+assign ok 1048578
+> assign	printer	1	select	c|posix
+assign ok 1048578
+> get	printer	select
+get id=1048578 scope=0 kind=flags bound=1 source=program depth=1 integer=5 real=0 text=(null) | 7 c|posix | 7 c|posix
+> assign	printer	1	select	c cpp posix
+assign ok 1048578
+> get	printer	select
+get id=1048578 scope=0 kind=flags bound=1 source=program depth=1 integer=7 real=0 text=(null) | 3 all | 3 all
+> assign	printer	1	select	ALL
+assign ok 1048578
+> get	printer	select
+get id=1048578 scope=0 kind=flags bound=1 source=program depth=1 integer=7 real=0 text=(null) | 3 all | 3 all
+> assign	printer	1	select	none
+assign ok 1048578
+> get	printer	select
+get id=1048578 scope=0 kind=flags bound=1 source=program depth=1 integer=0 real=0 text=(null) | 4 none | 4 none
+> assign	printer	1	select	
+assign ok 1048578
+> get	printer	select
+get id=1048578 scope=0 kind=flags bound=1 source=program depth=1 integer=0 real=0 text=(null) | 4 none | 4 none
+> assign	printer	1	select	wide
+assign ok 1048578
+> get	printer	select
+get id=1048578 scope=0 kind=flags bound=1 source=program depth=1 integer=4294967296 real=0 text=(null) | 4 wide | 4 wide
+> assign	printer	1	select	wide,c
+assign ok 1048578
+> get	printer	select
+get id=1048578 scope=0 kind=flags bound=1 source=program depth=1 integer=4294967297 real=0 text=(null) | 6 c|wide | 6 c|wide
+> assign	printer	1	select	+posix
+assign ok 1048578
+> get	printer	select
+get id=1048578 scope=0 kind=flags bound=1 source=program depth=1 integer=4294967301 real=0 text=(null) | 12 c|posix|wide | 12 c|posix|wide
+> assign	printer	1	select	-c
+assign ok 1048578
+> get	printer	select
+get id=1048578 scope=0 kind=flags bound=1 source=program depth=1 integer=4294967300 real=0 text=(null) | 10 posix|wide | 10 posix|wide
+> assign	printer	1	select	-wide +cpp
+assign ok 1048578
+> get	printer	select
+get id=1048578 scope=0 kind=flags bound=1 source=program depth=1 integer=6 real=0 text=(null) | 9 cpp|posix | 9 cpp|posix
+> assign	printer	1	select	+all,-cpp
+assign ok 1048578
+> get	printer	select
+get id=1048578 scope=0 kind=flags bound=1 source=program depth=1 integer=5 real=0 text=(null) | 7 c|posix | 7 c|posix
+> assign	printer	1	select	5
+assign ok 1048578
+> get	printer	select
+get id=1048578 scope=0 kind=flags bound=1 source=program depth=1 integer=5 real=0 text=(null) | 7 c|posix | 7 c|posix
+> assign	printer	1	select	0x100000002
+assign ok 1048578
+> get	printer	select
+get id=1048578 scope=0 kind=flags bound=1 source=program depth=1 integer=4294967298 real=0 text=(null) | 8 cpp|wide | 8 cpp|wide
+> assign	printer	1	select	legacy
+assign fail 6 POLICY_REJECTED
+> assign	printer	1	select	c,legacy
+assign fail 6 POLICY_REJECTED
+> assign	printer	1	select	8
+assign fail 6 POLICY_REJECTED
+> assign	printer	1	select	16
+assign fail 8 INVALID_ARGUMENT
+> assign	printer	1	select	24
+assign fail 6 POLICY_REJECTED
+> assign	printer	1	select	c,,cpp
+assign ok 1048578
+> get	printer	select
+get id=1048578 scope=0 kind=flags bound=1 source=program depth=1 integer=3 real=0 text=(null) | 5 c|cpp | 5 c|cpp
+> assign	printer	1	select	c,+
+assign fail 8 INVALID_ARGUMENT
+> assign	printer	1	select	c;cpp
+assign fail 8 INVALID_ARGUMENT
+> assign	printer	1	select	bogus
+assign fail 8 INVALID_ARGUMENT
+> assign	printer	1	select	-legacy
+assign fail 6 POLICY_REJECTED
+> get	printer	select
+get id=1048578 scope=0 kind=flags bound=1 source=program depth=1 integer=3 real=0 text=(null) | 5 c|cpp | 5 c|cpp
+> assign	net	1	bits	sign
+assign ok 1048579
+> get	net	bits
+get id=1048579 scope=0 kind=flags bound=1 source=program depth=1 integer=-9223372036854775808 real=0 text=(null) | 4 sign | 4 sign
+> assign	net	1	bits	sign,a
+assign ok 1048579
+> get	net	bits
+get id=1048579 scope=0 kind=flags bound=1 source=program depth=1 integer=-9223372036854775807 real=0 text=(null) | 6 a|sign | 6 a|sign
+> assign	net	1	bits	a|b
+assign ok 1048579
+> get	net	bits
+get id=1048579 scope=0 kind=flags bound=1 source=program depth=1 integer=3 real=0 text=(null) | 3 a|b | 3 a|b
+> assign	net	1	bits	4
+assign fail 8 INVALID_ARGUMENT
+> assign	net	1	bits	-1
+assign ok 1048579
+> assign	net	1	bits	
+assign ok 1048579
+> get	net	bits
+get id=1048579 scope=0 kind=flags bound=1 source=program depth=1 integer=0 real=0 text=(null) | 1 0 | 1 0
+> # binding by value
+> set	app	1	color	bool	1
+set ok 0
+> set	app	1	color	bool	7
+set ok 0
+> get	app	color
+get id=0 scope=0 kind=bool bound=1 source=program depth=0 integer=1 real=0 text=(null) | 4 true | 4 true
+> set	app	1	color	int	1
+set fail 3 VALUE_TYPE_MISMATCH
+> set	app	1	width	int	100
+set ok 1
+> set	app	1	width	int	99
+set fail 8 INVALID_ARGUMENT
+> set	app	1	width	bool	1
+set fail 3 VALUE_TYPE_MISMATCH
+> set	app	1	width	real	1
+set fail 3 VALUE_TYPE_MISMATCH
+> set	app	1	width	text	x
+set fail 3 VALUE_TYPE_MISMATCH
+> set	app	1	width	none	1
+set fail 3 VALUE_TYPE_MISMATCH
+> set	app	1	width	choice	150
+set ok 1
+> get	app	width
+get id=1 scope=0 kind=int bound=1 source=program depth=0 integer=150 real=0 text=(null) | 3 150 | 3 150
+> set	app	1	ratio	real	0.25
+set ok 2
+> set	app	1	ratio	int	1
+set fail 3 VALUE_TYPE_MISMATCH
+> get	app	ratio
+get id=2 scope=0 kind=real bound=1 source=program depth=0 integer=0 real=0.25 text=(null) | 4 0.25 | 4 0.25
+> set	app	1	title	text	borrowed
+set ok 3
+> get	app	title
+get id=3 scope=0 kind=text bound=1 source=program depth=0 integer=0 real=0 text=borrowed | 8 borrowed | 8 borrowed
+> set	app	1	title	text	(null)
+set ok 3
+> get	app	title
+get id=3 scope=0 kind=text bound=1 source=program depth=0 integer=0 real=0 text=(null) | 0  | 0 
+> set	app	1	title	int	1
+set fail 3 VALUE_TYPE_MISMATCH
+> set	printer	1	style	int	2
+set ok 1048577
+> set	printer	1	style	choice	1
+set ok 1048577
+> set	printer	1	style	flags	0
+set ok 1048577
+> set	printer	1	style	int	3
+set fail 6 POLICY_REJECTED
+> set	printer	1	style	int	9
+set fail 8 INVALID_ARGUMENT
+> get	printer	style
+get id=1048577 scope=0 kind=choice bound=1 source=program depth=1 integer=0 real=0 text=plain | 5 plain | 5 plain
+> set	printer	1	select	int	7
+set ok 1048578
+> set	printer	1	select	int	8
+set fail 6 POLICY_REJECTED
+> set	printer	1	select	int	16
+set fail 8 INVALID_ARGUMENT
+> set	printer	1	select	int	4294967296
+set ok 1048578
+> get	printer	select
+get id=1048578 scope=0 kind=flags bound=1 source=program depth=1 integer=4294967296 real=0 text=(null) | 4 wide | 4 wide
+> set	app	0	color	bool	1
+set fail 8 INVALID_ARGUMENT
+> set	app	6	color	bool	1
+set fail 8 INVALID_ARGUMENT
+> set	app	1	nothing	bool	1
+set fail 1 KEY_ABSENT
+> text_copy	app	title	copied
+text_copy ok 3
+> get	app	title
+get id=3 scope=0 kind=text bound=1 source=program depth=0 integer=0 real=0 text=copied | 6 copied | 6 copied
+> text_copy	app	width	copied
+text_copy fail 3 VALUE_TYPE_MISMATCH
+> raw_get	app	0	0
+raw_get ok 0 source=1 | 4 true | 4 true
+> raw_get	app	0	5
+raw_get fail 1 KEY_ABSENT source=-1 | -1 (null) | -1 (null)
+> raw_get	app	1	0
+raw_get ok 0 source=1 | 4 true | 4 true
+> raw_get	app	2	0
+raw_get fail 1 KEY_ABSENT source=-1 | -1 (null) | -1 (null)
+> raw_get	app	1048577	0
+raw_get fail 1 KEY_ABSENT source=-1 | -1 (null) | -1 (null)
+> raw_get	printer	1048577	0
+raw_get ok 0 source=1 | 4 true | 4 true
+> raw_get	printer	1048578	1048577
+raw_get ok 1048577 source=1 | 5 plain | 5 plain
+> raw_get	printer	1048579	1048577
+raw_get fail 1 KEY_ABSENT source=-1 | -1 (null) | -1 (null)
+> raw_get	printer	1	1048577
+raw_get ok 1048577 source=1 | 5 plain | 5 plain
+> raw_get	printer	0	268435456
+raw_get fail 1 KEY_ABSENT source=-1 | -1 (null) | -1 (null)
+> raw_get	printer	0	2097152
+raw_get fail 1 KEY_ABSENT source=-1 | -1 (null) | -1 (null)
+> raw_get	printer_two	0	2097152
+raw_get ok 2097152 source=0 | 5 false | 5 false

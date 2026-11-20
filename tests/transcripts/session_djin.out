@@ -1,0 +1,162 @@
+registry ok 0
+frame app declare=ok 0 scopes=ok 1
+frame printer init=ok 0 name=ok 0 declare=ok 0 scopes=ok 1 attach=ok 0
+frame net init=ok 0 name=ok 0 declare=ok 0 attach=ok 1
+frame cache init=ok 0 name=ok 0 declare=ok 0 attach=ok 2
+frame printer_two init=ok 0 name=ok 0 declare=ok 0 scopes=ok 1 attach=ok 0
+frame tiny init=ok 0 name=ok 0 declare=ok 0
+djins 0
+> # records, taken and refused
+> djin_list
+printer  -  settings only
+net      -  settings only
+cache    -  settings only
+djin_list 0
+> djin_register	upper
+djin_register 1 invalid
+> djin_register	reserved
+djin_register 3 reserved
+> djin_register	no_version
+djin_register 1 invalid
+> djin_register	two_lines
+djin_register 1 invalid
+> djin_register	twice
+djin_register 1 invalid
+> djin_register	shout
+djin_register 1 invalid
+> djin_register	other_abi
+djin_register 1 invalid
+> djin_register	wrong_frame
+djin_register 1 invalid
+> djin_register	nothing
+djin_register -1 unknown
+> djin_register	printer
+djin_register 0 ok
+> djin_register	printer
+djin_register 2 duplicate
+> djin_register	printer_again
+djin_register 2 duplicate
+> djin_list
+printer  0.9.0  prints descriptions
+net      -      settings only
+cache    -      settings only
+djin_list 0
+> djin_register	plain
+djin_register 0 ok
+> djin_register	net
+djin_register 0 ok
+> djin_list
+printer  0.9.0  prints descriptions
+plain    3      a djin with no settings and no commands
+net      1.2    talks to other machines
+cache    -      settings only
+djin_list 0
+> djin_register	cache_named
+djin_register 4 full
+> djin_describe	printer
+printer  0.9.0
+  prints descriptions
+
+commands
+  run        print a description
+  check-all  check every description
+
+settings
+  printer.key_width  int     30         D_CFG_ENV_PRINTER_KEY_WIDTH  the width of a key
+  printer.style      choice  plain      D_CFG_ENV_PRINTER_STYLE      how a description is written
+  printer.select     flags   3          -                            the sections written
+  printer.prefix     text    "> "       -                            a text whose default needs quotes
+  printer.banner     bool    false      -                            a bool the environment may not set
+  printer.seed       int     0          -                            an int of any value
+  printer.scale      real    1          -
+  printer.module     text    "builtin"  D_CFG_ENV_PRINTER_MODULE     a text only the program and the command line set
+  printer.width      int     80         -                            a name the root declares too
+djin_describe 0
+> djin_describe	net
+net  1.2
+  talks to other machines
+
+settings
+  net.host  text    "localhost"  -  a text with a default
+  net.port  int     8080         -  an int with an alias
+  net.mode  choice  off          -  a choice of 64-bit values
+  net.bits  flags   0            -  flags with the sign bit
+  net.big   int     0            -  an int one past the exact integers each way
+djin_describe 0
+> djin_describe	plain
+plain  3
+  a djin with no settings and no commands
+djin_describe 0
+> djin_describe	cache
+djin_describe none
+> djin_describe	nothing
+djin_describe none
+> djin_frame	cache
+cache
+  settings only
+
+settings
+  cache.size  int   64     -
+  cache.path  text  unset  -  where it is kept
+djin_frame 0
+> djin_frame	printer
+printer
+  settings only
+
+settings
+  printer.key_width  int     30         D_CFG_ENV_PRINTER_KEY_WIDTH  the width of a key
+  printer.style      choice  plain      D_CFG_ENV_PRINTER_STYLE      how a description is written
+  printer.select     flags   3          -                            the sections written
+  printer.prefix     text    "> "       -                            a text whose default needs quotes
+  printer.banner     bool    false      -                            a bool the environment may not set
+  printer.seed       int     0          -                            an int of any value
+  printer.scale      real    1          -
+  printer.module     text    "builtin"  D_CFG_ENV_PRINTER_MODULE     a text only the program and the command line set
+  printer.width      int     80         -                            a name the root declares too
+djin_frame 0
+> djin_frame	app
+app
+  settings only
+
+settings
+  app.color  bool  true   -  whether output is coloured
+  app.width  int   240    -  an int in a range
+  app.ratio  real  0.5    -  a real
+  app.title  text  unset  -  a text with no default
+  app.depth  int   8      -  an int with named values and an alias
+djin_frame 0
+> djin_frame	printer_two
+printer_two
+  settings only
+
+settings
+  printer_two.verbose  bool  false  -  a bool two frames down
+djin_frame 0
+> djin_frame	tiny
+tiny
+  settings only
+
+settings
+  tiny.t  text  unset  -
+  tiny.u  text  unset  -
+  tiny.n  int   0      -
+djin_frame 0
+> djin_frame	nothing
+djin_frame -1
+> djin_command	printer	run
+djin_command print a description
+> djin_command	printer	check-all
+djin_command check every description
+> djin_command	printer	check
+djin_command (null)
+> djin_command	net	run
+djin_command (null)
+> djin_command	nothing	run
+djin_command (null)
+> reg_remove	cache
+reg_remove ok 2
+> djin_list
+printer  0.9.0  prints descriptions
+plain    3      a djin with no settings and no commands
+net      1.2    talks to other machines
+djin_list 0

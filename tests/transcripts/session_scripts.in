@@ -1,0 +1,58 @@
+# a script: statements, comments, and where it stops
+load	app	1	color = no; width = 300\nratio = 2.5
+get	app	color
+get	app	width
+get	app	ratio
+load	app	1	# nothing but a comment
+load	app	1	
+load	app	1	;;;\n\n;  ; \n
+load	app	1	width = 200 # then a comment; color = yes\ncolor = no
+get	app	width
+get	app	color
+load	app	1	title = "a;b#c\nd" ; width = 210
+get	app	title
+get	app	width
+load	app	1	title = "quote \" inside ; still"; width = 220
+get	app	title
+load	app	1	width = 230; width = 99; width = 240
+get	app	width
+load	app	1	  \n\n   width = 250\n   nothing = 1\nwidth = 260
+get	app	width
+load	app	1	width = 270;nothing
+load	app	1	nothing
+load	app	1	\twidth = 1
+load	app	1	title = "open ; width = 300
+get	app	title
+load	app	1	title = caf\xc3\xa9; width = 99
+get	app	title
+load	app	1	title = "\xe6\x97\xa5\xe6\x9c\xac\xe8\xaa\x9e"; ratio = x
+get	app	title
+load	app	1	# \xe2\x82\xac\nwidth = 99
+load	app	0	width = 300
+load	app	6	width = 300
+load	app	2	width = 300; color = yes
+layers	app	width
+load	app	1	-width; -color
+layers	app	width
+load	app	1	color; -color; color = no; color
+get	app	color
+load	app	1	width = 300\r\ncolor = yes\r\n
+get	app	width
+load	app	1	width = 310\x0cwidth = 320
+load	app	1	width = 300 ;# c\n# d\n ; color = no #e
+load	app	1	title = a\;b
+get	app	title
+load	app	1	title = "a\\"; width = 330
+get	app	title
+get	app	width
+statement_end	a = 1; b = 2	0
+statement_end	a = 1; b = 2	6
+statement_end	a = "x;y" ; b	0
+statement_end	a = "x\\";y" ; b	0
+statement_end	a = "x\\\\";y	0
+statement_end	a # c	0
+statement_end	a\nb	0
+statement_end	abc	3
+statement_end	a = "open	0
+statement_end	a = \; b	0
+statement_end		0

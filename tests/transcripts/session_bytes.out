@@ -1,0 +1,91 @@
+registry ok 0
+frame app declare=ok 0 scopes=ok 1
+frame printer init=ok 0 name=ok 0 declare=ok 0 scopes=ok 1 attach=ok 0
+frame net init=ok 0 name=ok 0 declare=ok 0 attach=ok 1
+frame cache init=ok 0 name=ok 0 declare=ok 0 attach=ok 2
+frame printer_two init=ok 0 name=ok 0 declare=ok 0 scopes=ok 1 attach=ok 0
+frame tiny init=ok 0 name=ok 0 declare=ok 0
+djins 0
+> # text that is not ASCII, and bytes that are not UTF-8
+> put	app	1	title = caf\xc3\xa9
+put ok 3
+> get	app	title
+get id=3 scope=0 kind=text bound=1 source=program depth=0 integer=0 real=0 text=cafÃ© | 5 cafÃ© | 5 cafÃ©
+> put	app	1	title = "\xc3\xa9t\xc3\xa9; \xe2\x82\xac"
+put ok 3
+> get	app	title
+get id=3 scope=0 kind=text bound=1 source=program depth=0 integer=0 real=0 text=Ã©tÃ©; â‚¬ | 10 Ã©tÃ©; â‚¬ | 12 "Ã©tÃ©; â‚¬"
+> put	app	1	title = \xf0\x9f\x98\x80
+put ok 3
+> get	app	title
+get id=3 scope=0 kind=text bound=1 source=program depth=0 integer=0 real=0 text=ğŸ˜€ | 4 ğŸ˜€ | 4 ğŸ˜€
+> put	app	1	title = "\\xff\\xfe raw"
+put ok 3
+> get	app	title
+get id=3 scope=0 kind=text bound=1 source=program depth=0 integer=0 real=0 text=ÿş raw | 6 ÿş raw | 6 ÿş raw
+> put	app	1	title = \xff\xfe
+put ok 3
+> get	app	title
+get id=3 scope=0 kind=text bound=1 source=program depth=0 integer=0 real=0 text=ÿş | 2 ÿş | 2 ÿş
+> put	app	1	title = \xc3
+put ok 3
+> get	app	title
+get id=3 scope=0 kind=text bound=1 source=program depth=0 integer=0 real=0 text=Ã | 1 Ã | 1 Ã
+> put	app	1	title = "\\xc3\\xa9"
+put ok 3
+> get	app	title
+get id=3 scope=0 kind=text bound=1 source=program depth=0 integer=0 real=0 text=Ã© | 2 Ã© | 2 Ã©
+> put	app	1	title = \xed\xa0\x80
+put ok 3
+> get	app	title
+get id=3 scope=0 kind=text bound=1 source=program depth=0 integer=0 real=0 text=í € | 3 í € | 3 í €
+> put	app	1	title = \xc0\x80
+put ok 3
+> get	app	title
+get id=3 scope=0 kind=text bound=1 source=program depth=0 integer=0 real=0 text=À€ | 2 À€ | 2 À€
+> put	app	1	title = "\\x80"
+put ok 3
+> get	app	title
+get id=3 scope=0 kind=text bound=1 source=program depth=0 integer=0 real=0 text=€ | 1 € | 1 €
+> put	app	1	title = a\x7fb\x01c
+put ok 3
+> get	app	title
+get id=3 scope=0 kind=text bound=1 source=program depth=0 integer=0 real=0 text=a\x7Fb\x01c | 5 a\x7Fb\x01c | 13 "a\\x7Fb\\x01c"
+> put	app	1	title = \x0bvt and ff\x0c
+put ok 3
+> get	app	title
+get id=3 scope=0 kind=text bound=1 source=program depth=0 integer=0 real=0 text=vt and ff | 9 vt and ff | 9 vt and ff
+> put	app	1	caf\xc3\xa9 = 1
+put fail 1 KEY_ABSENT
+> put	app	1	width\xc3\xa9 = 1
+put fail 8 INVALID_ARGUMENT
+> put	app	1	width = 30\xc3\xa9
+put fail 8 INVALID_ARGUMENT
+> put	app	1	color = \xc3\xa9
+put fail 8 INVALID_ARGUMENT
+> suggest	app	titl\xc3\xa9
+suggest title
+> suggest	app	t\xc3\xa9tle
+suggest title
+> distance	title	titl\xc3\xa9
+distance 2
+> load	app	1	title = \xe2\x82\xac\xe2\x82\xac; width = 5
+load fail 8 INVALID_ARGUMENT at 16
+> load	app	1	title = \xff; width = 5
+load fail 8 INVALID_ARGUMENT at 11
+> reg_load	1	title = \xe2\x82\xac\nwidth = 5
+reg_load fail 8 INVALID_ARGUMENT at 12
+> reg_suggest	titl\xc3\xa9
+reg_suggest 5 title
+> env	APP_TITLE	\xe2\x82\xac 5
+env
+> reg_import	APP_
+reg_import ok 1
+> get	app	title
+get id=3 scope=0 kind=text bound=1 source=environment depth=0 integer=0 real=0 text=â‚¬ 5 | 5 â‚¬ 5 | 5 â‚¬ 5
+> layers	app	title
+layers 2
+  [0] frame=app scope=0 shown=1 kind=text bound=1 source=environment depth=0 integer=0 real=0 text=â‚¬ 5
+  [1] frame=app scope=0 shown=0 kind=text bound=1 source=program depth=0 integer=0 real=0 text=â‚¬
+> statement_end	\xe2\x82\xac; b	0
+statement_end 3

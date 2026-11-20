@@ -1,0 +1,97 @@
+# a frame with room for two bindings and sixteen bytes of text
+vars	tiny
+put	tiny	1	n = 1
+put	tiny	2	n = 2
+put	tiny	3	n = 3
+layers	tiny	n
+put	tiny	2	n = 4
+unset_from	tiny	1	n
+put	tiny	3	n = 3
+layers	tiny	n
+clear	tiny
+generation	tiny
+put	tiny	1	t = 12345678
+generation	tiny
+put	tiny	1	t = abcdefgh
+generation	tiny
+get	tiny	t
+put	tiny	1	t = 123456789012345
+generation	tiny
+get	tiny	t
+put	tiny	1	t = 1234567890123456
+generation	tiny
+get	tiny	t
+put	tiny	1	u = 1234567
+generation	tiny
+put	tiny	1	u = 12345
+generation	tiny
+get	tiny	t
+get	tiny	u
+put	tiny	1	u = "123\q"
+generation	tiny
+put	tiny	1	u = "12345"
+generation	tiny
+get	tiny	u
+put	tiny	1	t = 
+generation	tiny
+get	tiny	t
+put	tiny	1	t = "\0abc"
+get	tiny	t
+put	tiny	1	-t
+put	tiny	1	-u
+generation	tiny
+put	tiny	1	t = 123456789012345
+generation	tiny
+set	tiny	1	u	text	a borrowed text of any length at all takes no room
+get	tiny	u
+generation	tiny
+text_copy	tiny	u	1234567890123456
+text_copy	tiny	u	
+get	tiny	u
+clear	tiny
+generation	tiny
+get	tiny	t
+# putting a frame under another drops its bindings and moves its ids
+put	tiny	1	n = 5
+vars	tiny
+generation	tiny
+attach	tiny	net
+vars	tiny
+get	tiny	n
+generation	tiny
+get	tiny	host
+put	tiny	1	host = here
+get	tiny	host
+get	net	host
+attach	tiny	tiny
+attach	net	tiny
+attach	net	-
+attach	app	net
+attach	printer	net
+detach	tiny
+vars	tiny
+get	tiny	host
+generation	tiny
+detach	tiny
+generation	tiny
+attach	tiny	printer_two
+vars	tiny
+root	tiny
+detach	tiny
+# the registry and its djins
+reg_count
+reg_remove	net
+reg_count
+get	net	title
+reg_remove	net
+reg_add	net
+reg_add	net
+reg_count
+reg_add	app
+reg_add	tiny
+reg_add	printer_two
+reg_count
+reg_remove	printer_two
+reg_remove	tiny
+reg_count
+attach	printer_two	printer

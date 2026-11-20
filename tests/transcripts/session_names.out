@@ -1,0 +1,258 @@
+registry ok 0
+frame app declare=ok 0 scopes=ok 1
+frame printer init=ok 0 name=ok 0 declare=ok 0 scopes=ok 1 attach=ok 0
+frame net init=ok 0 name=ok 0 declare=ok 0 attach=ok 1
+frame cache init=ok 0 name=ok 0 declare=ok 0 attach=ok 2
+frame printer_two init=ok 0 name=ok 0 declare=ok 0 scopes=ok 1 attach=ok 0
+frame tiny init=ok 0 name=ok 0 declare=ok 0
+djins 0
+> # finding
+> vars	app
+vars 5
+  [0] id=0 index=0 name=color frame=app depth=0
+  [1] id=1 index=1 name=width frame=app depth=0
+  [2] id=2 index=2 name=ratio frame=app depth=0
+  [3] id=3 index=3 name=title frame=app depth=0
+  [4] id=4 index=4 name=depth frame=app depth=0
+  [5] id=4294967295 index=4294967295 name=- frame=- depth=255
+> vars	printer
+vars 14
+  [0] id=0 index=0 name=color frame=app depth=0
+  [1] id=1 index=1 name=width frame=app depth=0
+  [2] id=2 index=2 name=ratio frame=app depth=0
+  [3] id=3 index=3 name=title frame=app depth=0
+  [4] id=4 index=4 name=depth frame=app depth=0
+  [5] id=1048576 index=5 name=key_width frame=printer depth=1
+  [6] id=1048577 index=6 name=style frame=printer depth=1
+  [7] id=1048578 index=7 name=select frame=printer depth=1
+  [8] id=1048579 index=8 name=prefix frame=printer depth=1
+  [9] id=1048580 index=9 name=banner frame=printer depth=1
+  [10] id=1048581 index=10 name=seed frame=printer depth=1
+  [11] id=1048582 index=11 name=scale frame=printer depth=1
+  [12] id=1048583 index=12 name=module frame=printer depth=1
+  [13] id=1048584 index=13 name=width frame=printer depth=1
+  [14] id=4294967295 index=4294967295 name=- frame=- depth=255
+> vars	net
+vars 10
+  [0] id=0 index=0 name=color frame=app depth=0
+  [1] id=1 index=1 name=width frame=app depth=0
+  [2] id=2 index=2 name=ratio frame=app depth=0
+  [3] id=3 index=3 name=title frame=app depth=0
+  [4] id=4 index=4 name=depth frame=app depth=0
+  [5] id=1048576 index=5 name=host frame=net depth=1
+  [6] id=1048577 index=6 name=port frame=net depth=1
+  [7] id=1048578 index=7 name=mode frame=net depth=1
+  [8] id=1048579 index=8 name=bits frame=net depth=1
+  [9] id=1048580 index=9 name=big frame=net depth=1
+  [10] id=4294967295 index=4294967295 name=- frame=- depth=255
+> vars	tiny
+vars 3
+  [0] id=0 index=0 name=t frame=tiny depth=0
+  [1] id=1 index=1 name=u frame=tiny depth=0
+  [2] id=2 index=2 name=n frame=tiny depth=0
+  [3] id=4294967295 index=4294967295 name=- frame=- depth=255
+> get	app	nothing
+get fail 1 KEY_ABSENT
+> get	app	COLOR
+get fail 1 KEY_ABSENT
+> get	app	Color
+get fail 1 KEY_ABSENT
+> get	app	app.color
+get id=0 scope=0 kind=bool bound=0 source=default depth=none integer=1 real=0 text=(null) | 4 true | 4 true
+> get	app	app.debug.color
+get id=0 scope=1 kind=bool bound=0 source=default depth=none integer=1 real=0 text=(null) | 4 true | 4 true
+> get	app	debug.color
+get id=0 scope=1 kind=bool bound=0 source=default depth=none integer=1 real=0 text=(null) | 4 true | 4 true
+> get	app	app.
+get fail 1 KEY_ABSENT
+> get	app	app
+get fail 1 KEY_ABSENT
+> get	app	.
+get fail 1 KEY_ABSENT
+> get	app	
+get fail 1 KEY_ABSENT
+> get	printer	printer.style
+get id=1048577 scope=0 kind=choice bound=0 source=default depth=none integer=0 real=0 text=plain | 5 plain | 5 plain
+> get	printer	printer.summary.style
+get id=1048577 scope=1048578 kind=choice bound=0 source=default depth=none integer=0 real=0 text=plain | 5 plain | 5 plain
+> get	printer	summary.style
+get id=1048577 scope=1048578 kind=choice bound=0 source=default depth=none integer=0 real=0 text=plain | 5 plain | 5 plain
+> get	printer	app.style
+get fail 1 KEY_ABSENT
+> get	printer	style.
+get fail 1 KEY_ABSENT
+> get	printer	format
+get id=1048577 scope=0 kind=choice bound=0 source=default depth=none integer=0 real=0 text=plain | 5 plain | 5 plain
+> get	printer	printer.format
+get id=1048577 scope=0 kind=choice bound=0 source=default depth=none integer=0 real=0 text=plain | 5 plain | 5 plain
+> get	printer	color
+get id=0 scope=0 kind=bool bound=0 source=default depth=none integer=1 real=0 text=(null) | 4 true | 4 true
+> get	printer	printer.color
+get id=0 scope=0 kind=bool bound=0 source=default depth=none integer=1 real=0 text=(null) | 4 true | 4 true
+> get	printer	debug.color
+get id=0 scope=1 kind=bool bound=0 source=default depth=none integer=1 real=0 text=(null) | 4 true | 4 true
+> get	net	p
+get id=1048577 scope=0 kind=int bound=0 source=default depth=none integer=8080 real=0 text=(null) | 4 8080 | 4 8080
+> get	net	net.p
+get id=1048577 scope=0 kind=int bound=0 source=default depth=none integer=8080 real=0 text=(null) | 4 8080 | 4 8080
+> get	printer_two	printer_two.width
+get id=1048584 scope=0 kind=int bound=0 source=default depth=none integer=80 real=0 text=(null) | 2 80 | 2 80
+> get	printer_two	printer.width
+get fail 1 KEY_ABSENT
+> get	printer_two	key_width
+get id=1048576 scope=0 kind=int bound=0 source=default depth=none integer=30 real=0 text=(null) | 2 30 | 2 30
+> root	printer_two
+root app
+> root	printer
+root app
+> root	app
+root app
+> root	tiny
+root tiny
+> scope	app	debug
+scope ok 1 name=debug
+> scope	app	Debug
+scope fail 1 KEY_ABSENT
+> scope	app	
+scope fail 1 KEY_ABSENT
+> scope	printer	cpp_features
+scope ok 1048577 name=cpp_features
+> scope	printer	summary
+scope ok 1048578 name=summary
+> scope	printer	debug
+scope ok 1 name=debug
+> scope	printer	local
+scope fail 1 KEY_ABSENT
+> # suggesting
+> suggest	app	colour
+suggest color
+> suggest	app	colr
+suggest color
+> suggest	app	wdith
+suggest width
+> suggest	app	widht
+suggest width
+> suggest	app	WIDTH
+suggest width
+> suggest	app	wid
+suggest (null)
+> suggest	app	w
+suggest (null)
+> suggest	app	rati
+suggest ratio
+> suggest	app	ratios
+suggest ratio
+> suggest	app	titel
+suggest title
+> suggest	app	max_dept
+suggest max_depth
+> suggest	app	maxdepth
+suggest max_depth
+> suggest	app	dep
+suggest (null)
+> suggest	app	de
+suggest (null)
+> suggest	app	xyz
+suggest (null)
+> suggest	app	
+suggest (null)
+> suggest	app	debgu.color
+suggest debug
+> suggest	app	debug.colr
+suggest color
+> suggest	app	dbg.color
+suggest (null)
+> suggest	app	app.colr
+suggest color
+> suggest	app	app.debug.colr
+suggest color
+> suggest	printer	stlye
+suggest style
+> suggest	printer	fromat
+suggest format
+> suggest	printer	sumary.style
+suggest summary
+> suggest	printer	summary.stlye
+suggest style
+> suggest	printer	printer.stlye
+suggest style
+> suggest	printer	colr
+suggest color
+> suggest	printer	keywidth
+suggest key_width
+> suggest	printer	key_widht
+suggest key_width
+> suggest	printer	sed
+suggest seed
+> suggest	printer	see
+suggest seed
+> suggest	printer	modul
+suggest module
+> suggest	printer_two	verbos
+suggest verbose
+> suggest	printer_two	lcal.verbose
+suggest local
+> suggest	printer_two	cpp_feature.style
+suggest cpp_features
+> suggest	net	hots
+suggest host
+> suggest	net	prot
+suggest port
+> suggest	net	q
+suggest p
+> suggest	net	pp
+suggest p
+> suggest	net	mod
+suggest mode
+> suggest	net	bit
+suggest bits
+> suggest	net	bi
+suggest big
+> distance	width	width
+distance 0
+> distance	width	WIDTH
+distance 0
+> distance	width	widht
+distance 1
+> distance	width	wdith
+distance 1
+> distance	width	wid
+distance 2
+> distance	width	
+distance 5
+> distance		width
+distance 5
+> distance	abc	cba
+distance 2
+> distance	ab	ba
+distance 1
+> distance	kitten	sitting
+distance 3
+> distance	a_name_of_sixty_three_characters_exactly_and_not_one_more_xxxxxx	a_name_of_sixty_three_characters_exactly_and_not_one_more_xxxxxy
+distance 9
+> distance	a_name_of_sixty_four_characters_exactly_and_not_one_more_xxxxxxxx	a
+distance 9
+> distance	a	a_name_of_sixty_four_characters_exactly_and_not_one_more_xxxxxxxx
+distance 9
+> declare_bad
+declare_bad ok 0
+  9lives: fail 8 INVALID_ARGUMENT
+  two words: fail 8 INVALID_ARGUMENT
+  aliased: fail 8 INVALID_ARGUMENT
+  kind_seven: fail 8 INVALID_ARGUMENT
+  kind_zero: fail 8 INVALID_ARGUMENT
+  okay: ok 0
+  okay: fail 2 KEY_DUPLICATE
+  other: fail 2 KEY_DUPLICATE
+  outside: fail 8 INVALID_ARGUMENT
+  empty: fail 8 INVALID_ARGUMENT
+  named_out: ok 1
+  no_names: fail 8 INVALID_ARGUMENT
+  not_named: fail 8 INVALID_ARGUMENT
+  no_flags: fail 8 INVALID_ARGUMENT
+  stray_bit: fail 8 INVALID_ARGUMENT
+  bool_two: fail 8 INVALID_ARGUMENT
+  refuses_default: fail 8 INVALID_ARGUMENT
+  refuses_seven: fail 8 INVALID_ARGUMENT
+  count_no_names: fail 8 INVALID_ARGUMENT
+  last: fail 257 CAPACITY

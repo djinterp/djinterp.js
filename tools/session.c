@@ -28,7 +28,7 @@
 #include <inttypes.h>  // PRId64
 #include <stdio.h>     // printf, fgets
 #include <stdlib.h>    // malloc, setenv, unsetenv, strtod, strtoll
-#include <string.h>    // strcmp, strlen, memset
+#include <string.h>    // strcmp, strlen, memset, strdup
 // djinterp
 #include "djinterp/c/option/option_common.h"  // results, statuses
 #include "djinterp/c/util/sink_common.h"      // struct dj_pack_sink
@@ -356,8 +356,11 @@ read_value(
     }
     else if (strcmp(_kind, "text") == 0)
     {
+        // the binding borrows the text, and the line it came in is read
+        // over by the next: a copy that is never freed outlives both
         _value->kind = D_OPTION_ENV_KIND_TEXT;
-        _value->text = (strcmp(_text, "(null)") == 0) ? NULL : _text;
+        _value->text = (strcmp(_text, "(null)") == 0) ? NULL
+                                                      : strdup(_text);
     }
     else
     {

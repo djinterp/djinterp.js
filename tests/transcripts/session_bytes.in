@@ -1,0 +1,41 @@
+# text that is not ASCII, and bytes that are not UTF-8
+put	app	1	title = caf\xc3\xa9
+get	app	title
+put	app	1	title = "\xc3\xa9t\xc3\xa9; \xe2\x82\xac"
+get	app	title
+put	app	1	title = \xf0\x9f\x98\x80
+get	app	title
+put	app	1	title = "\\xff\\xfe raw"
+get	app	title
+put	app	1	title = \xff\xfe
+get	app	title
+put	app	1	title = \xc3
+get	app	title
+put	app	1	title = "\\xc3\\xa9"
+get	app	title
+put	app	1	title = \xed\xa0\x80
+get	app	title
+put	app	1	title = \xc0\x80
+get	app	title
+put	app	1	title = "\\x80"
+get	app	title
+put	app	1	title = a\x7fb\x01c
+get	app	title
+put	app	1	title = \x0bvt and ff\x0c
+get	app	title
+put	app	1	caf\xc3\xa9 = 1
+put	app	1	width\xc3\xa9 = 1
+put	app	1	width = 30\xc3\xa9
+put	app	1	color = \xc3\xa9
+suggest	app	titl\xc3\xa9
+suggest	app	t\xc3\xa9tle
+distance	title	titl\xc3\xa9
+load	app	1	title = \xe2\x82\xac\xe2\x82\xac; width = 5
+load	app	1	title = \xff; width = 5
+reg_load	1	title = \xe2\x82\xac\nwidth = 5
+reg_suggest	titl\xc3\xa9
+env	APP_TITLE	\xe2\x82\xac 5
+reg_import	APP_
+get	app	title
+layers	app	title
+statement_end	\xe2\x82\xac; b	0

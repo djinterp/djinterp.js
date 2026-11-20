@@ -1,0 +1,3667 @@
+registry ok 0
+frame app declare=ok 0 scopes=ok 1
+frame printer init=ok 0 name=ok 0 declare=ok 0 scopes=ok 1 attach=ok 0
+frame net init=ok 0 name=ok 0 declare=ok 0 attach=ok 1
+frame cache init=ok 0 name=ok 0 declare=ok 0 attach=ok 2
+frame printer_two init=ok 0 name=ok 0 declare=ok 0 scopes=ok 1 attach=ok 0
+frame tiny init=ok 0 name=ok 0 declare=ok 0
+djins 0
+> reg_add	net
+reg_add fail 2 KEY_DUPLICATE
+> raw_get	net	1048577	2097152
+raw_get fail 1 KEY_ABSENT source=-1 | -1 (null) | -1 (null)
+> put	net	1	\tkey_width =  8 
+put fail 1 KEY_ABSENT
+> assign	app	0	djinterp.seed	cafÃ©
+assign fail 8 INVALID_ARGUMENT
+> reg_target	n
+reg_target app
+> djin_describe	cache
+djin_describe none
+> reg_target	format
+reg_target app
+> load	tiny	5	\tSEED= posix  # c\n -  select;cache.nothing.module =-2.75   # c\n ne  =\t-1  \n\tprefix = "a\"b" # c\n
+load fail 1 KEY_ABSENT at 1
+> reg_remove	net
+reg_remove ok 1
+> reg_put	2	 scale =x=y\t
+reg_put fail 1 KEY_ABSENT
+> put	printer	1	 u =\t9007199254740993 
+put fail 1 KEY_ABSENT
+> reg_take	--setprefix
+reg_take -1 at=1 fail 1 KEY_ABSENT
+> suggest	tiny	big
+suggest (null)
+> clear	printer_two
+clear
+> djin_list
+printer  -  settings only
+cache    -  settings only
+djin_list 0
+> get	tiny	djineterp.seed
+get fail 1 KEY_ABSENT
+> reg_import	APP_
+reg_import ok 0
+> reg_put	5	  - seed_
+reg_put fail 1 KEY_ABSENT
+> unset_from	nothing	6	.port
+no frame
+> reg_target	title
+reg_target app
+> get	tiny	depth
+get fail 1 KEY_ABSENT
+> reg_load	1	  elocal.bits =  .5 # c\n
+reg_load fail 1 KEY_ABSENT at 2
+> djin_frame	app
+app
+  settings only
+
+settings
+  app.color  bool  true   -  whether output is coloured
+  app.width  int   240    -  an int in a range
+  app.ratio  real  0.5    -  a real
+  app.title  text  unset  -  a text with no default
+  app.depth  int   8      -  an int with named values and an alias
+djin_frame 0
+> reg_take	--set	.=false
+reg_take -1 at=2 fail 1 KEY_ABSENT
+> generation	printer
+generation 19
+> reg_assign	5	n	off
+reg_assign fail 1 KEY_ABSENT
+> reg_suggest	scale
+reg_suggest 0 
+> unset_from	printer_two	1	big
+unset_from fail 1 KEY_ABSENT
+> reg_import	APP_
+reg_import ok 0
+> text_copy	cache	big	it's
+text_copy fail 1 KEY_ABSENT
+> get	app	debug.u
+get fail 1 KEY_ABSENT
+> clear	printer_two
+clear
+> djin_describe	net
+djin_describe none
+> djin_frame	printer_two
+printer_two
+  settings only
+
+settings
+  printer_two.verbose  bool  false  -  a bool two frames down
+djin_frame 0
+> reg_assign	5	t	-9223372036854775808
+reg_assign fail 1 KEY_ABSENT
+> reg_count
+reg_count 2 printer cache
+> layers	app	LOCAL.bits
+layers fail 1 KEY_ABSENT
+> text_copy	app	dbug.p	3.14159
+text_copy fail 1 KEY_ABSENT
+> reg_assign	1	size	3
+reg_assign fail 1 KEY_ABSENT
+> reg_load	5	 sclae= 7\r\n
+reg_load fail 1 KEY_ABSENT at 1
+> distance	width	ormat
+distance 5
+> import	printer	APP_
+import ok 0
+> attach	tiny	printer_two
+attach ok 0
+> set	printer_two	3	app.depth	flags	nan
+set fail 1 KEY_ABSENT
+> put	printer	1	host\t=  ÿ
+put fail 1 KEY_ABSENT
+> reg_put	1	 title =  " "
+reg_put ok 3
+> import	cache	
+import ok 0
+> layers	printer	select	8
+layers 0
+> reg_put	6	-maxe_depth
+reg_put fail 8 INVALID_ARGUMENT
+> reg_count
+reg_count 2 printer cache
+> djin_list
+printer  -  settings only
+cache    -  settings only
+djin_list 0
+> reg_target	color
+reg_target app
+> set	tiny	6	djinterp.sacle	int	plain
+set fail 1 KEY_ABSENT
+> statement_end	SUMMARY.depth =  3 ;	0
+statement_end 19
+> djin_describe	printer_two
+djin_describe none
+> djin_register	net
+djin_register 0 ok
+> layers	app	style	0
+layers fail 1 KEY_ABSENT
+> unset_from	printer	1	module
+unset_from ok 1048583
+> put	printer	5	  nothing.omde\t=  601 
+put fail 1 KEY_ABSENT
+> assign	app	6	title	unbounded
+assign fail 8 INVALID_ARGUMENT
+> set	tiny	2	nt.DEBUG.mode	real	wide
+set fail 1 KEY_ABSENT
+> env	APP_NET_T	0o17
+env
+> assign	tiny	3	cpp_features.meax_depth	-all
+assign fail 1 KEY_ABSENT
+> vars	net
+vars 10
+  [0] id=0 index=0 name=color frame=app depth=0
+  [1] id=1 index=1 name=width frame=app depth=0
+  [2] id=2 index=2 name=ratio frame=app depth=0
+  [3] id=3 index=3 name=title frame=app depth=0
+  [4] id=4 index=4 name=depth frame=app depth=0
+  [5] id=1048576 index=5 name=host frame=net depth=1
+  [6] id=1048577 index=6 name=port frame=net depth=1
+  [7] id=1048578 index=7 name=mode frame=net depth=1
+  [8] id=1048579 index=8 name=bits frame=net depth=1
+  [9] id=1048580 index=9 name=big frame=net depth=1
+  [10] id=4294967295 index=4294967295 name=- frame=- depth=255
+> unenv	APP_KEY_WIDTH
+unenv
+> djin_register	printer_again
+djin_register 0 ok
+> detach	tiny
+detach
+> djin_list
+net      1.2    talks to other machines
+printer  0.9.1  a name a djin has
+cache    -      settings only
+djin_list 0
+> env	APP_CACHE_T	""
+env
+> import	printer_two	
+import ok 0
+> get	nothing	mx_depth
+no frame
+> djin_register	net
+djin_register 2 duplicate
+> import	printer	APP_
+import ok 0
+> reg_target	max_depth
+reg_target app
+> bound	nothing	title
+no frame
+> text_copy	printer	nothing.depth	16
+text_copy fail 1 KEY_ABSENT
+> reg_assign	4	P	601
+reg_assign fail 1 KEY_ABSENT
+> layers	net	nothingi.width
+layers fail 1 KEY_ABSENT
+> reg_import	APP_
+reg_import ok 0
+> djin_describe	cache
+djin_describe none
+> reg_load	0	.ptah 600\n printer_two.debug.color  = 5.  ;  ratio=\ \r\n
+reg_load fail 8 INVALID_ARGUMENT at 0
+> get	app	t
+get fail 1 KEY_ABSENT
+> get	cache	cache.title
+get id=3 scope=0 kind=text bound=1 source=program depth=0 integer=0 real=0 text=  | 1   | 3 " "
+> vars	printer_two
+vars 15
+  [0] id=0 index=0 name=color frame=app depth=0
+  [1] id=1 index=1 name=width frame=app depth=0
+  [2] id=2 index=2 name=ratio frame=app depth=0
+  [3] id=3 index=3 name=title frame=app depth=0
+  [4] id=4 index=4 name=depth frame=app depth=0
+  [5] id=1048576 index=5 name=key_width frame=printer depth=1
+  [6] id=1048577 index=6 name=style frame=printer depth=1
+  [7] id=1048578 index=7 name=select frame=printer depth=1
+  [8] id=1048579 index=8 name=prefix frame=printer depth=1
+  [9] id=1048580 index=9 name=banner frame=printer depth=1
+  [10] id=1048581 index=10 name=seed frame=printer depth=1
+  [11] id=1048582 index=11 name=scale frame=printer depth=1
+  [12] id=1048583 index=12 name=module frame=printer depth=1
+  [13] id=1048584 index=13 name=width frame=printer depth=1
+  [14] id=2097152 index=14 name=verbose frame=printer_two depth=2
+  [15] id=4294967295 index=4294967295 name=- frame=- depth=255
+> reg_load	1	 dpeth\t=  ;\tnet.path\t=1.5;
+reg_load fail 1 KEY_ABSENT at 1
+> statement_end	color = " "  \n  deubg.ratieo  =+c \r\n djinterp.cpp_featues.bits  =600  # c\n format. =  121  ;	0
+statement_end 13
+> bound	app	app.summary.style
+bound fail 1 KEY_ABSENT
+> load	tiny	6	  BANNER= 1e21 ;printer_two.depth = true \nmode table\r\n  printer_two.u\t=\t"a b"   ; -PRINTER_TWO.debug.bits;
+load fail 8 INVALID_ARGUMENT at 0
+> unset	app	scale
+unset fail 1 KEY_ABSENT
+> suggest	cache	printer.p
+suggest (null)
+> unset	net	depth
+unset ok 4
+> djin_list
+net      1.2    talks to other machines
+printer  0.9.1  a name a djin has
+cache    -      settings only
+djin_list 0
+> djin_register	cache_named
+djin_register 0 ok
+> scope	cache	debug
+scope ok 1 name=debug
+> unset_from	app	2	PRINTER_TWO.verbose
+unset_from fail 1 KEY_ABSENT
+> unenv	MODULE
+unenv
+> put	cache	6	verbose  = =
+put fail 8 INVALID_ARGUMENT
+> put	printer_two	3	 seed=120
+put ok 1048581
+> reg_suggest	u
+reg_suggest 0 
+> reg_remove	tiny
+reg_remove fail 1 KEY_ABSENT
+> detach	tiny
+detach
+> vars	printer
+vars 14
+  [0] id=0 index=0 name=color frame=app depth=0
+  [1] id=1 index=1 name=width frame=app depth=0
+  [2] id=2 index=2 name=ratio frame=app depth=0
+  [3] id=3 index=3 name=title frame=app depth=0
+  [4] id=4 index=4 name=depth frame=app depth=0
+  [5] id=1048576 index=5 name=key_width frame=printer depth=1
+  [6] id=1048577 index=6 name=style frame=printer depth=1
+  [7] id=1048578 index=7 name=select frame=printer depth=1
+  [8] id=1048579 index=8 name=prefix frame=printer depth=1
+  [9] id=1048580 index=9 name=banner frame=printer depth=1
+  [10] id=1048581 index=10 name=seed frame=printer depth=1
+  [11] id=1048582 index=11 name=scale frame=printer depth=1
+  [12] id=1048583 index=12 name=module frame=printer depth=1
+  [13] id=1048584 index=13 name=width frame=printer depth=1
+  [14] id=4294967295 index=4294967295 name=- frame=- depth=255
+> reg_add	tiny
+reg_add ok 3
+> put	printer	5	style 1
+put fail 8 INVALID_ARGUMENT
+> reg_remove	printer
+reg_remove ok 0
+> reg_assign	1	.	1e309
+reg_assign fail 1 KEY_ABSENT
+> unset_from	printer	1	.
+unset_from fail 1 KEY_ABSENT
+> reg_count
+reg_count 3 cache net tiny
+> layers	app	local_.big
+layers fail 1 KEY_ABSENT
+> generation	printer
+generation 20
+> get	app	max_depth
+get id=4 scope=0 kind=int bound=0 source=default depth=none integer=8 real=0 text=(null) | 1 8 | 1 8
+> vars	net
+vars 10
+  [0] id=0 index=0 name=color frame=app depth=0
+  [1] id=1 index=1 name=width frame=app depth=0
+  [2] id=2 index=2 name=ratio frame=app depth=0
+  [3] id=3 index=3 name=title frame=app depth=0
+  [4] id=4 index=4 name=depth frame=app depth=0
+  [5] id=1048576 index=5 name=host frame=net depth=1
+  [6] id=1048577 index=6 name=port frame=net depth=1
+  [7] id=1048578 index=7 name=mode frame=net depth=1
+  [8] id=1048579 index=8 name=bits frame=net depth=1
+  [9] id=1048580 index=9 name=big frame=net depth=1
+  [10] id=4294967295 index=4294967295 name=- frame=- depth=255
+> djin_frame	app
+app
+  settings only
+
+settings
+  app.color  bool  true   -  whether output is coloured
+  app.width  int   240    -  an int in a range
+  app.ratio  real  0.5    -  a real
+  app.title  text  unset  -  a text with no default
+  app.depth  int   8      -  an int with named values and an alias
+djin_frame 0
+> detach	tiny
+detach
+> unenv	APP_MAX_DEPTH
+unenv
+> unset	net	ne.module
+unset fail 1 KEY_ABSENT
+> put	tiny	0	n .5
+put fail 8 INVALID_ARGUMENT
+> get	printer	pateh
+get fail 1 KEY_ABSENT
+> generation	printer
+generation 20
+> djin_describe	app
+djin_describe none
+> put	tiny	0	 PRINTER_TWO.debug.prefixi =\tx=y  
+put fail 8 INVALID_ARGUMENT
+> scope	printer	NOTHING
+scope fail 1 KEY_ABSENT
+> assign	net	1	title	2
+assign ok 3
+> reg_count
+reg_count 3 cache net tiny
+> reg_suggest	SEED
+reg_suggest 0 
+> load	printer	5	-select ; \tewidth=JSON  # c\n seed =16\t\r\n cpp_features.host  =\t-1  \r\n  xscale\t=\tcpp \r\n
+load fail 1 KEY_ABSENT at 11
+> reg_take	--no-size
+reg_take -1 at=1 fail 1 KEY_ABSENT
+> import	nothing	APP_
+no frame
+> djin_describe	app
+djin_describe none
+> reg_load	1	\tselect ="tab\t"\r\n ig\t=two words ; 
+reg_load fail 1 KEY_ABSENT at 1
+> djin_describe	printer
+printer  0.9.1
+  a name a djin has
+djin_describe 0
+> put	printer	1	\tselect =" "\t
+put ok 1048578
+> reg_take	--set	SELECT
+reg_take -1 at=1 fail 8 INVALID_ARGUMENT
+> reg_import	APP_
+reg_import ok 0
+> djin_register	printer_again
+djin_register 2 duplicate
+> attach	tiny	app
+attach ok 0
+> get	nothing	PATH
+no frame
+> put	nothing	1	 -  djinterp.N
+no frame
+> scope	printer	cpp_features
+scope ok 1048577 name=cpp_features
+> reg_target	seummary.bits
+reg_target app
+> reg_suggest	width
+reg_suggest 5 width
+> reg_assign	0	styl	x=y
+reg_assign fail 8 INVALID_ARGUMENT
+> reg_take	--no-scale=0.5
+reg_take -1 at=1 fail 1 KEY_ABSENT
+> reg_remove	net
+reg_remove ok 1
+> reg_take	--.select
+reg_take -1 at=1 fail 1 KEY_ABSENT
+> layers	printer	bits	0
+layers fail 1 KEY_ABSENT
+> text_copy	app	u	9007199254740992
+text_copy fail 1 KEY_ABSENT
+> reg_add	app
+reg_add fail 8 INVALID_ARGUMENT
+> bound	tiny	big
+bound fail 1 KEY_ABSENT
+> env	NET_PATH	0.5
+env
+> generation	net
+generation 26
+> detach	printer_two
+detach
+> raw_get	cache	1	2097153
+raw_get fail 1 KEY_ABSENT source=-1 | -1 (null) | -1 (null)
+> attach	tiny	tiny
+attach fail 8 INVALID_ARGUMENT
+> layers	cache	.PORT	8
+layers fail 1 KEY_ABSENT
+> reg_load	6	summary.=\t"a" b\t ; 
+reg_load fail 8 INVALID_ARGUMENT at 0
+> bound	printer	t
+bound fail 1 KEY_ABSENT
+> text_copy	tiny	key_width	-
+text_copy fail 1 KEY_ABSENT
+> unenv	APP_FORMAT
+unenv
+> get	printer_two	moudle
+get fail 1 KEY_ABSENT
+> djin_describe	net
+net  1.2
+  talks to other machines
+
+settings
+  net.host  text    "localhost"  -  a text with a default
+  net.port  int     8080         -  an int with an alias
+  net.mode  choice  off          -  a choice of 64-bit values
+  net.bits  flags   0            -  flags with the sign bit
+  net.big   int     0            -  an int one past the exact integers each way
+djin_describe 0
+> reg_target	max_depth
+reg_target app
+> assign	app	6	tiny.module	64
+assign fail 8 INVALID_ARGUMENT
+> reg_take	--amx_depth
+reg_take -1 at=1 fail 1 KEY_ABSENT
+> assign	printer	6	WIDTH	121
+assign fail 8 INVALID_ARGUMENT
+> generation	net
+generation 26
+> distance	moxde	p
+distance 5
+> put	printer	6	\tTINY.cpp_faetures.path =  JSON 
+put fail 8 INVALID_ARGUMENT
+> reg_add	cache
+reg_add fail 2 KEY_DUPLICATE
+> raw_get	nothing	2	1048584
+no frame
+> reg_add	tiny
+reg_add fail 2 KEY_DUPLICATE
+> reg_add	cache
+reg_add fail 2 KEY_DUPLICATE
+> assign	tiny	5	key_width.	600
+assign fail 1 KEY_ABSENT
+> reg_take	--no-net.NOTHING.select
+reg_take -1 at=1 fail 1 KEY_ABSENT
+> djin_describe	tiny
+djin_describe none
+> generation	cache
+generation 12
+> reg_suggest	bits
+reg_suggest 0 
+> raw_get	printer	1048578	1048584
+raw_get ok 1048584 source=0 | 2 80 | 2 80
+> unset	printer_two	verbose
+unset ok 0
+> put	printer	4	-color
+put ok 0
+> assign	app	4	p	true
+assign fail 1 KEY_ABSENT
+> reg_count
+reg_count 2 cache tiny
+> reg_suggest	
+reg_suggest 0 
+> reg_count
+reg_count 2 cache tiny
+> distance	formate	banner
+distance 7
+> import	net	APP_
+import ok 0
+> bound	cache	prefix
+bound fail 1 KEY_ABSENT
+> attach	cache	net
+attach ok 0
+> raw_get	printer	0	1048585
+raw_get fail 1 KEY_ABSENT source=-1 | -1 (null) | -1 (null)
+> assign	net	1	width	2.5e-5
+assign fail 1 KEY_ABSENT
+> put	printer_two	6	  printer_two.cpp_fatures.u\t=\t65 
+put fail 8 INVALID_ARGUMENT
+> detach	printer_two
+detach
+> layers	printer	local.max_depth
+layers fail 1 KEY_ABSENT
+> get	tiny	local.module
+get fail 1 KEY_ABSENT
+> detach	tiny
+detach
+> reg_remove	cache
+reg_remove ok 0
+> distance	hot	et
+distance 2
+> reg_remove	net
+reg_remove fail 1 KEY_ABSENT
+> get	tiny	cache.cpp_eatures.prefix
+get fail 1 KEY_ABSENT
+> set	printer	5	banner	text	b
+set fail 3 VALUE_TYPE_MISMATCH
+> scope	printer_two	localx
+scope fail 1 KEY_ABSENT
+> assign	printer	2	title	"\0x"
+assign ok 3
+> import	app	
+import ok 0
+> reg_add	printer
+reg_add ok 1
+> unenv	X_P
+unenv
+> reg_target	port
+reg_target app
+> detach	tiny
+detach
+> detach	tiny
+detach
+> bound	nothing	.
+no frame
+> reg_count
+reg_count 2 tiny printer
+> put	printer	6	maxx_depth
+put fail 8 INVALID_ARGUMENT
+> attach	tiny	tiny
+attach fail 8 INVALID_ARGUMENT
+> layers	tiny	host	0
+layers fail 1 KEY_ABSENT
+> suggest	nothing	PRINTER.sumary.host
+no frame
+> detach	tiny
+detach
+> statement_end	 u  = 3   ; 	0
+statement_end 10
+> reg_import	APP_
+reg_import ok 0
+> layers	cache	color
+layers fail 1 KEY_ABSENT
+> layers	printer	depth
+layers 0
+> unenv	APP_PREFIX
+unenv
+> djin_frame	app
+app
+  settings only
+
+settings
+  app.color  bool  true   -  whether output is coloured
+  app.width  int   240    -  an int in a range
+  app.ratio  real  0.5    -  a real
+  app.title  text  unset  -  a text with no default
+  app.depth  int   8      -  an int with named values and an alias
+djin_frame 0
+> djin_register	cache_named
+djin_register 2 duplicate
+> suggest	app	djinterp.size
+suggest (null)
+> reg_assign	2	banner	sign
+reg_assign fail 1 KEY_ABSENT
+> scope	net	summary
+scope fail 1 KEY_ABSENT
+> assign	printer	1	scal	c|posix
+assign fail 1 KEY_ABSENT
+> clear	cache
+clear
+> reg_target	prefxix
+reg_target app
+> scope	app	nothing
+scope fail 1 KEY_ABSENT
+> unset	cache	PRINTER.nothing.n
+unset fail 1 KEY_ABSENT
+> get	nothing	RATIO
+no frame
+> clear	cache
+clear
+> reg_import	APP_
+reg_import ok 0
+> djin_frame	printer
+printer
+  settings only
+
+settings
+  printer.key_width  int     30         D_CFG_ENV_PRINTER_KEY_WIDTH  the width of a key
+  printer.style      choice  plain      D_CFG_ENV_PRINTER_STYLE      how a description is written
+  printer.select     flags   3          -                            the sections written
+  printer.prefix     text    "> "       -                            a text whose default needs quotes
+  printer.banner     bool    false      -                            a bool the environment may not set
+  printer.seed       int     0          -                            an int of any value
+  printer.scale      real    1          -
+  printer.module     text    "builtin"  D_CFG_ENV_PRINTER_MODULE     a text only the program and the command line set
+  printer.width      int     80         -                            a name the root declares too
+djin_frame 0
+> bound	tiny	size
+bound fail 1 KEY_ABSENT
+> layers	printer	depth
+layers 0
+> env	APP_CACHE_T	0x
+env
+> reg_remove	cache
+reg_remove fail 1 KEY_ABSENT
+> bound	net	banner
+bound fail 1 KEY_ABSENT
+> reg_take	--setmode=plain
+reg_take -1 at=1 fail 1 KEY_ABSENT
+> reg_remove	cache
+reg_remove fail 1 KEY_ABSENT
+> text_copy	net	stye	a#b
+text_copy fail 1 KEY_ABSENT
+> get	printer	summary.verbose
+get fail 1 KEY_ABSENT
+> djin_describe	tiny
+djin_describe none
+> djin_register	cache_named
+djin_register 2 duplicate
+> scope	tiny	idebug
+scope fail 1 KEY_ABSENT
+> statement_end	 local.xp= 8  # c\n big=c,cpp\nstyle n; k_ey_width =\t240  ;	1
+statement_end 14
+> get	app	
+get fail 1 KEY_ABSENT
+> unenv	X_SCALE
+unenv
+> clear	tiny
+clear
+> reg_count
+reg_count 2 tiny printer
+> reg_add	net
+reg_add ok 2
+> reg_load	1	-max_depth # c\n  p =b\n - forma;-t ; 
+reg_load fail 1 KEY_ABSENT at 17
+> reg_add	net
+reg_add fail 2 KEY_DUPLICATE
+> assign	cache	4	dept	65
+assign fail 1 KEY_ABSENT
+> vars	app
+vars 5
+  [0] id=0 index=0 name=color frame=app depth=0
+  [1] id=1 index=1 name=width frame=app depth=0
+  [2] id=2 index=2 name=ratio frame=app depth=0
+  [3] id=3 index=3 name=title frame=app depth=0
+  [4] id=4 index=4 name=depth frame=app depth=0
+  [5] id=4294967295 index=4294967295 name=- frame=- depth=255
+> reg_take	--set	style=yaml
+reg_take -1 at=2 fail 1 KEY_ABSENT
+> reg_count
+reg_count 3 tiny printer net
+> assign	cache	1	u	""
+assign fail 1 KEY_ABSENT
+> reg_import	APP_
+reg_import ok 0
+> djin_describe	printer
+printer  0.9.1
+  a name a djin has
+djin_describe 0
+> layers	nothing	FORMAT
+no frame
+> unset	tiny	itle
+unset fail 1 KEY_ABSENT
+> djin_list
+net      1.2    talks to other machines
+printer  0.9.1  a name a djin has
+cache    2.0    a record for a frame already listed
+tiny     -      settings only
+djin_list 0
+> reg_count
+reg_count 3 tiny printer net
+> generation	nothing
+no frame
+> set	nothing	1	verbose	none	nan
+no frame
+> reg_count
+reg_count 3 tiny printer net
+> assign	app	5	bits	none
+assign fail 1 KEY_ABSENT
+> detach	tiny
+detach
+> raw_get	app	0	5
+raw_get fail 1 KEY_ABSENT source=-1 | -1 (null) | -1 (null)
+> distance	host	sxize
+distance 5
+> bound	app	size
+bound fail 1 KEY_ABSENT
+> assign	cache	4	size	3
+assign ok 0
+> load	app	5	width\r\n  -\tpath # c\n\tverbose  = hello\r\n
+load fail 8 INVALID_ARGUMENT at 0
+> reg_target	.
+reg_target app
+> set	app	3	select	flags	-2.75
+set fail 1 KEY_ABSENT
+> assign	cache	3	depth	5e-324
+assign fail 1 KEY_ABSENT
+> assign	printer_two	5	.	"open
+assign fail 1 KEY_ABSENT
+> djin_register	reserved
+djin_register 3 reserved
+> put	app	1	 port  = 0x
+put fail 1 KEY_ABSENT
+> reg_count
+reg_count 3 tiny printer net
+> djin_frame	printer_two
+printer_two
+  settings only
+
+settings
+  printer_two.verbose  bool  false  -  a bool two frames down
+djin_frame 0
+> reg_target	select
+reg_target app
+> unset_from	printer_two	3	u
+unset_from fail 1 KEY_ABSENT
+> unenv	APP_SIZE
+unenv
+> djin_describe	net
+net  1.2
+  talks to other machines
+
+settings
+  net.host  text    "localhost"  -  a text with a default
+  net.port  int     8080         -  an int with an alias
+  net.mode  choice  off          -  a choice of 64-bit values
+  net.bits  flags   0            -  flags with the sign bit
+  net.big   int     0            -  an int one past the exact integers each way
+djin_describe 0
+> layers	printer	summary.siez	0
+layers fail 1 KEY_ABSENT
+> env	APP_NET_MODE	inf
+env
+> reg_add	printer
+reg_add fail 2 KEY_DUPLICATE
+> reg_take	--set	summary.PATH=-all
+reg_take -1 at=2 fail 1 KEY_ABSENT
+> reg_load	4	big\t= JSON   ; \tcache.summay.big =\t0x\t\nnet.style=600 ; -  t # c\ndebug.max_depth "tab\t" ; 
+reg_load fail 1 KEY_ABSENT at 0
+> detach	printer_two
+detach
+> djin_describe	printer_two
+djin_describe none
+> get	printer	cache.nothing.key_width
+get fail 1 KEY_ABSENT
+> unenv	APP_MODE
+unenv
+> put	printer	1	 big =\tÿ  
+put fail 1 KEY_ABSENT
+> load	net	2	 -  key_width # c\n\tmode= 65\r\nsize # c\n  summayr.ratio = 120 \n
+load fail 1 KEY_ABSENT at 1
+> djin_describe	printer
+printer  0.9.1
+  a name a djin has
+djin_describe 0
+> unset	nothing	seed
+no frame
+> assign	nothing	4	tilte	
+no frame
+> unset_from	nothing	3	t
+no frame
+> load	printer	2	  tiny.nothing.MODULE\t="\x41"   ;   .host =\ta#b   ;   app.debug.mode  = off   # c\n n=8 \n
+load fail 1 KEY_ABSENT at 2
+> env	X_HOST	-nan
+env
+> detach	printer_two
+detach
+> reg_import	
+reg_import ok 0
+> put	printer	4	 format  =  ""
+put fail 8 INVALID_ARGUMENT
+> get	printer_two	ratio
+get fail 1 KEY_ABSENT
+> reg_take	--set	edbug.seed
+reg_take -1 at=1 fail 8 INVALID_ARGUMENT
+> distance	seed	SCALE
+distance 4
+> detach	tiny
+detach
+> reg_take	--set	anner
+reg_take -1 at=1 fail 8 INVALID_ARGUMENT
+> assign	printer	0	printer_two.SIZE	c|posix
+assign fail 8 INVALID_ARGUMENT
+> reg_count
+reg_count 3 tiny printer net
+> env	APP_PRINTER_MODE	c|posix
+env
+> layers	nothing	neit.usmmary.porit	8
+no frame
+> djin_describe	cache
+cache  2.0
+  a record for a frame already listed
+
+settings
+  cache.size  int   64     -
+  cache.path  text  unset  -  where it is kept
+djin_describe 0
+> vars	printer
+vars 14
+  [0] id=0 index=0 name=color frame=app depth=0
+  [1] id=1 index=1 name=width frame=app depth=0
+  [2] id=2 index=2 name=ratio frame=app depth=0
+  [3] id=3 index=3 name=title frame=app depth=0
+  [4] id=4 index=4 name=depth frame=app depth=0
+  [5] id=1048576 index=5 name=key_width frame=printer depth=1
+  [6] id=1048577 index=6 name=style frame=printer depth=1
+  [7] id=1048578 index=7 name=select frame=printer depth=1
+  [8] id=1048579 index=8 name=prefix frame=printer depth=1
+  [9] id=1048580 index=9 name=banner frame=printer depth=1
+  [10] id=1048581 index=10 name=seed frame=printer depth=1
+  [11] id=1048582 index=11 name=scale frame=printer depth=1
+  [12] id=1048583 index=12 name=module frame=printer depth=1
+  [13] id=1048584 index=13 name=width frame=printer depth=1
+  [14] id=4294967295 index=4294967295 name=- frame=- depth=255
+> djin_list
+net      1.2    talks to other machines
+printer  0.9.1  a name a djin has
+cache    2.0    a record for a frame already listed
+tiny     -      settings only
+djin_list 0
+> get	app	host.
+get fail 1 KEY_ABSENT
+> reg_put	1	-app.N
+reg_put fail 1 KEY_ABSENT
+> djin_frame	net
+net
+  settings only
+
+settings
+  net.host  text    "localhost"  -  a text with a default
+  net.port  int     8080         -  an int with an alias
+  net.mode  choice  off          -  a choice of 64-bit values
+  net.bits  flags   0            -  flags with the sign bit
+  net.big   int     0            -  an int one past the exact integers each way
+djin_frame 0
+> djin_list
+net      1.2    talks to other machines
+printer  0.9.1  a name a djin has
+cache    2.0    a record for a frame already listed
+tiny     -      settings only
+djin_list 0
+> load	app	1	  path\t=-nan\r\n.scale  =\t"\x41"  ;app.seed 65536 ; path\t=  1e-7 ; seed hello\n
+load fail 1 KEY_ABSENT at 2
+> reg_put	4	host = low\t
+reg_put fail 1 KEY_ABSENT
+> attach	printer_two	printer
+attach ok 0
+> bound	net	summary.path
+bound fail 1 KEY_ABSENT
+> scope	app	summary
+scope fail 1 KEY_ABSENT
+> load	net	6	 banner = -1  ; \t- t. # c\nkey_width = "\q"\n djintrp.NOTHING.size= -inf \nprinter_two.nothig.MODULE=\t"" ;
+load fail 8 INVALID_ARGUMENT at 0
+> reg_load	5	\tprinter.ize=\t4096  \n TITLE =\t99 ; net.format = posix   ; -printer_two.nothing.mode\r\n.mode 600;
+reg_load fail 1 KEY_ABSENT at 1
+> text_copy	printer	ratio	601
+text_copy fail 3 VALUE_TYPE_MISMATCH
+> layers	nothing	printeri.key_width	3
+no frame
+> reg_add	net
+reg_add fail 2 KEY_DUPLICATE
+> reg_remove	net
+reg_remove ok 2
+> layers	cache	bits	3
+layers fail 1 KEY_ABSENT
+> reg_target	key_with
+reg_target app
+> assign	net	1	style	200
+assign fail 1 KEY_ABSENT
+> distance	title	port
+distance 5
+> import	tiny	APP_
+import ok 0
+> vars	printer_two
+vars 15
+  [0] id=0 index=0 name=color frame=app depth=0
+  [1] id=1 index=1 name=width frame=app depth=0
+  [2] id=2 index=2 name=ratio frame=app depth=0
+  [3] id=3 index=3 name=title frame=app depth=0
+  [4] id=4 index=4 name=depth frame=app depth=0
+  [5] id=1048576 index=5 name=key_width frame=printer depth=1
+  [6] id=1048577 index=6 name=style frame=printer depth=1
+  [7] id=1048578 index=7 name=select frame=printer depth=1
+  [8] id=1048579 index=8 name=prefix frame=printer depth=1
+  [9] id=1048580 index=9 name=banner frame=printer depth=1
+  [10] id=1048581 index=10 name=seed frame=printer depth=1
+  [11] id=1048582 index=11 name=scale frame=printer depth=1
+  [12] id=1048583 index=12 name=module frame=printer depth=1
+  [13] id=1048584 index=13 name=width frame=printer depth=1
+  [14] id=2097152 index=14 name=verbose frame=printer_two depth=2
+  [15] id=4294967295 index=4294967295 name=- frame=- depth=255
+> reg_target	app.cpp_features.etitle
+reg_target app
+> put	tiny	3	-max_depht
+put fail 1 KEY_ABSENT
+> assign	printer	0	verbose	2
+assign fail 8 INVALID_ARGUMENT
+> raw_get	net	1048578	5
+raw_get fail 1 KEY_ABSENT source=-1 | -1 (null) | -1 (null)
+> unset	printer	bits
+unset fail 1 KEY_ABSENT
+> reg_load	2	\tn= shallow  ;tin.color 99;
+reg_load fail 1 KEY_ABSENT at 1
+> assign	cache	0	bits	16
+assign fail 8 INVALID_ARGUMENT
+> djin_register	printer_again
+djin_register 2 duplicate
+> env	X_PRINTER_SCALE	4096
+env
+> reg_take	--set	tilte=600
+reg_take -1 at=2 fail 1 KEY_ABSENT
+> reg_assign	1	color	200
+reg_assign fail 8 INVALID_ARGUMENT
+> reg_assign	4	banner	"a b"
+reg_assign fail 1 KEY_ABSENT
+> djin_describe	tiny
+djin_describe none
+> reg_target	ode
+reg_target app
+> djin_list
+net      1.2    talks to other machines
+printer  0.9.1  a name a djin has
+cache    2.0    a record for a frame already listed
+tiny     -      settings only
+djin_list 0
+> unenv	X_WIDTH
+unenv
+> layers	printer_two	tiny.STYLE	3
+layers fail 1 KEY_ABSENT
+> clear	cache
+clear
+> reg_take	--set	.
+reg_take -1 at=1 fail 8 INVALID_ARGUMENT
+> distance	style	RATIO
+distance 5
+> reg_take	--nothing.banner
+reg_take -1 at=1 fail 1 KEY_ABSENT
+> put	tiny	0	\tmodule  =  "\x41" 
+put fail 8 INVALID_ARGUMENT
+> reg_count
+reg_count 2 tiny printer
+> djin_list
+net      1.2    talks to other machines
+printer  0.9.1  a name a djin has
+cache    2.0    a record for a frame already listed
+tiny     -      settings only
+djin_list 0
+> reg_target	ca_che.nothing.port
+reg_target app
+> reg_remove	net
+reg_remove fail 1 KEY_ABSENT
+> generation	app
+generation 8
+> statement_end	 verbose  =\t2.5e-5 \r\n priner.debug.banner =  9223372036854775808 \n	2
+statement_end 20
+> attach	tiny	net
+attach ok 0
+> put	cache	2	NOTHING.format= x=y\t
+put fail 1 KEY_ABSENT
+> reg_target	seelect
+reg_target app
+> reg_count
+reg_count 2 tiny printer
+> scope	printer_two	nothing
+scope fail 1 KEY_ABSENT
+> env	PRINTER_U	0b101
+env
+> reg_take	--no-ath=legacy
+reg_take -1 at=1 fail 1 KEY_ABSENT
+> get	cache	preefix
+get fail 1 KEY_ABSENT
+> load	cache	1	-host; select =  4294967296  ;\tp=\t"\x41" \r\ndepth =\t1e-7  ;-title # c\n
+load fail 1 KEY_ABSENT at 0
+> get	printer	verbose
+get fail 1 KEY_ABSENT
+> reg_target	djinterep.DEBUG.format
+reg_target app
+> reg_add	cache
+reg_add ok 2
+> suggest	app	verbose
+suggest (null)
+> get	printer	max_depth
+get id=4 scope=0 kind=int bound=0 source=default depth=none integer=8 real=0 text=(null) | 1 8 | 1 8
+> get	cache	module
+get fail 1 KEY_ABSENT
+> get	net	format
+get fail 1 KEY_ABSENT
+> detach	tiny
+detach
+> suggest	printer_two	etitle
+suggest title
+> assign	tiny	3	printer.COLOR	plain
+assign fail 1 KEY_ABSENT
+> unset	app	t
+unset fail 1 KEY_ABSENT
+> set	printer_two	5	net.nothing.BITS	real	"quoted"
+set fail 1 KEY_ABSENT
+> suggest	tiny	summary.u
+suggest (null)
+> put	app	5	PRINTER_TWO.color\t= all\t
+put fail 1 KEY_ABSENT
+> layers	printer_two	u
+layers fail 1 KEY_ABSENT
+> unset_from	app	5	prefix
+unset_from fail 1 KEY_ABSENT
+> djin_frame	app
+app
+  settings only
+
+settings
+  app.color  bool  true   -  whether output is coloured
+  app.width  int   240    -  an int in a range
+  app.ratio  real  0.5    -  a real
+  app.title  text  unset  -  a text with no default
+  app.depth  int   8      -  an int with named values and an alias
+djin_frame 0
+> text_copy	tiny	printer.xlocal.module	a
+text_copy fail 1 KEY_ABSENT
+> reg_take	--app.BANNER
+reg_take -1 at=1 fail 1 KEY_ABSENT
+> env	APP_PRINTER_BIG	9223372036854775808
+env
+> assign	cache	5	raito	yaml
+assign fail 1 KEY_ABSENT
+> raw_get	app	2097153	1048585
+raw_get fail 1 KEY_ABSENT source=-1 | -1 (null) | -1 (null)
+> djin_list
+net      1.2    talks to other machines
+printer  0.9.1  a name a djin has
+cache    2.0    a record for a frame already listed
+tiny     -      settings only
+djin_list 0
+> detach	printer_two
+detach
+> assign	tiny	4	seed	off
+assign fail 1 KEY_ABSENT
+> distance	title	scale
+distance 3
+> reg_import	
+reg_import ok 0
+> statement_end	-format ; 	0
+statement_end 8
+> scope	printer	notihng
+scope fail 1 KEY_ABSENT
+> layers	printer	size
+layers fail 1 KEY_ABSENT
+> assign	app	4		0x10
+assign fail 1 KEY_ABSENT
+> reg_remove	net
+reg_remove fail 1 KEY_ABSENT
+> distance	size	color
+distance 5
+> assign	app	2	MODULE	-
+assign fail 1 KEY_ABSENT
+> reg_add	cache
+reg_add fail 2 KEY_DUPLICATE
+> bound	net	app.local.t
+bound fail 1 KEY_ABSENT
+> reg_take	--no-verbose=1e309
+reg_take -1 at=1 fail 1 KEY_ABSENT
+> clear	app
+clear
+> assign	printer	3	app.MAX_DEPTH	Y
+assign fail 1 KEY_ABSENT
+> reg_remove	printer
+reg_remove ok 1
+> assign	printer	6	nothing.raxtio	0
+assign fail 8 INVALID_ARGUMENT
+> reg_add	net
+reg_add ok 2
+> put	printer	4	summary._bits=  5e-324 
+put fail 1 KEY_ABSENT
+> reg_count
+reg_count 3 tiny cache net
+> generation	app
+generation 9
+> distance	color	wi_dth
+distance 6
+> text_copy	printer	cpp_features.seed	cpp
+text_copy fail 3 VALUE_TYPE_MISMATCH
+> reg_import	X_
+reg_import ok 0
+> unset_from	app	3	loacl.format
+unset_from fail 1 KEY_ABSENT
+> reg_import	APP_
+reg_import fail 8 INVALID_ARGUMENT
+> put	app	3	nothing.mode
+put fail 1 KEY_ABSENT
+> suggest	app	tiny.style
+suggest (null)
+> bound	tiny	app.ti_tle
+bound fail 1 KEY_ABSENT
+> detach	tiny
+detach
+> reg_suggest	djnterp.width
+reg_suggest 0 
+> assign	app	3	style	0o17
+assign fail 1 KEY_ABSENT
+> suggest	nothing	hsot
+no frame
+> put	app	1	KEY_WIDTH = -nan 
+put fail 1 KEY_ABSENT
+> scope	printer_two	debug
+scope fail 1 KEY_ABSENT
+> import	cache	APP_
+import ok 0
+> unenv	BITS
+unenv
+> djin_list
+net      1.2    talks to other machines
+printer  0.9.1  a name a djin has
+cache    2.0    a record for a frame already listed
+tiny     -      settings only
+djin_list 0
+> load	tiny	6	-key_width\n  key_wxidth = 65\t\r\n\tprinter.summary.style =1e15  \n
+load fail 8 INVALID_ARGUMENT at 0
+> attach	tiny	printer
+attach ok 0
+> distance	PATH	prefix
+distance 5
+> djin_frame	printer_two
+printer_two
+  settings only
+
+settings
+  printer_two.verbose  bool  false  -  a bool two frames down
+djin_frame 0
+> load	printer_two	1	printer_two.debug.module= +wide,-c \r\nprinteri.p\t= JSON\t # c\nmax_depth; bit_s=\tno ; 
+load fail 1 KEY_ABSENT at 0
+> vars	net
+vars 10
+  [0] id=0 index=0 name=color frame=app depth=0
+  [1] id=1 index=1 name=width frame=app depth=0
+  [2] id=2 index=2 name=ratio frame=app depth=0
+  [3] id=3 index=3 name=title frame=app depth=0
+  [4] id=4 index=4 name=depth frame=app depth=0
+  [5] id=1048576 index=5 name=host frame=net depth=1
+  [6] id=1048577 index=6 name=port frame=net depth=1
+  [7] id=1048578 index=7 name=mode frame=net depth=1
+  [8] id=1048579 index=8 name=bits frame=net depth=1
+  [9] id=1048580 index=9 name=big frame=net depth=1
+  [10] id=4294967295 index=4294967295 name=- frame=- depth=255
+> scope	tiny	olcal
+scope fail 1 KEY_ABSENT
+> text_copy	nothing	nothing.t	3
+no frame
+> env	X_CACHE_DEPTH	cafÃ©
+env
+> reg_take	--set	printre_two.summary.p=true
+reg_take -1 at=2 fail 1 KEY_ABSENT
+> djin_register	upper
+djin_register 1 invalid
+> get	app	size
+get fail 1 KEY_ABSENT
+> vars	nothing
+no frame
+> set	nothing	1	t	choice	1e15
+no frame
+> reg_put	5	   =  1e21\t
+reg_put fail 8 INVALID_ARGUMENT
+> reg_count
+reg_count 3 tiny cache net
+> reg_count
+reg_count 3 tiny cache net
+> detach	tiny
+detach
+> attach	cache	printer_two
+attach ok 0
+> reg_put	4	 u =  sign 
+reg_put fail 1 KEY_ABSENT
+> reg_take	--set	bits="a\"b"
+reg_take -1 at=2 fail 1 KEY_ABSENT
+> layers	tiny	prefix	0
+layers fail 1 KEY_ABSENT
+> assign	app	5		"\0x"
+assign fail 1 KEY_ABSENT
+> get	cache	scale
+get fail 1 KEY_ABSENT
+> distance	SELECT	host
+distance 5
+> reg_add	cache
+reg_add fail 2 KEY_DUPLICATE
+> reg_import	
+reg_import ok 0
+> unset_from	app	4	color
+unset_from ok 0
+> reg_suggest	p
+reg_suggest 0 
+> env	APP_PRINTER_N	"a\"b"
+env
+> unset	cache	u
+unset fail 1 KEY_ABSENT
+> raw_get	printer	1048578	0
+raw_get fail 1 KEY_ABSENT source=-1 | -1 (null) | -1 (null)
+> env	APP_RATIO	cpp
+env
+> reg_take	--max_depth=off
+reg_take -1 at=1 fail 8 INVALID_ARGUMENT
+> reg_import	APP_
+reg_import fail 8 INVALID_ARGUMENT
+> assign	app	1	verbose	.5
+assign fail 1 KEY_ABSENT
+> djin_describe	cache
+cache  2.0
+  a record for a frame already listed
+
+settings
+  cache.size  int   64     -
+  cache.path  text  unset  -  where it is kept
+djin_describe 0
+> unset_from	app	3	nothing.bits
+unset_from fail 1 KEY_ABSENT
+> djin_register	cache_named
+djin_register 2 duplicate
+> reg_import	APP_
+reg_import fail 8 INVALID_ARGUMENT
+> detach	printer_two
+detach
+> put	net	5	\tmaxd_epth= cafÃ© 
+put fail 1 KEY_ABSENT
+> reg_add	net
+reg_add fail 2 KEY_DUPLICATE
+> statement_end	  djinterp.notxhing.n =  ""  # c\n-debug.scale\n cache.olcal.port\t= shallow  ;\t.= no \r\n path =  7\t\r\n	0
+statement_end 29
+> assign	printer_two	1	p	8080
+assign fail 1 KEY_ABSENT
+> text_copy	printer	path	9223372036854775807
+text_copy fail 1 KEY_ABSENT
+> attach	tiny	app
+attach ok 0
+> unenv	APP_HOST
+unenv
+> vars	printer_two
+vars 1
+  [0] id=0 index=0 name=verbose frame=printer_two depth=0
+  [1] id=4294967295 index=4294967295 name=- frame=- depth=255
+> get	printer_two	seed
+get fail 1 KEY_ABSENT
+> set	tiny	1	.max_dept	flags	yaml
+set fail 1 KEY_ABSENT
+> put	printer_two	1	  module = off\t
+put fail 1 KEY_ABSENT
+> layers	tiny	n
+layers 0
+> reg_import	
+reg_import ok 0
+> scope	printer	debug
+scope fail 1 KEY_ABSENT
+> unenv	APP_MODE
+unenv
+> djin_describe	printer
+printer  0.9.1
+  a name a djin has
+djin_describe 0
+> put	net	5	-width
+put ok 1
+> reg_suggest	app.t
+reg_suggest 0 
+> reg_target	format
+reg_target app
+> get	tiny	CACHE.max_depth
+get fail 1 KEY_ABSENT
+> put	printer	1	\tbig = 16\t
+put fail 1 KEY_ABSENT
+> reg_remove	printer
+reg_remove fail 1 KEY_ABSENT
+> get	printer	port
+get fail 1 KEY_ABSENT
+> reg_load	4	SCALE=  xml\t\r\n  mode =-9223372036854775808\t\nn = 4096 \r\n printer_two.summary.port = a#b ;-  ma_xdepth\r\n
+reg_load fail 1 KEY_ABSENT at 0
+> assign	nothing	5	verbose	cafÃ©
+no frame
+> put	app	5	printer.verbose =120 
+put fail 1 KEY_ABSENT
+> assign	app	5	djinterp.nothing.txitle	65536
+assign fail 1 KEY_ABSENT
+> reg_put	0	 port =  \t
+reg_put fail 8 INVALID_ARGUMENT
+> reg_add	tiny
+reg_add fail 2 KEY_DUPLICATE
+> djin_describe	tiny
+djin_describe none
+> detach	tiny
+detach
+> get	net	printer.SUMMARY.u
+get fail 1 KEY_ABSENT
+> djin_register	printer_again
+djin_register 2 duplicate
+> distance	style	port
+distance 5
+> reg_take	--set	app.debug.mode
+reg_take -1 at=1 fail 8 INVALID_ARGUMENT
+> unset	net	format
+unset fail 1 KEY_ABSENT
+> env	X_CACHE_SCALE	0x
+env
+> attach	tiny	printer
+attach ok 0
+> suggest	printer	mode
+suggest module
+> djin_register	printer
+djin_register 2 duplicate
+> unenv	APP_BIG
+unenv
+> get	printer	u
+get fail 1 KEY_ABSENT
+> reg_take	--set	verbose="\x41"
+reg_take -1 at=2 fail 1 KEY_ABSENT
+> get	net	title
+get id=3 scope=0 kind=text bound=0 source=default depth=none integer=0 real=0 text=(null) | 0  | 0 
+> reg_suggest	seed
+reg_suggest 0 
+> unset	printer_two	port
+unset fail 1 KEY_ABSENT
+> djin_frame	printer_two
+printer_two
+  settings only
+
+settings
+  printer_two.verbose  bool  false  -  a bool two frames down
+djin_frame 0
+> reg_remove	tiny
+reg_remove ok 0
+> scope	app	summary
+scope fail 1 KEY_ABSENT
+> djin_register	cache_named
+djin_register 2 duplicate
+> load	tiny	5	 net.nothing.size = yaml  \n\tcpp_features.RATIO  = .  \r\n\t.\t=2  # c\n ne.ratiox = .5  # c\nmodule;
+load fail 1 KEY_ABSENT at 1
+> raw_get	tiny	1048578	1
+raw_get fail 1 KEY_ABSENT source=-1 | -1 (null) | -1 (null)
+> reg_put	5	 -local.width
+reg_put fail 1 KEY_ABSENT
+> scope	tiny	cpp_feautres
+scope fail 1 KEY_ABSENT
+> layers	nothing	cache.banner
+no frame
+> put	app	6	path
+put fail 8 INVALID_ARGUMENT
+> unset	printer_two	banner
+unset fail 1 KEY_ABSENT
+> assign	printer_two	1	u	shallow
+assign fail 1 KEY_ABSENT
+> set	cache	2	color	int	a
+set fail 1 KEY_ABSENT
+> generation	printer
+generation 33
+> reg_take	--setbits
+reg_take -1 at=1 fail 1 KEY_ABSENT
+> reg_assign	2	style	none
+reg_assign fail 1 KEY_ABSENT
+> reg_take	--no-cache.p
+reg_take -1 at=1 fail 1 KEY_ABSENT
+> reg_remove	cache
+reg_remove ok 0
+> get	cache	DJINTERP.mode
+get fail 1 KEY_ABSENT
+> statement_end	\tdjinterp.debug.title = 30 # c\n\tsummary.width=a\t;\tmaxx_depth =\t0  ;  path\t=\t8080  \r\n cpp_features.u =1e21  \n	0
+statement_end 27
+> import	tiny	APP_
+import ok 0
+> import	app	APP_
+import fail 8 INVALID_ARGUMENT
+> statement_end	-\tbig # c\n 9007199254740993 ;  printer.ratio=-all\t # c\ntiny.title 65535\n	1
+statement_end 6
+> put	nothing	3	debug.title = 200  
+no frame
+> get	cache	porxt
+get fail 1 KEY_ABSENT
+> import	app	APP_
+import fail 8 INVALID_ARGUMENT
+> assign	printer_two	6	bits	table
+assign fail 8 INVALID_ARGUMENT
+> reg_import	
+reg_import ok 0
+> vars	printer
+vars 9
+  [0] id=0 index=0 name=key_width frame=printer depth=0
+  [1] id=1 index=1 name=style frame=printer depth=0
+  [2] id=2 index=2 name=select frame=printer depth=0
+  [3] id=3 index=3 name=prefix frame=printer depth=0
+  [4] id=4 index=4 name=banner frame=printer depth=0
+  [5] id=5 index=5 name=seed frame=printer depth=0
+  [6] id=6 index=6 name=scale frame=printer depth=0
+  [7] id=7 index=7 name=module frame=printer depth=0
+  [8] id=8 index=8 name=width frame=printer depth=0
+  [9] id=4294967295 index=4294967295 name=- frame=- depth=255
+> reg_count
+reg_count 1 net
+> assign	nothing	4	big	true
+no frame
+> reg_load	1	width_ .5;
+reg_load fail 1 KEY_ABSENT at 0
+> assign	net	5	ratio	0o17
+assign fail 8 INVALID_ARGUMENT
+> suggest	nothing	verbose
+no frame
+> get	printer	local.module_
+get fail 1 KEY_ABSENT
+> suggest	nothing	t
+no frame
+> reg_remove	tiny
+reg_remove fail 1 KEY_ABSENT
+> scope	tiny	debug
+scope fail 1 KEY_ABSENT
+> djin_describe	app
+djin_describe none
+> get	net	summary.depth
+get fail 1 KEY_ABSENT
+> attach	tiny	tiny
+attach fail 8 INVALID_ARGUMENT
+> reg_suggest	port
+reg_suggest 0 
+> reg_suggest	.seed
+reg_suggest 0 
+> suggest	app	host
+suggest (null)
+> reg_add	net
+reg_add fail 2 KEY_DUPLICATE
+> layers	printer_two	mode
+layers fail 1 KEY_ABSENT
+> reg_assign	1	n	65536
+reg_assign fail 1 KEY_ABSENT
+> reg_suggest	bits
+reg_suggest 0 
+> get	net	seed
+get fail 1 KEY_ABSENT
+> reg_import	APP_
+reg_import fail 8 INVALID_ARGUMENT
+> suggest	tiny	cpp_featurse.U
+suggest (null)
+> djin_frame	nothing
+djin_frame -1
+> get	net	bits
+get id=1048579 scope=0 kind=flags bound=0 source=default depth=none integer=0 real=0 text=(null) | 1 0 | 1 0
+> statement_end	 size  = all\t\r\n - s_eed\r\n	1
+statement_end 14
+> assign	tiny	3	ap.nothing.size	2.5e-5
+assign fail 1 KEY_ABSENT
+> set	printer	5	app.veirbose	choice	65536
+set fail 1 KEY_ABSENT
+> reg_import	APP_
+reg_import fail 8 INVALID_ARGUMENT
+> unset	cache	style
+unset fail 1 KEY_ABSENT
+> unset_from	nothing	5	cach.key_width
+no frame
+> djin_describe	net
+net  1.2
+  talks to other machines
+
+settings
+  net.host  text    "localhost"  -  a text with a default
+  net.port  int     8080         -  an int with an alias
+  net.mode  choice  off          -  a choice of 64-bit values
+  net.bits  flags   0            -  flags with the sign bit
+  net.big   int     0            -  an int one past the exact integers each way
+djin_describe 0
+> layers	printer	local.BIG	0
+layers fail 1 KEY_ABSENT
+> raw_get	printer	0	0
+raw_get ok 0 source=0 | 2 30 | 2 30
+> reg_count
+reg_count 1 net
+> set	app	5		choice	nan
+set fail 1 KEY_ABSENT
+> generation	cache
+generation 118
+> suggest	printer	seed.
+suggest (null)
+> reg_put	0	-  FORMAT
+reg_put fail 8 INVALID_ARGUMENT
+> clear	nothing
+no frame
+> import	app	APP_
+import fail 8 INVALID_ARGUMENT
+> get	nothing	depth
+no frame
+> get	app	modue
+get fail 1 KEY_ABSENT
+> assign	tiny	4	eslect	"\x41"
+assign fail 1 KEY_ABSENT
+> distance	moe	title
+distance 4
+> distance	path	TITLE
+distance 4
+> reg_count
+reg_count 1 net
+> import	app	
+import ok 0
+> reg_assign	1	kiey_width	-
+reg_assign fail 1 KEY_ABSENT
+> get	cache	host
+get fail 1 KEY_ABSENT
+> reg_add	printer
+reg_add ok 1
+> generation	cache
+generation 118
+> suggest	tiny	select
+suggest (null)
+> attach	printer_two	-
+attach ok 0
+> generation	tiny
+generation 172
+> reg_count
+reg_count 2 net printer
+> reg_target	P
+reg_target app
+> raw_get	tiny	1048578	5
+raw_get fail 1 KEY_ABSENT source=-1 | -1 (null) | -1 (null)
+> distance	depth	bits
+distance 4
+> reg_load	0	 = auto \r\n
+reg_load fail 8 INVALID_ARGUMENT at 1
+> reg_import	X_
+reg_import ok 1
+> reg_load	0	 tiny.debug.ve_rbose= shallow  \r\n depth\t=\tnan  # c\n u\t=65  \r\nratio Y\n   = 0;
+reg_load fail 8 INVALID_ARGUMENT at 1
+> reg_target	host.
+reg_target app
+> reg_remove	net
+reg_remove ok 0
+> djin_list
+net      1.2    talks to other machines
+printer  0.9.1  a name a djin has
+cache    2.0    a record for a frame already listed
+djin_list 0
+> import	app	X_
+import ok 0
+> layers	nothing	ratio
+no frame
+> get	app	rato
+get fail 1 KEY_ABSENT
+> detach	printer_two
+detach
+> attach	printer_two	printer_two
+attach fail 8 INVALID_ARGUMENT
+> reg_count
+reg_count 1 printer
+> put	printer_two	0	u
+put fail 8 INVALID_ARGUMENT
+> reg_import	X_
+reg_import ok 1
+> suggest	nothing	veirbose
+no frame
+> bound	app	scale
+bound fail 1 KEY_ABSENT
+> text_copy	tiny	debug.host	c legacy
+text_copy fail 1 KEY_ABSENT
+> layers	tiny	djinterp.cpp_features.select	1
+layers fail 1 KEY_ABSENT
+> put	printer	4	 key_iwdth= 0x 
+put fail 1 KEY_ABSENT
+> reg_suggest	color
+reg_suggest 5 color
+> vars	app
+vars 5
+  [0] id=0 index=0 name=color frame=app depth=0
+  [1] id=1 index=1 name=width frame=app depth=0
+  [2] id=2 index=2 name=ratio frame=app depth=0
+  [3] id=3 index=3 name=title frame=app depth=0
+  [4] id=4 index=4 name=depth frame=app depth=0
+  [5] id=4294967295 index=4294967295 name=- frame=- depth=255
+> raw_get	app	1	1048585
+raw_get fail 1 KEY_ABSENT source=-1 | -1 (null) | -1 (null)
+> scope	net	summary
+scope fail 1 KEY_ABSENT
+> attach	tiny	app
+attach ok 0
+> reg_load	3	- tiny.depth ; 
+reg_load fail 1 KEY_ABSENT at 0
+> layers	app	seed	8
+layers fail 1 KEY_ABSENT
+> unset	net	format
+unset fail 1 KEY_ABSENT
+> distance	seed	scale
+distance 4
+> unset	app	deth
+unset fail 1 KEY_ABSENT
+> unenv	X_VERBOSE
+unenv
+> assign	app	2	tiny.local.sede	1e21
+assign fail 1 KEY_ABSENT
+> put	tiny	0	net.max_depth\t= wide
+put fail 8 INVALID_ARGUMENT
+> reg_target	depth
+reg_target app
+> attach	cache	-
+attach ok 0
+> scope	printer	summary
+scope ok 1048578 name=summary
+> unset_from	printer_two	4	SIZE.
+unset_from fail 1 KEY_ABSENT
+> scope	printer	summary
+scope ok 1048578 name=summary
+> djin_frame	printer_two
+printer_two
+  settings only
+
+settings
+  printer_two.verbose  bool  false  -  a bool two frames down
+djin_frame 0
+> distance	cloor	scale
+distance 5
+> djin_register	net
+djin_register 2 duplicate
+> vars	cache
+vars 2
+  [0] id=0 index=0 name=size frame=cache depth=0
+  [1] id=1 index=1 name=path frame=cache depth=0
+  [2] id=4294967295 index=4294967295 name=- frame=- depth=255
+> generation	printer
+generation 45
+> put	printer	3	  net.SUMMARY.path=\toff 
+put fail 1 KEY_ABSENT
+> assign	net	5	printer_two.local.title	1.5
+assign fail 1 KEY_ABSENT
+> reg_put	1	mode
+reg_put fail 1 KEY_ABSENT
+> djin_register	upper
+djin_register 1 invalid
+> reg_suggest	printer_tow.cpp_features.style
+reg_suggest 0 
+> put	tiny	2	 printer.banner_ = -1 
+put fail 1 KEY_ABSENT
+> djin_describe	djinterp
+djin_describe none
+> assign	tiny	4	preifx	two words
+assign fail 1 KEY_ABSENT
+> assign	printer	1	_n	120
+assign fail 1 KEY_ABSENT
+> unenv	X_BIG
+unenv
+> load	cache	2	t=it's  ;   style = all  ; - select;scale =\t121  \r\napp.debug.t "quoted" ; 
+load fail 1 KEY_ABSENT at 0
+> layers	app	path	0
+layers fail 1 KEY_ABSENT
+> layers	cache	MAX_DEPTH
+layers fail 1 KEY_ABSENT
+> set	printer_two	4	color	text	4294967296
+set fail 1 KEY_ABSENT
+> get	cache	paith
+get fail 1 KEY_ABSENT
+> load	cache	1	\tcpp_features.select =  "quoted"  \r\n color =\tjson\t # c\n-host ; stiyle =  grid  \n nothing.max_depth  =\t017  ;
+load fail 1 KEY_ABSENT at 1
+> set	cache	1	nothing.widht	int	0x100000000
+set fail 1 KEY_ABSENT
+> djin_register	upper
+djin_register 1 invalid
+> reg_put	5	bits =\t017\t
+reg_put fail 1 KEY_ABSENT
+> get	cache	netx.debug.title
+get fail 1 KEY_ABSENT
+> assign	nothing	1	mode	shallow
+no frame
+> unset	printer	prefix
+unset ok 1048579
+> detach	printer_two
+detach
+> reg_count
+reg_count 1 printer
+> set	app	4	host	flags	-1
+set fail 1 KEY_ABSENT
+> unset	cache	riatio
+unset fail 1 KEY_ABSENT
+> reg_take	--set	width.
+reg_take -1 at=1 fail 8 INVALID_ARGUMENT
+> text_copy	nothing	module	-cpp
+no frame
+> get	printer	style
+get id=1048577 scope=0 kind=choice bound=0 source=default depth=none integer=0 real=0 text=plain | 5 plain | 5 plain
+> text_copy	net	path	cafÃ©
+text_copy fail 1 KEY_ABSENT
+> djin_describe	cache
+cache  2.0
+  a record for a frame already listed
+
+settings
+  cache.size  int   64     -
+  cache.path  text  unset  -  where it is kept
+djin_describe 0
+> get	app	style
+get fail 1 KEY_ABSENT
+> djin_register	wrong_frame
+djin_register 1 invalid
+> reg_assign	3	style	off
+reg_assign fail 1 KEY_ABSENT
+> text_copy	net	banner	+c
+text_copy fail 1 KEY_ABSENT
+> djin_frame	printer
+printer
+  settings only
+
+settings
+  printer.key_width  int     30         D_CFG_ENV_PRINTER_KEY_WIDTH  the width of a key
+  printer.style      choice  plain      D_CFG_ENV_PRINTER_STYLE      how a description is written
+  printer.select     flags   3          -                            the sections written
+  printer.prefix     text    "> "       -                            a text whose default needs quotes
+  printer.banner     bool    false      -                            a bool the environment may not set
+  printer.seed       int     0          -                            an int of any value
+  printer.scale      real    1          -
+  printer.module     text    "builtin"  D_CFG_ENV_PRINTER_MODULE     a text only the program and the command line set
+  printer.width      int     80         -                            a name the root declares too
+djin_frame 0
+> reg_count
+reg_count 1 printer
+> raw_get	cache	1048578	1
+raw_get fail 1 KEY_ABSENT source=-1 | -1 (null) | -1 (null)
+> set	net	0	host	bool	3
+set fail 8 INVALID_ARGUMENT
+> reg_take	--size
+reg_take -1 at=1 fail 1 KEY_ABSENT
+> put	printer	1	-.u
+put fail 1 KEY_ABSENT
+> scope	tiny	summary
+scope fail 1 KEY_ABSENT
+> reg_target	SCALE
+reg_target app
+> set	printer	5	width	choice	9223372036854775808
+set fail 8 INVALID_ARGUMENT
+> get	printer_two	printer.CPP_FEATURES.banenr
+get fail 1 KEY_ABSENT
+> assign	tiny	5	banner	b
+assign fail 1 KEY_ABSENT
+> reg_put	0	 summary.SELECT\t= xml 
+reg_put fail 8 INVALID_ARGUMENT
+> reg_put	0	N "\0x"
+reg_put fail 8 INVALID_ARGUMENT
+> bound	app	host
+bound fail 1 KEY_ABSENT
+> assign	tiny	5	app.max_depth	65535
+assign fail 1 KEY_ABSENT
+> unenv	X_PREFIX
+unenv
+> get	printer	printer.title
+get id=3 scope=0 kind=text bound=0 source=default depth=none integer=0 real=0 text=(null) | 0  | 0 
+> detach	printer_two
+detach
+> attach	printer_two	printer
+attach ok 0
+> distance	p	select
+distance 6
+> reg_import	
+reg_import ok 0
+> clear	printer
+clear
+> assign	printer_two	4	big	-1
+assign fail 1 KEY_ABSENT
+> scope	app	cpp_featrues
+scope fail 1 KEY_ABSENT
+> text_copy	cache	printer_two.format	1e15
+text_copy fail 1 KEY_ABSENT
+> reg_target	cpp_features.banner
+reg_target app
+> distance	max_depth	n
+distance 9
+> layers	printer	p	64
+layers fail 1 KEY_ABSENT
+> reg_count
+reg_count 1 printer
+> put	app	3	  =017  
+put fail 8 INVALID_ARGUMENT
+> unset_from	tiny	6	style
+unset_from fail 1 KEY_ABSENT
+> put	printer_two	0	 title\t= 601  
+put fail 8 INVALID_ARGUMENT
+> reg_add	net
+reg_add ok 1
+> reg_suggest	cpp_features.seed
+reg_suggest 0 
+> unenv	APP_U
+unenv
+> assign	nothing	1	t	-2.75
+no frame
+> suggest	net	app.cpp_features.banner
+suggest (null)
+> clear	nothing
+no frame
+> put	printer	5	 ratio\t=80 
+put ok 2
+> reg_take	--set	port=0x100000000
+reg_take -1 at=2 fail 1 KEY_ABSENT
+> get	cache	path
+get id=1 scope=0 kind=text bound=0 source=default depth=none integer=0 real=0 text=(null) | 0  | 0 
+> detach	tiny
+detach
+> attach	tiny	-
+attach ok 0
+> scope	nothing	_debug
+no frame
+> reg_target	scale
+reg_target app
+> reg_remove	net
+reg_remove ok 1
+> djin_register	reserved
+djin_register 3 reserved
+> put	app	4	prixnter.nothing.path  =\t4294967296\t
+put fail 1 KEY_ABSENT
+> load	printer_two	5	  max_depth =  a,sign  \n nothing.big\t=  4294967296  ;  APP.nothing.eky_width  =  x=y ;     = 2\t # c\n  host  =  3.14159 # c\n
+load fail 8 INVALID_ARGUMENT at 2
+> generation	cache
+generation 119
+> unset_from	app	1	cpp_features.host
+unset_from fail 1 KEY_ABSENT
+> reg_assign	6	local.width	1e
+reg_assign fail 8 INVALID_ARGUMENT
+> suggest	printer	tiny.summary.eslect
+suggest (null)
+> djin_describe	app
+djin_describe none
+> reg_add	net
+reg_add ok 1
+> get	printer	print_er.NOTHING.color
+get fail 1 KEY_ABSENT
+> unset_from	tiny	2	summayr.seexd
+unset_from fail 1 KEY_ABSENT
+> clear	net
+clear
+> put	cache	5	 .banner\t=\t"\x41"
+put fail 1 KEY_ABSENT
+> unset	printer	printerx.summary.paith
+unset fail 1 KEY_ABSENT
+> reg_target	bnner
+reg_target app
+> reg_target	pah
+reg_target app
+> vars	cache
+vars 2
+  [0] id=0 index=0 name=size frame=cache depth=0
+  [1] id=1 index=1 name=path frame=cache depth=0
+  [2] id=4294967295 index=4294967295 name=- frame=- depth=255
+> djin_register	printer
+djin_register 2 duplicate
+> reg_suggest	app.summary.module
+reg_suggest 0 
+> assign	printer_two	5	style	=
+assign fail 8 INVALID_ARGUMENT
+> distance	p	epth
+distance 3
+> reg_count
+reg_count 2 printer net
+> reg_target	nothing.port
+reg_target app
+> statement_end	p\r\nwidth  padded \n	0
+statement_end 2
+> reg_assign	0	CPP_FEATURES.m_odule	huge
+reg_assign fail 8 INVALID_ARGUMENT
+> layers	app	title
+layers 0
+> reg_add	net
+reg_add fail 2 KEY_DUPLICATE
+> reg_assign	3	seed	xml
+reg_assign fail 1 KEY_ABSENT
+> layers	printer	SUMMARY.style	1
+layers fail 1 KEY_ABSENT
+> attach	tiny	printer
+attach ok 0
+> reg_target	seed
+reg_target app
+> reg_take	--set	bitis
+reg_take -1 at=1 fail 8 INVALID_ARGUMENT
+> put	printer	3	 - cpp_features.MODE
+put fail 1 KEY_ABSENT
+> unset_from	cache	1	idebug.t
+unset_from fail 1 KEY_ABSENT
+> unenv	WIDTH
+unenv
+> layers	net	port	3
+layers 0
+> unset	printer	
+unset fail 1 KEY_ABSENT
+> clear	printer
+clear
+> reg_count
+reg_count 2 printer net
+> assign	printer	1	djinterp.formeat	120
+assign fail 1 KEY_ABSENT
+> djin_describe	djinterp
+djin_describe none
+> reg_add	app
+reg_add fail 8 INVALID_ARGUMENT
+> attach	cache	-
+attach ok 0
+> suggest	printer_two	heost
+suggest (null)
+> scope	printer	summary
+scope ok 1048578 name=summary
+> put	printer_two	1	  . =  hello  
+put fail 1 KEY_ABSENT
+> djin_list
+net      1.2    talks to other machines
+printer  0.9.1  a name a djin has
+cache    2.0    a record for a frame already listed
+djin_list 0
+> reg_put	1	 NET.nothing.u =1e-7\t
+reg_put fail 1 KEY_ABSENT
+> get	printer	apth
+get fail 1 KEY_ABSENT
+> import	cache	X_
+import ok 0
+> reg_suggest	printer_two.color
+reg_suggest 0 
+> unset_from	printer_two	1	prt
+unset_from fail 1 KEY_ABSENT
+> reg_take	--set	u
+reg_take -1 at=1 fail 8 INVALID_ARGUMENT
+> layers	nothing	.host	64
+no frame
+> statement_end	 module =  a#b  ; 	2
+statement_end 12
+> put	printer	0	prefix = xml 
+put fail 8 INVALID_ARGUMENT
+> reg_add	cache
+reg_add ok 2
+> reg_take	--set	n.=all
+reg_take -1 at=2 fail 1 KEY_ABSENT
+> layers	app	cache.max_depth
+layers fail 1 KEY_ABSENT
+> get	nothing	
+no frame
+> reg_suggest	app.bits
+reg_suggest 0 
+> put	app	3	-t
+put fail 1 KEY_ABSENT
+> put	printer_two	5	\tstyle = -nan 
+put fail 8 INVALID_ARGUMENT
+> put	tiny	0	 ratio =Y 
+put fail 8 INVALID_ARGUMENT
+> reg_target	pinter_two.MAX_DEPTH
+reg_target app
+> reg_assign	0	n	two words
+reg_assign fail 8 INVALID_ARGUMENT
+> assign	printer	4	net.summary.bits	9007199254740992
+assign fail 1 KEY_ABSENT
+> reg_add	app
+reg_add fail 8 INVALID_ARGUMENT
+> import	nothing	APP_
+no frame
+> reg_import	APP_
+reg_import fail 8 INVALID_ARGUMENT
+> reg_remove	net
+reg_remove ok 1
+> reg_count
+reg_count 2 printer cache
+> reg_count
+reg_count 2 printer cache
+> bound	printer	port
+bound fail 1 KEY_ABSENT
+> assign	tiny	5	path	TRUE
+assign fail 1 KEY_ABSENT
+> reg_import	APP_
+reg_import fail 8 INVALID_ARGUMENT
+> get	net	cache.cpp_features.mode
+get fail 1 KEY_ABSENT
+> put	printer	4	djinterp.big 8
+put fail 1 KEY_ABSENT
+> get	cache	max_depth
+get id=4 scope=0 kind=int bound=0 source=default depth=none integer=8 real=0 text=(null) | 1 8 | 1 8
+> reg_assign	1	app.cpp_features.path	1e15
+reg_assign fail 1 KEY_ABSENT
+> assign	printer	1	CACHE.verbose	3
+assign fail 1 KEY_ABSENT
+> attach	tiny	net
+attach ok 0
+> set	app	3	color	none	a#b
+set fail 3 VALUE_TYPE_MISMATCH
+> reg_put	0	\thost = 0.5
+reg_put fail 8 INVALID_ARGUMENT
+> reg_import	X_
+reg_import fail 8 INVALID_ARGUMENT
+> assign	printer_two	1	PATH	c,cpp
+assign fail 1 KEY_ABSENT
+> unenv	X_PREFIX
+unenv
+> get	app	titele
+get fail 1 KEY_ABSENT
+> unset_from	net	2	size
+unset_from fail 1 KEY_ABSENT
+> layers	nothing	bainner
+no frame
+> vars	tiny
+vars 8
+  [0] id=0 index=0 name=host frame=net depth=0
+  [1] id=1 index=1 name=port frame=net depth=0
+  [2] id=2 index=2 name=mode frame=net depth=0
+  [3] id=3 index=3 name=bits frame=net depth=0
+  [4] id=4 index=4 name=big frame=net depth=0
+  [5] id=1048576 index=5 name=t frame=tiny depth=1
+  [6] id=1048577 index=6 name=u frame=tiny depth=1
+  [7] id=1048578 index=7 name=n frame=tiny depth=1
+  [8] id=4294967295 index=4294967295 name=- frame=- depth=255
+> reg_import	APP_
+reg_import fail 8 INVALID_ARGUMENT
+> put	printer	5	size\t=3  
+put fail 1 KEY_ABSENT
+> djin_frame	app
+app
+  settings only
+
+settings
+  app.color  bool  true   -  whether output is coloured
+  app.width  int   240    -  an int in a range
+  app.ratio  real  0.5    -  a real
+  app.title  text  unset  -  a text with no default
+  app.depth  int   8      -  an int with named values and an alias
+djin_frame 0
+> set	app	2	verbose	bool	4294967296
+set fail 1 KEY_ABSENT
+> get	nothing	SELECT
+no frame
+> unenv	PREFIX
+unenv
+> reg_remove	cache
+reg_remove ok 1
+> clear	net
+clear
+> attach	cache	net
+attach ok 0
+> djin_register	plain
+djin_register 4 full
+> vars	printer_two
+vars 15
+  [0] id=0 index=0 name=color frame=app depth=0
+  [1] id=1 index=1 name=width frame=app depth=0
+  [2] id=2 index=2 name=ratio frame=app depth=0
+  [3] id=3 index=3 name=title frame=app depth=0
+  [4] id=4 index=4 name=depth frame=app depth=0
+  [5] id=1048576 index=5 name=key_width frame=printer depth=1
+  [6] id=1048577 index=6 name=style frame=printer depth=1
+  [7] id=1048578 index=7 name=select frame=printer depth=1
+  [8] id=1048579 index=8 name=prefix frame=printer depth=1
+  [9] id=1048580 index=9 name=banner frame=printer depth=1
+  [10] id=1048581 index=10 name=seed frame=printer depth=1
+  [11] id=1048582 index=11 name=scale frame=printer depth=1
+  [12] id=1048583 index=12 name=module frame=printer depth=1
+  [13] id=1048584 index=13 name=width frame=printer depth=1
+  [14] id=2097152 index=14 name=verbose frame=printer_two depth=2
+  [15] id=4294967295 index=4294967295 name=- frame=- depth=255
+> layers	printer	printer.bits
+layers fail 1 KEY_ABSENT
+> put	net	0	  format = 99 
+put fail 8 INVALID_ARGUMENT
+> load	nothing	4	  path\t= false   ;   nxet.cpp_features.depth  =  1e15\t\n
+no frame
+> raw_get	app	0	1048585
+raw_get fail 1 KEY_ABSENT source=-1 | -1 (null) | -1 (null)
+> layers	printer_two	style	8
+layers 0
+> scope	cache	summary
+scope fail 1 KEY_ABSENT
+> unenv	P
+unenv
+> djin_register	printer
+djin_register 2 duplicate
+> env	X_PRINTER_VERBOSE	grid
+env
+> env	APP_NET_SIZE	 padded 
+env
+> raw_get	net	2	2097153
+raw_get fail 1 KEY_ABSENT source=-1 | -1 (null) | -1 (null)
+> unset_from	printer_two	6	neit.debug.ratio
+unset_from fail 1 KEY_ABSENT
+> suggest	app	printer_two.tilte
+suggest (null)
+> reg_put	5	  n  = "\q" 
+reg_put fail 1 KEY_ABSENT
+> reg_target	cp_pfeatures.n
+reg_target app
+> attach	tiny	printer
+attach ok 0
+> bound	printer	.
+bound fail 1 KEY_ABSENT
+> distance	_u	big
+distance 3
+> unset_from	nothing	5	modul
+no frame
+> statement_end	U  = yaml ;	0
+statement_end 10
+> unenv	HOST
+unenv
+> reg_load	1	\twidth\t=  a#b  ; noting.prefix= a#b  ; 
+reg_load fail 8 INVALID_ARGUMENT at 1
+> put	app	0	\tformat\t=\t.5
+put fail 8 INVALID_ARGUMENT
+> reg_load	4	 ize\t=\t""  # c\n  -  .;\tverbose\t= inf  \r\n WIDTH= -9223372036854775808  # c\n . =  0x\t\n
+reg_load fail 1 KEY_ABSENT at 1
+> get	printer_two	APP.cpp_features.ratio
+get fail 1 KEY_ABSENT
+> layers	net	wdth	8
+layers fail 1 KEY_ABSENT
+> load	tiny	5	 t\t= a\t\n  -verbose # c\n\tnet.debug.n  =  xml\t ; port  = 3.14159;tiny.VERBOSE\n
+load fail 1 KEY_ABSENT at 10
+> assign	printer_two	1	scale	1e
+assign fail 8 INVALID_ARGUMENT
+> get	cache	path
+get id=1048577 scope=0 kind=text bound=0 source=default depth=none integer=0 real=0 text=(null) | 0  | 0 
+> assign	tiny	5	CPP_FEATURES.PATH	64
+assign fail 1 KEY_ABSENT
+> attach	printer_two	printer
+attach ok 0
+> reg_assign	3	BIG	infinity
+reg_assign fail 1 KEY_ABSENT
+> djin_frame	tiny
+tiny
+  settings only
+
+settings
+  tiny.t  text  unset  -
+  tiny.u  text  unset  -
+  tiny.n  int   0      -
+djin_frame 0
+> assign	tiny	0	banner	-
+assign fail 8 INVALID_ARGUMENT
+> put	app	5	format
+put fail 1 KEY_ABSENT
+> assign	nothing	6	module	all
+no frame
+> get	tiny	nothing.path
+get fail 1 KEY_ABSENT
+> reg_remove	cache
+reg_remove fail 1 KEY_ABSENT
+> reg_count
+reg_count 1 printer
+> put	app	4	-local_.n
+put fail 1 KEY_ABSENT
+> reg_take	--no-debug.n=posix
+reg_take -1 at=1 fail 1 KEY_ABSENT
+> attach	tiny	tiny
+attach fail 8 INVALID_ARGUMENT
+> env	APP_NET_STYLE	-1
+env
+> reg_take	--set	debug.p=65536
+reg_take -1 at=2 fail 1 KEY_ABSENT
+> reg_take	--no-wdith
+reg_take -1 at=1 fail 1 KEY_ABSENT
+> djin_register	wrong_frame
+djin_register 1 invalid
+> get	printer_two	key_width
+get id=1048576 scope=0 kind=int bound=0 source=default depth=none integer=30 real=0 text=(null) | 2 30 | 2 30
+> reg_take	--set	local.bits=+wide,-c
+reg_take -1 at=2 fail 1 KEY_ABSENT
+> put	net	4	 seummary.t= 0o17 
+put fail 1 KEY_ABSENT
+> reg_load	2	 host\t=\t-nan  # c\n-cache.hots;title\n-ode.;cpp_features.p\n
+reg_load fail 1 KEY_ABSENT at 1
+> attach	printer_two	printer_two
+attach fail 8 INVALID_ARGUMENT
+> reg_count
+reg_count 1 printer
+> reg_suggest	.
+reg_suggest 0 
+> reg_count
+reg_count 1 printer
+> set	printer	4		choice	65536
+set fail 1 KEY_ABSENT
+> load	app	0	-prefix ;  max_depth = xml \n
+load fail 8 INVALID_ARGUMENT at 0
+> reg_count
+reg_count 1 printer
+> djin_describe	cache
+cache  2.0
+  a record for a frame already listed
+
+settings
+  cache.size  int   64     -
+  cache.path  text  unset  -  where it is kept
+djin_describe 0
+> reg_remove	net
+reg_remove fail 1 KEY_ABSENT
+> reg_target	port
+reg_target app
+> djin_frame	printer_two
+printer_two
+  settings only
+
+settings
+  printer_two.verbose  bool  false  -  a bool two frames down
+djin_frame 0
+> reg_target	printer.style
+reg_target printer
+> get	app	p
+get fail 1 KEY_ABSENT
+> generation	net
+generation 71
+> djin_describe	cache
+cache  2.0
+  a record for a frame already listed
+
+settings
+  cache.size  int   64     -
+  cache.path  text  unset  -  where it is kept
+djin_describe 0
+> reg_add	cache
+reg_add ok 1
+> bound	app	printer_two.n
+bound fail 1 KEY_ABSENT
+> put	cache	6	key_width 9223372036854775807
+put fail 8 INVALID_ARGUMENT
+> unset	net	p
+unset ok 1
+> reg_import	X_
+reg_import fail 8 INVALID_ARGUMENT
+> reg_take	--set	big=false
+reg_take -1 at=2 fail 1 KEY_ABSENT
+> reg_count
+reg_count 2 printer cache
+> reg_take	--set	title
+reg_take -1 at=1 fail 8 INVALID_ARGUMENT
+> distance	PATH	SCALE
+distance 4
+> reg_put	5	 printer_two.host\t= "a" b  
+reg_put fail 1 KEY_ABSENT
+> assign	net	6	module	off
+assign fail 8 INVALID_ARGUMENT
+> assign	app	3	mode	no
+assign fail 1 KEY_ABSENT
+> clear	printer
+clear
+> reg_add	tiny
+reg_add ok 2
+> unset_from	printer_two	5	DJINTERP.big
+unset_from fail 1 KEY_ABSENT
+> import	app	X_
+import ok 0
+> reg_suggest	style
+reg_suggest 0 
+> layers	printer	bits	8
+layers fail 1 KEY_ABSENT
+> reg_remove	cache
+reg_remove ok 1
+> djin_list
+net      1.2    talks to other machines
+printer  0.9.1  a name a djin has
+cache    2.0    a record for a frame already listed
+tiny     -      settings only
+djin_list 0
+> reg_count
+reg_count 2 printer tiny
+> reg_import	
+reg_import ok 0
+> put	cache	6	-bannr
+put fail 8 INVALID_ARGUMENT
+> put	app	6	\t= 80 
+put fail 8 INVALID_ARGUMENT
+> layers	app	xselect
+layers fail 1 KEY_ABSENT
+> set	printer_two	5	prefix	none	99
+set fail 3 VALUE_TYPE_MISMATCH
+> assign	app	3	size	plain
+assign fail 1 KEY_ABSENT
+> djin_list
+net      1.2    talks to other machines
+printer  0.9.1  a name a djin has
+cache    2.0    a record for a frame already listed
+tiny     -      settings only
+djin_list 0
+> load	net	5	prefix ; seed +wide,-c # c\nprefix off\r\nmodule wide ; 
+load fail 1 KEY_ABSENT at 0
+> get	printer	size
+get fail 1 KEY_ABSENT
+> reg_assign	5	max_depth	0o17
+reg_assign ok 4
+> scope	printer	local
+scope fail 1 KEY_ABSENT
+> bound	net	foermat
+bound fail 1 KEY_ABSENT
+> unset	app	size.
+unset fail 1 KEY_ABSENT
+> scope	nothing	debug
+no frame
+> load	printer_two	1	 ne.local.scale= 240 \n format  =3.14159;  cpp_featurs.PATH=all\t\r\n
+load fail 1 KEY_ABSENT at 1
+> text_copy	app	module	a#b
+text_copy fail 1 KEY_ABSENT
+> reg_assign	2	hoxst	"a b"
+reg_assign fail 1 KEY_ABSENT
+> scope	app	SUMMARY
+scope fail 1 KEY_ABSENT
+> reg_remove	printer
+reg_remove ok 0
+> reg_load	5	 SIZE = c\t;
+reg_load fail 1 KEY_ABSENT at 1
+> reg_take	--setkey_width=c
+reg_take -1 at=1 fail 1 KEY_ABSENT
+> put	printer_two	0	-max_depth
+put fail 8 INVALID_ARGUMENT
+> scope	app	LOCAL
+scope fail 1 KEY_ABSENT
+> assign	app	1	cache.xstyle	TRUE
+assign fail 1 KEY_ABSENT
+> layers	printer	title
+layers 0
+> djin_register	printer
+djin_register 2 duplicate
+> reg_target	max_depth
+reg_target app
+> assign	printer_two	0	ma_depth	1
+assign fail 8 INVALID_ARGUMENT
+> unset_from	tiny	1	module
+unset_from fail 1 KEY_ABSENT
+> reg_count
+reg_count 1 tiny
+> djin_frame	cache
+cache
+  settings only
+
+settings
+  cache.size  int   64     -
+  cache.path  text  unset  -  where it is kept
+djin_frame 0
+> assign	printer	5	host	"quoted"
+assign fail 1 KEY_ABSENT
+> statement_end	 bits =  7 ;  tiny.nothing.p  =  yaml \n	1
+statement_end 11
+> layers	printer_two	app.local.p	8
+layers fail 1 KEY_ABSENT
+> scope	nothing	ummary
+no frame
+> reg_target	.
+reg_target app
+> get	net	olcal.PATH
+get fail 1 KEY_ABSENT
+> reg_take	--set	app.debug.host=-inf
+reg_take -1 at=2 fail 1 KEY_ABSENT
+> load	printer	3	  bits. =yes   # c\n
+load fail 1 KEY_ABSENT at 2
+> layers	printer_two	host	1
+layers fail 1 KEY_ABSENT
+> reg_assign	1	style	=
+reg_assign fail 1 KEY_ABSENT
+> scope	net	NOTHING
+scope fail 1 KEY_ABSENT
+> put	nothing	0	\tdepth =cpp  
+no frame
+> scope	printer	summary
+scope ok 1048578 name=summary
+> assign	tiny	3	max_depth	grid
+assign fail 8 INVALID_ARGUMENT
+> unenv	X_PREFIX
+unenv
+> reg_count
+reg_count 1 tiny
+> suggest	printer_two	max_depth
+suggest max_depth
+> reg_take	--set	style
+reg_take -1 at=1 fail 8 INVALID_ARGUMENT
+> unset_from	cache	4	NOTHING.selet
+unset_from fail 1 KEY_ABSENT
+> djin_describe	cache
+cache  2.0
+  a record for a frame already listed
+
+settings
+  cache.size  int   64     -
+  cache.path  text  unset  -  where it is kept
+djin_describe 0
+> djin_describe	cache
+cache  2.0
+  a record for a frame already listed
+
+settings
+  cache.size  int   64     -
+  cache.path  text  unset  -  where it is kept
+djin_describe 0
+> assign	app	6	color	
+assign fail 8 INVALID_ARGUMENT
+> reg_put	0	\t- ap.local.ratio
+reg_put fail 8 INVALID_ARGUMENT
+> set	cache	1		int	legacy
+set fail 1 KEY_ABSENT
+> generation	printer
+generation 52
+> reg_count
+reg_count 1 tiny
+> reg_load	0	-tiny.nothing.scle ;   big  = yaml \r\n HOST=xml ;  summary.bitis = ÿ  ;
+reg_load fail 8 INVALID_ARGUMENT at 0
+> reg_take	--set	HOST=.
+reg_take -1 at=2 fail 1 KEY_ABSENT
+> reg_take	--no-scale
+reg_take -1 at=1 fail 1 KEY_ABSENT
+> detach	printer_two
+detach
+> get	printer	printer.LOCAL.banner
+get fail 1 KEY_ABSENT
+> bound	printer	
+bound fail 1 KEY_ABSENT
+> djin_describe	app
+djin_describe none
+> reg_remove	tiny
+reg_remove ok 0
+> djin_register	printer_again
+djin_register 2 duplicate
+> djin_register	upper
+djin_register 1 invalid
+> detach	tiny
+detach
+> load	printer_two	1	-prefiix\r\n\tdjinterp.deebug.PATH = it's\t;n\t=\tnan\r\n
+load fail 1 KEY_ABSENT at 0
+> djin_list
+net      1.2    talks to other machines
+printer  0.9.1  a name a djin has
+cache    2.0    a record for a frame already listed
+djin_list 0
+> reg_count
+reg_count 0
+> env	X_BIG	0
+env
+> text_copy	tiny	printexr.PREFIX	low
+text_copy fail 1 KEY_ABSENT
+> get	printer	printer_two.local.ban_ner
+get fail 1 KEY_ABSENT
+> distance	elect	title
+distance 5
+> djin_register	plain
+djin_register 4 full
+> raw_get	printer	1	2097153
+raw_get fail 1 KEY_ABSENT source=-1 | -1 (null) | -1 (null)
+> reg_take	--no-color="quoted"
+reg_take -1 at=1 fail 1 KEY_ABSENT
+> vars	cache
+vars 2
+  [0] id=0 index=0 name=size frame=cache depth=0
+  [1] id=1 index=1 name=path frame=cache depth=0
+  [2] id=4294967295 index=4294967295 name=- frame=- depth=255
+> vars	net
+vars 5
+  [0] id=0 index=0 name=host frame=net depth=0
+  [1] id=1 index=1 name=port frame=net depth=0
+  [2] id=2 index=2 name=mode frame=net depth=0
+  [3] id=3 index=3 name=bits frame=net depth=0
+  [4] id=4 index=4 name=big frame=net depth=0
+  [5] id=4294967295 index=4294967295 name=- frame=- depth=255
+> reg_take	--no-host.
+reg_take -1 at=1 fail 1 KEY_ABSENT
+> load	printer	5	\t-tiny.local.host # c\n path  =.5\t\nprinter.s_cale\t=\tÿ  ; 
+load fail 1 KEY_ABSENT at 1
+> attach	tiny	net
+attach ok 0
+> reg_take	--set	depth
+reg_take -1 at=1 fail 8 INVALID_ARGUMENT
+> vars	printer
+vars 14
+  [0] id=0 index=0 name=color frame=app depth=0
+  [1] id=1 index=1 name=width frame=app depth=0
+  [2] id=2 index=2 name=ratio frame=app depth=0
+  [3] id=3 index=3 name=title frame=app depth=0
+  [4] id=4 index=4 name=depth frame=app depth=0
+  [5] id=1048576 index=5 name=key_width frame=printer depth=1
+  [6] id=1048577 index=6 name=style frame=printer depth=1
+  [7] id=1048578 index=7 name=select frame=printer depth=1
+  [8] id=1048579 index=8 name=prefix frame=printer depth=1
+  [9] id=1048580 index=9 name=banner frame=printer depth=1
+  [10] id=1048581 index=10 name=seed frame=printer depth=1
+  [11] id=1048582 index=11 name=scale frame=printer depth=1
+  [12] id=1048583 index=12 name=module frame=printer depth=1
+  [13] id=1048584 index=13 name=width frame=printer depth=1
+  [14] id=4294967295 index=4294967295 name=- frame=- depth=255
+> unset_from	nothing	6	t
+no frame
+> bound	printer	.mode
+bound fail 1 KEY_ABSENT
+> reg_remove	tiny
+reg_remove fail 1 KEY_ABSENT
+> suggest	app	debug.title
+suggest title
+> assign	app	3	p	sign
+assign fail 1 KEY_ABSENT
+> layers	printer_two	mode	1
+layers fail 1 KEY_ABSENT
+> env	APP_PRINTER_TWO_HOST	9223372036854775807
+env
+> load	printer	1	 -net.debug.format;  \t=\t100 ; host =  240\n-summary.width # c\n- ;
+load fail 1 KEY_ABSENT at 1
+> bound	tiny	depth
+bound fail 1 KEY_ABSENT
+> suggest	printer	net.key_width
+suggest (null)
+> env	X_NET_RATIO	""
+env
+> djin_frame	nothing
+djin_frame -1
+> assign	tiny	1	local.mde	5e-324
+assign fail 1 KEY_ABSENT
+> scope	app	debug
+scope ok 1 name=debug
+> generation	printer_two
+generation 167
+> put	printer_two	1	 mode = sign 
+put fail 1 KEY_ABSENT
+> reg_import	
+reg_import ok 0
+> reg_load	2	 cace.summary.banner =cpp  \n-caceh.cpp_featuers.its ;  scale ="\0x"  # c\n
+reg_load fail 1 KEY_ABSENT at 1
+> put	printer_two	1	- KEY_WIDTH
+put fail 1 KEY_ABSENT
+> put	app	1	bgi
+put fail 1 KEY_ABSENT
+> put	tiny	1	prefix =  yaml
+put fail 1 KEY_ABSENT
+> unenv	X_RATIO
+unenv
+> get	printer_two	idth
+get fail 1 KEY_ABSENT
+> put	printer	5	  seelct = c\t
+put fail 1 KEY_ABSENT
+> distance		ratio
+distance 5
+> clear	printer
+clear
+> unenv	X_DEPTH
+unenv
+> bound	printer_two	djintep.nothing.seed
+bound fail 1 KEY_ABSENT
+> reg_remove	net
+reg_remove fail 1 KEY_ABSENT
+> vars	cache
+vars 2
+  [0] id=0 index=0 name=size frame=cache depth=0
+  [1] id=1 index=1 name=path frame=cache depth=0
+  [2] id=4294967295 index=4294967295 name=- frame=- depth=255
+> text_copy	net	printer_two.sieze	a,sign
+text_copy fail 1 KEY_ABSENT
+> reg_assign	5		legacy
+reg_assign fail 1 KEY_ABSENT
+> detach	tiny
+detach
+> reg_target	color
+reg_target app
+> put	nothing	0	  sacle= 200 
+no frame
+> djin_register	reserved
+djin_register 3 reserved
+> unset_from	nothing	1	.xbits
+no frame
+> reg_take	--no-seed=plain
+reg_take -1 at=1 fail 1 KEY_ABSENT
+> reg_load	1	\tapp.debug.key_width=+c \r\n
+reg_load fail 1 KEY_ABSENT at 1
+> djin_frame	printer
+printer
+  settings only
+
+settings
+  printer.key_width  int     30         D_CFG_ENV_PRINTER_KEY_WIDTH  the width of a key
+  printer.style      choice  plain      D_CFG_ENV_PRINTER_STYLE      how a description is written
+  printer.select     flags   3          -                            the sections written
+  printer.prefix     text    "> "       -                            a text whose default needs quotes
+  printer.banner     bool    false      -                            a bool the environment may not set
+  printer.seed       int     0          -                            an int of any value
+  printer.scale      real    1          -
+  printer.module     text    "builtin"  D_CFG_ENV_PRINTER_MODULE     a text only the program and the command line set
+  printer.width      int     80         -                            a name the root declares too
+djin_frame 0
+> djin_frame	cache
+cache
+  settings only
+
+settings
+  cache.size  int   64     -
+  cache.path  text  unset  -  where it is kept
+djin_frame 0
+> reg_suggest	scale
+reg_suggest 0 
+> bound	printer	mode
+bound fail 1 KEY_ABSENT
+> djin_frame	nothing
+djin_frame -1
+> unenv	X_TITLE
+unenv
+> put	printer_two	1	title
+put fail 1 KEY_ABSENT
+> reg_suggest	.
+reg_suggest 0 
+> djin_list
+net      1.2    talks to other machines
+printer  0.9.1  a name a djin has
+cache    2.0    a record for a frame already listed
+djin_list 0
+> attach	printer_two	-
+attach ok 0
+> unenv	MODE
+unenv
+> get	nothing	depth.
+no frame
+> reg_add	printer
+reg_add ok 0
+> text_copy	printer	depth	"quoted"
+text_copy fail 3 VALUE_TYPE_MISMATCH
+> import	cache	
+import ok 0
+> detach	tiny
+detach
+> reg_put	5	  -t
+reg_put fail 1 KEY_ABSENT
+> layers	tiny	scale
+layers fail 1 KEY_ABSENT
+> detach	printer_two
+detach
+> reg_load	5	  module\t=true\t\n\tbanner="tab\t"   # c\n  APP.debug.seed= 0x100000000 ;
+reg_load fail 1 KEY_ABSENT at 2
+> djin_register	cache_named
+djin_register 2 duplicate
+> layers	printer	printer.host
+layers fail 1 KEY_ABSENT
+> scope	printer	debug
+scope ok 1 name=debug
+> env	X_NET_PREFIX	240
+env
+> unenv	RATIO
+unenv
+> layers	app	seed	1
+layers fail 1 KEY_ABSENT
+> reg_add	printer
+reg_add fail 2 KEY_DUPLICATE
+> djin_register	plain
+djin_register 4 full
+> unset	cache	NOTHING.max_depth
+unset fail 1 KEY_ABSENT
+> reg_add	app
+reg_add fail 8 INVALID_ARGUMENT
+> unset	app	summary.path
+unset fail 1 KEY_ABSENT
+> put	net	5	 style\t= ÿ\t
+put fail 1 KEY_ABSENT
+> reg_add	tiny
+reg_add ok 1
+> layers	app	PATH	8
+layers fail 1 KEY_ABSENT
+> reg_remove	printer
+reg_remove ok 0
+> text_copy	printer	cache.path	-2.75
+text_copy fail 1 KEY_ABSENT
+> reg_suggest	tilte
+reg_suggest 5 title
+> get	printer_two	verboes
+get fail 1 KEY_ABSENT
+> reg_assign	4	cpp_features.seed	two words
+reg_assign fail 1 KEY_ABSENT
+> djin_describe	printer
+printer  0.9.1
+  a name a djin has
+djin_describe 0
+> scope	tiny	NOTHING
+scope fail 1 KEY_ABSENT
+> detach	printer_two
+detach
+> generation	printer_two
+generation 168
+> reg_put	1	-cache.sumary.prefix
+reg_put fail 1 KEY_ABSENT
+> detach	printer_two
+detach
+> env	APP_NET_BIG	a#b
+env
+> reg_count
+reg_count 1 tiny
+> statement_end	  max_depth=  80  \n   = 1e309 \r\n .  = JSON # c\n  key_width =-1  \r\n	2
+statement_end 18
+> get	printer	sze
+get fail 1 KEY_ABSENT
+> get	printer	module
+get id=7 scope=0 kind=text bound=0 source=default depth=none integer=0 real=0 text=builtin | 7 builtin | 7 builtin
+> scope	nothing	nthing
+no frame
+> attach	tiny	tiny
+attach fail 8 INVALID_ARGUMENT
+> put	printer_two	4	cache.cpp_features.p
+put fail 1 KEY_ABSENT
+> clear	app
+clear
+> reg_put	1	  ratio =\t5.
+reg_put ok 2
+> raw_get	printer	2	1048578
+raw_get fail 1 KEY_ABSENT source=-1 | -1 (null) | -1 (null)
+> get	printer	format
+get id=1 scope=0 kind=choice bound=0 source=default depth=none integer=0 real=0 text=plain | 5 plain | 5 plain
+> djin_describe	app
+djin_describe none
+> reg_target	app.n
+reg_target app
+> distance	bits	xp
+distance 4
+> bound	nothing	nte.baxnner
+no frame
+> reg_target	u
+reg_target app
+> statement_end	xkey_width -1 # c\n path =\tyes\t\r\n	1
+statement_end 14
+> suggest	app	printer_two.local.bits
+suggest (null)
+> reg_put	0	\tsize\t="\0x"\t
+reg_put fail 8 INVALID_ARGUMENT
+> djin_describe	app
+djin_describe none
+> distance	max_depth	color
+distance 9
+> reg_assign	1	tiny.debug.mode	80
+reg_assign fail 1 KEY_ABSENT
+> reg_count
+reg_count 1 tiny
+> get	printer_two	
+get fail 1 KEY_ABSENT
+> get	cache	cpp_features.wdith
+get fail 1 KEY_ABSENT
+> statement_end	  COLOR= b \r\n cche.nothing.n\t= =\t\r\n scale\t=\t0x  ; \tverbose =  0.5  # c\n	0
+statement_end 12
+> statement_end	verobse\n	1
+statement_end 7
+> put	printer	5	  size = c legacy
+put fail 1 KEY_ABSENT
+> unenv	APP_SIZE
+unenv
+> statement_end	 app.sumary.TITLE= off  \r\n\tdept_h.= 0.1  ; 	2
+statement_end 25
+> get	printer	cpp_features.WIDTH
+get fail 1 KEY_ABSENT
+> text_copy	cache	printer_two.U	cafÃ©
+text_copy fail 1 KEY_ABSENT
+> layers	tiny	title	8
+layers 0
+> unset	printer	
+unset fail 1 KEY_ABSENT
+> statement_end	MODE ;   big= 9007199254740992 # c\n\tscle\t=  30  ;   u =\t"\q" ;	2
+statement_end 5
+> djin_frame	cache
+cache
+  settings only
+
+settings
+  cache.size  int   64     -
+  cache.path  text  unset  -  where it is kept
+djin_frame 0
+> scope	printer	LOCAL
+scope fail 1 KEY_ABSENT
+> get	app	.format
+get fail 1 KEY_ABSENT
+> statement_end	 hosit=\tplain   ; \tapp.p =legacy \n  smmary.port ="a b"\t\n\tsummary.host\t=  600  \r\nformat # c\n	0
+statement_end 16
+> reg_add	tiny
+reg_add fail 2 KEY_DUPLICATE
+> djin_register	cache_named
+djin_register 2 duplicate
+> djin_describe	net
+net  1.2
+  talks to other machines
+
+settings
+  net.host  text    "localhost"  -  a text with a default
+  net.port  int     8080         -  an int with an alias
+  net.mode  choice  off          -  a choice of 64-bit values
+  net.bits  flags   0            -  flags with the sign bit
+  net.big   int     0            -  an int one past the exact integers each way
+djin_describe 0
+> suggest	app	bits
+suggest (null)
+> reg_add	net
+reg_add ok 1
+> set	printer	6	printer.local.verbose	flags	80
+set fail 1 KEY_ABSENT
+> get	tiny	
+get fail 1 KEY_ABSENT
+> djin_register	upper
+djin_register 1 invalid
+> reg_suggest	cache.big
+reg_suggest 0 
+> reg_take	--set	nothing.HOST
+reg_take -1 at=1 fail 8 INVALID_ARGUMENT
+> reg_put	2	 si_ze=  a,sign 
+reg_put fail 1 KEY_ABSENT
+> unset	app	djinerp.u
+unset fail 1 KEY_ABSENT
+> get	printer_two	cache.ratio
+get fail 1 KEY_ABSENT
+> scope	printer	cp_features
+scope fail 1 KEY_ABSENT
+> reg_remove	net
+reg_remove ok 1
+> reg_import	APP_
+reg_import fail 8 INVALID_ARGUMENT
+> reg_remove	net
+reg_remove fail 1 KEY_ABSENT
+> import	printer	
+import ok 0
+> statement_end	\tlo_cal.p= 65536  ; .\ntitle = 8\t ;   .= +c \n	0
+statement_end 18
+> attach	tiny	app
+attach ok 0
+> clear	cache
+clear
+> get	nothing	keey_width
+no frame
+> assign	printer_two	1	net.SIZE	"open
+assign fail 1 KEY_ABSENT
+> reg_add	cache
+reg_add ok 1
+> import	app	APP_
+import fail 8 INVALID_ARGUMENT
+> reg_assign	5	color	"a\"b"
+reg_assign fail 8 INVALID_ARGUMENT
+> get	app	vebose
+get fail 1 KEY_ABSENT
+> clear	app
+clear
+> reg_count
+reg_count 2 tiny cache
+> vars	printer
+vars 9
+  [0] id=0 index=0 name=key_width frame=printer depth=0
+  [1] id=1 index=1 name=style frame=printer depth=0
+  [2] id=2 index=2 name=select frame=printer depth=0
+  [3] id=3 index=3 name=prefix frame=printer depth=0
+  [4] id=4 index=4 name=banner frame=printer depth=0
+  [5] id=5 index=5 name=seed frame=printer depth=0
+  [6] id=6 index=6 name=scale frame=printer depth=0
+  [7] id=7 index=7 name=module frame=printer depth=0
+  [8] id=8 index=8 name=width frame=printer depth=0
+  [9] id=4294967295 index=4294967295 name=- frame=- depth=255
+> reg_add	net
+reg_add ok 2
+> scope	tiny	summay
+scope fail 1 KEY_ABSENT
+> load	app	1	\t= " " ;   n=-9223372036854775808 \r\n seed\t= a ;  - port ; 
+load fail 8 INVALID_ARGUMENT at 1
+> reg_add	tiny
+reg_add fail 2 KEY_DUPLICATE
+> layers	nothing	WIDTH
+no frame
+> djin_register	net
+djin_register 2 duplicate
+> distance	color	p
+distance 5
+> reg_suggest	ittle
+reg_suggest 5 title
+> generation	cache
+generation 229
+> assign	net	1	width	-all
+assign fail 8 INVALID_ARGUMENT
+> reg_suggest	module.
+reg_suggest 0 
+> load	tiny	0	  = 9007199254740993 ;   - summary.style\n. = 0.1 \r\n
+load fail 8 INVALID_ARGUMENT at 0
+> djin_register	reserved
+djin_register 3 reserved
+> get	cache	.
+get fail 1 KEY_ABSENT
+> djin_register	wrong_frame
+djin_register 1 invalid
+> generation	app
+generation 13
+> detach	printer_two
+detach
+> vars	app
+vars 5
+  [0] id=0 index=0 name=color frame=app depth=0
+  [1] id=1 index=1 name=width frame=app depth=0
+  [2] id=2 index=2 name=ratio frame=app depth=0
+  [3] id=3 index=3 name=title frame=app depth=0
+  [4] id=4 index=4 name=depth frame=app depth=0
+  [5] id=4294967295 index=4294967295 name=- frame=- depth=255
+> reg_put	3	  app.debug.big  = unbounded
+reg_put fail 1 KEY_ABSENT
+> detach	tiny
+detach
+> import	printer_two	
+import ok 0
+> unset_from	app	5	.
+unset_from fail 1 KEY_ABSENT
+> generation	printer
+generation 65
+> vars	nothing
+no frame
+> reg_count
+reg_count 3 tiny cache net
+> reg_take	--no-u
+reg_take -1 at=1 fail 1 KEY_ABSENT
+> unenv	X_DEPTH
+unenv
+> djin_frame	app
+app
+  settings only
+
+settings
+  app.color  bool  true   -  whether output is coloured
+  app.width  int   240    -  an int in a range
+  app.ratio  real  0.5    -  a real
+  app.title  text  unset  -  a text with no default
+  app.depth  int   8      -  an int with named values and an alias
+djin_frame 0
+> import	cache	APP_
+import fail 8 INVALID_ARGUMENT
+> scope	printer	DEBUG
+scope fail 1 KEY_ABSENT
+> env	X_CACHE_BITS	1e-7
+env
+> generation	cache
+generation 229
+> reg_count
+reg_count 3 tiny cache net
+> djin_list
+net      1.2    talks to other machines
+printer  0.9.1  a name a djin has
+cache    2.0    a record for a frame already listed
+tiny     -      settings only
+djin_list 0
+> assign	app	0	key_width	b
+assign fail 8 INVALID_ARGUMENT
+> layers	tiny	nothing.verbose
+layers fail 1 KEY_ABSENT
+> raw_get	cache	1048577	1
+raw_get fail 1 KEY_ABSENT source=-1 | -1 (null) | -1 (null)
+> load	app	5	 summary.sieed=-2.75 ;
+load fail 1 KEY_ABSENT at 1
+> reg_assign	1	tiny.width	" "
+reg_assign fail 1 KEY_ABSENT
+> reg_remove	printer
+reg_remove fail 1 KEY_ABSENT
+> clear	nothing
+no frame
+> attach	cache	app
+attach ok 0
+> statement_end	 vebrose\t= n\n-net.module # c\n\tsacle =\t120  \n tiny.debug.max_depth==   # c\n port  =1e-7 # c\n	2
+statement_end 12
+> reg_import	X_
+reg_import fail 8 INVALID_ARGUMENT
+> scope	net	local
+scope fail 1 KEY_ABSENT
+> raw_get	app	2097153	1048584
+raw_get fail 1 KEY_ABSENT source=-1 | -1 (null) | -1 (null)
+> djin_frame	app
+app
+  settings only
+
+settings
+  app.color  bool  true   -  whether output is coloured
+  app.width  int   240    -  an int in a range
+  app.ratio  real  0.5    -  a real
+  app.title  text  unset  -  a text with no default
+  app.depth  int   8      -  an int with named values and an alias
+djin_frame 0
+> reg_target	
+reg_target app
+> clear	nothing
+no frame
+> unenv	X_RATIO
+unenv
+> clear	cache
+clear
+> unset	cache	KEY_WIDTH
+unset fail 1 KEY_ABSENT
+> djin_register	plain
+djin_register 4 full
+> reg_take	--set	cache.width=off
+reg_take -1 at=2 fail 8 INVALID_ARGUMENT
+> reg_suggest	.style
+reg_suggest 0 
+> get	net	net.p
+get id=1048577 scope=0 kind=int bound=0 source=default depth=none integer=8080 real=0 text=(null) | 4 8080 | 4 8080
+> put	tiny	0	-t
+put fail 8 INVALID_ARGUMENT
+> layers	cache	local.depth	8
+layers fail 1 KEY_ABSENT
+> layers	tiny	djinterp.nothing.depth	8
+layers fail 1 KEY_ABSENT
+> layers	app	verbose
+layers fail 1 KEY_ABSENT
+> text_copy	net	tite	9007199254740992
+text_copy fail 1 KEY_ABSENT
+> text_copy	printer_two	tiny.local.key_width	9223372036854775808
+text_copy fail 1 KEY_ABSENT
+> assign	app	1	dinterp.p	-9223372036854775808
+assign fail 1 KEY_ABSENT
+> statement_end	 MAX_DEPTH=on\t\r\n	1
+statement_end 15
+> vars	net
+vars 10
+  [0] id=0 index=0 name=color frame=app depth=0
+  [1] id=1 index=1 name=width frame=app depth=0
+  [2] id=2 index=2 name=ratio frame=app depth=0
+  [3] id=3 index=3 name=title frame=app depth=0
+  [4] id=4 index=4 name=depth frame=app depth=0
+  [5] id=1048576 index=5 name=host frame=net depth=1
+  [6] id=1048577 index=6 name=port frame=net depth=1
+  [7] id=1048578 index=7 name=mode frame=net depth=1
+  [8] id=1048579 index=8 name=bits frame=net depth=1
+  [9] id=1048580 index=9 name=big frame=net depth=1
+  [10] id=4294967295 index=4294967295 name=- frame=- depth=255
+> djin_list
+net      1.2    talks to other machines
+printer  0.9.1  a name a djin has
+cache    2.0    a record for a frame already listed
+tiny     -      settings only
+djin_list 0
+> suggest	net	local.module
+suggest (null)
+> reg_assign	5	patxh	yaml
+reg_assign fail 1 KEY_ABSENT
+> reg_take	--no-nothing.p
+reg_take -1 at=1 fail 1 KEY_ABSENT
+> bound	printer_two	host
+bound fail 1 KEY_ABSENT
+> bound	tiny	scale
+bound fail 1 KEY_ABSENT
+> reg_assign	2	.banner	wide
+reg_assign fail 1 KEY_ABSENT
+> reg_add	cache
+reg_add fail 2 KEY_DUPLICATE
+> detach	tiny
+detach
+> reg_count
+reg_count 3 tiny cache net
+> generation	printer_two
+generation 168
+> reg_load	1	-port. # c\n  path =  auto  ;
+reg_load fail 1 KEY_ABSENT at 0
+> unset_from	net	0	key_width
+unset_from fail 1 KEY_ABSENT
+> detach	printer_two
+detach
+> unset_from	nothing	5	BANNER
+no frame
+> get	nothing	nothing.select
+no frame
+> reg_add	net
+reg_add fail 2 KEY_DUPLICATE
+> layers	app	select
+layers fail 1 KEY_ABSENT
+> raw_get	printer_two	0	268435456
+raw_get fail 1 KEY_ABSENT source=-1 | -1 (null) | -1 (null)
+> reg_count
+reg_count 3 tiny cache net
+> reg_load	4	\tFORMAT = 1e15\t;-verbose\n max_depth=\tn   ;  size  = 1.5 ; \tbanner =unbounded   # c\n
+reg_load fail 1 KEY_ABSENT at 1
+> reg_take	--set	debu.module=true
+reg_take -1 at=2 fail 1 KEY_ABSENT
+> unset	net	local.path
+unset fail 1 KEY_ABSENT
+> djin_describe	cache
+cache  2.0
+  a record for a frame already listed
+
+settings
+  cache.size  int   64     -
+  cache.path  text  unset  -  where it is kept
+djin_describe 0
+> reg_import	X_
+reg_import fail 8 INVALID_ARGUMENT
+> djin_frame	cache
+cache
+  settings only
+
+settings
+  cache.size  int   64     -
+  cache.path  text  unset  -  where it is kept
+djin_frame 0
+> text_copy	nothing	djinterp.ratio	9007199254740993
+no frame
+> text_copy	nothing	n	xml
+no frame
+> reg_assign	6	.	""
+reg_assign fail 8 INVALID_ARGUMENT
+> unset	printer_two	seect
+unset fail 1 KEY_ABSENT
+> reg_count
+reg_count 3 tiny cache net
+> reg_suggest	local.color
+reg_suggest 0 
+> unenv	APP_HOST
+unenv
+> reg_import	APP_
+reg_import fail 8 INVALID_ARGUMENT
+> scope	printer_two	summary
+scope fail 1 KEY_ABSENT
+> raw_get	net	0	0
+raw_get ok 0 source=0 | 4 true | 4 true
+> djin_describe	app
+djin_describe none
+> reg_put	4	. all
+reg_put fail 1 KEY_ABSENT
+> get	tiny	path
+get fail 1 KEY_ABSENT
+> reg_suggest	deipth
+reg_suggest 5 depth
+> get	printer_two	width
+get fail 1 KEY_ABSENT
+> generation	printer
+generation 65
+> reg_load	2	module c\n path=  a,sign;scale\n
+reg_load fail 1 KEY_ABSENT at 0
+> bound	app	djinterp.title
+bound fail 1 KEY_ABSENT
+> reg_take	--settitel=table
+reg_take -1 at=1 fail 1 KEY_ABSENT
+> unenv	DEPTH
+unenv
+> statement_end	debuge.size off\r\n	2
+statement_end 16
+> layers	cache	local.xkey_width
+layers fail 1 KEY_ABSENT
+> layers	nothing	net.scale
+no frame
+> clear	nothing
+no frame
+> vars	printer_two
+vars 1
+  [0] id=0 index=0 name=verbose frame=printer_two depth=0
+  [1] id=4294967295 index=4294967295 name=- frame=- depth=255
+> reg_target	iformat
+reg_target app
+> assign	net	2	path	c legacy
+assign fail 1 KEY_ABSENT
+> reg_count
+reg_count 3 tiny cache net
+> unset	printer_two	key_width
+unset fail 1 KEY_ABSENT
+> put	cache	3	\tprinter.pth\t= "a" b 
+put fail 1 KEY_ABSENT
+> reg_import	APP_
+reg_import fail 8 INVALID_ARGUMENT
+> get	cache	scale
+get fail 1 KEY_ABSENT
+> bound	printer	seed
+bound is_bound=0 scope_is_bound=0
+> clear	printer
+clear
+> put	printer_two	6	-select
+put fail 8 INVALID_ARGUMENT
+> reg_take	--no-depth
+reg_take -1 at=1 fail 8 INVALID_ARGUMENT
+> unenv	APP_RATIO
+unenv
+> env	APP_COLOR	grid
+env
+> layers	printer	depth	3
+layers fail 1 KEY_ABSENT
+> set	app	3	size	flags	off
+set fail 1 KEY_ABSENT
+> assign	app	5	cche.depth	\
+assign fail 1 KEY_ABSENT
+> statement_end	printer_two.LOCAL.stye\nBITS\r\nmax_depth\r\n -t\n  ratio =\t"\0x" ;	2
+statement_end 22
+> put	printer_two	2	 stylee  =  0x10
+put fail 1 KEY_ABSENT
+> reg_target	debug.banner
+reg_target app
+> djin_frame	net
+net
+  settings only
+
+settings
+  net.host  text    "localhost"  -  a text with a default
+  net.port  int     8080         -  an int with an alias
+  net.mode  choice  off          -  a choice of 64-bit values
+  net.bits  flags   0            -  flags with the sign bit
+  net.big   int     0            -  an int one past the exact integers each way
+djin_frame 0
+> reg_load	2	 prefix\t= a#b  ;.big=\t2.5e-5 \r\nne.HOST -cpp;p;\tverbose  = "open ;
+reg_load fail 1 KEY_ABSENT at 1
+> raw_get	app	1048577	2097152
+raw_get fail 1 KEY_ABSENT source=-1 | -1 (null) | -1 (null)
+> vars	app
+vars 5
+  [0] id=0 index=0 name=color frame=app depth=0
+  [1] id=1 index=1 name=width frame=app depth=0
+  [2] id=2 index=2 name=ratio frame=app depth=0
+  [3] id=3 index=3 name=title frame=app depth=0
+  [4] id=4 index=4 name=depth frame=app depth=0
+  [5] id=4294967295 index=4294967295 name=- frame=- depth=255
+> generation	tiny
+generation 471
+> djin_describe	tiny
+djin_describe none
+> vars	cache
+vars 7
+  [0] id=0 index=0 name=color frame=app depth=0
+  [1] id=1 index=1 name=width frame=app depth=0
+  [2] id=2 index=2 name=ratio frame=app depth=0
+  [3] id=3 index=3 name=title frame=app depth=0
+  [4] id=4 index=4 name=depth frame=app depth=0
+  [5] id=1048576 index=5 name=size frame=cache depth=1
+  [6] id=1048577 index=6 name=path frame=cache depth=1
+  [7] id=4294967295 index=4294967295 name=- frame=- depth=255
+> reg_add	cache
+reg_add fail 2 KEY_DUPLICATE
+> reg_add	cache
+reg_add fail 2 KEY_DUPLICATE
+> djin_describe	net
+net  1.2
+  talks to other machines
+
+settings
+  net.host  text    "localhost"  -  a text with a default
+  net.port  int     8080         -  an int with an alias
+  net.mode  choice  off          -  a choice of 64-bit values
+  net.bits  flags   0            -  flags with the sign bit
+  net.big   int     0            -  an int one past the exact integers each way
+djin_describe 0
+> text_copy	printer	sexlect	c
+text_copy fail 1 KEY_ABSENT
+> unenv	APP_BIG
+unenv
+> reg_put	2	title
+reg_put fail 8 INVALID_ARGUMENT
+> djin_list
+net      1.2    talks to other machines
+printer  0.9.1  a name a djin has
+cache    2.0    a record for a frame already listed
+tiny     -      settings only
+djin_list 0
+> put	tiny	6	\t  =0.1 
+put fail 8 INVALID_ARGUMENT
+> reg_import	APP_
+reg_import fail 8 INVALID_ARGUMENT
+> get	printer	bi
+get fail 1 KEY_ABSENT
+> put	printer_two	6	 net.module= a  
+put fail 8 INVALID_ARGUMENT
+> reg_take	--no-bannexr
+reg_take -1 at=1 fail 1 KEY_ABSENT
+> put	app	1	  summary.t=  121 
+put fail 1 KEY_ABSENT
+> vars	app
+vars 5
+  [0] id=0 index=0 name=color frame=app depth=0
+  [1] id=1 index=1 name=width frame=app depth=0
+  [2] id=2 index=2 name=ratio frame=app depth=0
+  [3] id=3 index=3 name=title frame=app depth=0
+  [4] id=4 index=4 name=depth frame=app depth=0
+  [5] id=4294967295 index=4294967295 name=- frame=- depth=255
+> scope	nothing	local
+no frame
+> set	cache	5	mode	choice	on
+set fail 1 KEY_ABSENT
+> get	printer	seeed
+get fail 1 KEY_ABSENT
+> raw_get	nothing	1048577	0
+no frame
+> vars	printer_two
+vars 1
+  [0] id=0 index=0 name=verbose frame=printer_two depth=0
+  [1] id=4294967295 index=4294967295 name=- frame=- depth=255
+> scope	net	nothing
+scope fail 1 KEY_ABSENT
+> generation	printer_two
+generation 168
+> assign	tiny	3	local.bits	none
+assign fail 1 KEY_ABSENT
+> reg_count
+reg_count 3 tiny cache net
+> reg_target	bits
+reg_target app
+> djin_describe	printer_two
+djin_describe none
+> assign	app	1	width	120
+assign ok 1
+> put	printer_two	4	 n\t=  99\t
+put fail 1 KEY_ABSENT
+> attach	printer_two	-
+attach ok 0
+> djin_frame	printer
+printer
+  settings only
+
+settings
+  printer.key_width  int     30         D_CFG_ENV_PRINTER_KEY_WIDTH  the width of a key
+  printer.style      choice  plain      D_CFG_ENV_PRINTER_STYLE      how a description is written
+  printer.select     flags   3          -                            the sections written
+  printer.prefix     text    "> "       -                            a text whose default needs quotes
+  printer.banner     bool    false      -                            a bool the environment may not set
+  printer.seed       int     0          -                            an int of any value
+  printer.scale      real    1          -
+  printer.module     text    "builtin"  D_CFG_ENV_PRINTER_MODULE     a text only the program and the command line set
+  printer.width      int     80         -                            a name the root declares too
+djin_frame 0
+> set	tiny	0	_p	flags	yes
+set fail 1 KEY_ABSENT
+> reg_put	1	port =  "open  
+reg_put fail 1 KEY_ABSENT
+> reg_target	width
+reg_target app
+> put	cache	4	.
+put fail 1 KEY_ABSENT
+> attach	tiny	app
+attach ok 0
+> get	printer	net.debug.diepth
+get fail 1 KEY_ABSENT
+> reg_take	--no-seed
+reg_take -1 at=1 fail 1 KEY_ABSENT
+> djin_list
+net      1.2    talks to other machines
+printer  0.9.1  a name a djin has
+cache    2.0    a record for a frame already listed
+tiny     -      settings only
+djin_list 0
+> text_copy	app	depth	017
+text_copy fail 3 VALUE_TYPE_MISMATCH
+> clear	printer
+clear
+> get	nothing	select
+no frame
+> put	nothing	3	max_depth =\t30 
+no frame
+> set	app	3	summary.depth	int	-9223372036854775808
+set fail 1 KEY_ABSENT
+> vars	app
+vars 5
+  [0] id=0 index=0 name=color frame=app depth=0
+  [1] id=1 index=1 name=width frame=app depth=0
+  [2] id=2 index=2 name=ratio frame=app depth=0
+  [3] id=3 index=3 name=title frame=app depth=0
+  [4] id=4 index=4 name=depth frame=app depth=0
+  [5] id=4294967295 index=4294967295 name=- frame=- depth=255
+> reg_suggest	PRINTER_TWO.summary.width
+reg_suggest 0 
+> scope	nothing	nothing
+no frame
+> reg_load	5	 scal=  3.14159  # c\n
+reg_load fail 1 KEY_ABSENT at 1
+> assign	cache	0	MODE	xml
+assign fail 8 INVALID_ARGUMENT
+> unset	nothing	tiny.othing.t
+no frame
+> assign	nothing	4	p	a|b
+no frame
+> clear	printer
+clear
+> layers	printer_two		1
+layers fail 1 KEY_ABSENT
+> reg_suggest	verbose
+reg_suggest 0 
+> get	app	RATIO.
+get fail 1 KEY_ABSENT
+> put	printer	6	\tp =  cafÃ©  
+put fail 8 INVALID_ARGUMENT
+> import	net	X_
+import ok 2
+> get	tiny	tiny.local.ptah
+get fail 1 KEY_ABSENT
+> assign	cache	0	STYLE	it's
+assign fail 8 INVALID_ARGUMENT
+> assign	printer_two	6	format	off
+assign fail 8 INVALID_ARGUMENT
+> bound	printer	title
+bound fail 1 KEY_ABSENT
+> reg_count
+reg_count 3 tiny cache net
+> statement_end	style = 1 \n\t-  scale\r\nport 80 ; select  =\t-9223372036854775808\t ; 	1
+statement_end 10
+> put	printer	6	prefix
+put fail 8 INVALID_ARGUMENT
+> assign	printer	5	prefix	c,cpp
+assign ok 3
+> get	app	printer_two.cpp_f_eatures.BIG
+get fail 1 KEY_ABSENT
+> unset	tiny	printer_two.PATH
+unset fail 1 KEY_ABSENT
+> djin_frame	nothing
+djin_frame -1
+> put	printer	5	cache.ratio wide
+put fail 1 KEY_ABSENT
+> reg_put	6	cpp_features.n=  a|b\t
+reg_put fail 8 INVALID_ARGUMENT
+> clear	printer_two
+clear
+> get	cache	
+get fail 1 KEY_ABSENT
+> vars	net
+vars 10
+  [0] id=0 index=0 name=color frame=app depth=0
+  [1] id=1 index=1 name=width frame=app depth=0
+  [2] id=2 index=2 name=ratio frame=app depth=0
+  [3] id=3 index=3 name=title frame=app depth=0
+  [4] id=4 index=4 name=depth frame=app depth=0
+  [5] id=1048576 index=5 name=host frame=net depth=1
+  [6] id=1048577 index=6 name=port frame=net depth=1
+  [7] id=1048578 index=7 name=mode frame=net depth=1
+  [8] id=1048579 index=8 name=bits frame=net depth=1
+  [9] id=1048580 index=9 name=big frame=net depth=1
+  [10] id=4294967295 index=4294967295 name=- frame=- depth=255
+> reg_remove	tiny
+reg_remove ok 0
+> unenv	APP_PATH
+unenv
+> djin_register	upper
+djin_register 1 invalid
+> import	printer	APP_
+import ok 0
+> generation	net
+generation 102
+> djin_frame	tiny
+tiny
+  settings only
+
+settings
+  tiny.t  text  unset  -
+  tiny.u  text  unset  -
+  tiny.n  int   0      -
+djin_frame 0
+> layers	printer_two	
+layers fail 1 KEY_ABSENT
+> reg_add	tiny
+reg_add ok 2
+> reg_take	--setapp.n=
+reg_take -1 at=1 fail 1 KEY_ABSENT
+> clear	nothing
+no frame
+> unset	app	cpp_features.stye
+unset fail 1 KEY_ABSENT
+> text_copy	printer_two	format.	nan
+text_copy fail 1 KEY_ABSENT
+> vars	nothing
+no frame
+> djin_frame	tiny
+tiny
+  settings only
+
+settings
+  tiny.t  text  unset  -
+  tiny.u  text  unset  -
+  tiny.n  int   0      -
+djin_frame 0
+> reg_count
+reg_count 3 cache net tiny
+> assign	printer	3	caiche.cpp_features.seed	=
+assign fail 1 KEY_ABSENT
+> reg_assign	5	bits	240
+reg_assign fail 1 KEY_ABSENT
+> djin_describe	djinterp
+djin_describe none
+> generation	tiny
+generation 502
+> unset	tiny	path
+unset fail 1 KEY_ABSENT
+> set	app	2	net_.coloer	flags	1e15
+set fail 1 KEY_ABSENT
+> reg_take	--set	MODULE=false
+reg_take -1 at=2 fail 1 KEY_ABSENT
+> unenv	X_KEY_WIDTH
+unenv
+> unenv	WIDTH
+unenv
+> set	net	2	prefix.	int	huge
+set fail 1 KEY_ABSENT
+> get	printer	banner
+get id=4 scope=0 kind=bool bound=0 source=default depth=none integer=0 real=0 text=(null) | 5 false | 5 false
+> env	X_PRINTER_DEPTH	8080
+env
+> get	printer_two	locxal.big
+get fail 1 KEY_ABSENT
+> get	net	verbose
+get fail 1 KEY_ABSENT
+> put	app	6	cache.ratio yes
+put fail 8 INVALID_ARGUMENT
+> env	NET_KEY_WIDTH	b
+env
+> reg_remove	net
+reg_remove ok 1
+> reg_take	--set	prefix
+reg_take -1 at=1 fail 8 INVALID_ARGUMENT
+> djin_describe	printer
+printer  0.9.1
+  a name a djin has
+djin_describe 0
+> reg_assign	6	host	-inf
+reg_assign fail 8 INVALID_ARGUMENT
+> djin_frame	nothing
+djin_frame -1
+> get	net	nothing.format
+get fail 1 KEY_ABSENT
+> bound	cache	banner
+bound fail 1 KEY_ABSENT
+> put	printer	5	  select =\t0 
+put ok 2
+> assign	net	3	scael	a,sign
+assign fail 1 KEY_ABSENT
+> reg_load	3	SUMMARY.size= Y  # c\n  - depth ;  max_depth  =200\t\r\n ratio  =  inf  ; 
+reg_load fail 1 KEY_ABSENT at 0
+> djin_list
+net      1.2    talks to other machines
+printer  0.9.1  a name a djin has
+cache    2.0    a record for a frame already listed
+tiny     -      settings only
+djin_list 0
+> layers	nothing	ratio	3
+no frame
+> raw_get	net	2	2097152
+raw_get fail 1 KEY_ABSENT source=-1 | -1 (null) | -1 (null)
+> reg_suggest	vebose
+reg_suggest 0 
+> djin_register	plain
+djin_register 4 full
+> reg_target	bits
+reg_target app
+> put	tiny	1	\t =\tno  
+put fail 8 INVALID_ARGUMENT
+> reg_add	cache
+reg_add fail 2 KEY_DUPLICATE
+> raw_get	printer	1	2097153
+raw_get fail 1 KEY_ABSENT source=-1 | -1 (null) | -1 (null)
+> scope	tiny	debug
+scope ok 1 name=debug
+> unenv	N
+unenv
+> reg_count
+reg_count 2 cache tiny
+> reg_take	--set	select
+reg_take -1 at=1 fail 8 INVALID_ARGUMENT
+> reg_add	printer
+reg_add ok 2
+> reg_import	APP_
+reg_import fail 8 INVALID_ARGUMENT
+> env	APP_PRINTER_PORT	-9223372036854775808
+env
+> text_copy	nothing	n	=
+no frame
+> reg_count
+reg_count 3 cache tiny printer
+> reg_assign	0	path	601
+reg_assign fail 8 INVALID_ARGUMENT
+> djin_list
+net      1.2    talks to other machines
+printer  0.9.1  a name a djin has
+cache    2.0    a record for a frame already listed
+tiny     -      settings only
+djin_list 0
+> text_copy	net	nothing.key_width	.
+text_copy fail 1 KEY_ABSENT
+> unenv	X_KEY_WIDTH
+unenv
+> vars	app
+vars 5
+  [0] id=0 index=0 name=color frame=app depth=0
+  [1] id=1 index=1 name=width frame=app depth=0
+  [2] id=2 index=2 name=ratio frame=app depth=0
+  [3] id=3 index=3 name=title frame=app depth=0
+  [4] id=4 index=4 name=depth frame=app depth=0
+  [5] id=4294967295 index=4294967295 name=- frame=- depth=255
+> bound	tiny	scale
+bound fail 1 KEY_ABSENT
+> reg_take	--set	summary.seed
+reg_take -1 at=1 fail 8 INVALID_ARGUMENT
+> assign	printer	5	tiny.debug.verbose	yaml
+assign fail 1 KEY_ABSENT
+> clear	printer
+clear
+> suggest	printer	net.verbose
+suggest (null)
+> raw_get	nothing	0	1048585
+no frame
+> layers	app	.	64
+layers fail 1 KEY_ABSENT
+> reg_assign	6	key_widthi.	x=y
+reg_assign fail 8 INVALID_ARGUMENT
+> reg_take	--setsize=low
+reg_take -1 at=1 fail 1 KEY_ABSENT
+> reg_suggest	sleect
+reg_suggest 0 
+> reg_suggest	path
+reg_suggest 0 
+> reg_target	prefix
+reg_target app
+> distance	path	moede
+distance 5
+> distance	t	modle
+distance 5
+> get	net	size
+get fail 1 KEY_ABSENT
+> assign	cache	6	verobse	64
+assign fail 8 INVALID_ARGUMENT
+> get	app	SEED.
+get fail 1 KEY_ABSENT
+> reg_take	--setcolor
+reg_take -1 at=1 fail 1 KEY_ABSENT
+> set	printer_two	2	TINY.max_depth	real	json
+set fail 1 KEY_ABSENT
+> load	printer_two	4	 max_depth  =\t5. ;nte.bits;u # c\n
+load fail 1 KEY_ABSENT at 1
+> reg_remove	tiny
+reg_remove ok 1
+> put	nothing	3	  path =\t+wide,-c\t
+no frame
+> vars	tiny
+vars 3
+  [0] id=0 index=0 name=t frame=tiny depth=0
+  [1] id=1 index=1 name=u frame=tiny depth=0
+  [2] id=2 index=2 name=n frame=tiny depth=0
+  [3] id=4294967295 index=4294967295 name=- frame=- depth=255
+> reg_take	--setcache.depth
+reg_take -1 at=1 fail 1 KEY_ABSENT
+> assign	nothing	4	max_depth	TRUE
+no frame
+> raw_get	net	0	2097153
+raw_get fail 1 KEY_ABSENT source=-1 | -1 (null) | -1 (null)
+> djin_describe	net
+net  1.2
+  talks to other machines
+
+settings
+  net.host  text    "localhost"  -  a text with a default
+  net.port  int     8080         -  an int with an alias
+  net.mode  choice  off          -  a choice of 64-bit values
+  net.bits  flags   0            -  flags with the sign bit
+  net.big   int     0            -  an int one past the exact integers each way
+djin_describe 0
+> get	nothing	p
+no frame
+> layers	nothing	U	8
+no frame
+> reg_take	--no-N=7
+reg_take -1 at=1 fail 1 KEY_ABSENT
+> statement_end	 bnner  = grid; size =1   # c\nverbose\t= "\0x"\n\tAPP.host = 64 # c\n	2
+statement_end 14
+> unenv	X_U
+unenv
+> reg_add	app
+reg_add fail 8 INVALID_ARGUMENT
+> reg_take	--no-nothing.stye=true
+reg_take -1 at=1 fail 1 KEY_ABSENT
+> reg_count
+reg_count 2 cache printer
+> layers	cache	.size	1
+layers fail 1 KEY_ABSENT
+> clear	app
+clear
+> get	net	depth
+get fail 1 KEY_ABSENT
+> layers	app	title
+layers 0
+> reg_assign	3	style	0
+reg_assign fail 1 KEY_ABSENT
+> put	app	3	\t= 1.5 
+put fail 8 INVALID_ARGUMENT
+> assign	app	6		-9223372036854775808
+assign fail 8 INVALID_ARGUMENT
+> set	printer_two	5	ke_ywidth	none	1e
+set fail 1 KEY_ABSENT
+> load	app	5	l_ocal.kye_width  = inf\t\r\n
+load fail 1 KEY_ABSENT at 0
+> layers	cache	big	3
+layers fail 1 KEY_ABSENT
+> load	printer_two	5	p =  . \r\n
+load fail 1 KEY_ABSENT at 0
+> bound	app	mode
+bound fail 1 KEY_ABSENT
+> detach	printer_two
+detach
+> reg_count
+reg_count 2 cache printer
+> assign	cache	5	VERBOSE.	b
+assign fail 1 KEY_ABSENT
+> layers	net	.	1
+layers fail 1 KEY_ABSENT
+> statement_end	   =0b101 ;\teapp.loca.t  = "\q"  ;\tnet.U =\t120  \r\n	1
+statement_end 10
+> env	NET_PATH	1
+env
+> set	nothing	6	seed	choice	8080
+no frame
+> clear	nothing
+no frame
+> clear	printer_two
+clear
+> layers	net	style.
+layers fail 1 KEY_ABSENT
+> distance	module	n
+distance 6
+> distance	depth	seed
+distance 4
+> statement_end	  title ="\x41"  \r\n	2
+statement_end 15

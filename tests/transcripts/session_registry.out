@@ -1,0 +1,344 @@
+registry ok 0
+frame app declare=ok 0 scopes=ok 1
+frame printer init=ok 0 name=ok 0 declare=ok 0 scopes=ok 1 attach=ok 0
+frame net init=ok 0 name=ok 0 declare=ok 0 attach=ok 1
+frame cache init=ok 0 name=ok 0 declare=ok 0 attach=ok 2
+frame printer_two init=ok 0 name=ok 0 declare=ok 0 scopes=ok 1 attach=ok 0
+frame tiny init=ok 0 name=ok 0 declare=ok 0
+djins 0
+> # settings by full name
+> reg_target	printer.style
+reg_target printer
+> reg_target	style
+reg_target app
+> reg_target	net.host
+reg_target net
+> reg_target	nothing.host
+reg_target app
+> reg_target	debug.color
+reg_target app
+> reg_target	printer.summary.style
+reg_target printer
+> reg_target	printer_two.verbose
+reg_target app
+> reg_target	
+reg_target app
+> reg_assign	1	printer.style	json
+reg_assign ok 1048577
+> get	printer	style
+get id=1048577 scope=0 kind=choice bound=1 source=program depth=1 integer=1 real=0 text=json | 4 json | 4 json
+> reg_assign	1	style	json
+reg_assign fail 1 KEY_ABSENT
+> reg_assign	1	color	no
+reg_assign ok 0
+> get	app	color
+get id=0 scope=0 kind=bool bound=1 source=program depth=0 integer=0 real=0 text=(null) | 5 false | 5 false
+> reg_assign	1	debug.color	yes
+reg_assign ok 0
+> get	app	debug.color
+get id=0 scope=1 kind=bool bound=1 source=program depth=0 integer=1 real=0 text=(null) | 4 true | 4 true
+> reg_assign	1	printer.summary.style	table
+reg_assign ok 1048577
+> get	printer	summary.style
+get id=1048577 scope=1048578 kind=choice bound=1 source=program depth=1 integer=2 real=0 text=table | 5 table | 5 table
+> reg_assign	1	printer.debug.color	no
+reg_assign ok 0
+> get	printer	debug.color
+get id=0 scope=1 kind=bool bound=1 source=program depth=1 integer=0 real=0 text=(null) | 5 false | 5 false
+> layers	printer	debug.color
+layers 3
+  [0] frame=printer scope=1 shown=1 kind=bool bound=1 source=program depth=1 integer=0 real=0 text=(null)
+  [1] frame=app scope=1 shown=0 kind=bool bound=1 source=program depth=0 integer=1 real=0 text=(null)
+  [2] frame=app scope=0 shown=0 kind=bool bound=1 source=program depth=0 integer=0 real=0 text=(null)
+> reg_assign	1	printer.color	yes
+reg_assign ok 0
+> layers	printer	color
+layers 2
+  [0] frame=printer scope=0 shown=1 kind=bool bound=1 source=program depth=1 integer=1 real=0 text=(null)
+  [1] frame=app scope=0 shown=0 kind=bool bound=1 source=program depth=0 integer=0 real=0 text=(null)
+> reg_assign	1	nothing.color	yes
+reg_assign fail 1 KEY_ABSENT
+> reg_assign	1	app.color	yes
+reg_assign ok 0
+> reg_assign	1	net.port	70000
+reg_assign fail 8 INVALID_ARGUMENT
+> reg_assign	1	net.port	443
+reg_assign ok 1048577
+> reg_assign	1	net.p	8443
+reg_assign ok 1048577
+> get	net	port
+get id=1048577 scope=0 kind=int bound=1 source=program depth=1 integer=8443 real=0 text=(null) | 4 8443 | 4 8443
+> reg_assign	0	net.port	443
+reg_assign fail 8 INVALID_ARGUMENT
+> reg_assign	1	printer_two.verbose	yes
+reg_assign fail 1 KEY_ABSENT
+> reg_put	1	printer.style = plain
+reg_put ok 1048577
+> reg_put	1	  printer.banner
+reg_put ok 1048580
+> get	printer	banner
+get id=1048580 scope=0 kind=bool bound=1 source=program depth=1 integer=1 real=0 text=(null) | 4 true | 4 true
+> reg_put	1	-printer.banner
+reg_put ok 1048580
+> get	printer	banner
+get id=1048580 scope=0 kind=bool bound=0 source=default depth=none integer=0 real=0 text=(null) | 5 false | 5 false
+> reg_put	1	- printer.banner
+reg_put fail 1 KEY_ABSENT
+> reg_put	3	printer.banner
+reg_put fail 6 POLICY_REJECTED
+> reg_put	1	width = 111
+reg_put ok 1
+> get	app	width
+get id=1 scope=0 kind=int bound=1 source=program depth=0 integer=111 real=0 text=(null) | 3 111 | 3 111
+> get	printer	width
+get id=1048584 scope=0 kind=int bound=0 source=default depth=none integer=80 real=0 text=(null) | 2 80 | 2 80
+> reg_put	1	printer.width = 111
+reg_put ok 1048584
+> get	printer	width
+get id=1048584 scope=0 kind=int bound=1 source=program depth=1 integer=111 real=0 text=(null) | 3 111 | 3 111
+> reg_put	1	cache.path = "/var/cache; x"
+reg_put ok 1048577
+> get	cache	path
+get id=1048577 scope=0 kind=text bound=1 source=program depth=1 integer=0 real=0 text=/var/cache; x | 13 /var/cache; x | 15 "/var/cache; x"
+> reg_put	1	cache.size = 5000
+reg_put fail 8 INVALID_ARGUMENT
+> reg_put	1	
+reg_put fail 8 INVALID_ARGUMENT
+> reg_put	1	= 1
+reg_put fail 8 INVALID_ARGUMENT
+> reg_load	2	color = yes\nprinter.style = json\nnet.host = example.org # a comment\ncache.size = 128
+reg_load ok 4
+> get	app	color
+get id=0 scope=0 kind=bool bound=1 source=file depth=0 integer=1 real=0 text=(null) | 4 true | 4 true
+> get	printer	style
+get id=1048577 scope=0 kind=choice bound=1 source=file depth=1 integer=1 real=0 text=json | 4 json | 4 json
+> get	net	host
+get id=1048576 scope=0 kind=text bound=1 source=file depth=1 integer=0 real=0 text=example.org | 11 example.org | 11 example.org
+> get	cache	size
+get id=1048576 scope=0 kind=int bound=1 source=file depth=1 integer=128 real=0 text=(null) | 3 128 | 3 128
+> reg_load	2	printer.style = table; printer.style = yaml; printer.style = plain
+reg_load fail 8 INVALID_ARGUMENT at 23
+> get	printer	style
+get id=1048577 scope=0 kind=choice bound=1 source=file depth=1 integer=2 real=0 text=table | 5 table | 5 table
+> reg_load	2	\n\n  net.port = 1;\n  net.port = 0\n
+reg_load fail 8 INVALID_ARGUMENT at 20
+> reg_load	2	# only a comment\n
+reg_load ok 0
+> reg_load	2	\x0c
+reg_load fail 8 INVALID_ARGUMENT at 0
+> reg_load	2	title = caf\xc3\xa9\nnet.host = "\xe2\x82\xac"\nnet.port = x
+reg_load fail 8 INVALID_ARGUMENT at 31
+> get	app	title
+get id=3 scope=0 kind=text bound=1 source=file depth=0 integer=0 real=0 text=café | 5 café | 5 café
+> get	net	host
+get id=1048576 scope=0 kind=text bound=1 source=file depth=1 integer=0 real=0 text=€ | 3 € | 3 €
+> reg_load	0	color = yes
+reg_load fail 8 INVALID_ARGUMENT at 0
+> # the environment
+> env	APP_WIDTH	333
+env
+> env	APP_COLOR	off
+env
+> env	APP_MAX_DEPTH	5
+env
+> env	APP_TITLE	from the environment
+env
+> env	APP_PRINTER_STYLE	json
+env
+> env	APP_PRINTER_FORMAT	table
+env
+> env	APP_PRINTER_BANNER	yes
+env
+> env	APP_PRINTER_WIDTH	55
+env
+> env	APP_PRINTER_SEED	0x10
+env
+> env	APP_NET_P	2222
+env
+> env	APP_NET_PORT	99999
+env
+> env	APP_CACHE_SIZE	lots
+env
+> env	APP_PRINTER_TWO_VERBOSE	yes
+env
+> env	WIDTH	444
+env
+> reg_import	APP_
+reg_import fail 6 POLICY_REJECTED
+> get	app	width
+get id=1 scope=0 kind=int bound=1 source=environment depth=0 integer=333 real=0 text=(null) | 3 333 | 3 333
+> get	app	color
+get id=0 scope=0 kind=bool bound=1 source=environment depth=0 integer=0 real=0 text=(null) | 5 false | 5 false
+> get	app	depth
+get id=4 scope=0 kind=int bound=1 source=environment depth=0 integer=5 real=0 text=(null) | 1 5 | 1 5
+> get	app	title
+get id=3 scope=0 kind=text bound=1 source=environment depth=0 integer=0 real=0 text=from the environment | 20 from the environment | 20 from the environment
+> get	printer	style
+get id=1048577 scope=0 kind=choice bound=1 source=environment depth=1 integer=1 real=0 text=json | 4 json | 4 json
+> get	printer	banner
+get id=1048580 scope=0 kind=bool bound=0 source=default depth=none integer=0 real=0 text=(null) | 5 false | 5 false
+> get	printer	width
+get id=1048584 scope=0 kind=int bound=1 source=environment depth=1 integer=55 real=0 text=(null) | 2 55 | 2 55
+> get	printer	seed
+get id=1048581 scope=0 kind=int bound=1 source=environment depth=1 integer=16 real=0 text=(null) | 2 16 | 2 16
+> get	net	port
+get id=1048577 scope=0 kind=int bound=1 source=file depth=1 integer=1 real=0 text=(null) | 1 1 | 1 1
+> get	cache	size
+get id=1048576 scope=0 kind=int bound=1 source=file depth=1 integer=128 real=0 text=(null) | 3 128 | 3 128
+> get	printer_two	verbose
+get id=2097152 scope=0 kind=bool bound=0 source=default depth=none integer=0 real=0 text=(null) | 5 false | 5 false
+> layers	printer	style
+layers 3
+  [0] frame=printer scope=0 shown=1 kind=choice bound=1 source=environment depth=1 integer=1 real=0 text=json
+  [1] frame=printer scope=0 shown=0 kind=choice bound=1 source=file depth=1 integer=2 real=0 text=table
+  [2] frame=printer scope=0 shown=0 kind=choice bound=1 source=program depth=1 integer=0 real=0 text=plain
+> unenv	APP_PRINTER_BANNER
+unenv
+> unenv	APP_NET_PORT
+unenv
+> unenv	APP_CACHE_SIZE
+unenv
+> reg_import	APP_
+reg_import ok 8
+> get	net	port
+get id=1048577 scope=0 kind=int bound=1 source=environment depth=1 integer=2222 real=0 text=(null) | 4 2222 | 4 2222
+> reg_import	
+reg_import ok 1
+> get	app	width
+get id=1 scope=0 kind=int bound=1 source=environment depth=0 integer=444 real=0 text=(null) | 3 444 | 3 444
+> import	printer_two	APP_PRINTER_TWO_
+import ok 1
+> get	printer_two	verbose
+get id=2097152 scope=0 kind=bool bound=1 source=environment depth=2 integer=1 real=0 text=(null) | 4 true | 4 true
+> import	printer_two	
+import fail 8 INVALID_ARGUMENT
+> get	printer_two	width
+get id=1048584 scope=0 kind=int bound=1 source=environment depth=1 integer=55 real=0 text=(null) | 2 55 | 2 55
+> import	net	NOTHING_
+import ok 0
+> # a command line's options
+> reg_take	--set	printer.style=table
+reg_take 1 at=2 ok 1048577
+> get	printer	style
+get id=1048577 scope=0 kind=choice bound=1 source=command line depth=1 integer=2 real=0 text=table | 5 table | 5 table
+> reg_take	--set	printer.style
+reg_take -1 at=1 fail 8 INVALID_ARGUMENT
+> reg_take	--set
+reg_take -1 at=1 fail 8 INVALID_ARGUMENT
+> reg_take	--set	printer.style=yaml
+reg_take -1 at=2 fail 8 INVALID_ARGUMENT
+> reg_take	--printer.style=plain
+reg_take 1 at=1 ok 1048577
+> get	printer	style
+get id=1048577 scope=0 kind=choice bound=1 source=command line depth=1 integer=0 real=0 text=plain | 5 plain | 5 plain
+> reg_take	--printer.banner
+reg_take 1 at=1 ok 1048580
+> get	printer	banner
+get id=1048580 scope=0 kind=bool bound=1 source=command line depth=1 integer=1 real=0 text=(null) | 4 true | 4 true
+> reg_take	--no-printer.banner
+reg_take 1 at=1 ok 1048580
+> get	printer	banner
+get id=1048580 scope=0 kind=bool bound=1 source=command line depth=1 integer=0 real=0 text=(null) | 5 false | 5 false
+> reg_take	--printer.style
+reg_take -1 at=1 fail 8 INVALID_ARGUMENT
+> reg_take	--no-printer.style
+reg_take -1 at=1 fail 8 INVALID_ARGUMENT
+> reg_take	--color
+reg_take 1 at=1 ok 0
+> reg_take	--no-color
+reg_take 1 at=1 ok 0
+> get	app	color
+get id=0 scope=0 kind=bool bound=1 source=command line depth=0 integer=0 real=0 text=(null) | 5 false | 5 false
+> reg_take	--width=123
+reg_take 1 at=1 ok 1
+> get	app	width
+get id=1 scope=0 kind=int bound=1 source=command line depth=0 integer=123 real=0 text=(null) | 3 123 | 3 123
+> reg_take	--width
+reg_take -1 at=1 fail 8 INVALID_ARGUMENT
+> reg_take	--nothing
+reg_take -1 at=1 fail 1 KEY_ABSENT
+> reg_take	--nothing=1
+reg_take -1 at=1 fail 1 KEY_ABSENT
+> reg_take	--no-nothing
+reg_take -1 at=1 fail 1 KEY_ABSENT
+> reg_take	--
+reg_take 0 at=1 ok 0
+> reg_take	-x
+reg_take 0 at=1 ok 0
+> reg_take	width=1
+reg_take 0 at=1 ok 0
+> reg_take	--=1
+reg_take -1 at=1 fail 1 KEY_ABSENT
+> reg_take	--no-
+reg_take -1 at=1 fail 1 KEY_ABSENT
+> reg_take	--printer.module=cli
+reg_take 1 at=1 ok 1048583
+> get	printer	module
+get id=1048583 scope=0 kind=text bound=1 source=command line depth=1 integer=0 real=0 text=cli | 3 cli | 3 cli
+> reg_take	--title=a=b=c
+reg_take 1 at=1 ok 3
+> get	app	title
+get id=3 scope=0 kind=text bound=1 source=command line depth=0 integer=0 real=0 text=a=b=c | 5 a=b=c | 5 a=b=c
+> reg_take	--title=
+reg_take 1 at=1 ok 3
+> get	app	title
+get id=3 scope=0 kind=text bound=1 source=command line depth=0 integer=0 real=0 text= | 0  | 2 ""
+> reg_take	--debug.color
+reg_take 1 at=1 ok 0
+> get	app	debug.color
+get id=0 scope=1 kind=bool bound=1 source=command line depth=0 integer=1 real=0 text=(null) | 4 true | 4 true
+> layers	printer	style
+layers 4
+  [0] frame=printer scope=0 shown=1 kind=choice bound=1 source=command line depth=1 integer=0 real=0 text=plain
+  [1] frame=printer scope=0 shown=0 kind=choice bound=1 source=environment depth=1 integer=1 real=0 text=json
+  [2] frame=printer scope=0 shown=0 kind=choice bound=1 source=file depth=1 integer=2 real=0 text=table
+  [3] frame=printer scope=0 shown=0 kind=choice bound=1 source=program depth=1 integer=0 real=0 text=plain
+> # suggesting a full name
+> reg_suggest	printer.stlye
+reg_suggest 13 printer.style
+> reg_suggest	printr.style
+reg_suggest 13 printer.style
+> reg_suggest	printr.stlye
+reg_suggest 13 printer.style
+> reg_suggest	pinter.summary.style
+reg_suggest 21 printer.summary.style
+> reg_suggest	printer.sumary.style
+reg_suggest 21 printer.summary.style
+> reg_suggest	printer.summary.stlye
+reg_suggest 21 printer.summary.style
+> reg_suggest	printer.summry.stlye
+reg_suggest 21 printer.summary.stlye
+> reg_suggest	colr
+reg_suggest 5 color
+> reg_suggest	debgu.color
+reg_suggest 11 debug.color
+> reg_suggest	debug.colr
+reg_suggest 11 debug.color
+> reg_suggest	nte.host
+reg_suggest 8 net.host
+> reg_suggest	net.hots
+reg_suggest 8 net.host
+> reg_suggest	cach.size
+reg_suggest 10 cache.size
+> reg_suggest	cache.siz
+reg_suggest 10 cache.size
+> reg_suggest	xyz.abc
+reg_suggest 0 
+> reg_suggest	printer.xyzxyz
+reg_suggest 0 
+> reg_suggest	xyzxyz
+reg_suggest 0 
+> reg_suggest	printer.
+reg_suggest 0 
+> reg_suggest	.style
+reg_suggest 0 
+> reg_suggest	
+reg_suggest 0 
+> reg_suggest	printer.color
+reg_suggest 13 printer.color
+> reg_suggest	printer.colr
+reg_suggest 13 printer.color
+> reg_suggest	net.widht
+reg_suggest 9 net.width
+> reg_suggest	tiny.n
+reg_suggest 0 

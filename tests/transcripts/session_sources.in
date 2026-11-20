@@ -1,0 +1,131 @@
+# who set it: the highest source is in force, whatever the order
+put	app	2	width = 200
+get	app	width
+put	app	4	width = 400
+get	app	width
+put	app	3	width = 300
+get	app	width
+put	app	1	width = 110
+get	app	width
+layers	app	width
+put	app	5	width = 500
+get	app	width
+layers	app	width
+layers	app	width	2
+layers	app	width	0
+layers	app	width	1
+unset_from	app	5	width
+get	app	width
+put	app	4	-width
+get	app	width
+unset_from	app	3	width
+unset_from	app	2	width
+get	app	width
+unset	app	width
+get	app	width
+layers	app	width
+# scopes: the scoped binding over the global one of the same source
+put	app	1	color = no
+put	app	1	debug.color = yes
+get	app	color
+get	app	debug.color
+layers	app	debug.color
+layers	app	color
+put	app	2	color = yes
+get	app	debug.color
+put	app	2	debug.color = no
+get	app	debug.color
+layers	app	debug.color
+bound	app	color
+bound	app	debug.color
+bound	app	debug.width
+bound	app	width
+unset	app	debug.color
+get	app	debug.color
+bound	app	debug.color
+clear	app
+# depth: a djin's binding of a root's variable over the root's own
+put	app	1	title = from app
+put	printer	1	title = from printer
+get	app	title
+get	printer	title
+get	printer_two	title
+put	printer_two	1	title = from two
+get	printer_two	title
+layers	printer_two	title
+put	app	2	title = app file
+get	printer_two	title
+layers	printer_two	title
+get	net	title
+layers	net	title
+# a name the root declares too: the innermost is found
+get	printer	width
+get	printer_two	width
+get	app	width
+put	printer	1	width = 150
+put	printer	1	width = 300
+get	printer	width
+get	app	width
+put	printer	1	printer.width = 160
+get	printer	printer.width
+put	printer	1	app.width = 1
+put	printer_two	1	printer_two.verbose
+get	printer_two	verbose
+put	printer_two	1	printer.width = 170
+# scopes of several frames
+scope	printer_two	local
+scope	printer_two	summary
+scope	printer_two	debug
+scope	printer_two	nothing
+scope	app	summary
+put	printer_two	1	local.verbose = no
+put	printer_two	1	summary.verbose = yes
+put	printer_two	1	debug.verbose = no
+get	printer_two	local.verbose
+get	printer_two	summary.verbose
+get	printer_two	debug.verbose
+get	printer_two	verbose
+put	printer	1	cpp_features.key_width = 40
+put	printer	3	summary.key_width = 50
+put	printer	1	key_width = 20
+get	printer	key_width
+get	printer	cpp_features.key_width
+get	printer	summary.key_width
+get	printer	debug.key_width
+layers	printer	summary.key_width
+put	printer	1	nothing.key_width = 1
+put	printer	1	local.key_width = 1
+put	printer	1	summary.nothing = 1
+put	printer	1	summary. = 1
+put	printer	1	.key_width = 1
+put	printer	1	summary.debug.key_width = 1
+# a source a row refuses
+put	printer	3	banner
+put	printer	3	banner = yes
+put	printer	3	-banner
+put	printer	2	banner
+get	printer	banner
+put	printer	4	banner = no
+get	printer	banner
+put	printer	2	module = "from a file"
+put	printer	3	module = env
+put	printer	1	module = program
+put	printer	4	module = "command line"
+put	printer	5	module = override
+get	printer	module
+layers	printer	module
+set	printer	3	banner	bool	1
+set	printer	2	module	text	x
+# the same binding made twice replaces it
+put	app	1	width = 120
+put	app	1	width = 130
+layers	app	width
+generation	app
+put	app	1	width = 130
+generation	app
+put	app	1	width = 9
+generation	app
+unset	app	width
+generation	app
+unset	app	width
+generation	app

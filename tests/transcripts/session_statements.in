@@ -1,0 +1,82 @@
+# every kind, bound by a statement and read back
+get	app	color
+put	app	1	color = no
+get	app	color
+put	app	1	color
+get	app	color
+put	app	1	-color
+get	app	color
+put	app	1	width = 300
+get	app	width
+put	app	1	width=0x12C
+get	app	width
+put	app	1	ratio = 0.1
+get	app	ratio
+put	app	1	title = hello world
+get	app	title
+put	app	1	title =
+get	app	title
+put	app	1	title = "  padded  "
+get	app	title
+put	app	1	title = "a;b#c"
+get	app	title
+put	app	1	title = "tab\there \"quoted\" back\\slash\nline"
+get	app	title
+put	app	1	title = "\x41\x7f\x01"
+get	app	title
+put	app	1	title = it's
+get	app	title
+put	app	1	depth = unbounded
+get	app	depth
+put	app	1	depth = SHALLOW
+get	app	depth
+put	app	1	max_depth = 3
+get	app	depth
+get	app	max_depth
+# what a statement refuses
+put	app	1	
+put	app	1	= 3
+put	app	1	- 
+put	app	1	- width
+put	app	1	nothing = 3
+put	app	1	-nothing
+put	app	1	width
+put	app	1	width 300
+put	app	1	-width = 3
+put	app	1	width = 99
+put	app	1	width = 601
+put	app	1	width = abc
+put	app	1	width = 
+put	app	1	width = "300"
+put	app	1	width = " 300 "
+put	app	1	width = "300" x
+put	app	1	width = "30\x30"
+put	app	1	width = "30\q"
+put	app	1	title = "open
+put	app	1	title = "a" "b"
+put	app	1	title = "bad \q escape"
+put	app	1	title = "short \x4"
+put	app	1	title = "end \"
+put	app	1	title = "nul \0 inside"
+get	app	title
+put	app	1	depth = auto
+put	app	1	depth = 65
+put	app	1	depth = -1
+put	app	1	color = maybe
+put	app	1	color = "yes"
+get	app	color
+put	app	1	   color   =   off   
+get	app	color
+put	app	0	color = on
+put	app	6	color = on
+put	app	-1	color = on
+put	app	5	color = on
+get	app	color
+layers	app	color
+unset	app	color
+get	app	color
+unset	app	color
+unset	app	nothing
+unset_from	app	5	color
+unset_from	app	0	color
+unset_from	app	9	color

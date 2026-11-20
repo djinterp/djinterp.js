@@ -1,0 +1,288 @@
+# bool spellings
+assign	app	1	color	TRUE
+assign	app	1	color	Yes
+assign	app	1	color	on
+assign	app	1	color	y
+assign	app	1	color	1
+get	app	color
+assign	app	1	color	False
+assign	app	1	color	NO
+assign	app	1	color	Off
+assign	app	1	color	N
+assign	app	1	color	0
+get	app	color
+assign	app	1	color	2
+assign	app	1	color	tru
+assign	app	1	color	
+assign	app	1	color	 true 
+# ints: bases, signs, limits
+assign	printer	1	seed	0
+assign	printer	1	seed	-0
+assign	printer	1	seed	+17
+get	printer	seed
+assign	printer	1	seed	0x7fffffffffffffff
+get	printer	seed
+assign	printer	1	seed	0x8000000000000000
+assign	printer	1	seed	-0x8000000000000000
+get	printer	seed
+assign	printer	1	seed	9223372036854775807
+get	printer	seed
+assign	printer	1	seed	9223372036854775808
+assign	printer	1	seed	-9223372036854775808
+get	printer	seed
+assign	printer	1	seed	-9223372036854775809
+assign	printer	1	seed	18446744073709551615
+assign	printer	1	seed	18446744073709551616
+assign	printer	1	seed	0b1011
+get	printer	seed
+assign	printer	1	seed	0B1011
+assign	printer	1	seed	0o777
+get	printer	seed
+assign	printer	1	seed	0777
+get	printer	seed
+assign	printer	1	seed	0X1f
+get	printer	seed
+assign	printer	1	seed	0x
+assign	printer	1	seed	0b2
+assign	printer	1	seed	0o8
+assign	printer	1	seed	1f
+assign	printer	1	seed	1_000
+assign	printer	1	seed	1.0
+assign	printer	1	seed	1e3
+assign	printer	1	seed	+
+assign	printer	1	seed	-
+assign	printer	1	seed	--1
+assign	printer	1	seed	9007199254740993
+get	printer	seed
+assign	net	1	big	9007199254740992
+get	net	big
+assign	net	1	big	-9007199254740992
+get	net	big
+assign	net	1	big	9007199254740993
+assign	net	1	port	65535
+assign	net	1	port	65536
+assign	net	1	port	0
+assign	net	1	p	22
+get	net	port
+# an int's named values
+assign	app	1	depth	64
+assign	app	1	depth	0
+assign	app	1	depth	unbounded
+get	app	depth
+assign	app	1	depth	9223372036854775807
+get	app	depth
+assign	app	1	depth	2
+get	app	depth
+assign	app	1	depth	auto
+assign	app	1	depth	AUTO
+assign	app	1	depth	-1
+assign	app	1	depth	100
+# reals
+assign	app	1	ratio	1
+get	app	ratio
+assign	app	1	ratio	1.5
+get	app	ratio
+assign	app	1	ratio	-2.75
+get	app	ratio
+assign	app	1	ratio	1e21
+get	app	ratio
+assign	app	1	ratio	1E15
+get	app	ratio
+assign	app	1	ratio	1.5e-7
+get	app	ratio
+assign	app	1	ratio	2.5e-5
+get	app	ratio
+assign	app	1	ratio	.5
+get	app	ratio
+assign	app	1	ratio	5.
+get	app	ratio
+assign	app	1	ratio	+.5e+1
+get	app	ratio
+assign	app	1	ratio	0.1
+get	app	ratio
+assign	app	1	ratio	0.30000000000000004
+get	app	ratio
+assign	app	1	ratio	123456789012345678901234567890
+get	app	ratio
+assign	app	1	ratio	0.000000000000000000000000000001
+get	app	ratio
+assign	app	1	ratio	1.7976931348623157e308
+get	app	ratio
+assign	app	1	ratio	1.7976931348623159e308
+assign	app	1	ratio	1e309
+assign	app	1	ratio	-1e309
+assign	app	1	ratio	4.9e-324
+get	app	ratio
+assign	app	1	ratio	2.4703282292062328e-324
+get	app	ratio
+assign	app	1	ratio	2.4703282292062327e-324
+get	app	ratio
+assign	app	1	ratio	1e-400
+get	app	ratio
+assign	app	1	ratio	-1e-400
+get	app	ratio
+assign	app	1	ratio	2.2250738585072011e-308
+get	app	ratio
+assign	app	1	ratio	9007199254740993
+get	app	ratio
+assign	app	1	ratio	inf
+get	app	ratio
+assign	app	1	ratio	-INF
+get	app	ratio
+assign	app	1	ratio	+Infinity
+get	app	ratio
+assign	app	1	ratio	nan
+get	app	ratio
+assign	app	1	ratio	-NaN
+get	app	ratio
+assign	app	1	ratio	infinit
+assign	app	1	ratio	nan(1)
+assign	app	1	ratio	0x10
+assign	app	1	ratio	0x1p3
+assign	app	1	ratio	1e
+assign	app	1	ratio	1e+
+assign	app	1	ratio	e5
+assign	app	1	ratio	.
+assign	app	1	ratio	-.
+assign	app	1	ratio	1..2
+assign	app	1	ratio	1.2.3
+assign	app	1	ratio	1 2
+assign	app	1	ratio	1,5
+assign	app	1	ratio	+-1
+assign	app	1	ratio	1f
+assign	app	1	ratio	
+assign	app	1	ratio	0.000000000000000000000000000000000000000000000000000000000000001
+assign	app	1	ratio	0.00000000000000000000000000000000000000000000000000000000000001
+get	app	ratio
+assign	printer	1	scale	  3.25  
+get	printer	scale
+# choices
+assign	printer	1	style	json
+get	printer	style
+assign	printer	1	style	TABLE
+get	printer	style
+assign	printer	1	style	grid
+get	printer	style
+assign	printer	1	style	1
+get	printer	style
+assign	printer	1	style	0x2
+get	printer	style
+assign	printer	1	style	xml
+assign	printer	1	style	3
+assign	printer	1	style	4
+assign	printer	1	style	yaml
+assign	printer	1	style	
+assign	printer	1	format	plain
+get	printer	format
+assign	net	1	mode	huge
+get	net	mode
+assign	net	1	mode	low
+get	net	mode
+assign	net	1	mode	-9223372036854775808
+get	net	mode
+assign	net	1	mode	1
+# flags
+get	printer	select
+assign	printer	1	select	c
+get	printer	select
+assign	printer	1	select	c,cpp
+get	printer	select
+assign	printer	1	select	c	posix
+assign	printer	1	select	c|posix
+get	printer	select
+assign	printer	1	select	c cpp posix
+get	printer	select
+assign	printer	1	select	ALL
+get	printer	select
+assign	printer	1	select	none
+get	printer	select
+assign	printer	1	select	
+get	printer	select
+assign	printer	1	select	wide
+get	printer	select
+assign	printer	1	select	wide,c
+get	printer	select
+assign	printer	1	select	+posix
+get	printer	select
+assign	printer	1	select	-c
+get	printer	select
+assign	printer	1	select	-wide +cpp
+get	printer	select
+assign	printer	1	select	+all,-cpp
+get	printer	select
+assign	printer	1	select	5
+get	printer	select
+assign	printer	1	select	0x100000002
+get	printer	select
+assign	printer	1	select	legacy
+assign	printer	1	select	c,legacy
+assign	printer	1	select	8
+assign	printer	1	select	16
+assign	printer	1	select	24
+assign	printer	1	select	c,,cpp
+get	printer	select
+assign	printer	1	select	c,+
+assign	printer	1	select	c;cpp
+assign	printer	1	select	bogus
+assign	printer	1	select	-legacy
+get	printer	select
+assign	net	1	bits	sign
+get	net	bits
+assign	net	1	bits	sign,a
+get	net	bits
+assign	net	1	bits	a|b
+get	net	bits
+assign	net	1	bits	4
+assign	net	1	bits	-1
+assign	net	1	bits	
+get	net	bits
+# binding by value
+set	app	1	color	bool	1
+set	app	1	color	bool	7
+get	app	color
+set	app	1	color	int	1
+set	app	1	width	int	100
+set	app	1	width	int	99
+set	app	1	width	bool	1
+set	app	1	width	real	1
+set	app	1	width	text	x
+set	app	1	width	none	1
+set	app	1	width	choice	150
+get	app	width
+set	app	1	ratio	real	0.25
+set	app	1	ratio	int	1
+get	app	ratio
+set	app	1	title	text	borrowed
+get	app	title
+set	app	1	title	text	(null)
+get	app	title
+set	app	1	title	int	1
+set	printer	1	style	int	2
+set	printer	1	style	choice	1
+set	printer	1	style	flags	0
+set	printer	1	style	int	3
+set	printer	1	style	int	9
+get	printer	style
+set	printer	1	select	int	7
+set	printer	1	select	int	8
+set	printer	1	select	int	16
+set	printer	1	select	int	4294967296
+get	printer	select
+set	app	0	color	bool	1
+set	app	6	color	bool	1
+set	app	1	nothing	bool	1
+text_copy	app	title	copied
+get	app	title
+text_copy	app	width	copied
+raw_get	app	0	0
+raw_get	app	0	5
+raw_get	app	1	0
+raw_get	app	2	0
+raw_get	app	1048577	0
+raw_get	printer	1048577	0
+raw_get	printer	1048578	1048577
+raw_get	printer	1048579	1048577
+raw_get	printer	1	1048577
+raw_get	printer	0	268435456
+raw_get	printer	0	2097152
+raw_get	printer_two	0	2097152

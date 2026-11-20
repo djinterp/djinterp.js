@@ -1,0 +1,172 @@
+registry ok 0
+frame app declare=ok 0 scopes=ok 1
+frame printer init=ok 0 name=ok 0 declare=ok 0 scopes=ok 1 attach=ok 0
+frame net init=ok 0 name=ok 0 declare=ok 0 attach=ok 1
+frame cache init=ok 0 name=ok 0 declare=ok 0 attach=ok 2
+frame printer_two init=ok 0 name=ok 0 declare=ok 0 scopes=ok 1 attach=ok 0
+frame tiny init=ok 0 name=ok 0 declare=ok 0
+djins 0
+> # every kind, bound by a statement and read back
+> get	app	color
+get id=0 scope=0 kind=bool bound=0 source=default depth=none integer=1 real=0 text=(null) | 4 true | 4 true
+> put	app	1	color = no
+put ok 0
+> get	app	color
+get id=0 scope=0 kind=bool bound=1 source=program depth=0 integer=0 real=0 text=(null) | 5 false | 5 false
+> put	app	1	color
+put ok 0
+> get	app	color
+get id=0 scope=0 kind=bool bound=1 source=program depth=0 integer=1 real=0 text=(null) | 4 true | 4 true
+> put	app	1	-color
+put ok 0
+> get	app	color
+get id=0 scope=0 kind=bool bound=0 source=default depth=none integer=1 real=0 text=(null) | 4 true | 4 true
+> put	app	1	width = 300
+put ok 1
+> get	app	width
+get id=1 scope=0 kind=int bound=1 source=program depth=0 integer=300 real=0 text=(null) | 3 300 | 3 300
+> put	app	1	width=0x12C
+put ok 1
+> get	app	width
+get id=1 scope=0 kind=int bound=1 source=program depth=0 integer=300 real=0 text=(null) | 3 300 | 3 300
+> put	app	1	ratio = 0.1
+put ok 2
+> get	app	ratio
+get id=2 scope=0 kind=real bound=1 source=program depth=0 integer=0 real=0.10000000000000001 text=(null) | 19 0.10000000000000001 | 19 0.10000000000000001
+> put	app	1	title = hello world
+put ok 3
+> get	app	title
+get id=3 scope=0 kind=text bound=1 source=program depth=0 integer=0 real=0 text=hello world | 11 hello world | 11 hello world
+> put	app	1	title =
+put ok 3
+> get	app	title
+get id=3 scope=0 kind=text bound=1 source=program depth=0 integer=0 real=0 text= | 0  | 2 ""
+> put	app	1	title = "  padded  "
+put ok 3
+> get	app	title
+get id=3 scope=0 kind=text bound=1 source=program depth=0 integer=0 real=0 text=  padded   | 10   padded   | 12 "  padded  "
+> put	app	1	title = "a;b#c"
+put ok 3
+> get	app	title
+get id=3 scope=0 kind=text bound=1 source=program depth=0 integer=0 real=0 text=a;b#c | 5 a;b#c | 7 "a;b#c"
+> put	app	1	title = "tab\there \"quoted\" back\\slash\nline"
+put fail 8 INVALID_ARGUMENT
+> get	app	title
+get id=3 scope=0 kind=text bound=1 source=program depth=0 integer=0 real=0 text=a;b#c | 5 a;b#c | 7 "a;b#c"
+> put	app	1	title = "\x41\x7f\x01"
+put ok 3
+> get	app	title
+get id=3 scope=0 kind=text bound=1 source=program depth=0 integer=0 real=0 text=A\x7F\x01 | 3 A\x7F\x01 | 11 "A\\x7F\\x01"
+> put	app	1	title = it's
+put ok 3
+> get	app	title
+get id=3 scope=0 kind=text bound=1 source=program depth=0 integer=0 real=0 text=it's | 4 it's | 4 it's
+> put	app	1	depth = unbounded
+put ok 4
+> get	app	depth
+get id=4 scope=0 kind=int bound=1 source=program depth=0 integer=9223372036854775807 real=0 text=unbounded | 9 unbounded | 9 unbounded
+> put	app	1	depth = SHALLOW
+put ok 4
+> get	app	depth
+get id=4 scope=0 kind=int bound=1 source=program depth=0 integer=2 real=0 text=shallow | 7 shallow | 7 shallow
+> put	app	1	max_depth = 3
+put ok 4
+> get	app	depth
+get id=4 scope=0 kind=int bound=1 source=program depth=0 integer=3 real=0 text=(null) | 1 3 | 1 3
+> get	app	max_depth
+get id=4 scope=0 kind=int bound=1 source=program depth=0 integer=3 real=0 text=(null) | 1 3 | 1 3
+> # what a statement refuses
+> put	app	1	
+put fail 8 INVALID_ARGUMENT
+> put	app	1	= 3
+put fail 8 INVALID_ARGUMENT
+> put	app	1	- 
+put fail 8 INVALID_ARGUMENT
+> put	app	1	- width
+put fail 1 KEY_ABSENT
+> put	app	1	nothing = 3
+put fail 1 KEY_ABSENT
+> put	app	1	-nothing
+put fail 1 KEY_ABSENT
+> put	app	1	width
+put fail 8 INVALID_ARGUMENT
+> put	app	1	width 300
+put fail 8 INVALID_ARGUMENT
+> put	app	1	-width = 3
+put fail 8 INVALID_ARGUMENT
+> put	app	1	width = 99
+put fail 8 INVALID_ARGUMENT
+> put	app	1	width = 601
+put fail 8 INVALID_ARGUMENT
+> put	app	1	width = abc
+put fail 8 INVALID_ARGUMENT
+> put	app	1	width = 
+put fail 8 INVALID_ARGUMENT
+> put	app	1	width = "300"
+put ok 1
+> put	app	1	width = " 300 "
+put ok 1
+> put	app	1	width = "300" x
+put fail 8 INVALID_ARGUMENT
+> put	app	1	width = "30\x30"
+put ok 1
+> put	app	1	width = "30\q"
+put fail 8 INVALID_ARGUMENT
+> put	app	1	title = "open
+put fail 8 INVALID_ARGUMENT
+> put	app	1	title = "a" "b"
+put fail 8 INVALID_ARGUMENT
+> put	app	1	title = "bad \q escape"
+put ok 3
+> put	app	1	title = "short \x4"
+put fail 8 INVALID_ARGUMENT
+> put	app	1	title = "end \"
+put ok 3
+> put	app	1	title = "nul \0 inside"
+put ok 3
+> get	app	title
+get id=3 scope=0 kind=text bound=1 source=program depth=0 integer=0 real=0 text=nul 0 inside | 12 nul 0 inside | 12 nul 0 inside
+> put	app	1	depth = auto
+put fail 6 POLICY_REJECTED
+> put	app	1	depth = 65
+put fail 8 INVALID_ARGUMENT
+> put	app	1	depth = -1
+put fail 6 POLICY_REJECTED
+> put	app	1	color = maybe
+put fail 8 INVALID_ARGUMENT
+> put	app	1	color = "yes"
+put ok 0
+> get	app	color
+get id=0 scope=0 kind=bool bound=1 source=program depth=0 integer=1 real=0 text=(null) | 4 true | 4 true
+> put	app	1	   color   =   off   
+put ok 0
+> get	app	color
+get id=0 scope=0 kind=bool bound=1 source=program depth=0 integer=0 real=0 text=(null) | 5 false | 5 false
+> put	app	0	color = on
+put fail 8 INVALID_ARGUMENT
+> put	app	6	color = on
+put fail 8 INVALID_ARGUMENT
+> put	app	-1	color = on
+put fail 8 INVALID_ARGUMENT
+> put	app	5	color = on
+put ok 0
+> get	app	color
+get id=0 scope=0 kind=bool bound=1 source=override depth=0 integer=1 real=0 text=(null) | 4 true | 4 true
+> layers	app	color
+layers 2
+  [0] frame=app scope=0 shown=1 kind=bool bound=1 source=override depth=0 integer=1 real=0 text=(null)
+  [1] frame=app scope=0 shown=0 kind=bool bound=1 source=program depth=0 integer=0 real=0 text=(null)
+> unset	app	color
+unset ok 0
+> get	app	color
+get id=0 scope=0 kind=bool bound=0 source=default depth=none integer=1 real=0 text=(null) | 4 true | 4 true
+> unset	app	color
+unset ok 0
+> unset	app	nothing
+unset fail 1 KEY_ABSENT
+> unset_from	app	5	color
+unset_from ok 0
+> unset_from	app	0	color
+unset_from fail 8 INVALID_ARGUMENT
+> unset_from	app	9	color
+unset_from fail 8 INVALID_ARGUMENT

@@ -1,0 +1,9 @@
+program: tools/session.c
+arguments: (none; the input is its standard input)
+reference: djinterp
+commit: d20c0b23
+recorded: 2026-11-15
+environment: empty
+seed: 20261115
+count: 1500
+input: node tools/fuzz_session.js 20261115 1500

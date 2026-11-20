@@ -1,0 +1,248 @@
+registry ok 0
+frame app declare=ok 0 scopes=ok 1
+frame printer init=ok 0 name=ok 0 declare=ok 0 scopes=ok 1 attach=ok 0
+frame net init=ok 0 name=ok 0 declare=ok 0 attach=ok 1
+frame cache init=ok 0 name=ok 0 declare=ok 0 attach=ok 2
+frame printer_two init=ok 0 name=ok 0 declare=ok 0 scopes=ok 1 attach=ok 0
+frame tiny init=ok 0 name=ok 0 declare=ok 0
+djins 0
+> # a frame with room for two bindings and sixteen bytes of text
+> vars	tiny
+vars 3
+  [0] id=0 index=0 name=t frame=tiny depth=0
+  [1] id=1 index=1 name=u frame=tiny depth=0
+  [2] id=2 index=2 name=n frame=tiny depth=0
+  [3] id=4294967295 index=4294967295 name=- frame=- depth=255
+> put	tiny	1	n = 1
+put ok 2
+> put	tiny	2	n = 2
+put ok 2
+> put	tiny	3	n = 3
+put fail 257 CAPACITY
+> layers	tiny	n
+layers 2
+  [0] frame=tiny scope=0 shown=1 kind=int bound=1 source=file depth=0 integer=2 real=0 text=(null)
+  [1] frame=tiny scope=0 shown=0 kind=int bound=1 source=program depth=0 integer=1 real=0 text=(null)
+> put	tiny	2	n = 4
+put ok 2
+> unset_from	tiny	1	n
+unset_from ok 2
+> put	tiny	3	n = 3
+put ok 2
+> layers	tiny	n
+layers 2
+  [0] frame=tiny scope=0 shown=1 kind=int bound=1 source=environment depth=0 integer=3 real=0 text=(null)
+  [1] frame=tiny scope=0 shown=0 kind=int bound=1 source=file depth=0 integer=4 real=0 text=(null)
+> clear	tiny
+clear
+> generation	tiny
+generation 10
+> put	tiny	1	t = 12345678
+put ok 0
+> generation	tiny
+generation 11
+> put	tiny	1	t = abcdefgh
+put fail 256 BUFFER_TOO_SMALL
+> generation	tiny
+generation 12
+> get	tiny	t
+get id=0 scope=0 kind=text bound=1 source=program depth=0 integer=0 real=0 text=12345678 | 8 12345678 | 8 12345678
+> put	tiny	1	t = 123456789012345
+put fail 256 BUFFER_TOO_SMALL
+> generation	tiny
+generation 13
+> get	tiny	t
+get id=0 scope=0 kind=text bound=1 source=program depth=0 integer=0 real=0 text=12345678 | 8 12345678 | 8 12345678
+> put	tiny	1	t = 1234567890123456
+put fail 256 BUFFER_TOO_SMALL
+> generation	tiny
+generation 14
+> get	tiny	t
+get id=0 scope=0 kind=text bound=1 source=program depth=0 integer=0 real=0 text=12345678 | 8 12345678 | 8 12345678
+> put	tiny	1	u = 1234567
+put fail 256 BUFFER_TOO_SMALL
+> generation	tiny
+generation 15
+> put	tiny	1	u = 12345
+put ok 1
+> generation	tiny
+generation 16
+> get	tiny	t
+get id=0 scope=0 kind=text bound=1 source=program depth=0 integer=0 real=0 text=12345678 | 8 12345678 | 8 12345678
+> get	tiny	u
+get id=1 scope=0 kind=text bound=1 source=program depth=0 integer=0 real=0 text=12345 | 5 12345 | 5 12345
+> put	tiny	1	u = "123\q"
+put fail 256 BUFFER_TOO_SMALL
+> generation	tiny
+generation 17
+> put	tiny	1	u = "12345"
+put fail 256 BUFFER_TOO_SMALL
+> generation	tiny
+generation 18
+> get	tiny	u
+get id=1 scope=0 kind=text bound=1 source=program depth=0 integer=0 real=0 text=12345 | 5 12345 | 5 12345
+> put	tiny	1	t = 
+put ok 0
+> generation	tiny
+generation 19
+> get	tiny	t
+get id=0 scope=0 kind=text bound=1 source=program depth=0 integer=0 real=0 text= | 0  | 2 ""
+> put	tiny	1	t = "\0abc"
+put ok 0
+> get	tiny	t
+get id=0 scope=0 kind=text bound=1 source=program depth=0 integer=0 real=0 text=0abc | 4 0abc | 4 0abc
+> put	tiny	1	-t
+put ok 0
+> put	tiny	1	-u
+put ok 1
+> generation	tiny
+generation 23
+> put	tiny	1	t = 123456789012345
+put ok 0
+> generation	tiny
+generation 25
+> set	tiny	1	u	text	a borrowed text of any length at all takes no room
+set ok 1
+> get	tiny	u
+get id=1 scope=0 kind=text bound=1 source=program depth=0 integer=0 real=0 text=a borrowed text of any length at all takes no room | 50 a borrowed text of any length at all takes no room | 50 a borrowed text of any length at all takes no room
+> generation	tiny
+generation 26
+> text_copy	tiny	u	1234567890123456
+text_copy fail 256 BUFFER_TOO_SMALL
+> text_copy	tiny	u	
+text_copy fail 256 BUFFER_TOO_SMALL
+> get	tiny	u
+get id=1 scope=0 kind=text bound=1 source=program depth=0 integer=0 real=0 text=a borrowed text of any length at all takes no room | 50 a borrowed text of any length at all takes no room | 50 a borrowed text of any length at all takes no room
+> clear	tiny
+clear
+> generation	tiny
+generation 29
+> get	tiny	t
+get id=0 scope=0 kind=text bound=0 source=default depth=none integer=0 real=0 text=(null) | 0  | 0 
+> # putting a frame under another drops its bindings and moves its ids
+> put	tiny	1	n = 5
+put ok 2
+> vars	tiny
+vars 3
+  [0] id=0 index=0 name=t frame=tiny depth=0
+  [1] id=1 index=1 name=u frame=tiny depth=0
+  [2] id=2 index=2 name=n frame=tiny depth=0
+  [3] id=4294967295 index=4294967295 name=- frame=- depth=255
+> generation	tiny
+generation 30
+> attach	tiny	net
+attach ok 0
+> vars	tiny
+vars 13
+  [0] id=0 index=0 name=color frame=app depth=0
+  [1] id=1 index=1 name=width frame=app depth=0
+  [2] id=2 index=2 name=ratio frame=app depth=0
+  [3] id=3 index=3 name=title frame=app depth=0
+  [4] id=4 index=4 name=depth frame=app depth=0
+  [5] id=1048576 index=5 name=host frame=net depth=1
+  [6] id=1048577 index=6 name=port frame=net depth=1
+  [7] id=1048578 index=7 name=mode frame=net depth=1
+  [8] id=1048579 index=8 name=bits frame=net depth=1
+  [9] id=1048580 index=9 name=big frame=net depth=1
+  [10] id=2097152 index=10 name=t frame=tiny depth=2
+  [11] id=2097153 index=11 name=u frame=tiny depth=2
+  [12] id=2097154 index=12 name=n frame=tiny depth=2
+  [13] id=4294967295 index=4294967295 name=- frame=- depth=255
+> get	tiny	n
+get id=2097154 scope=0 kind=int bound=0 source=default depth=none integer=0 real=0 text=(null) | 1 0 | 1 0
+> generation	tiny
+generation 45
+> get	tiny	host
+get id=1048576 scope=0 kind=text bound=0 source=default depth=none integer=0 real=0 text=localhost | 9 localhost | 9 localhost
+> put	tiny	1	host = here
+put ok 1048576
+> get	tiny	host
+get id=1048576 scope=0 kind=text bound=1 source=program depth=2 integer=0 real=0 text=here | 4 here | 4 here
+> get	net	host
+get id=1048576 scope=0 kind=text bound=0 source=default depth=none integer=0 real=0 text=localhost | 9 localhost | 9 localhost
+> attach	tiny	tiny
+attach fail 8 INVALID_ARGUMENT
+> attach	net	tiny
+attach fail 8 INVALID_ARGUMENT
+> attach	net	-
+attach fail 8 INVALID_ARGUMENT
+> attach	app	net
+attach fail 8 INVALID_ARGUMENT
+> attach	printer	net
+attach fail 8 INVALID_ARGUMENT
+> detach	tiny
+detach
+> vars	tiny
+vars 3
+  [0] id=0 index=0 name=t frame=tiny depth=0
+  [1] id=1 index=1 name=u frame=tiny depth=0
+  [2] id=2 index=2 name=n frame=tiny depth=0
+  [3] id=4294967295 index=4294967295 name=- frame=- depth=255
+> get	tiny	host
+get fail 1 KEY_ABSENT
+> generation	tiny
+generation 47
+> detach	tiny
+detach
+> generation	tiny
+generation 47
+> attach	tiny	printer_two
+attach ok 0
+> vars	tiny
+vars 18
+  [0] id=0 index=0 name=color frame=app depth=0
+  [1] id=1 index=1 name=width frame=app depth=0
+  [2] id=2 index=2 name=ratio frame=app depth=0
+  [3] id=3 index=3 name=title frame=app depth=0
+  [4] id=4 index=4 name=depth frame=app depth=0
+  [5] id=1048576 index=5 name=key_width frame=printer depth=1
+  [6] id=1048577 index=6 name=style frame=printer depth=1
+  [7] id=1048578 index=7 name=select frame=printer depth=1
+  [8] id=1048579 index=8 name=prefix frame=printer depth=1
+  [9] id=1048580 index=9 name=banner frame=printer depth=1
+  [10] id=1048581 index=10 name=seed frame=printer depth=1
+  [11] id=1048582 index=11 name=scale frame=printer depth=1
+  [12] id=1048583 index=12 name=module frame=printer depth=1
+  [13] id=1048584 index=13 name=width frame=printer depth=1
+  [14] id=2097152 index=14 name=verbose frame=printer_two depth=2
+  [15] id=3145728 index=15 name=t frame=tiny depth=3
+  [16] id=3145729 index=16 name=u frame=tiny depth=3
+  [17] id=3145730 index=17 name=n frame=tiny depth=3
+  [18] id=4294967295 index=4294967295 name=- frame=- depth=255
+> root	tiny
+root app
+> detach	tiny
+detach
+> # the registry and its djins
+> reg_count
+reg_count 3 printer net cache
+> reg_remove	net
+reg_remove ok 1
+> reg_count
+reg_count 2 printer cache
+> get	net	title
+get fail 1 KEY_ABSENT
+> reg_remove	net
+reg_remove fail 1 KEY_ABSENT
+> reg_add	net
+reg_add ok 2
+> reg_add	net
+reg_add fail 2 KEY_DUPLICATE
+> reg_count
+reg_count 3 printer cache net
+> reg_add	app
+reg_add fail 8 INVALID_ARGUMENT
+> reg_add	tiny
+reg_add ok 3
+> reg_add	printer_two
+reg_add ok 4
+> reg_count
+reg_count 5 printer cache net tiny printer_two
+> reg_remove	printer_two
+reg_remove ok 4
+> reg_remove	tiny
+reg_remove ok 3
+> reg_count
+reg_count 3 printer cache net
+> attach	printer_two	printer
+attach ok 0

@@ -1,0 +1,37 @@
+# records, taken and refused
+djin_list
+djin_register	upper
+djin_register	reserved
+djin_register	no_version
+djin_register	two_lines
+djin_register	twice
+djin_register	shout
+djin_register	other_abi
+djin_register	wrong_frame
+djin_register	nothing
+djin_register	printer
+djin_register	printer
+djin_register	printer_again
+djin_list
+djin_register	plain
+djin_register	net
+djin_list
+djin_register	cache_named
+djin_describe	printer
+djin_describe	net
+djin_describe	plain
+djin_describe	cache
+djin_describe	nothing
+djin_frame	cache
+djin_frame	printer
+djin_frame	app
+djin_frame	printer_two
+djin_frame	tiny
+djin_frame	nothing
+djin_command	printer	run
+djin_command	printer	check-all
+djin_command	printer	check
+djin_command	net	run
+djin_command	nothing	run
+reg_remove	cache
+djin_list

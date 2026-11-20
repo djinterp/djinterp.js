@@ -1,0 +1,126 @@
+registry ok 0
+frame app declare=ok 0 scopes=ok 1
+frame printer init=ok 0 name=ok 0 declare=ok 0 scopes=ok 1 attach=ok 0
+frame net init=ok 0 name=ok 0 declare=ok 0 attach=ok 1
+frame cache init=ok 0 name=ok 0 declare=ok 0 attach=ok 2
+frame printer_two init=ok 0 name=ok 0 declare=ok 0 scopes=ok 1 attach=ok 0
+frame tiny init=ok 0 name=ok 0 declare=ok 0
+djins 0
+> # a script: statements, comments, and where it stops
+> load	app	1	color = no; width = 300\nratio = 2.5
+load ok 3
+> get	app	color
+get id=0 scope=0 kind=bool bound=1 source=program depth=0 integer=0 real=0 text=(null) | 5 false | 5 false
+> get	app	width
+get id=1 scope=0 kind=int bound=1 source=program depth=0 integer=300 real=0 text=(null) | 3 300 | 3 300
+> get	app	ratio
+get id=2 scope=0 kind=real bound=1 source=program depth=0 integer=0 real=2.5 text=(null) | 3 2.5 | 3 2.5
+> load	app	1	# nothing but a comment
+load ok 0
+> load	app	1	
+load ok 0
+> load	app	1	;;;\n\n;  ; \n
+load ok 0
+> load	app	1	width = 200 # then a comment; color = yes\ncolor = no
+load ok 2
+> get	app	width
+get id=1 scope=0 kind=int bound=1 source=program depth=0 integer=200 real=0 text=(null) | 3 200 | 3 200
+> get	app	color
+get id=0 scope=0 kind=bool bound=1 source=program depth=0 integer=0 real=0 text=(null) | 5 false | 5 false
+> load	app	1	title = "a;b#c\nd" ; width = 210
+load ok 2
+> get	app	title
+get id=3 scope=0 kind=text bound=1 source=program depth=0 integer=0 real=0 text=a;b#c\nd | 7 a;b#c\nd | 10 "a;b#c\\nd"
+> get	app	width
+get id=1 scope=0 kind=int bound=1 source=program depth=0 integer=210 real=0 text=(null) | 3 210 | 3 210
+> load	app	1	title = "quote \" inside ; still"; width = 220
+load fail 8 INVALID_ARGUMENT at 0
+> get	app	title
+get id=3 scope=0 kind=text bound=1 source=program depth=0 integer=0 real=0 text=a;b#c\nd | 7 a;b#c\nd | 10 "a;b#c\\nd"
+> load	app	1	width = 230; width = 99; width = 240
+load fail 8 INVALID_ARGUMENT at 13
+> get	app	width
+get id=1 scope=0 kind=int bound=1 source=program depth=0 integer=230 real=0 text=(null) | 3 230 | 3 230
+> load	app	1	  \n\n   width = 250\n   nothing = 1\nwidth = 260
+load fail 1 KEY_ABSENT at 22
+> get	app	width
+get id=1 scope=0 kind=int bound=1 source=program depth=0 integer=250 real=0 text=(null) | 3 250 | 3 250
+> load	app	1	width = 270;nothing
+load fail 1 KEY_ABSENT at 12
+> load	app	1	nothing
+load fail 1 KEY_ABSENT at 0
+> load	app	1	\twidth = 1
+load fail 8 INVALID_ARGUMENT at 1
+> load	app	1	title = "open ; width = 300
+load fail 8 INVALID_ARGUMENT at 0
+> get	app	title
+get id=3 scope=0 kind=text bound=1 source=program depth=0 integer=0 real=0 text=a;b#c\nd | 7 a;b#c\nd | 10 "a;b#c\\nd"
+> load	app	1	title = caf\xc3\xa9; width = 99
+load fail 8 INVALID_ARGUMENT at 15
+> get	app	title
+get id=3 scope=0 kind=text bound=1 source=program depth=0 integer=0 real=0 text=café | 5 café | 5 café
+> load	app	1	title = "\xe6\x97\xa5\xe6\x9c\xac\xe8\xaa\x9e"; ratio = x
+load fail 8 INVALID_ARGUMENT at 21
+> get	app	title
+get id=3 scope=0 kind=text bound=1 source=program depth=0 integer=0 real=0 text=日本語 | 9 日本語 | 9 日本語
+> load	app	1	# \xe2\x82\xac\nwidth = 99
+load fail 8 INVALID_ARGUMENT at 6
+> load	app	0	width = 300
+load fail 8 INVALID_ARGUMENT at 0
+> load	app	6	width = 300
+load fail 8 INVALID_ARGUMENT at 0
+> load	app	2	width = 300; color = yes
+load ok 2
+> layers	app	width
+layers 2
+  [0] frame=app scope=0 shown=1 kind=int bound=1 source=file depth=0 integer=300 real=0 text=(null)
+  [1] frame=app scope=0 shown=0 kind=int bound=1 source=program depth=0 integer=270 real=0 text=(null)
+> load	app	1	-width; -color
+load ok 2
+> layers	app	width
+layers 1
+  [0] frame=app scope=0 shown=1 kind=int bound=1 source=file depth=0 integer=300 real=0 text=(null)
+> load	app	1	color; -color; color = no; color
+load ok 4
+> get	app	color
+get id=0 scope=0 kind=bool bound=1 source=file depth=0 integer=1 real=0 text=(null) | 4 true | 4 true
+> load	app	1	width = 300\r\ncolor = yes\r\n
+load ok 2
+> get	app	width
+get id=1 scope=0 kind=int bound=1 source=file depth=0 integer=300 real=0 text=(null) | 3 300 | 3 300
+> load	app	1	width = 310\x0cwidth = 320
+load fail 8 INVALID_ARGUMENT at 0
+> load	app	1	width = 300 ;# c\n# d\n ; color = no #e
+load ok 2
+> load	app	1	title = a\;b
+load fail 1 KEY_ABSENT at 10
+> get	app	title
+get id=3 scope=0 kind=text bound=1 source=program depth=0 integer=0 real=0 text=a | 1 a | 1 a
+> load	app	1	title = "a\\"; width = 330
+load fail 8 INVALID_ARGUMENT at 0
+> get	app	title
+get id=3 scope=0 kind=text bound=1 source=program depth=0 integer=0 real=0 text=a | 1 a | 1 a
+> get	app	width
+get id=1 scope=0 kind=int bound=1 source=file depth=0 integer=300 real=0 text=(null) | 3 300 | 3 300
+> statement_end	a = 1; b = 2	0
+statement_end 5
+> statement_end	a = 1; b = 2	6
+statement_end 12
+> statement_end	a = "x;y" ; b	0
+statement_end 10
+> statement_end	a = "x\\";y" ; b	0
+statement_end 12
+> statement_end	a = "x\\\\";y	0
+statement_end 9
+> statement_end	a # c	0
+statement_end 2
+> statement_end	a\nb	0
+statement_end 1
+> statement_end	abc	3
+statement_end 3
+> statement_end	a = "open	0
+statement_end 9
+> statement_end	a = \; b	0
+statement_end 4
+> statement_end		0
+statement_end 0
