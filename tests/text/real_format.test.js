@@ -11,7 +11,7 @@
 * path:      /tests/text/real_format.test.js
 * link(s):   TBA
 * author(s): Samuel 'teer' Neal-Blim                         created: 2026.11.15
-*                                                            revised: 2026.11.15
+*                                                            revised: 2026.11.16
 *******************************************************************************/
 
 import assert from 'node:assert/strict';

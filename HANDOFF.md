@@ -65,7 +65,7 @@ const dj = await djinterp.open({
 
 const reply = await dj.run('get --show-origin color');
 // { status: 0, out: 'color = true  (default)\n', err: '' }
-dj.on('set', (_event) => { /* _event.names */ });
+dj.on('djinterp.set', (_event) => { /* _event.names */ });
 ```
 
 **To follow the reference somewhere else** needs `cc`, `cmake` and a

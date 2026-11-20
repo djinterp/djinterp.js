@@ -15,7 +15,7 @@ import * as djinterp from './src/djinterp.js';
 const dj    = await djinterp.open({ djins: [printer] });
 const reply = await dj.run('get --show-origin printer.style');
 
-dj.on('set', (_event) => { /* _event.names */ });
+dj.on('djinterp.set', (_event) => { /* _event.names */ });
 ```
 
 ```sh

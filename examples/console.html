@@ -86,7 +86,7 @@ const dj = await djinterp.open({
 
 say('err', dj.warnings);
 
-dj.on('set', (_event) =>
+dj.on('djinterp.set', (_event) =>
 {
     heard.textContent = 'set: ' + _event.names.join(', ');
 });

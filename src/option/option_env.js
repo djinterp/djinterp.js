@@ -44,7 +44,7 @@
 * path:      /src/option/option_env.js
 * link(s):   TBA
 * author(s): Samuel 'teer' Neal-Blim                         created: 2026.11.15
-*                                                            revised: 2026.11.15
+*                                                            revised: 2026.11.16
 *******************************************************************************/
 
 /*
@@ -69,7 +69,7 @@ TABLE OF CONTENTS
     2.  is_bound, scope_is_bound, layers
 5.  Binding by value
     1.  set_bool, set_int, set_real, set_text, set_value, set_text_copy
-    2.  unset, unset_from
+    2.  unset, unset_from, unset_source
 6.  Binding from text
     1.  assign_from, assign
     2.  put_from, put, put_n_from
@@ -2809,6 +2809,47 @@ export function unset_from(
     }
 
     return ok(_var);
+}
+
+/**
+ * Unbinds everything a frame holds bound at one source, in every scope.
+ * The port's own: the reference's program has no need of it, since what
+ * a process bound from its command line ends with the process, and a
+ * page's program does not end (src/djinterp.js, `run`).
+ *
+ * @param {option_env} _env     the frame; its own bindings only, not its
+ *        ancestors'.
+ * @param {number}     _source  the source; any but DEFAULT.
+ * @returns {option_result} how many bindings went.
+ */
+export function unset_source(
+    _env,
+    _source
+)
+{
+    let count = 0;
+
+    if ( !is_env(_env) ||
+         !source_ok(_source) )
+    {
+        return fail(STATUS.INVALID_ARGUMENT);
+    }
+
+    for (const key of [..._env.cells.keys()])
+    {
+        if (key.split('/')[1] === String(_source))
+        {
+            _env.cells.delete(key);
+            ++count;
+        }
+    }
+
+    if (count !== 0)
+    {
+        ++_env.generation;
+    }
+
+    return ok(count);
 }
 
 

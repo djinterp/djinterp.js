@@ -5,13 +5,22 @@
 *     import * as djinterp from './src/djinterp.js';
 *     const dj = await djinterp.open({ djins: [printer] });
 *     await dj.run('set printer.style=json');
-*     (await dj.run('get --show-origin printer.style')).out;
-*     dj.on('set', (_event) => { ... });
+*     (await dj.run(['get', '--show-origin', 'printer.style'])).out;
+*     dj.on('djinterp.set', (_event) => { ... });
 *   `open` makes a program over a registry of settings and a set of djins,
 * and readies its settings as the reference's program does at its start:
 * the environment's, then the user's settings file's. `run` gives it one
-* line, as a person types one at a console, and answers with a status,
-* what was written and what was said. `on` hears what the program does.
+* command line, as a line a person types at a console or as the words
+* themselves, and answers with a status, what was written and what was
+* said. `on` hears what the program does.
+*   A LINE IS A RUN OF THE PROGRAM (the owner's ruling 7 of 2026-11-16).
+* The reference's program is a process a command line, so before each
+* line the port starts again as a process would: what the last line
+* bound from its command line or by `set` is dropped, and the environment
+* and the settings file are read again. What `set` kept is in the file,
+* and is read from there. What a page bound at the program's standing
+* stays. So every line answers as the reference's program answers it,
+* and the transcripts of that program are replayed through `run` itself.
 *   `open` and `run` answer with promises, as the interface was first
 * drawn: what answers a page can then become an engine that is not in
 * the page's own thread, and no page changes. With this engine, the port,
@@ -33,8 +42,9 @@
 *     as the page is open, and `storage_file` keeps one in a Storage the
 *     page hands over, such as its localStorage.
 *   - WHAT IS HEARD. The reference's program posts no events. `on` hears
-*     two: 'run', after every line, and 'set', after a `set` that was
-*     kept.
+*     two, named as the reference names events, by module:
+*     "djinterp.run", after every line, and "djinterp.set", after a
+*     `set` that was kept.
 *   Nothing here touches the document, the window or the network: a page
 * hands in what it wants used.
 *
@@ -42,7 +52,7 @@
 * path:      /src/djinterp.js
 * link(s):   TBA
 * author(s): Samuel 'teer' Neal-Blim                         created: 2026.11.15
-*                                                            revised: 2026.11.15
+*                                                            revised: 2026.11.16
 *******************************************************************************/
 
 /*
@@ -56,8 +66,9 @@ TABLE OF CONTENTS
 3.  Settings a page declares
     1.  settings_frame
 4.  The program
-    1.  open_now
-    2.  open
+    1.  open_program
+    2.  open_now
+    3.  open
 */
 
 import * as event from './event/event.js';
@@ -346,18 +357,171 @@ function take_query(
  * @property {string} warnings  what was said while its settings were
  *           readied: a line for each statement of the settings file, and
  *           each piece of the query, that was refused.
- * @property {function(string): Promise<djinterp_reply>} run  gives the
- *           program one line. What is heard of the line has been heard
- *           by the time the promise is kept. A line that is not a string
- *           is a promise broken with a TypeError.
- * @property {function(string): djinterp_reply} run_now  the same, with
- *           the reply handed straight back; the port's own.
+ * @property {function((string|Array<string>)): Promise<djinterp_reply>}
+ *           run  gives the program one command line: a line, which
+ *           `split` makes words of, or an array of the words, which are
+ *           passed on untouched. What the program says as it starts
+ *           again comes first in the reply's `err`. What is heard of the
+ *           line has been heard by the time the promise is kept. Anything
+ *           but a string or an array of strings is a promise broken with
+ *           a TypeError.
+ * @property {function((string|Array<string>)): djinterp_reply} run_now
+ *           the same, with the reply handed straight back; the port's
+ *           own.
  * @property {function(string, function(object): (number|void)): number}
- *           on  hears an event; gives an id for `off`.
+ *           on  hears an event by its name; gives an id for `off`. The
+ *           program posts "djinterp.set", with the `names` a line's
+ *           `set` kept, and "djinterp.run", with every line's `line` (or
+ *           null), `words` (or null for an unclosed quote), and reply.
  * @property {function(number): boolean} off  stops hearing.
  */
 
+// the sources a run of the program binds at, and its end unbinds
+const RUN_SOURCES = [option_env.SOURCE.ENVIRONMENT, option_env.SOURCE.FILE,
+                     option_env.SOURCE.COMMAND_LINE,
+                     option_env.SOURCE.OVERRIDE];
+
 // 4.1
+/**
+ * Opens a session over a program already made
+ * (djinterp_commands.program_make): for a caller that built the registry
+ * and the set of djins itself. `open_now` is this over a program it
+ * makes.
+ *
+ * @param {object}  _program  the program.
+ * @param {object}  [_options]
+ * @param {?string} [_options.query=null]  a URL's query, bound as the
+ *        command line of every line.
+ * @returns {djinterp_session}
+ */
+export function open_program(
+    _program,
+    _options = {}
+)
+{
+    const program = _program;
+    const events  = event.dispatcher_init();
+    const query   = (typeof _options.query === 'string') ? _options.query
+                                                         : null;
+
+    /*
+    start
+      The program's start, as each process of the reference's starts:
+    nothing bound but what the page bound at the program's standing, then
+    the environment, the settings file, and the query as the command
+    line. Gives what was said of the first two, and of the query.
+    */
+    const start = () =>
+    {
+        const registry = program.registry;
+        const frames   = [option_env_registry.frame(registry)];
+
+        for (let i = 0; i < option_env_registry.count(registry); ++i)
+        {
+            frames.push(option_env_registry.at(registry, i));
+        }
+
+        for (const frame of frames)
+        {
+            for (const source of RUN_SOURCES)
+            {
+                option_env.unset_source(frame, source);
+            }
+        }
+
+        return { said:  djinterp_commands.program_start(program),
+                 asked: (query !== null) ? take_query(program, query)
+                                         : '' };
+    };
+
+    const first = start();
+
+    return {
+        registry: program.registry,
+        set:      program.set,
+        program:  program,
+        warnings: first.said + first.asked,
+
+        run(_line)
+        {
+            // a misuse is a promise broken, not a throw past one
+            return new Promise((_keep) => _keep(this.run_now(_line)));
+        },
+
+        run_now(_line)
+        {
+            const line  = (typeof _line === 'string') ? _line : null;
+            const given = ( Array.isArray(_line) &&
+                            _line.every((_word) =>
+                                            (typeof _word === 'string')) );
+
+            if ( (line === null) &&
+                 !given )
+            {
+                throw new TypeError('run: neither a line nor an array ' +
+                                    'of words');
+            }
+
+            const words = (line !== null) ? split(line) : [..._line];
+            let   ran;
+
+            // an unclosed quote is found before the program starts
+            if (words === null)
+            {
+                ran = { status: djinterp_commands.EXIT.TROUBLE, out: '',
+                        err: program.name +
+                             ': error: a quote is not closed\n',
+                        set: [] };
+            }
+            else
+            {
+                const began = start();
+
+                ran     = djinterp_commands.program_run(
+                              program, [program.name, ...words]);
+                ran.err = began.said + ran.err;
+            }
+
+            const reply = { status: ran.status, out: ran.out, err: ran.err };
+
+            if (ran.set.length !== 0)
+            {
+                event.dispatcher_fire(events,
+                                      event.key_of_name('djinterp.set'),
+                                      { names: ran.set });
+            }
+
+            event.dispatcher_fire(events, event.key_of_name('djinterp.run'),
+                                  { line: line, words: words, ...reply });
+
+            return reply;
+        },
+
+        on(_name, _handler)
+        {
+            if ( (typeof _name !== 'string') ||
+                 (typeof _handler !== 'function') )
+            {
+                throw new TypeError('on: a name and a function are needed');
+            }
+
+            return event.dispatcher_bind(
+                       events, event.key_of_name(_name),
+                       event.step_make((_payload) =>
+                           (event.verdict_is_consumed(_handler(_payload))
+                                ? event.VERDICT.CONSUME
+                                : event.VERDICT.PASS))).id;
+        },
+
+        off(_id)
+        {
+            return (event.dispatcher_unbind(events, _id) ===
+                    event.STATUS.OK);
+        }
+    };
+}
+
+// 4.2
 /**
  * Opens a program: a registry named "djinterp", the djins given, and the
  * settings of a run readied -- the environment's, the settings file's,
@@ -390,7 +554,6 @@ export function open_now(
 {
     const registry = option_env_registry.init('djinterp').registry;
     const root     = option_env_registry.frame(registry);
-    const events   = event.dispatcher_init();
     const must     = (_ok, _what, _why) =>
     {
         if (!_ok)
@@ -439,78 +602,10 @@ export function open_now(
              djin.status_name(status));
     }
 
-    let warnings = djinterp_commands.program_start(program);
-
-    if (typeof _options.query === 'string')
-    {
-        warnings += take_query(program, _options.query);
-    }
-
-    return {
-        registry: registry,
-        set:      program.set,
-        program:  program,
-        warnings: warnings,
-
-        run(_line)
-        {
-            // a misuse is a promise broken, not a throw past one
-            return new Promise((_keep) => _keep(this.run_now(_line)));
-        },
-
-        run_now(_line)
-        {
-            if (typeof _line !== 'string')
-            {
-                throw new TypeError('run: the line is not a string');
-            }
-
-            const words = split(_line);
-            const ran   = (words === null)
-                ? { status: djinterp_commands.EXIT.TROUBLE, out: '',
-                    err: program.name + ': error: a quote is not closed\n',
-                    set: [] }
-                : djinterp_commands.program_run(program,
-                                                [program.name, ...words]);
-            const reply = { status: ran.status, out: ran.out, err: ran.err };
-
-            if (ran.set.length !== 0)
-            {
-                event.dispatcher_fire(events, event.key_of_name('set'),
-                                      { names: ran.set });
-            }
-
-            event.dispatcher_fire(events, event.key_of_name('run'),
-                                  { line: _line, ...reply });
-
-            return reply;
-        },
-
-        on(_name, _handler)
-        {
-            if ( (typeof _name !== 'string') ||
-                 (typeof _handler !== 'function') )
-            {
-                throw new TypeError('on: a name and a function are needed');
-            }
-
-            return event.dispatcher_bind(
-                       events, event.key_of_name(_name),
-                       event.step_make((_payload) =>
-                           (event.verdict_is_consumed(_handler(_payload))
-                                ? event.VERDICT.CONSUME
-                                : event.VERDICT.PASS))).id;
-        },
-
-        off(_id)
-        {
-            return (event.dispatcher_unbind(events, _id) ===
-                    event.STATUS.OK);
-        }
-    };
+    return open_program(program, { query: _options.query });
 }
 
-// 4.2
+// 4.3
 /**
  * Opens a program, as `open_now` does, and answers with a promise of it:
  * the interface a page is written to, whatever engine answers it.

@@ -14,14 +14,14 @@
 * path:      /tests/support/program.js
 * link(s):   TBA
 * author(s): Samuel 'teer' Neal-Blim                         created: 2026.11.15
-*                                                            revised: 2026.11.15
+*                                                            revised: 2026.11.16
 *******************************************************************************/
 
 import * as option_env from '../../src/option/option_env.js';
 import * as option_env_registry from '../../src/option/option_env_registry.js';
 import * as djinterp_commands
     from '../../src/tools/djinterp/djinterp_commands.js';
-import { split } from '../../src/djinterp.js';
+import { open_program } from '../../src/djinterp.js';
 import { generated } from './fixture.js';
 
 /*
@@ -42,11 +42,11 @@ function must(
 
 /**
  * The reference's program, made over the port: its registry from
- * generated/program.json, and its settings started.
+ * generated/program.json, its settings not yet started.
  *
  * @param {object} _file         the settings file.
  * @param {Map<string, string>} _environment  the environment.
- * @returns {{program: object, warnings: string}}
+ * @returns {object} the program.
  */
 export function make_program(
     _file,
@@ -88,8 +88,7 @@ export function make_program(
         registry: registry, file: _file, environment: _environment
     });
 
-    return { program:  program,
-             warnings: djinterp_commands.program_start(program) };
+    return program;
 }
 
 /*
@@ -147,6 +146,10 @@ export function run_program(
     };
     const lines       = _input.split('\n');
 
+    // one program for the whole transcript, as a page has one: `run` is
+    // what makes each line a process of the reference's
+    const dj          = open_program(make_program(file, environment));
+
     if (lines[lines.length - 1] === '')
     {
         lines.pop();
@@ -183,21 +186,11 @@ export function run_program(
         }
         else
         {
-            // a new process: the registry made again, its settings started
-            const { program, warnings } = make_program(file, environment);
-            const words = split(line);
-            const ran   = (words === null)
-                ? { status: 2, out: '',
-                    err: 'djinterp: error: a quote is not closed\n' }
-                : djinterp_commands.program_run(program,
-                                                ['djinterp', ...words]);
+            const ran = dj.run_now(line);
 
-            // an unclosed quote is found before the program starts
             out += 'exit ' + ran.status + '\n' +
                    stream_lines('out', ran.out) +
-                   stream_lines('err', ((words === null) ? ''
-                                                               : warnings) +
-                                              ran.err);
+                   stream_lines('err', ran.err);
         }
     }
 
