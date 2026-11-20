@@ -18,6 +18,10 @@ const reply = await dj.run(['get', '--show-origin', 'printer.style']);
 dj.on('djinterp.set', (_event) => { /* _event.names */ });
 ```
 
+A page whose console draws colour says so, `open({ colour: true })`, and
+the program's errors, warnings and notes then come with the reference's
+escapes, as on a terminal.
+
 ```sh
 node --test        # node 22 or later; no dependency, no build step
 ```
@@ -25,7 +29,8 @@ node --test        # node 22 or later; no dependency, no build step
 * `HANDOFF.md`: what is in it, how it was checked, where it leaves the
   reference by the owner's ruling, what is not ported, what is next.
 * `decisions.html`: the decisions for the owner, open and decided.
-* `docs/JS_STYLE.md`: the style.
+* `docs/JS_STYLE.md`: the style; `docs/style_guidelines_js.html`: the
+  style written out as the counterpart of djinterp's C and C++ guides.
 * `docs/FOR_THE_LANES.md`: notes for djinterp's lanes, to relay.
 * `examples/console.html`: a page with a console over it.
 * `types/`: declarations, written by `tools/check_types.js`.

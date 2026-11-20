@@ -4,10 +4,12 @@
 
 Read this, then `decisions.html`: its open decisions first, and every
 ruling so far below them, each with all that was put for it and where it
-stands. Decisions have one number across pages, D1 to D27; this file
+stands. Decisions have one number across pages, D1 to D28; this file
 names them so.
-`docs/JS_STYLE.md` is the style. `docs/FOR_THE_LANES.md` has the notes
-for djinterp's lanes.
+`docs/JS_STYLE.md` is the style, and `docs/style_guidelines_js.html` is
+it written out as the counterpart of djinterp's C and C++ guides; which of
+the two governs is D28. `docs/FOR_THE_LANES.md` has the notes for
+djinterp's lanes.
 
 **djinterp.js is ignorant of every framework but itself** (the owner,
 2026-11-16). Nothing in this repository names or needs another library:
@@ -34,7 +36,7 @@ server.
 | `src/text/` | printf's `%.*g`, and strtod's reading |
 | `generated/` | the reference's data, written by `tools/`; never edited |
 | `types/` | declarations, written by `tools/check_types.js`; never edited |
-| `tests/` | 97 tests; `tests/transcripts/` holds the reference's answers |
+| `tests/` | 99 tests; `tests/transcripts/` holds the reference's answers |
 | `tools/` | C drivers over the reference, the recorder, fuzzers, checks |
 | `examples/console.html` | the port in a page |
 | `decisions.html` | the decisions for the owner, open and decided |
@@ -49,7 +51,7 @@ A function's name is the reference's in camelCase, less `d_` or `dj_`:
 There is nothing to build. node 22 or later, and no dependency:
 
 ```sh
-node --test                  # 97 tests
+node --test                  # 99 tests
 node tools/check_style.js    # 80 columns, tabs, banners
 ```
 
@@ -110,16 +112,18 @@ later, which the repository does not depend on.
 
 | Part | Check | Result |
 |---|---|---|
-| real text (`%.17g`, `%.15g`, `%.6g`, `%.1g`; reading) | `tools/reals.c`: 6,778 doubles | 27,112 texts agree; every `%.17g` reads back to the same bits |
+| real text (`%.17g`, `%.15g`, `%.6g`, `%.1g`; reading) | `tools/reals.c`: 6,798 doubles, exact ties at 17, 15 and 6 digits among them | 27,192 texts agree; every `%.17g` reads back to the same bits |
 | the option machine | 7 hand-typed session transcripts, 2 fuzzed | byte for byte |
 | the registry, the djin records | `session_registry`, `session_djin` | byte for byte |
 | the program's commands, **through `run`** | 4 hand-typed program transcripts, 1 fuzzed | byte for byte |
-| the parser and the kit, as the program reads its command line | `program_kit`, 190 lines; 100,000 fuzzed command lines | byte for byte, but `--version` at `-v` (D26) |
+| the parser and the kit, as the program reads its command line | `program_kit`, 190 lines; 100,000 fuzzed command lines | byte for byte, but `--version` at `-v`, which says the port's own facts (D26) and a test holds |
+| colour on a terminal (D27) | the reference under a pseudo-terminal, against the port with `colour: true`: 400 lines, 9 over a settings file with warnings | byte for byte; not yet recorded as a transcript (section 4) |
 | both, on fresh seeds | `tools/fuzz_check.js` | agree; see below |
 | the event core | `t_event_core.c`'s cases, as 13 tests | pass |
 | the reference's option suite | `tests/option/suite.test.js` | four groups written out; a table of which transcript holds each other group |
-| the page interface | 16 tests; headless Chrome 153 | pass |
-| the JSDoc, as types | `tools/check_types.js`, TypeScript 5.9.3 | no finding; seven modules of sixteen held to the strict mode (D24) |
+| the page interface | 18 tests; headless Chrome 153, three visits, the third the colour drawn | pass |
+| the JSDoc, as types | `tools/check_types.js`, TypeScript 5.9.3 | no finding; ten modules of sixteen held to the strict mode (D24), listed in `tools/strict_modules.js` |
+| the style | `tools/check_style.js` | no finding: columns, banners and their geometry, the tables of contents against their bodies, the empty lines, D25's comment in the strict modules |
 | the starting package's four runs | `tests/option/prototype.test.js` | reproduce |
 
 A transcript is a file of lines in (`.in`), the reference's bytes out
@@ -153,6 +157,11 @@ These are differences on purpose. Each has a test that names it.
   fuzzed input makes a signed NaN any more.
 * **An event's key is still the reference's**: the FNV-1a-64 hash of the
   name's UTF-8 bytes, for any name (D21).
+* **`--version` at `-v` says the port's own facts** (D26): after the
+  version, `program:` and the address of `src/djinterp.js`, then
+  `kit: JavaScript, djinterp COMMIT, unbuilt`, where the reference
+  names its file, its compiler and its build. Any `-q` quiets them, as
+  in the reference.
 
 ### What the rulings changed in how it behaves
 
@@ -175,15 +184,21 @@ These are differences on purpose. Each has a test that names it.
   completion script are the reference's own, in `generated/kit.json`.
 * **A frame from its record has the reference's room** (D5):
   `optionEnv.fromRecord`.
+* **A page says whether its console draws colour** (D27):
+  `open({ colour: true })` is the reference on a terminal. Then
+  `--color=auto`, the default, colours the error stream with the
+  reference's escapes; `never` does not; a word that is none of the three
+  falls back; and what is said before a line's options are read (a
+  refused setting, the settings file's warnings, with the file and line
+  bold, the query's) is coloured whatever the line says. Measured on the
+  reference itself, under a pseudo-terminal. `examples/console.html`
+  says it draws colour, and draws it.
 
 ### What is not ported
 
-* **`--version` at `-v`.** The reference names the file and the compiler
-  of its own build; the port writes the version alone, and the fuzzer
-  keeps from it (D26, open).
-* **Colour where a page could show it.** `--color=auto` is no colour,
-  since the port is never a terminal; `--color=always` writes the
-  reference's escapes, which the example page shows as text (D27, open).
+* **`NO_COLOR` and `TERM=dumb`.** The reference refuses colour on a
+  terminal where they say to; the port reads no global, so a page that
+  wants them heeded says `colour: false`.
 * **The argument parser and the kit, whole.** The program's reading of
   its command line is a model of them, exact as far as its fuzzer
   reaches. A port of them whole is asked again with the command language
@@ -207,19 +222,29 @@ These are differences on purpose. Each has a test that names it.
 
 ## 4. What is next
 
-1. **D25, then D24's second tranche:** the strict mode for the nine
-   modules left (562 findings), a module at a time, in the form D25
-   gives their 72 inner comments. `tools/check_types.js` holds a module
-   to it once it is listed in `STRICT`.
-2. **D26 and D27** as ruled: `--version` at `-v`, and colour in a page.
-3. **Relay `docs/FOR_THE_LANES.md`** (D15, D4, D18, and what was found in
+1. **D24's second tranche goes on.** Ten modules are strict, the event
+   modules all six. Left: `option_env.js` (256 findings),
+   `djinterp_commands.js` (84), `option_env_registry.js` (56), `djin.js`
+   (41), `cli_settings.js` (21) and `src/djinterp.js` (20); in them, 66
+   inner functions with the plain comment and 66 with none, each to take
+   D25's form. Typing a shared record's fields first (as `EventTable`'s
+   took 34 findings at once) is the cheap way in. A module joins
+   `tools/strict_modules.js` when it has no finding; the style check
+   then holds its comments too.
+2. **D28**, when ruled: which of `docs/JS_STYLE.md` and the guide is the
+   file of style.
+3. **A terminal transcript for D27.** The comparison that proved it ran
+   the reference under `script` (a Linux utility) outside the
+   repository. Recording it would make it an oracle like the rest, at
+   the price of `tools/record.js` needing `script` where it records.
+4. **Relay `docs/FOR_THE_LANES.md`** (D15, D4, D18, and what was found in
    the program and the kit). When lane E lands the rows' writer,
    regenerate and bring the port's reader after it.
-4. **D14:** the move into djinterp's tree, when the tree has CI to run
+5. **D14:** the move into djinterp's tree, when the tree has CI to run
    the transcripts.
-5. **REAL rows' range and step**, when lane E lands them: regenerate,
+6. **REAL rows' range and step**, when lane E lands them: regenerate,
    read the diff, follow.
-6. **After 12-11:** the command language from the frozen grammar, desc's
+7. **After 12-11:** the command language from the frozen grammar, desc's
    JSON as data, and D11's question of the parser whole.
 
 
@@ -265,14 +290,24 @@ These are differences on purpose. Each has a test that names it.
 * **`node --test DIRECTORY` does not run a directory.**
 * **Recording must change nothing when nothing changed.** `record.js`
   keeps a recording's date when its bytes and commit are the same.
+* **What a terminal does is measurable here.** `script -qec` gives the
+  reference a pseudo-terminal, and stderr alone can be sent to it. It
+  showed two things no reading of the source had: a refusal made before
+  the parse is coloured even under `--color=never`, and so are the
+  settings file's warnings, with the file and line bold.
+* **A check finds what a reader misses.** The banner geometry check,
+  written for the guide, found the example page's banner ending on 77
+  with two fields missing, after two days of review by eye.
 
 
 ## 6. Conventions
 
-`docs/JS_STYLE.md`. Since the rulings: identifiers in camelCase, a
-type's name in PascalCase, constants, files and data in the reference's
-spelling (JS1); JSDoc read as types by a tool (JS2). Three things the
-style is silent on were settled by the C guide's habit:
+`docs/JS_STYLE.md`, and `docs/style_guidelines_js.html`, which writes it
+out in the form of djinterp's C and C++ guides. Since the rulings:
+identifiers in camelCase, a type's name in PascalCase, constants, files
+and data in the reference's spelling (JS1); JSDoc read as types by a tool
+(JS2); a function inside a module named first in its JSDoc (D25). Three
+things the style is silent on were settled by the C guide's habit:
 
 * **A file that is not JavaScript** (`.c`, `.h`, `.sh`, `.html`) has the
   same banner in its own comment form, with its `path:`.
