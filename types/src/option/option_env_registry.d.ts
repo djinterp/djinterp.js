@@ -15,10 +15,10 @@
  *          leaves the root unnamed.
  */
 export function init(_name: string | null, _room?: {
-    bindings?: number;
-    vars?: number;
-    text?: number;
-    djins?: number;
+    bindings?: number | undefined;
+    vars?: number | undefined;
+    text?: number | undefined;
+    djins?: number | undefined;
 }): OptionResult & {
     registry: OptionEnvRegistry;
 };

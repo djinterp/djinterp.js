@@ -17,7 +17,7 @@
  * @returns {EventQueue}
  */
 export function queueInit(_room?: {
-    capacity?: number;
+    capacity?: number | undefined;
 }): EventQueue;
 /**
  * Drops every queued occurrence; while the queue is being processed, every
@@ -99,8 +99,8 @@ export function queuePeek(_queue: EventQueue | null): {
  * @returns {EventDispatcher}
  */
 export function dispatcherInit(_room?: {
-    capacity?: number;
-    queue?: number;
+    capacity?: number | undefined;
+    queue?: number | undefined;
 }): EventDispatcher;
 /**
  * Drops what is queued, unbinds every handler, and ends the dispatcher.

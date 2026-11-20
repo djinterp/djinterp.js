@@ -12,12 +12,11 @@
 *   Everywhere, what is checked is what the comments claim: a function
 * with a JSDoc comment is held to its parameters and what it returns, and
 * every type a comment names must be one that exists.
-*   The modules in tools/strict_modules.js are also held to the checker's
-* strict mode: a
-* type on every parameter, and null and undefined told apart from values.
-* The strict mode is brought in a module at a time (the owner's ruling of
-* 2026-11-16); a module joins STRICT when it has no finding there, and
-* the tool says how many findings the others still have.
+*   Every module is held to the checker's strict mode: a type on every
+* parameter, and null and undefined told apart from values. It was
+* brought in a module at a time (the owner's ruling D24, 2026-11-16), and
+* has held all of them since 2026-11-18. The declarations are written by
+* the same pass, so they say where a value may be null.
 *   Exits 1, having shown them, where the checker finds anything it holds
 * a module to; types/ is then left as it was.
 *
@@ -25,7 +24,7 @@
 * path:      /tools/check_types.js
 * link(s):   TBA
 * author(s): Samuel 'teer' Neal-Blim                         created: 2026.11.16
-*                                                            revised: 2026.11.17
+*                                                            revised: 2026.11.18
 *******************************************************************************/
 
 import { spawnSync } from 'node:child_process';
@@ -34,8 +33,6 @@ import { cpSync, mkdtempSync, readdirSync, rmSync, statSync }
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-
-import { STRICT } from './strict_modules.js';
 
 const ROOT  = join(dirname(fileURLToPath(import.meta.url)), '..');
 const [tsc] = process.argv.slice(2);
@@ -94,24 +91,15 @@ function check(
 }
 
 const made     = mkdtempSync(join(tmpdir(), 'djinterp.js-types-'));
-const said     = check(['--declaration', '--emitDeclarationOnly',
+const said     = check(['--strict', '--declaration', '--emitDeclarationOnly',
                         '--outDir', made]);
 const findings = said.split('\n').filter((_line) =>
                                              _line.includes('error TS'));
 
-// the strict mode's findings, by the module each is in
-const strict   = check(['--noEmit', '--strict']).split('\n')
-                     .filter((_line) => _line.includes('error TS'));
-const held     = strict.filter((_line) =>
-                     STRICT.some((_module) =>
-                                     _line.startsWith('src/' + _module + '(')));
-
-if ( (findings.length !== 0) ||
-     (held.length !== 0) )
+if (findings.length !== 0)
 {
-    console.log([...((findings.length !== 0) ? [said.trimEnd()] : []),
-                 ...held].join('\n'));
-    console.log((findings.length + held.length) + ' to put right');
+    console.log(said.trimEnd());
+    console.log(findings.length + ' to put right');
     rmSync(made, { recursive: true, force: true });
     process.exit(1);
 }
@@ -119,7 +107,5 @@ if ( (findings.length !== 0) ||
 rmSync(join(ROOT, 'types'), { recursive: true, force: true });
 cpSync(made, join(ROOT, 'types'), { recursive: true });
 rmSync(made, { recursive: true, force: true });
-console.log('the code is as its comments say; declarations in types/');
-console.log(STRICT.length + ' modules are held to the strict mode; the ' +
-            'others have ' + (strict.length - held.length) +
-            ' findings there');
+console.log('the code is as its comments say, in the strict mode; ' +
+            'declarations in types/');

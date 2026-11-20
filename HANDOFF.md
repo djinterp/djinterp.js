@@ -122,8 +122,8 @@ later, which the repository does not depend on.
 | the event core | `t_event_core.c`'s cases, as 13 tests | pass |
 | the reference's option suite | `tests/option/suite.test.js` | four groups written out; a table of which transcript holds each other group |
 | the page interface | 18 tests; headless Chrome 153, three visits, the third the colour drawn | pass |
-| the JSDoc, as types | `tools/check_types.js`, TypeScript 5.9.3 | no finding; ten modules of sixteen held to the strict mode (D24), listed in `tools/strict_modules.js` |
-| the style | `tools/check_style.js` | no finding: columns, banners and their geometry, the tables of contents against their bodies, the empty lines, D25's comment in the strict modules |
+| the JSDoc, as types | `tools/check_types.js`, TypeScript 5.9.3 | no finding, every module in the strict mode (D24, done 2026-11-18); the declarations in `types/` written by the same pass |
+| the style | `tools/check_style.js` | no finding: columns, banners and their geometry, the tables of contents against their bodies and each marker against its entry, the empty lines, types by `@import`, and D25's comment on every function inside a module |
 | the starting package's four runs | `tests/option/prototype.test.js` | reproduce |
 
 A transcript is a file of lines in (`.in`), the reference's bytes out
@@ -222,15 +222,10 @@ These are differences on purpose. Each has a test that names it.
 
 ## 4. What is next
 
-1. **D24's second tranche goes on.** Ten modules are strict, the event
-   modules all six. Left: `option_env.js` (256 findings),
-   `djinterp_commands.js` (84), `option_env_registry.js` (56), `djin.js`
-   (41), `cli_settings.js` (21) and `src/djinterp.js` (20); in them, 66
-   inner functions with the plain comment and 66 with none, each to take
-   D25's form. Typing a shared record's fields first (as `EventTable`'s
-   took 34 findings at once) is the cheap way in. A module joins
-   `tools/strict_modules.js` when it has no finding; the style check
-   then holds its comments too.
+1. **The five functions past 100 lines** (the guide's section 16):
+   `read` and `runInner` in the commands, `openProgram`, `readReal` and
+   `nearestDouble`. A reason written for each, or a function taken out;
+   the fuzzers are what make taking one out safe.
 2. **A terminal transcript for D27.** The comparison that proved it ran
    the reference under `script` (a Linux utility) outside the
    repository. Recording it would make it an oracle like the rest, at
@@ -293,6 +288,12 @@ These are differences on purpose. Each has a test that names it.
   showed two things no reading of the source had: a refusal made before
   the parse is coloured even under `--color=never`, and so are the
   settings file's warnings, with the file and line bold.
+* **The checker sees flags, not what they promise.** `result.isOk` says
+  a result has its id and `check(...).status` that it found a row, but
+  the checker cannot connect them. Testing the value itself (`got`,
+  `decl`) both narrows the type and says what the code relies on. And
+  typing a shared record first (the event table, the frame) took dozens
+  of findings at a stroke: 34 for the table, 60 for the frame.
 * **A check finds what a reader misses.** The banner geometry check,
   written for the guide, found the example page's banner ending on 77
   with two fields missing, after two days of review by eye.

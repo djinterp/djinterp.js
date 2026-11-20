@@ -7,7 +7,7 @@
  * @returns {EventTable}
  */
 export function tableInit(_room?: {
-    capacity?: number;
+    capacity?: number | undefined;
 }): EventTable;
 /**
  * Unbinds every letter the table had when the call began, running each

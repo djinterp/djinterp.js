@@ -11,10 +11,9 @@
 * of its fields, as the C guide's do.
 *   Under src/, a comment names another module's type by an `@import`,
 * never an inline `import(...)`.
-*   In a module under src/ held to the strict mode (tools/strict_modules.js),
-* a function that is not exported has a JSDoc comment that names it on its
-* first line, ` * name`, as the C guide's definitions are named (the
-* owner's ruling D25, 2026-11-17).
+*   In a module under src/, a function that is not exported has a JSDoc
+* comment that names it on its first line, ` * name`, as the C guide's
+* definitions are named (the owner's ruling D25, 2026-11-17).
 *   A file's table of contents agrees with its body, as the C guide has
 * it: each section's name in capitals with a line of hyphens beneath it,
 * the name and number its divider has, and as many entries as the section
@@ -36,8 +35,6 @@
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { dirname, join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
-
-import { STRICT } from './strict_modules.js';
 
 const ROOT    = join(dirname(fileURLToPath(import.meta.url)), '..');
 const CHECKED = /\.(js|c|h|sh|md|json|html)$/;
@@ -140,9 +137,8 @@ for (const path of filesUnder(ROOT))
         }
     }
 
-    // a function inside a module held to the strict mode is named by its
-    // JSDoc comment
-    if (STRICT.includes(file.replace(/^src\//, '')))
+    // a function inside a module is named by its JSDoc comment
+    if (/^src\/.*\.js$/.test(file))
     {
         const lines = text.split('\n');
 

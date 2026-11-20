@@ -212,9 +212,9 @@ export function rowFlags(_name: string, _names: Array<{
  * @returns {OptionEnv} the frame.
  */
 export function init(_room?: {
-    bindings?: number;
-    vars?: number;
-    text?: number;
+    bindings?: number | undefined;
+    vars?: number | undefined;
+    text?: number | undefined;
 }): OptionEnv;
 /**
  * A frame made from its record in the reference's data, as
@@ -877,7 +877,7 @@ export const DEPTH_MAX: number;
  */
 export const inner: Readonly<{
     cstr: typeof cstr;
-    decl: (_env: OptionEnv | null, _var: number) => OptionDecl;
+    decl: (_env: OptionEnv | null, _var: number) => OptionDecl | null;
     isIdentifier: typeof isIdentifier;
     find: typeof findInner;
     findScope: typeof findScopeInner;
@@ -915,54 +915,54 @@ export type OptionRow = {
     /**
      * a line about it.
      */
-    help?: string | null;
+    help?: string | null | undefined;
     /**
      * a second name, an identifier.
      */
-    alias?: string | null;
+    alias?: string | null | undefined;
     /**
      * the compile-time knob its default is.
      */
-    knob?: string | null;
+    knob?: string | null | undefined;
     /**
      * its named values.
      */
-    names?: Array<{
+    names?: {
         name: string;
         value: (number | bigint | string);
-    }> | null;
+    }[] | null | undefined;
     /**
      * named values that are ruled and not built.
      */
-    unbuilt?: Array<{
+    unbuilt?: {
         name: string;
         value: (number | bigint | string);
-    }> | null;
+    }[] | null | undefined;
     /**
      * a TEXT's default.
      */
-    text?: string | null;
+    text?: string | null | undefined;
     /**
      * the default of every other
      * kind but REAL; a string is a decimal integer.
      */
-    integer?: number | bigint | string;
+    integer?: string | number | bigint | undefined;
     /**
      * an INT's least value.
      */
-    minimum?: number | bigint | string;
+    minimum?: string | number | bigint | undefined;
     /**
      * an INT's greatest value.
      */
-    maximum?: number | bigint | string;
+    maximum?: string | number | bigint | undefined;
     /**
      * a REAL's default.
      */
-    real?: number | string;
+    real?: string | number | undefined;
     /**
      * the sources it refuses, by `refuses`.
      */
-    refused?: number;
+    refused?: number | undefined;
 };
 /**
  * A frame. Made by `init`; its members are the machine's own, and are read

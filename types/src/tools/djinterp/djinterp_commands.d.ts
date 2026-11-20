@@ -29,10 +29,10 @@
  */
 export function programMake(_options: {
     registry: optionEnvRegistry.OptionEnvRegistry;
-    file?: cliSettings.SettingsFile | null;
+    file?: cliSettings.SettingsFile | null | undefined;
     environment?: any;
-    djins?: number;
-    colour?: boolean;
+    djins?: number | undefined;
+    colour?: boolean | undefined;
 }): DjinterpProgram;
 /**
  * Readies the program's settings for a run, once: the environment's and

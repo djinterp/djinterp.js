@@ -43,9 +43,9 @@ export function statusName(_status: number): string;
  * @returns {DjinSet}
  */
 export function setInit(_options?: {
-    capacity?: number;
-    registry?: optionEnvRegistry.OptionEnvRegistry | null;
-    reserved?: ReadonlyArray<string>;
+    capacity?: number | undefined;
+    registry?: optionEnvRegistry.OptionEnvRegistry | null | undefined;
+    reserved?: readonly string[] | undefined;
 }): DjinSet;
 /**
  * Takes a record into a set, and lists its settings in the set's
@@ -162,17 +162,17 @@ export type DjinRecord = {
     /**
      * its commands.
      */
-    commands?: Array<DjinCommand> | null;
+    commands?: DjinCommand[] | null | undefined;
     /**
      * its settings: a frame named as the
      * djin is.
      */
-    settings?: optionEnv.OptionEnv | null;
+    settings?: optionEnv.OptionEnv | null | undefined;
     /**
      * the ABI it was written to; the current
      * one where left out.
      */
-    abi?: number;
+    abi?: number | undefined;
 };
 /**
  * A djin's command: the reference's struct dj_djin_command, less its size.
@@ -190,7 +190,7 @@ export type DjinCommand = {
     /**
      * what carries it out.
      */
-    run?: Function | null;
+    run?: Function | null | undefined;
     /**
      * what `run` is handed.
      */

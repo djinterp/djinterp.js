@@ -62,7 +62,7 @@ export function settingsFrame(_name: string, _rows: Array<optionEnv.OptionRow>, 
  * @returns {DjinterpSession}
  */
 export function openProgram(_program: djinterpCommands.DjinterpProgram, _options?: {
-    query?: string | null;
+    query?: string | null | undefined;
 }): DjinterpSession;
 /**
  * Opens a program: a registry named "djinterp", the djins given, and the
@@ -96,14 +96,14 @@ export function openProgram(_program: djinterpCommands.DjinterpProgram, _options
  *         own mistake.
  */
 export function openNow(_options?: {
-    settings?: Array<optionEnv.OptionRow>;
-    scopes?: Array<string>;
-    djins?: Array<djin.DjinRecord>;
-    frames?: Array<optionEnv.OptionEnv>;
-    file?: cliSettings.SettingsFile | null;
+    settings?: optionEnv.OptionRow[] | undefined;
+    scopes?: string[] | undefined;
+    djins?: djin.DjinRecord[] | undefined;
+    frames?: optionEnv.OptionEnv[] | undefined;
+    file?: cliSettings.SettingsFile | null | undefined;
     environment?: any;
-    query?: string | null;
-    colour?: boolean;
+    query?: string | null | undefined;
+    colour?: boolean | undefined;
 }): DjinterpSession;
 /**
  * Opens a program, as `openNow` does, and answers with a promise of it:

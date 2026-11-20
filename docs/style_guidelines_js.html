@@ -494,9 +494,7 @@ the rest. Use the trailing underscore of <a href="#names">3.1</a>.</li>
 <ul>
 <li><code>//</code> comments by default.</li>
 <li>Block comments for: the file's banner; its table of contents; and a
-function's or a type's comment (<code>/** ... */</code>, or the C
-guide's <code>/* ... */</code> in a module not yet held to the strict
-mode, as <a href="#inner">5.2</a> says).</li>
+function's or a type's comment, in JSDoc (<code>/** ... */</code>).</li>
 <li>Section and entry markers are the <code>//</code> forms of
 <a href="#structure">4.3</a>.</li>
 <li>An ordinary comment begins in lower case unless its first word is a
@@ -738,22 +736,10 @@ function bitLength(
 }
 </pre>
 
-<ul>
-<li>In a module held to the strict mode (<code>tools/strict_modules.js
-</code>), every function inside it has this comment.
-<span class="b checked">check_style.js</span></li>
-<li>A module not yet held to it keeps the C guide's plain form until it
-is (D24): <code>/*</code>, the name, what it does, <code>*/</code>. It
-moves to the JSDoc form when it joins the strict mode.</li>
-</ul>
-
-<pre>
-/*
-cstr
-  A string as C reads one handed to it without a length: up to its
-first NUL.
-*/
-</pre>
+<p>Every function inside a module has this comment.<span class="b checked">
+check_style.js</span> Until each module joined the strict mode (D24), it
+kept the C guide's plain form, <code>/*</code>, the name, what it does,
+<code>*/</code>; none is left.</p>
 
 <h3 id="nothing">5.3 Functions that give nothing</h3>
 
@@ -863,9 +849,9 @@ a banner's <code>path:</code>; the comment of 5.2 in a strict module;
 the table of contents of 4.3 and its body; the empty lines before a
 section's divider</td></tr>
 <tr><td><code>node tools/check_types.js TSC</code></td><td>the JSDoc,
-read as types, in every module; the strict mode, in the modules listed
-in <code>tools/strict_modules.js</code>; and it writes
-<code>types/</code> <span class="b ruled">D17b, D24</span></td></tr>
+read as types in the strict mode, in every module; and it writes
+<code>types/</code> from the same pass
+<span class="b ruled">D17b, D24</span></td></tr>
 <tr><td><code>node tools/check_page.js BASE</code></td><td>the example
 page, opened in a headless browser, against what the port does under
 node</td></tr>
@@ -873,9 +859,10 @@ node</td></tr>
 
 <p>The type check is a tool beside the style check, never a step a page
 needs, and the repository does not depend on it: its path is given on
-the command line. The strict mode comes in a module at a time; a module
-joins <code>tools/strict_modules.js</code> when it has no finding there.
-<span class="b ruled">D24, 2026-11-16</span></p>
+the command line. The strict mode came in a module at a time, and has
+held every module since 2026-11-18.<span class="b ruled">D24,
+2026-11-16</span> A module written after is held to it from its first
+line.</p>
 
 <p>A finding genuinely not worth putting right is suppressed at the
 narrowest scope, with a comment saying why, never for the project. There
@@ -952,8 +939,13 @@ descriptions lined up.</li>
 <li>A record's fields keep the reference's spelling
 (<a href="#names">3.1</a>).</li>
 <li>An exported constant carries its <code>@type</code>.</li>
-<li><code>{*}</code> says a value's type is not yet written down. A
-module held to the strict mode has none where a type can be named.</li>
+<li><code>{*}</code> is for what a caller may hand in as anything, which
+the code then checks; nowhere else.</li>
+<li>Where the checker cannot see that a value is there (a result's id
+when it is OK; the row of a variable just found), the code says so where
+it reads it: a test of the value itself rather than of a flag the
+checker cannot connect to it, or a fallback that is never taken, with a
+comment saying why. A cast is the last resort, and says why too.</li>
 <li><code>types/</code> is what the type check writes from these, and is
 never edited.</li>
 </ul>
@@ -1149,30 +1141,21 @@ test('a cut is at the limit, for text that has no pairs', () =&gt;
 
 <h2 id="not-yet">16. Where the code is not yet this guide</h2>
 
-<p>Measured 2026-11-17. Each is work that is known and has its place.</p>
+<p>Measured 2026-11-18. Each is known, and has its place.</p>
 
 <table>
 <tr><th>What</th><th>Where</th><th>Until</th></tr>
-<tr><td>6 of the 16 modules are not yet held to the strict mode (478
-findings there); the event modules are, all six</td><td>the option
-machine and its registry; djin; the commands; the cli settings;
-<code>src/djinterp.js</code></td><td>D24's second tranche: a module at a
-time</td></tr>
-<tr><td>In those modules, of the functions not exported, 66 have the
-plain comment of 5.2, one has a JSDoc comment without its name, and 66
-have none</td><td>the same</td><td>each module, as it joins the strict
-mode</td></tr>
-<tr><td>7 dividers without a number, outside the table of contents
-</td><td><code>option_env.js</code>, <code>djin.js</code>,
-<code>djinterp_commands.js</code></td><td>the same</td></tr>
-<tr><td>5 functions past 100 lines</td><td><code>read</code> (209) and
-<code>runInner</code> (121) in the commands; <code>openProgram</code>
-(134); <code>readReal</code> (109) and <code>nearestDouble</code> (101)
+<tr><td>5 functions past 100 lines</td><td><code>read</code> (212) and
+<code>runInner</code> (134) in the commands; <code>openProgram</code>
+(148); <code>readReal</code> (109) and <code>nearestDouble</code> (101)
 </td><td>a reason each, or a function taken out</td></tr>
 <tr><td>No brief comment of 4.5 anywhere; small declarations have a plain
-one-line comment</td><td>throughout</td><td>each module, as it joins
-the strict mode</td></tr>
+one-line comment</td><td>throughout</td><td>the next change to each</td>
+</tr>
 </table>
+
+<p>Done on 2026-11-18: every module is strict (D24), every function
+inside one has D25's comment, and no divider is without its number.</p>
 
 
 <h2 id="rulings">17. Rulings</h2>
@@ -1199,7 +1182,8 @@ guide</td></tr>
 <tr><td>D23</td><td>2026-11-16</td><td>a cut never parts a surrogate
 pair (<a href="#behaviour">13</a>)</td></tr>
 <tr><td>D24</td><td>2026-11-16</td><td>the strict mode brought in a
-module at a time (<a href="#language">7</a>)</td></tr>
+module at a time; every module since 2026-11-18
+(<a href="#language">7</a>)</td></tr>
 <tr><td>D25</td><td>2026-11-17</td><td>a function inside a module has
 JSDoc in the C guide's form, its name first
 (<a href="#inner">5.2</a>)</td></tr>
