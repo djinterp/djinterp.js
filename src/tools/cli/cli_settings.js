@@ -17,8 +17,7 @@
 * `name` is what the file is called when the kit speaks of it; `read`
 * gives its text, or null where there is none yet; `write` replaces it, and
 * throws an Error whose message says why where it cannot.
-*   Everything here is in bytes (src/text/utf8.js), as the program's
-* commands are: what is said is the reference's, byte for byte.
+*   What is said is the reference's, character for character.
 *   reference: inc/djinterp/tools/cli/c/cli_settings.h and
 *              src/djinterp/tools/cli/c/cli_settings.c, at dfc793c4
 *
@@ -46,11 +45,10 @@ import { STATUS, result_status, status_name }
     from '../../option/option_common.js';
 import * as option_env from '../../option/option_env.js';
 import * as option_env_registry from '../../option/option_env_registry.js';
-import { encode } from '../../text/utf8.js';
 
 const ROOM      = 256;
-const env_bytes = option_env.bytes;
-const reg_bytes = option_env_registry.bytes;
+const env_inner = option_env.inner;
+const reg_inner = option_env_registry.inner;
 
 
 //==============================================================================
@@ -66,12 +64,12 @@ const reg_bytes = option_env_registry.bytes;
  * @param {option_env_registry} _registry  the registry the name was
  *        looked for in.
  * @param {number}  _status    the refusal's status.
- * @param {string}  _name      the setting's name as written, in bytes.
- * @param {?string} _value     the value as written, in bytes, or null for
+ * @param {string}  _name      the setting's name as written.
+ * @param {?string} _value     the value as written, or null for
  *        none.
  * @param {number}  [_capacity=256]  the room the reference's caller gives
  *        the message, with its terminator; a longer one is cut short.
- * @returns {string} the message, in bytes.
+ * @returns {string} the message.
  */
 export function why(
     _registry,
@@ -86,7 +84,7 @@ export function why(
 
     if (_status === STATUS.KEY_ABSENT)
     {
-        const near = reg_bytes.suggest(_registry, _name);
+        const near = reg_inner.suggest(_registry, _name);
 
         out = ( (near.length > 0) &&
                 (near.length < ROOM) )
@@ -202,9 +200,9 @@ function value_at(
  * goes on after it.
  *
  * @param {option_env_registry} _registry  the registry.
- * @param {string} _script  the file's text, in bytes.
+ * @param {string} _script  the file's text.
  * @param {function(number, string): void} _report  told each refusal: the
- *        statement's line, from 1, and why, in bytes.
+ *        statement's line, from 1, and why.
  */
 export function load(
     _registry,
@@ -212,14 +210,14 @@ export function load(
     _report
 )
 {
-    const script  = env_bytes.cstr(_script);
+    const script  = env_inner.cstr(_script);
     let   offset  = 0;
     let   line    = 1;
     let   counted = 0;
 
     while (offset < script.length)
     {
-        const done = reg_bytes.load(_registry, script.slice(offset),
+        const done = reg_inner.load(_registry, script.slice(offset),
                                     option_env.SOURCE.FILE);
 
         if (done.is_ok)
@@ -235,7 +233,7 @@ export function load(
             line += (script[counted] === '\n') ? 1 : 0;
         }
 
-        const end = env_bytes.statement_end(script, at);
+        const end = env_inner.statement_end(script, at);
 
         _report(line, why(_registry, result_status(done),
                           name_at(script, at, end),
@@ -285,23 +283,23 @@ function prefix_of(
  * @param {object} _program  the program
  *        (src/tools/djinterp/djinterp_commands.js): its `registry`,
  *        `name`, `environment` and `file` are read.
- * @returns {string} the warnings, in bytes, a line each.
+ * @returns {string} the warnings, a line each.
  */
 export function start(
     _program
 )
 {
-    const lookup = env_bytes.lookup_of(_program.environment);
+    const lookup = env_inner.lookup_of(_program.environment);
     const prefix = prefix_of(_program.name);
     let   said   = '';
 
     // the shared prefix, then the program's own, whose binding wins
-    reg_bytes.import(_program.registry, 'DJINTERP_', lookup);
+    reg_inner.import(_program.registry, 'DJINTERP_', lookup);
 
     if ( (prefix.length !== 0) &&
          (prefix !== 'DJINTERP_') )
     {
-        reg_bytes.import(_program.registry, prefix, lookup);
+        reg_inner.import(_program.registry, prefix, lookup);
     }
 
     if (_program.file === null)
@@ -318,15 +316,15 @@ export function start(
     catch (error)
     {
         said += _program.name + ': warning: cannot read \'' +
-                encode(_program.file.name) + '\': ' +
-                encode(String(error?.message ?? error)) + '\n';
+                _program.file.name + '\': ' +
+                String(error?.message ?? error) + '\n';
     }
 
     if (typeof text === 'string')
     {
-        load(_program.registry, encode(text), (_line, _why) =>
+        load(_program.registry, text, (_line, _why) =>
         {
-            said += encode(_program.file.name) + ':' + _line +
+            said += _program.file.name + ':' + _line +
                     ': warning: ' + _why + '\n';
         });
     }
@@ -366,10 +364,10 @@ function shaped(
  * refused: the message of a usage error.
  *
  * @param {option_env_registry} _registry  the registry.
- * @param {Array<string>} _argv    the command line, in bytes.
+ * @param {Array<string>} _argv    the command line.
  * @param {number}        _at      where the option stands on it.
  * @param {number}        _status  the refusal's status.
- * @returns {string} the message, in bytes.
+ * @returns {string} the message.
  */
 export function said_for(
     _registry,
@@ -428,13 +426,13 @@ export function said_for(
  *
  * @param {option_env_registry} _registry  the registry.
  * @param {Array<string>} _argv      the command line, the program's name
- *        first, in bytes.
+ *        first.
  * @param {Array<string>} _commands  the names of the program's commands:
  *        a refusal is said of the one the walk has reached.
  * @returns {{kept: Array<string>, refused: ?{command: ?string,
  *            message: string}}} the arguments kept; and for a setting
  *          refused, which stops the walk, the command reached, or null
- *          for none, and the usage error's message, in bytes.
+ *          for none, and the usage error's message.
  */
 export function take(
     _registry,
@@ -456,7 +454,7 @@ export function take(
              !ended   &&
              shaped(argument) )
         {
-            taken = reg_bytes.take_option(_registry, _argv, at);
+            taken = reg_inner.take_option(_registry, _argv, at);
             at    = taken.at;
         }
 

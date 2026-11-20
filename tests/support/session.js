@@ -7,8 +7,9 @@
 * replays through `run_session`; the port passes when the bytes agree.
 *   The lines and what each writes are set out in tools/session.c. This
 * file follows it operation for operation, in its order.
-*   Input and output are byte strings (src/text/utf8.js): a transcript may
-* hold bytes that are not UTF-8.
+*   Input and output are strings with a unit for each of the transcript's
+* bytes: the port counts text in UTF-16 units where the reference counts
+* bytes, so a byte to a unit is how the two are set side by side.
 *
 *
 * path:      /tests/support/session.js
@@ -23,7 +24,6 @@ import * as option_env from '../../src/option/option_env.js';
 import * as option_env_registry from '../../src/option/option_env_registry.js';
 import { format_g } from '../../src/text/real_format.js';
 import { read_real } from '../../src/text/real_read.js';
-import { decode, encode } from '../../src/text/utf8.js';
 import { make_fixture } from './fixture.js';
 
 const LAYERS = 64;
@@ -57,7 +57,7 @@ function text_of(
 
     let out = '';
 
-    for (const c of encode(_text))
+    for (const c of _text)
     {
         const code = c.charCodeAt(0);
 
@@ -71,7 +71,7 @@ function text_of(
              : c;
     }
 
-    return decode(out);
+    return out;
 }
 
 /*
@@ -171,7 +171,7 @@ export function make_session()
         const plain  = option_env.format(_frame, _scope, _var);
         const quoted = option_env.format_quoted(_frame, _scope, _var);
         const length = (_text) => ((_text === null) ? -1
-                                                    : encode(_text).length);
+                                                    : _text.length);
 
         return ' | ' + length(plain) + ' ' + text_of(plain) +
                ' | ' + length(quoted) + ' ' + text_of(quoted);
@@ -254,7 +254,7 @@ export function make_session()
         {
             const near = option_env_registry.suggest(registry, _a[1]);
 
-            return 'reg_suggest ' + encode(near).length + ' ' +
+            return 'reg_suggest ' + near.length + ' ' +
                    text_of(near);
         }
 
@@ -602,8 +602,8 @@ export function make_session()
     {
         const a     = _line.split('\t').slice(0, 16)
                            .map((_field, _i) => ((_i === 0)
-                                    ? decode(_field)
-                                    : decode(unescape(_field))));
+                                    ? _field
+                                    : unescape(_field)));
         const count = a.length;
 
         if ( (a[0] === 'env') &&
@@ -690,8 +690,8 @@ export function make_session()
 
     setup += 'djins 0\n';
 
-    return { setup: encode(setup),
-             line:  (_line) => encode(run_line(_line)) };
+    return { setup: setup,
+             line:  (_line) => run_line(_line) };
 }
 
 /**

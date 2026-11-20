@@ -44,12 +44,11 @@ import { STATUS, result_status } from '../../option/option_common.js';
 import * as option_env from '../../option/option_env.js';
 import * as option_env_registry from '../../option/option_env_registry.js';
 import { format_real } from '../../text/real_format.js';
-import { decode, encode } from '../../text/utf8.js';
 import * as cli_settings from '../cli/cli_settings.js';
 
 const ROOM      = 512;
-const env_bytes = option_env.bytes;
-const reg_bytes = option_env_registry.bytes;
+const env_inner = option_env.inner;
+const reg_inner = option_env_registry.inner;
 const KIND      = option_env.KIND;
 const SOURCE    = option_env.SOURCE;
 
@@ -130,7 +129,7 @@ export function program_start(
     _program
 )
 {
-    return decode(cli_settings.start(_program));
+    return cli_settings.start(_program);
 }
 
 
@@ -187,7 +186,7 @@ function work_list(
     _run
 )
 {
-    _run.out += djin.bytes.list(_run.program.set);
+    _run.out += djin.inner.list(_run.program.set);
 
     return EXIT.OK;
 }
@@ -197,9 +196,9 @@ function work_describe(
     _names
 )
 {
-    const found = djin.bytes.find(_run.program.set, _names[0]);
+    const found = djin.inner.find(_run.program.set, _names[0]);
     const frame = (found === null)
-                      ? reg_bytes.find(_run.program.registry, _names[0])
+                      ? reg_inner.find(_run.program.registry, _names[0])
                       : null;
 
     if ( (found === null) &&
@@ -209,8 +208,8 @@ function work_describe(
                            'no djin is named \'' + _names[0] + '\'');
     }
 
-    _run.out += (found !== null) ? djin.bytes.description(found)
-                                 : djin.bytes.frame(frame);
+    _run.out += (found !== null) ? djin.inner.description(found)
+                                 : djin.inner.frame(frame);
 
     return EXIT.OK;
 }
@@ -231,7 +230,7 @@ function find(
     _name
 )
 {
-    const frame = reg_bytes.target(_registry, _name);
+    const frame = reg_inner.target(_registry, _name);
     const dot   = _name.indexOf('.');
 
     if (frame === null)
@@ -239,16 +238,16 @@ function find(
         return null;
     }
 
-    let found = env_bytes.resolve(frame, _name);
+    let found = env_inner.resolve(frame, _name);
 
     if ( !found.is_ok &&
          (dot >= 0)   &&
          (frame !== option_env_registry.frame(_registry)) )
     {
-        found = env_bytes.resolve(frame, _name.slice(dot + 1));
+        found = env_inner.resolve(frame, _name.slice(dot + 1));
     }
 
-    const decl = found.is_ok ? env_bytes.decl(frame, found.value) : null;
+    const decl = found.is_ok ? env_inner.decl(frame, found.value) : null;
 
     return (decl !== null) ? { frame: frame, scope: found.scope,
                                var: found.value, decl: decl }
@@ -322,7 +321,7 @@ function origins(
     _setting
 )
 {
-    const found = env_bytes.layers(_setting.frame, _setting.scope,
+    const found = env_inner.layers(_setting.frame, _setting.scope,
                                    _setting.var, 8);
     const shown = (found === null) ? 0 : Math.min(found.count, 8);
     const decl  = _setting.decl;
@@ -360,11 +359,11 @@ function get_one(
     _origin
 )
 {
-    const in_force = env_bytes.get(_setting.frame, _setting.scope,
+    const in_force = env_inner.get(_setting.frame, _setting.scope,
                                    _setting.var).got;
     const unset    = ( (_setting.decl.kind === KIND.TEXT) &&
                        (in_force.text === null) );
-    const value    = env_bytes.format_quoted(_setting.frame, _setting.scope,
+    const value    = env_inner.format_quoted(_setting.frame, _setting.scope,
                                              _setting.var)
                          .slice(0, ROOM - 1);
     const room     = ROOM * 2;
@@ -484,7 +483,7 @@ function bind(
 
         const name  = item.slice(0, equals);
         const value = item.slice(equals + 1);
-        const bound = reg_bytes.assign(_run.program.registry, name, value,
+        const bound = reg_inner.assign(_run.program.registry, name, value,
                                        SOURCE.OVERRIDE);
 
         if (!bound.is_ok)
@@ -579,7 +578,7 @@ function compose(
     {
         const setting = find(_registry, name);
         const text    = name + ' = ' +
-                        env_bytes.format_quoted(setting.frame, setting.scope,
+                        env_inner.format_quoted(setting.frame, setting.scope,
                                                 setting.var)
                             .slice(0, ROOM - 1) + '\n';
 
@@ -613,8 +612,8 @@ function work_set(
     }
 
     const said = (_doing, _error) =>
-        report(_run, 'cannot ' + _doing + ' \'' + encode(file.name) +
-                     '\': ' + encode(String(_error?.message ?? _error)));
+        report(_run, 'cannot ' + _doing + ' \'' + file.name +
+                     '\': ' + String(_error?.message ?? _error));
     let   old;
 
     try
@@ -627,7 +626,7 @@ function work_set(
     }
 
     const text = compose(_run.program.registry,
-                         (typeof old === 'string') ? encode(old) : '',
+                         (typeof old === 'string') ? old : '',
                          _items);
 
     if (text === null)
@@ -637,7 +636,7 @@ function work_set(
 
     try
     {
-        file.write(decode(text));
+        file.write(text);
     }
     catch (error)
     {
@@ -941,7 +940,7 @@ function read(
     return line;
 }
 
-function run_bytes(
+function run_inner(
     _program,
     _argv
 )
@@ -1035,9 +1034,9 @@ export function program_run(
     _argv
 )
 {
-    const ran = run_bytes(_program,
-                          _argv.map((_word) => env_bytes.cstr(encode(_word))));
+    const ran = run_inner(_program,
+                          _argv.map((_word) => env_inner.cstr(_word)));
 
-    return { status: ran.status, out: decode(ran.out), err: decode(ran.err),
-             set: ran.set.map(decode) };
+    return { status: ran.status, out: ran.out, err: ran.err,
+             set: ran.set };
 }

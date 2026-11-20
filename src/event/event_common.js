@@ -32,7 +32,6 @@ TABLE OF CONTENTS
 */
 
 import data from '../../generated/event.js';
-import { encode } from '../text/utf8.js';
 
 const strip = (_name, _prefix) => _name.slice(_prefix.length);
 
@@ -75,15 +74,36 @@ export function key_of_name(
 
     let hash = FNV_OFFSET;
 
-    for (const c of encode(_name))
+    // a key is the reference's hash of the name's bytes, so the name is
+    // walked as UTF-8 here, and nowhere else is text taken as bytes
+    for (const character of _name)
     {
-        if (c === '\0')
+        const point = character.codePointAt(0);
+
+        // a surrogate with no partner is written as U+FFFD is
+        const scalar = ( (point >= 0xD800) &&
+                         (point <= 0xDFFF) ) ? 0xFFFD : point;
+        const bytes  = (scalar < 0x80)    ? [scalar]
+                     : (scalar < 0x800)   ? [0xC0 | (scalar >> 6),
+                                             0x80 | (scalar & 0x3F)]
+                     : (scalar < 0x10000) ? [0xE0 | (scalar >> 12),
+                                             0x80 | ((scalar >> 6) & 0x3F),
+                                             0x80 | (scalar & 0x3F)]
+                                          : [0xF0 | (scalar >> 18),
+                                             0x80 | ((scalar >> 12) & 0x3F),
+                                             0x80 | ((scalar >> 6) & 0x3F),
+                                             0x80 | (scalar & 0x3F)];
+
+        if (scalar === 0)
         {
             break;
         }
 
-        hash ^= BigInt(c.charCodeAt(0));
-        hash  = BigInt.asUintN(64, hash * FNV_PRIME);
+        for (const byte of bytes)
+        {
+            hash ^= BigInt(byte);
+            hash  = BigInt.asUintN(64, hash * FNV_PRIME);
+        }
     }
 
     return (hash === 0n) ? 1n : hash;

@@ -65,7 +65,6 @@ import * as djin from './modules/interp/djin.js';
 import { result_status, status_name } from './option/option_common.js';
 import * as option_env from './option/option_env.js';
 import * as option_env_registry from './option/option_env_registry.js';
-import { decode, encode } from './text/utf8.js';
 import * as cli_settings from './tools/cli/cli_settings.js';
 import * as djinterp_commands from './tools/djinterp/djinterp_commands.js';
 
@@ -309,19 +308,19 @@ function take_query(
             continue;
         }
 
-        const argv  = text.includes('=') ? ['--set', encode(text)]
-                                         : ['--' + encode(text)];
-        const taken = option_env_registry.bytes.take_option(
+        const argv  = text.includes('=') ? ['--set', text]
+                                         : ['--' + text];
+        const taken = option_env_registry.inner.take_option(
                           _program.registry, argv, 0);
 
         if (taken.took <= 0)
         {
             said += _program.name + ': warning: query: ' +
-                    decode(cli_settings.said_for(
+                    cli_settings.said_for(
                         _program.registry, argv, 0,
                         (taken.result !== null)
                             ? result_status(taken.result)
-                            : 0)) + '\n';
+                            : 0) + '\n';
         }
     }
 

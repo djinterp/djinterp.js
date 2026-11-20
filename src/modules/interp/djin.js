@@ -9,8 +9,9 @@
 * that is not a lowercase word, a version or summary that is not one line,
 * a command named twice, a name the program keeps for itself, a name
 * already taken, settings that are another djin's.
-*   The texts are the reference's, byte for byte: column widths count
-* bytes, as its strlen does.
+*   The texts are the reference's. A column's width counts its text's
+* UTF-16 units where the reference's strlen counts bytes, so the two line
+* up alike for ASCII and not for other text (the owner's ruling 3).
 *   The reference's record carries its own size and an ABI number, because
 * a native module is loaded from a file built elsewhere. A record here is
 * an object: it has no size, and its `abi` is the current one where left
@@ -44,13 +45,12 @@ TABLE OF CONTENTS
 
 import data from '../../../generated/option.js';
 import { format_real } from '../../text/real_format.js';
-import { decode, encode } from '../../text/utf8.js';
 import * as option_env from '../../option/option_env.js';
 import * as option_env_registry from '../../option/option_env_registry.js';
 
 const DEFAULT_ROOM = 96;
 const NAME_ROOM    = 128;
-const env_bytes    = option_env.bytes;
+const env_inner    = option_env.inner;
 const KIND         = option_env.KIND;
 
 
@@ -156,21 +156,21 @@ function is_line(
 }
 
 /*
-bytes_of
-  A record's text as the reference holds it: bytes, up to a NUL; what is
+text_of
+  A record's text as the reference holds it: up to a NUL; what is
 not a string is left as it is, to fail its check.
 */
-function bytes_of(
+function text_of(
     _text
 )
 {
-    return (typeof _text === 'string') ? env_bytes.cstr(encode(_text))
+    return (typeof _text === 'string') ? env_inner.cstr(_text)
                                        : _text;
 }
 
 /*
 normal
-  A caller's record as the writers and the set hold it: its text in bytes.
+  A caller's record as the writers and the set hold it.
 */
 function normal(
     _djin
@@ -179,14 +179,14 @@ function normal(
     return {
         record:   _djin,
         abi:      _djin.abi ?? ABI,
-        name:     bytes_of(_djin.name),
-        version:  bytes_of(_djin.version),
-        summary:  bytes_of(_djin.summary),
+        name:     text_of(_djin.name),
+        version:  text_of(_djin.version),
+        summary:  text_of(_djin.summary),
         commands: Array.isArray(_djin.commands)
                       ? _djin.commands.map((_command) => ({
                             command: _command,
-                            name:    bytes_of(_command?.name),
-                            summary: bytes_of(_command?.summary)
+                            name:    text_of(_command?.name),
+                            summary: text_of(_command?.summary)
                         }))
                       : (_djin.commands ?? []),
         settings: _djin.settings ?? null
@@ -271,7 +271,7 @@ export function set_init(
         items:    [],
         capacity: _options.capacity ?? Infinity,
         registry: _options.registry ?? null,
-        reserved: (_options.reserved ?? []).map(bytes_of)
+        reserved: (_options.reserved ?? []).map(text_of)
     };
 }
 
@@ -290,7 +290,7 @@ function register_settings(
         return STATUS.SETTINGS;
     }
 
-    const present = option_env_registry.bytes.find(_set.registry,
+    const present = option_env_registry.inner.find(_set.registry,
                                                    _djin.name);
 
     if (present !== null)
@@ -430,7 +430,7 @@ export function set_find(
         return null;
     }
 
-    const found = find_normal(_set, encode(_name));
+    const found = find_normal(_set, _name);
 
     return (found !== null) ? found.record : null;
 }
@@ -489,7 +489,7 @@ function cell(
 /*
 cut
   A text as snprintf leaves one in a buffer of a capacity, with "..." for
-its last three bytes where it did not fit.
+its last three characters where it did not fit.
 */
 function cut(
     _text,
@@ -564,7 +564,7 @@ function write_settings(
     {
         const cells = [
             cut(_frame.name + '.' + decl.name, NAME_ROOM),
-            encode(option_env.kind_name(decl.kind)),
+            option_env.kind_name(decl.kind),
             default_text(decl),
             (decl.knob !== null) ? decl.knob : '-',
             (decl.help !== null) ? decl.help : ''
@@ -594,7 +594,7 @@ function write_settings(
     return '\nsettings\n' + out;
 }
 
-function list_bytes(
+function list_inner(
     _set
 )
 {
@@ -660,10 +660,10 @@ export function write_list(
     _set
 )
 {
-    return (_set) ? decode(list_bytes(_set)) : null;
+    return (_set) ? list_inner(_set) : null;
 }
 
-function description_bytes(
+function description_inner(
     _djin
 )
 {
@@ -707,10 +707,10 @@ export function write_description(
     _djin
 )
 {
-    return (_djin) ? decode(description_bytes(normal(_djin))) : null;
+    return (_djin) ? description_inner(normal(_djin)) : null;
 }
 
-function frame_bytes(
+function frame_inner(
     _frame
 )
 {
@@ -731,18 +731,18 @@ export function write_frame(
 {
     return ( (_frame) &&
              (_frame.name !== null) &&
-             (_frame.name !== undefined) ) ? decode(frame_bytes(_frame))
+             (_frame.name !== undefined) ) ? frame_inner(_frame)
                                            : null;
 }
 
 /**
- * The writers on byte strings, and a record as they hold one, for the
- * program's commands, which count bytes themselves.
+ * The writers without their checks, and a record as they hold one, for
+ * the program's commands.
  */
-export const bytes = Object.freeze({
+export const inner = Object.freeze({
     normal:      normal,
     find:        find_normal,
-    list:        list_bytes,
-    description: description_bytes,
-    frame:       frame_bytes
+    list:        list_inner,
+    description: description_inner,
+    frame:       frame_inner
 });

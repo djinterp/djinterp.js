@@ -7,10 +7,10 @@
 * with no djin before it is the root's. The registry routes a statement, a
 * script, the environment and a command line's options to the frame each
 * names, and suggests the full name a mistyped one was meant to be.
-*   Like option_env.js, the exported functions take and give strings, and
-* `bytes` has the same on byte strings.
+*   Like option_env.js, the exported functions check what they are
+* handed, and `inner` has the same without the checks.
 *   The reference's registry has room for a fixed number of djins and its
-* root for fixed numbers of variables, bindings and bytes of text, each a
+* root for fixed numbers of variables, bindings and units of text, each a
 * knob (cfg_option_env.h). A registry here has the reference's default
 * room unless `init` is given other.
 *   reference: inc/djinterp/c/option/option_env_registry.h and
@@ -37,18 +37,17 @@ TABLE OF CONTENTS
     2.  import
     3.  take_option
     4.  suggest
-3.  Bytes
-    1.  bytes
+3.  Inner
+    1.  inner
 */
 
 import data from '../../generated/option.js';
-import { decode, encode } from '../text/utf8.js';
 import { STATUS, fail, ok } from './option_common.js';
 import * as option_env from './option_env.js';
 
 const PREFIX_ROOM = 256;
 const REGISTRY    = Symbol('option_env_registry');
-const env_bytes   = option_env.bytes;
+const env_inner   = option_env.inner;
 
 
 //==============================================================================
@@ -82,7 +81,7 @@ function is_registry(
  *        left out.
  * @param {number}  [_room.bindings]  the root's bindings.
  * @param {number}  [_room.vars]      the root's variables.
- * @param {number}  [_room.text]      the root's bytes of text.
+ * @param {number}  [_room.text]      the root's units of text.
  * @param {number}  [_room.djins]     the djins.
  * @returns {option_result & {registry: option_env_registry}} the
  *          registry in `registry`, made whatever the result;
@@ -140,7 +139,7 @@ export function frame(
     return is_registry(_registry) ? _registry.frame : null;
 }
 
-function find_bytes(
+function find_inner(
     _registry,
     _name
 )
@@ -188,7 +187,7 @@ export function add(
         return fail(STATUS.INVALID_ARGUMENT);
     }
 
-    if (find_bytes(_registry, _djin.name) !== null)
+    if (find_inner(_registry, _djin.name) !== null)
     {
         return fail(STATUS.KEY_DUPLICATE);
     }
@@ -287,11 +286,11 @@ export function find(
     _name
 )
 {
-    return find_bytes(_registry, (typeof _name === 'string') ? encode(_name)
+    return find_inner(_registry, (typeof _name === 'string') ? _name
                                                              : null);
 }
 
-function target_bytes(
+function target_inner(
     _registry,
     _name
 )
@@ -306,7 +305,7 @@ function target_bytes(
 
     if (dot >= 0)
     {
-        const djin = find_bytes(_registry, _name.slice(0, dot));
+        const djin = find_inner(_registry, _name.slice(0, dot));
 
         if (djin !== null)
         {
@@ -330,8 +329,8 @@ export function target(
     _name
 )
 {
-    return target_bytes(_registry, (typeof _name === 'string')
-                                       ? encode(_name)
+    return target_inner(_registry, (typeof _name === 'string')
+                                       ? _name
                                        : null);
 }
 
@@ -373,24 +372,24 @@ function route(
         ++i;
     }
 
-    return target_bytes(_registry, _text.slice(start, i));
+    return target_inner(_registry, _text.slice(start, i));
 }
 
-function assign_bytes(
+function assign_inner(
     _registry,
     _name,
     _value,
     _source
 )
 {
-    const frame_ = target_bytes(_registry, _name);
+    const frame_ = target_inner(_registry, _name);
 
     if (frame_ === null)
     {
         return fail(STATUS.INVALID_ARGUMENT);
     }
 
-    return env_bytes.assign_from(frame_, _name, _value, _source);
+    return env_inner.assign_from(frame_, _name, _value, _source);
 }
 
 // 2.1
@@ -411,13 +410,13 @@ export function assign(
     _source
 )
 {
-    return assign_bytes(_registry,
-                        (typeof _name === 'string') ? encode(_name) : null,
-                        (typeof _value === 'string') ? encode(_value) : '',
+    return assign_inner(_registry,
+                        (typeof _name === 'string') ? _name : null,
+                        (typeof _value === 'string') ? _value : '',
                         _source);
 }
 
-function put_bytes(
+function put_inner(
     _registry,
     _statement,
     _source
@@ -429,7 +428,7 @@ function put_bytes(
         return fail(STATUS.INVALID_ARGUMENT);
     }
 
-    return env_bytes.put_n_from(route(_registry, _statement), _statement,
+    return env_inner.put_n_from(route(_registry, _statement), _statement,
                                 _source);
 }
 
@@ -449,14 +448,14 @@ export function put(
     _source
 )
 {
-    return put_bytes(_registry,
+    return put_inner(_registry,
                      (typeof _statement === 'string')
-                         ? env_bytes.cstr(encode(_statement))
+                         ? env_inner.cstr(_statement)
                          : null,
                      _source);
 }
 
-function load_bytes(
+function load_inner(
     _registry,
     _script,
     _source
@@ -477,7 +476,7 @@ function load_bytes(
     {
         const start = i;
 
-        i = env_bytes.statement_end(_script, i);
+        i = env_inner.statement_end(_script, i);
 
         // a statement of nothing but space is skipped
         let first = start;
@@ -493,7 +492,7 @@ function load_bytes(
         if (first < i)
         {
             const text   = _script.slice(first, i);
-            const result = env_bytes.put_n_from(route(_registry, text), text,
+            const result = env_inner.put_n_from(route(_registry, text), text,
                                                 _source);
 
             if (!result.is_ok)
@@ -533,7 +532,7 @@ function load_bytes(
  * @param {number}              _source    the source; any but DEFAULT.
  * @returns {option_result & {error_offset?: number}} how many statements
  *          were carried out; or the refusal, with in `error_offset` where
- *          the refused statement starts, in bytes of the script's UTF-8.
+ *          the refused statement starts, an index into the script.
  */
 export function load(
     _registry,
@@ -541,14 +540,14 @@ export function load(
     _source
 )
 {
-    return load_bytes(_registry,
+    return load_inner(_registry,
                       (typeof _script === 'string')
-                          ? env_bytes.cstr(encode(_script))
+                          ? env_inner.cstr(_script)
                           : null,
                       _source);
 }
 
-function import_bytes(
+function import_inner(
     _registry,
     _prefix,
     _lookup
@@ -559,7 +558,7 @@ function import_bytes(
         return fail(STATUS.INVALID_ARGUMENT);
     }
 
-    let result  = env_bytes.import(_registry.frame, _prefix, _lookup);
+    let result  = env_inner.import(_registry.frame, _prefix, _lookup);
     let total   = result.is_ok ? result.value : 0;
     let failure = result.is_ok ? ok(0) : result;
 
@@ -580,7 +579,7 @@ function import_bytes(
                           : djin.name[c];
         }
 
-        result = env_bytes.import(djin, prefix + '_', _lookup);
+        result = env_inner.import(djin, prefix + '_', _lookup);
         total += result.is_ok ? result.value : 0;
 
         if ( !result.is_ok &&
@@ -617,11 +616,11 @@ export function import_(
     _environment
 )
 {
-    return import_bytes(_registry,
+    return import_inner(_registry,
                         (typeof _prefix === 'string')
-                            ? env_bytes.cstr(encode(_prefix))
+                            ? env_inner.cstr(_prefix)
                             : '',
-                        env_bytes.lookup_of(_environment));
+                        env_inner.lookup_of(_environment));
 }
 
 export { import_ as import };
@@ -635,21 +634,21 @@ function is_bool(
     _name
 )
 {
-    const frame_ = target_bytes(_registry, _name);
+    const frame_ = target_inner(_registry, _name);
 
     if (frame_ === null)
     {
         return -1;
     }
 
-    const found = env_bytes.resolve(frame_, _name);
+    const found = env_inner.resolve(frame_, _name);
 
     if (!found.is_ok)
     {
         return -1;
     }
 
-    const value = env_bytes.get(frame_, found.scope, found.value);
+    const value = env_inner.get(frame_, found.scope, found.value);
 
     if (!value.is_ok)
     {
@@ -659,7 +658,7 @@ function is_bool(
     return (value.got.kind === option_env.KIND.BOOL) ? 1 : 0;
 }
 
-function take_option_bytes(
+function take_option_inner(
     _registry,
     _argv,
     _at
@@ -715,7 +714,7 @@ function take_option_bytes(
         return { took: -1, at: i, result: refusal };
     }
 
-    const result = assign_bytes(_registry, name, value,
+    const result = assign_inner(_registry, name, value,
                                 option_env.SOURCE.COMMAND_LINE);
 
     return { took: result.is_ok ? 1 : -1, at: i, result: result };
@@ -742,11 +741,11 @@ export function take_option(
     _at
 )
 {
-    return take_option_bytes(_registry,
+    return take_option_inner(_registry,
                              Array.isArray(_argv)
                                  ? _argv.map((_argument) =>
                                        ((typeof _argument === 'string')
-                                            ? env_bytes.cstr(encode(_argument))
+                                            ? env_inner.cstr(_argument)
                                             : _argument))
                                  : _argv,
                              _at);
@@ -763,7 +762,7 @@ function nearest(
 
     for (const djin of _registry.djins)
     {
-        const far = env_bytes.distance(djin.name, _text);
+        const far = env_inner.distance(djin.name, _text);
 
         if (far < most)
         {
@@ -785,7 +784,7 @@ function within(
     _name
 )
 {
-    const near = env_bytes.suggest(_frame, _name);
+    const near = env_inner.suggest(_frame, _name);
     const dot  = _name.indexOf('.');
 
     if (near === null)
@@ -795,7 +794,7 @@ function within(
 
     // a scope that fails is replaced, and the variable after it kept
     if ( (dot >= 0) &&
-         !env_bytes.find_scope(_frame, _name.slice(0, dot)).is_ok )
+         !env_inner.find_scope(_frame, _name.slice(0, dot)).is_ok )
     {
         return near + _name.slice(dot);
     }
@@ -803,7 +802,7 @@ function within(
     return ((dot >= 0) ? _name.slice(0, dot + 1) : '') + near;
 }
 
-function suggest_bytes(
+function suggest_inner(
     _registry,
     _name
 )
@@ -816,11 +815,11 @@ function suggest_bytes(
 
     const dot  = _name.indexOf('.');
     const head = (dot >= 0) ? _name.slice(0, dot) : '';
-    let   djin = (dot >= 0) ? find_bytes(_registry, head) : null;
+    let   djin = (dot >= 0) ? find_inner(_registry, head) : null;
 
     if ( (dot >= 0)      &&
          (djin === null) &&
-         !env_bytes.find_scope(_registry.frame, head).is_ok )
+         !env_inner.find_scope(_registry.frame, head).is_ok )
     {
         djin = nearest(_registry, head);
     }
@@ -830,7 +829,7 @@ function suggest_bytes(
         const rest = _name.slice(dot + 1);
 
         // the rest may be right already, when only the djin was wrong
-        if (env_bytes.resolve(djin, rest).is_ok)
+        if (env_inner.resolve(djin, rest).is_ok)
         {
             return djin.name + '.' + rest;
         }
@@ -857,28 +856,27 @@ export function suggest(
     _name
 )
 {
-    return decode(suggest_bytes(_registry,
-                                (typeof _name === 'string') ? encode(_name)
-                                                            : null));
+    return suggest_inner(_registry,
+                                (typeof _name === 'string') ? _name
+                                                            : null);
 }
 
 
 //==============================================================================
-// 3.  BYTES
+// 3.  INNER
 //==============================================================================
 
 // 3.1
 /**
- * The registry on byte strings, for the modules that count bytes
- * themselves.
+ * The registry without its checks, for the modules that stand on it.
  */
-export const bytes = Object.freeze({
-    find:        find_bytes,
-    target:      target_bytes,
-    assign:      assign_bytes,
-    put:         put_bytes,
-    load:        load_bytes,
-    import:      import_bytes,
-    take_option: take_option_bytes,
-    suggest:     suggest_bytes
+export const inner = Object.freeze({
+    find:        find_inner,
+    target:      target_inner,
+    assign:      assign_inner,
+    put:         put_inner,
+    load:        load_inner,
+    import:      import_inner,
+    take_option: take_option_inner,
+    suggest:     suggest_inner
 });

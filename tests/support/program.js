@@ -19,7 +19,6 @@
 
 import * as option_env from '../../src/option/option_env.js';
 import * as option_env_registry from '../../src/option/option_env_registry.js';
-import { decode, encode } from '../../src/text/utf8.js';
 import * as djinterp_commands
     from '../../src/tools/djinterp/djinterp_commands.js';
 import { split } from '../../src/djinterp.js';
@@ -167,16 +166,16 @@ export function run_program(
         {
             const equals = line.indexOf('=');
 
-            environment.set(decode(line.slice(4, equals)),
-                            decode(line.slice(equals + 1)));
+            environment.set(line.slice(4, equals),
+                            line.slice(equals + 1));
         }
         else if (line.startsWith('unenv '))
         {
-            environment.delete(decode(line.slice(6)));
+            environment.delete(line.slice(6));
         }
         else if (line.startsWith('file '))
         {
-            text = decode(unescape(line.slice(5)));
+            text = unescape(line.slice(5));
         }
         else if (line === 'nofile')
         {
@@ -186,7 +185,7 @@ export function run_program(
         {
             // a new process: the registry made again, its settings started
             const { program, warnings } = make_program(file, environment);
-            const words = split(decode(line));
+            const words = split(line);
             const ran   = (words === null)
                 ? { status: 2, out: '',
                     err: 'djinterp: error: a quote is not closed\n' }
@@ -195,10 +194,10 @@ export function run_program(
 
             // an unclosed quote is found before the program starts
             out += 'exit ' + ran.status + '\n' +
-                   stream_lines('out', encode(ran.out)) +
-                   stream_lines('err', encode(((words === null) ? ''
+                   stream_lines('out', ran.out) +
+                   stream_lines('err', ((words === null) ? ''
                                                                : warnings) +
-                                              ran.err));
+                                              ran.err);
         }
     }
 

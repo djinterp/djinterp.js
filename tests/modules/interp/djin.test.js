@@ -108,13 +108,14 @@ test('commands are found by name; the writers take a record as it is',
     assert.equal(djin.write_list(set), 'printer  1  prints\n');
 });
 
-test('columns are as wide as their bytes, as the reference\'s are', () =>
+test('columns are as wide as their text\'s units', () =>
 {
     const set = djin.set_init();
 
     djin.register(set, { name: 'a', version: '€', summary: 'x' });
     djin.register(set, { name: 'b', version: '1', summary: 'y' });
 
-    // the euro sign is three bytes: the column after it is padded to those
-    assert.equal(djin.write_list(set), 'a  €  x\nb  1    y\n');
+    // the euro sign is one unit, where it is three bytes in the reference,
+    // whose column after it is two wider (the owner's ruling 3)
+    assert.equal(djin.write_list(set), 'a  €  x\nb  1  y\n');
 });

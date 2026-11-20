@@ -17,12 +17,15 @@
 *   This file follows option_env.c function by function, in its order, so
 * that either can be read against the other. Three things differ, each
 * because the language does:
-*   - TEXT IS BYTES INSIDE. The reference's lengths, offsets and escapes
-*     count bytes. Every exported function takes and gives JavaScript
-*     strings, and changes them at the boundary (src/text/utf8.js); the
-*     offset a script's refusal is reported at is in bytes of its UTF-8,
-*     as the reference reports it. The functions under `bytes` take and
-*     give byte strings, for the modules that stand on this one.
+*   - TEXT IS A STRING, COUNTED IN ITS UTF-16 UNITS (the owner's ruling 3
+*     of 2026-11-16). Where the reference's lengths, offsets, limits and
+*     room count bytes, the port's count code units, so the two agree
+*     for ASCII and differ for any other text: "é" is one here and two
+*     bytes there. The transcripts are replayed with each of the
+*     reference's bytes as one unit, which holds the port to it on
+*     everything but that count. The functions under `inner` are the
+*     same machine without the checks of what a caller hands in, for the
+*     modules that stand on this one.
 *   - INTEGERS ARE EXACT. A row's integers are held as BigInt. A value is
 *     handed out as a number where every value the row can hold lies
 *     within the exact integers of a double, and as a bigint where one
@@ -76,14 +79,13 @@ TABLE OF CONTENTS
     1.  format, format_quoted
 8.  Reading on a hot path
     1.  cached
-9.  Bytes
-    1.  bytes
+9.  Inner
+    1.  inner
 */
 
 import data from '../../generated/option.js';
 import { format_real } from '../text/real_format.js';
 import { read_real } from '../text/real_read.js';
-import { decode, encode } from '../text/utf8.js';
 import { STATUS, fail, ok } from './option_common.js';
 
 
@@ -369,23 +371,23 @@ export function row_flags(
 
 /*
 cstr
-  A byte string as C reads one handed to it without a length: up to its
+  A string as C reads one handed to it without a length: up to its
 first NUL.
 */
 function cstr(
-    _bytes
+    _text
 )
 {
-    const nul = _bytes.indexOf('\0');
+    const nul = _text.indexOf('\0');
 
-    return (nul < 0) ? _bytes : _bytes.slice(0, nul);
+    return (nul < 0) ? _text : _text.slice(0, nul);
 }
 
 /*
-to_bytes
-  A caller's string as bytes; null for null or undefined.
+to_inner
+  A caller's string, checked to be one; null for null or undefined.
 */
-function to_bytes(
+function to_inner(
     _text,
     _what
 )
@@ -401,7 +403,7 @@ function to_bytes(
         throw new TypeError('option_env: ' + _what + ' is not a string');
     }
 
-    return encode(_text);
+    return _text;
 }
 
 /*
@@ -717,7 +719,7 @@ function compact_text(
              !live.has(cell.text) )
         {
             live.add(cell.text);
-            mark += cell.text.bytes.length + 1;
+            mark += cell.text.chars.length + 1;
         }
     }
 
@@ -774,7 +776,7 @@ function alloc(
  * @param {object} [_room]  how much the frame holds.
  * @param {number} [_room.bindings=Infinity]  bindings.
  * @param {number} [_room.vars=Infinity]      variables it declares.
- * @param {number} [_room.text=Infinity]      bytes of text it keeps
+ * @param {number} [_room.text=Infinity]      units of text it keeps
  *        copies of, each with a terminator, as the reference counts them.
  * @returns {option_env} the frame.
  */
@@ -839,14 +841,14 @@ function normal_names(
                                          : Math.min(_count, _names.length);
 
     return _names.slice(0, count).map((_name) => ({
-        name:  to_bytes(_name.name, 'a named value\'s name'),
+        name:  to_inner(_name.name, 'a named value\'s name'),
         value: to_int64(_name.value, 'a named value')
     }));
 }
 
 /*
 normalize
-  A caller's row as the machine holds it: text as bytes, integers as
+  A caller's row as the machine holds it: text checked, integers as
 BigInt, and every member the reference's struct has.
 */
 function normalize(
@@ -894,13 +896,13 @@ function normalize(
 
     return {
         row:           _row,
-        name:          to_bytes(_row.name, 'name'),
-        help:          to_bytes(_row.help, 'help'),
-        alias:         to_bytes(_row.alias, 'alias'),
-        knob:          to_bytes(_row.knob, 'knob'),
+        name:          to_inner(_row.name, 'name'),
+        help:          to_inner(_row.help, 'help'),
+        alias:         to_inner(_row.alias, 'alias'),
+        knob:          to_inner(_row.knob, 'knob'),
         names:         names,
         unbuilt:       unbuilt,
-        text:          to_bytes(_row.text, 'text'),
+        text:          to_inner(_row.text, 'text'),
         integer:       to_int64(_row.integer ?? 0, 'integer'),
         minimum:       to_int64(_row.minimum ?? INT64_MIN, 'minimum'),
         maximum:       to_int64(_row.maximum ?? INT64_MAX, 'maximum'),
@@ -1152,7 +1154,7 @@ export function set_scopes(
         return fail(STATUS.INVALID_ARGUMENT);
     }
 
-    _env.scopes = _names.map((_name) => to_bytes(_name, 'a scope\'s name'));
+    _env.scopes = _names.map((_name) => to_inner(_name, 'a scope\'s name'));
     ++_env.generation;
 
     return ok(make_id(_env.depth, 1));
@@ -1230,7 +1232,7 @@ export function set_name(
     _name
 )
 {
-    const name = to_bytes(_name, 'the name');
+    const name = to_inner(_name, 'the name');
 
     if ( !is_env(_env) ||
          ( (name !== null) &&
@@ -1329,7 +1331,7 @@ export function root(
 
 /**
  * A frame's name. The reference reads the frame's member; a frame here
- * holds its name in bytes, so this hands it out.
+ * holds its name itself, so this hands it out.
  *
  * @param {?option_env} _env  the frame.
  * @returns {?string} the name; null for none, and for no frame.
@@ -1339,7 +1341,7 @@ export function name(
 )
 {
     return ( is_env(_env) &&
-             (_env.name !== null) ) ? decode(_env.name) : null;
+             (_env.name !== null) ) ? _env.name : null;
 }
 
 
@@ -1464,7 +1466,7 @@ export function var_frame(
     return at_depth(_env, _var >>> DEPTH_SHIFT);
 }
 
-function scope_name_bytes(
+function scope_name_inner(
     _env,
     _scope
 )
@@ -1494,12 +1496,12 @@ export function scope_name(
     _scope
 )
 {
-    const name = scope_name_bytes(_env, _scope);
+    const name = scope_name_inner(_env, _scope);
 
-    return (name !== null) ? decode(name) : null;
+    return (name !== null) ? name : null;
 }
 
-function find_bytes(
+function find_inner(
     _env,
     _name
 )
@@ -1537,10 +1539,10 @@ export function find(
     _name
 )
 {
-    return find_bytes(_env, to_bytes(_name, 'the name'));
+    return find_inner(_env, to_inner(_name, 'the name'));
 }
 
-function find_scope_bytes(
+function find_scope_inner(
     _env,
     _name
 )
@@ -1577,7 +1579,7 @@ export function find_scope(
     _name
 )
 {
-    return find_scope_bytes(_env, to_bytes(_name, 'the name'));
+    return find_scope_inner(_env, to_inner(_name, 'the name'));
 }
 
 /*
@@ -1597,7 +1599,7 @@ function unqualify(
              _name.startsWith(_env.name) ) ? _name.slice(own + 1) : _name;
 }
 
-function resolve_bytes(
+function resolve_inner(
     _env,
     _name
 )
@@ -1613,17 +1615,17 @@ function resolve_bytes(
 
     if (dot < 0)
     {
-        return { ...find_bytes(_env, name), scope: GLOBAL };
+        return { ...find_inner(_env, name), scope: GLOBAL };
     }
 
-    const scope = find_scope_bytes(_env, name.slice(0, dot));
+    const scope = find_scope_inner(_env, name.slice(0, dot));
 
     if (!scope.is_ok)
     {
         return { ...scope, scope: GLOBAL };
     }
 
-    return { ...find_bytes(_env, name.slice(dot + 1)), scope: scope.value };
+    return { ...find_inner(_env, name.slice(dot + 1)), scope: scope.value };
 }
 
 /**
@@ -1641,10 +1643,10 @@ export function resolve(
     _name
 )
 {
-    return resolve_bytes(_env, to_bytes(_name, 'the name'));
+    return resolve_inner(_env, to_inner(_name, 'the name'));
 }
 
-function distance_bytes(
+function distance_inner(
     _name,
     _text
 )
@@ -1718,7 +1720,7 @@ function nearest(
             const name = _scopes        ? f.scopes[i]
                        : ((i % 2) === 0) ? f.vars[i >> 1].name
                        : f.vars[i >> 1].alias;
-            const far  = (name !== null) ? distance_bytes(name, _text) : 9;
+            const far  = (name !== null) ? distance_inner(name, _text) : 9;
 
             if (far < most)
             {
@@ -1739,15 +1741,15 @@ function nearest(
  *
  * @param {string} _name  the name.
  * @param {string} _text  the text.
- * @returns {number} the distance; 9 where either is longer than 63 bytes.
+ * @returns {number} the distance; 9 where either is longer than 63 units.
  */
 export function distance(
     _name,
     _text
 )
 {
-    const name = to_bytes(_name, 'the name');
-    const text = to_bytes(_text, 'the text');
+    const name = to_inner(_name, 'the name');
+    const text = to_inner(_text, 'the text');
 
     if ( (name === null) ||
          (text === null) )
@@ -1755,10 +1757,10 @@ export function distance(
         return 9;
     }
 
-    return distance_bytes(cstr(name), text);
+    return distance_inner(cstr(name), text);
 }
 
-function suggest_bytes(
+function suggest_inner(
     _env,
     _name
 )
@@ -1773,7 +1775,7 @@ function suggest_bytes(
     const dot  = name.indexOf('.');
 
     if ( (dot >= 0) &&
-         !find_scope_bytes(_env, name.slice(0, dot)).is_ok )
+         !find_scope_inner(_env, name.slice(0, dot)).is_ok )
     {
         return nearest(_env, name.slice(0, dot), true);
     }
@@ -1801,9 +1803,9 @@ export function suggest(
     _name
 )
 {
-    const name = suggest_bytes(_env, to_bytes(_name, 'the name'));
+    const name = suggest_inner(_env, to_inner(_name, 'the name'));
 
-    return (name !== null) ? decode(name) : null;
+    return (name !== null) ? name : null;
 }
 
 
@@ -1832,7 +1834,7 @@ function read(
             break;
 
         case KIND.TEXT:
-            _value.text = (_cell.text !== null) ? _cell.text.bytes : null;
+            _value.text = (_cell.text !== null) ? _cell.text.chars : null;
             break;
 
         default:
@@ -1956,10 +1958,10 @@ function name_value(
 }
 
 /*
-get_bytes
-  d_option_env_get, its value's text in bytes and its integer a BigInt.
+get_inner
+  d_option_env_get, its value's text and its integer a BigInt.
 */
-function get_bytes(
+function get_inner(
     _env,
     _scope,
     _var
@@ -1996,7 +1998,7 @@ function handed(
 )
 {
     return {
-        text:         (_value.text !== null) ? decode(_value.text) : null,
+        text:         (_value.text !== null) ? _value.text : null,
         integer:      _decl.exact ? Number(_value.integer) : _value.integer,
         real:         _value.real,
         kind:         _value.kind,
@@ -2041,7 +2043,7 @@ export function get(
     _var
 )
 {
-    const result = get_bytes(_env, _scope, _var);
+    const result = get_inner(_env, _scope, _var);
 
     return result.is_ok ? { ...ok(_var),
                             got: handed(result.decl, result.got) }
@@ -2062,7 +2064,7 @@ export function bool(
     _var
 )
 {
-    const result = get_bytes(_env, _scope, _var);
+    const result = get_inner(_env, _scope, _var);
 
     return ( result.is_ok                     &&
              (result.got.kind === KIND.BOOL)  &&
@@ -2083,7 +2085,7 @@ export function int(
     _var
 )
 {
-    const result = get_bytes(_env, _scope, _var);
+    const result = get_inner(_env, _scope, _var);
 
     if ( !result.is_ok                    ||
          (result.got.kind === KIND.BOOL)  ||
@@ -2111,7 +2113,7 @@ export function real(
     _var
 )
 {
-    const result = get_bytes(_env, _scope, _var);
+    const result = get_inner(_env, _scope, _var);
 
     return ( result.is_ok &&
              (result.got.kind === KIND.REAL) ) ? result.got.real : 0;
@@ -2132,13 +2134,13 @@ export function text(
     _var
 )
 {
-    const result = get_bytes(_env, _scope, _var);
+    const result = get_inner(_env, _scope, _var);
 
     return ( result.is_ok &&
              ( (result.got.kind === KIND.TEXT)   ||
                (result.got.kind === KIND.CHOICE) ||
                (result.got.kind === KIND.INT) )  &&
-             (result.got.text !== null) ) ? decode(result.got.text) : null;
+             (result.got.text !== null) ) ? result.got.text : null;
 }
 
 /**
@@ -2155,7 +2157,7 @@ export function source(
     _var
 )
 {
-    const result = get_bytes(_env, _scope, _var);
+    const result = get_inner(_env, _scope, _var);
 
     return result.is_ok ? result.got.source : -1;
 }
@@ -2220,11 +2222,11 @@ export function scope_is_bound(
 }
 
 /*
-layers_bytes
-  d_option_env_layers, each layer's value in bytes; null for the
+layers_inner
+  d_option_env_layers, each layer's value; null for the
 reference's (size_t)-1.
 */
-function layers_bytes(
+function layers_inner(
     _env,
     _scope,
     _var,
@@ -2311,7 +2313,7 @@ export function layers(
     _capacity = 64
 )
 {
-    const found = layers_bytes(_env, _scope, _var, _capacity);
+    const found = layers_inner(_env, _scope, _var, _capacity);
 
     if (found === null)
     {
@@ -2504,7 +2506,7 @@ function borrowed(
     _text
 )
 {
-    return (_text !== null) ? { bytes: cstr(_text), arena: false } : null;
+    return (_text !== null) ? { chars: cstr(_text), arena: false } : null;
 }
 
 // 5.1
@@ -2597,10 +2599,10 @@ export function set_text(
 )
 {
     return bind(_env, _scope, _var, SOURCE.PROGRAM, KIND.TEXT,
-                { text: borrowed(to_bytes(_value, 'the value')) });
+                { text: borrowed(to_inner(_value, 'the value')) });
 }
 
-function set_value_bytes(
+function set_value_inner(
     _env,
     _scope,
     _var,
@@ -2667,17 +2669,17 @@ export function set_value(
         return fail(STATUS.INVALID_ARGUMENT);
     }
 
-    return set_value_bytes(_env, _scope, _var, _source, {
+    return set_value_inner(_env, _scope, _var, _source, {
         kind:         _value.kind,
         integer:      to_int64(_value.integer ?? 0, 'the value\'s integer'),
         real:         _value.real ?? 0,
-        text:         to_bytes(_value.text, 'the value\'s text')
+        text:         to_inner(_value.text, 'the value\'s text')
     });
 }
 
 /*
 text_copy
-  Binds a TEXT to a copy of bytes the frame keeps.
+  Binds a TEXT to a copy of text the frame keeps.
 */
 function text_copy(
     _env,
@@ -2710,7 +2712,7 @@ function text_copy(
     }
 
     return bind(_env, _scope, _var, _source, KIND.TEXT,
-                { text: { bytes: cstr(_value), arena: true } });
+                { text: { chars: cstr(_value), arena: true } });
 }
 
 /**
@@ -2731,7 +2733,7 @@ export function set_text_copy(
     _value
 )
 {
-    return text_copy(_env, _scope, _var, to_bytes(_value, 'the value') ?? '',
+    return text_copy(_env, _scope, _var, to_inner(_value, 'the value') ?? '',
                      SOURCE.PROGRAM);
 }
 
@@ -3036,7 +3038,7 @@ function read_flags(
          ( (_text[0] === '+') ||
            (_text[0] === '-') ) )
     {
-        const now = get_bytes(_env, _scope, _var);
+        const now = get_inner(_env, _scope, _var);
 
         value = now.is_ok ? now.got.integer : 0n;
     }
@@ -3152,11 +3154,11 @@ function assign_value(
     value.text = null;
 
     return (status === STATUS.OK)
-               ? set_value_bytes(_env, _scope, _var, _source, value)
+               ? set_value_inner(_env, _scope, _var, _source, value)
                : fail(status);
 }
 
-function assign_from_bytes(
+function assign_from_inner(
     _env,
     _name,
     _value,
@@ -3171,7 +3173,7 @@ function assign_from_bytes(
         return fail(STATUS.INVALID_ARGUMENT);
     }
 
-    const found = resolve_bytes(_env, _name);
+    const found = resolve_inner(_env, _name);
 
     if (!found.is_ok)
     {
@@ -3209,8 +3211,8 @@ export function assign_from(
     _source
 )
 {
-    return assign_from_bytes(_env, to_bytes(_name, 'the name'),
-                             to_bytes(_value, 'the value') ?? '', _source);
+    return assign_from_inner(_env, to_inner(_name, 'the name'),
+                             to_inner(_value, 'the value') ?? '', _source);
 }
 
 /**
@@ -3232,7 +3234,7 @@ export function assign(
 
 /*
 escape
-  One escape of a quoted value, after its backslash: the byte it stands
+  One escape of a quoted value, after its backslash: the unit it stands
 for, and how far it reached; null for one that is none.
 */
 function escape(
@@ -3242,13 +3244,13 @@ function escape(
 {
     switch (_text[_at])
     {
-        case '"':  return { byte: '"', at: _at };
-        case '\\': return { byte: '\\', at: _at };
-        case '\'': return { byte: '\'', at: _at };
-        case 'n':  return { byte: '\n', at: _at };
-        case 'r':  return { byte: '\r', at: _at };
-        case 't':  return { byte: '\t', at: _at };
-        case '0':  return { byte: '\0', at: _at };
+        case '"':  return { unit: '"', at: _at };
+        case '\\': return { unit: '\\', at: _at };
+        case '\'': return { unit: '\'', at: _at };
+        case 'n':  return { unit: '\n', at: _at };
+        case 'r':  return { unit: '\r', at: _at };
+        case 't':  return { unit: '\t', at: _at };
+        case '0':  return { unit: '\0', at: _at };
         case 'x':  break;
         default:   return null;
     }
@@ -3266,7 +3268,7 @@ function escape(
         return null;
     }
 
-    return { byte: String.fromCharCode(Number(code) & 0xFF), at: _at + 2 };
+    return { unit: String.fromCharCode(Number(code) & 0xFF), at: _at + 2 };
 }
 
 function unescape(
@@ -3289,7 +3291,7 @@ function unescape(
                 return null;
             }
 
-            c = read_.byte;
+            c = read_.unit;
             i = read_.at;
         }
 
@@ -3329,7 +3331,7 @@ function quoted(
         }
 
         return bind(_env, _scope, _var, _source, KIND.TEXT,
-                    { text: { bytes: cstr(plain), arena: true } });
+                    { text: { chars: cstr(plain), arena: true } });
     }
 
     const plain = (_text.length > SCRATCH) ? null : unescape(_text);
@@ -3428,7 +3430,7 @@ function statement(
         ++at;
     }
 
-    const found = resolve_bytes(_env, text_.slice(unset_, at));
+    const found = resolve_inner(_env, text_.slice(unset_, at));
 
     while ( (at < size) &&
             is_space(text_[at]) )
@@ -3446,7 +3448,7 @@ function statement(
                _source);
 }
 
-function put_n_from_bytes(
+function put_n_from_inner(
     _env,
     _statement,
     _source
@@ -3483,9 +3485,9 @@ export function put_from(
     _source
 )
 {
-    const text_ = to_bytes(_statement, 'the statement');
+    const text_ = to_inner(_statement, 'the statement');
 
-    return put_n_from_bytes(_env, (text_ !== null) ? cstr(text_) : null,
+    return put_n_from_inner(_env, (text_ !== null) ? cstr(text_) : null,
                             _source);
 }
 
@@ -3519,11 +3521,11 @@ export function put_n_from(
     _source
 )
 {
-    return put_n_from_bytes(_env, to_bytes(_statement, 'the statement') ?? '',
+    return put_n_from_inner(_env, to_inner(_statement, 'the statement') ?? '',
                             _source);
 }
 
-function statement_end_bytes(
+function statement_end_inner(
     _script,
     _at
 )
@@ -3561,21 +3563,21 @@ function statement_end_bytes(
  * line break or '#' outside double quotes, or the script's end.
  *
  * @param {string} _script  the script.
- * @param {number} _at      where the statement starts, in bytes of the
- *        script's UTF-8 (src/text/utf8.js, `byte_offset`).
- * @returns {number} the offset of its end, in bytes.
+ * @param {number} _at      where the statement starts, an index into the
+ *        script.
+ * @returns {number} the index of its end.
  */
 export function statement_end(
     _script,
     _at
 )
 {
-    const script = to_bytes(_script, 'the script');
+    const script = to_inner(_script, 'the script');
 
-    return (script !== null) ? statement_end_bytes(cstr(script), _at) : _at;
+    return (script !== null) ? statement_end_inner(cstr(script), _at) : _at;
 }
 
-function load_from_bytes(
+function load_from_inner(
     _env,
     _script,
     _source
@@ -3597,7 +3599,7 @@ function load_from_bytes(
     {
         const start = at;
 
-        at = statement_end_bytes(_script, at);
+        at = statement_end_inner(_script, at);
 
         const trimmed = trim(_script.slice(start, at));
 
@@ -3642,9 +3644,7 @@ function load_from_bytes(
  * @param {number}     _source  the source; any but DEFAULT.
  * @returns {option_result & {error_offset?: number}} how many statements
  *          were carried out; or the refusal, with in `error_offset` where
- *          the refused statement starts, in bytes of the script's UTF-8,
- *          as the reference reports it (src/text/utf8.js, `string_index`,
- *          gives the index into the string).
+ *          the refused statement starts, an index into the script.
  */
 export function load_from(
     _env,
@@ -3652,9 +3652,9 @@ export function load_from(
     _source
 )
 {
-    const script = to_bytes(_script, 'the script');
+    const script = to_inner(_script, 'the script');
 
-    return load_from_bytes(_env, (script !== null) ? cstr(script) : null,
+    return load_from_inner(_env, (script !== null) ? cstr(script) : null,
                            _source);
 }
 
@@ -3675,8 +3675,8 @@ export function load(
 
 /*
 lookup_of
-  An environment as a function from a variable's name in bytes to its value
-in bytes, or null: from a Map, an object or a function of strings.
+  An environment as a function from a variable's name to its value, or
+null: from a Map, an object or a function of strings.
 */
 function lookup_of(
     _environment
@@ -3695,9 +3695,9 @@ function lookup_of(
 
     return (_key) =>
     {
-        const value = ask(decode(_key));
+        const value = ask(_key);
 
-        return (typeof value === 'string') ? cstr(encode(value)) : null;
+        return (typeof value === 'string') ? cstr(value) : null;
     };
 }
 
@@ -3731,7 +3731,7 @@ function getenv(
     return _lookup(key);
 }
 
-function import_bytes(
+function import_inner(
     _env,
     _prefix,
     _lookup
@@ -3751,7 +3751,7 @@ function import_bytes(
     {
         const id   = var_id(_env, k);
         const decl = decl_of(_env, id);
-        const seen = find_bytes(_env, decl.name);
+        const seen = find_inner(_env, decl.name);
         let   value = getenv(_lookup, _prefix, decl.name);
 
         // a variable an inner frame's hides is not read
@@ -3810,7 +3810,7 @@ export function import_(
     _environment
 )
 {
-    return import_bytes(_env, cstr(to_bytes(_prefix, 'the prefix') ?? ''),
+    return import_inner(_env, cstr(to_inner(_prefix, 'the prefix') ?? ''),
                         lookup_of(_environment));
 }
 
@@ -3935,13 +3935,13 @@ function format_value(
     }
 }
 
-function format_bytes(
+function format_inner(
     _env,
     _scope,
     _var
 )
 {
-    const result = get_bytes(_env, _scope, _var);
+    const result = get_inner(_env, _scope, _var);
 
     return result.is_ok ? format_value(result.decl, result.got) : null;
 }
@@ -4003,20 +4003,20 @@ function append_quoted(
     return out + '"';
 }
 
-function format_quoted_bytes(
+function format_quoted_inner(
     _env,
     _scope,
     _var
 )
 {
-    const result = get_bytes(_env, _scope, _var);
+    const result = get_inner(_env, _scope, _var);
 
     if ( !result.is_ok                    ||
          (result.got.kind !== KIND.TEXT)  ||
          (result.got.text === null)       ||
          !needs_quotes(result.got.text) )
     {
-        return format_bytes(_env, _scope, _var);
+        return format_inner(_env, _scope, _var);
     }
 
     return append_quoted(result.got.text);
@@ -4043,9 +4043,9 @@ export function format(
     _var
 )
 {
-    const out = format_bytes(_env, _scope, _var);
+    const out = format_inner(_env, _scope, _var);
 
-    return (out !== null) ? decode(out) : null;
+    return (out !== null) ? out : null;
 }
 
 /**
@@ -4065,9 +4065,9 @@ export function format_quoted(
     _var
 )
 {
-    const out = format_quoted_bytes(_env, _scope, _var);
+    const out = format_quoted_inner(_env, _scope, _var);
 
-    return (out !== null) ? decode(out) : null;
+    return (out !== null) ? out : null;
 }
 
 
@@ -4122,37 +4122,36 @@ export function cached(
 
 
 //==============================================================================
-// 9.  BYTES
+// 9.  INNER
 //==============================================================================
 
 // 9.1
 /**
- * The machine without the change to strings: each takes and gives byte
- * strings (src/text/utf8.js), and integers as BigInt. For the modules that
- * stand on this one and count bytes themselves -- the registry, the djin
- * writers, the program's commands. `decl` gives a variable's row as the
- * machine holds it.
+ * The machine without its checks of what a caller hands in: each takes
+ * strings as they are, and integers as BigInt. For the modules that stand
+ * on this one -- the registry, the djin writers, the program's commands.
+ * `decl` gives a variable's row as the machine holds it.
  */
-export const bytes = Object.freeze({
+export const inner = Object.freeze({
     cstr:          cstr,
     decl:          (_env, _var) => (is_env(_env) ? decl_of(_env, _var)
                                                  : null),
     is_identifier: is_identifier,
-    find:          find_bytes,
-    find_scope:    find_scope_bytes,
-    resolve:       resolve_bytes,
-    distance:      distance_bytes,
-    suggest:       suggest_bytes,
-    scope_name:    scope_name_bytes,
-    get:           get_bytes,
-    layers:        layers_bytes,
-    assign_from:   assign_from_bytes,
-    put_n_from:    put_n_from_bytes,
-    load_from:     load_from_bytes,
-    statement_end: statement_end_bytes,
-    import:        import_bytes,
+    find:          find_inner,
+    find_scope:    find_scope_inner,
+    resolve:       resolve_inner,
+    distance:      distance_inner,
+    suggest:       suggest_inner,
+    scope_name:    scope_name_inner,
+    get:           get_inner,
+    layers:        layers_inner,
+    assign_from:   assign_from_inner,
+    put_n_from:    put_n_from_inner,
+    load_from:     load_from_inner,
+    statement_end: statement_end_inner,
+    import:        import_inner,
     lookup_of:     lookup_of,
-    format:        format_bytes,
-    format_quoted: format_quoted_bytes,
+    format:        format_inner,
+    format_quoted: format_quoted_inner,
     format_value:  format_value
 });

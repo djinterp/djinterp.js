@@ -22,7 +22,6 @@ import { STATUS, fail, ok, result_status, status_is_mechanical,
          status_message, status_name }
     from '../../src/option/option_common.js';
 import * as option_env from '../../src/option/option_env.js';
-import { string_index } from '../../src/text/utf8.js';
 
 const { GLOBAL, KIND, SOURCE } = option_env;
 
@@ -287,7 +286,7 @@ test('the environment is a Map, an object or a function', () =>
     assert.equal(option_env.import, option_env.import_);
 });
 
-test('a script\'s refusal is reported in bytes, as the reference\'s is',
+test('a script\'s refusal is reported as an index into the script',
      () =>
 {
     const { env } = frame_of([option_env.row_text('title', null),
@@ -296,13 +295,19 @@ test('a script\'s refusal is reported in bytes, as the reference\'s is',
     const script  = 'title = €€; width = 5';
     const loaded  = option_env.load(env, script);
 
-    // two characters of three bytes each: the refused statement starts 12
-    // into the string and 16 into its bytes
+    // the reference, counting bytes, says 16 for the same script: each
+    // euro sign is three bytes there and one unit here (ruling 3)
     assert.equal(loaded.error, STATUS.INVALID_ARGUMENT);
-    assert.equal(loaded.error_offset, 16);
+    assert.equal(loaded.error_offset, 12);
     assert.equal(script.indexOf('width'), 12);
-    assert.equal(string_index(script, loaded.error_offset), 12);
-    assert.equal(option_env.statement_end(script, 0), 14);
+    assert.equal(option_env.statement_end(script, 0), script.indexOf(';'));
+
+    // a character outside the first plane is two units
+    const far = option_env.load(env, 'title = \u{1F600}; width = 5');
+
+    assert.equal(far.error_offset, 12);
+    assert.equal(option_env.text(env, GLOBAL, 0), '\u{1F600}');
+    assert.equal(option_env.format(env, GLOBAL, 0).length, 2);
 });
 
 test('cached reads again only when the generation has moved', () =>
