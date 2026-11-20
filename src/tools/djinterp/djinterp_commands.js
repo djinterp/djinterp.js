@@ -45,6 +45,7 @@ import * as optionEnv from '../../option/option_env.js';
 import * as optionEnvRegistry from '../../option/option_env_registry.js';
 import { formatReal } from '../../text/real_format.js';
 import * as cliSettings from '../cli/cli_settings.js';
+import { cutAt } from '../../text/cut.js';
 
 // the types of other modules that this one's comments name
 /** @import { DjinSet } from '../../modules/interp/djin.js' */
@@ -313,7 +314,7 @@ function valueText(
             break;
     }
 
-    return out.slice(0, ROOM - 1);
+    return cutAt(out, ROOM - 1);
 }
 
 /*
@@ -367,21 +368,21 @@ function getOne(
                                  _setting.var).got;
     const unset    = ( (_setting.decl.kind === KIND.TEXT) &&
                        (inForce.text === null) );
-    const value    = envInner.formatQuoted(_setting.frame, _setting.scope,
-                                           _setting.var)
-                        .slice(0, ROOM - 1);
+    const value    = cutAt(envInner.formatQuoted(_setting.frame,
+                                                 _setting.scope,
+                                                 _setting.var), ROOM - 1);
     const room     = ROOM * 2;
-    let   line     = (unset ? ('# ' + _name + ' is unset')
-                            : (_name + ' = ' + value)).slice(0, room - 1);
+    let   line     = cutAt(unset ? ('# ' + _name + ' is unset')
+                                 : (_name + ' = ' + value), room - 1);
 
     if (_origin)
     {
-        line = (line + '  (' +
-                (inForce.bound ? sourceWord(inForce.source)
-                               : (_setting.decl.knob !== null)
-                                     ? _setting.decl.knob
-                                     : 'default') +
-                ')').slice(0, room - 2);
+        line = cutAt(line + '  (' +
+                     (inForce.bound ? sourceWord(inForce.source)
+                                    : (_setting.decl.knob !== null)
+                                          ? _setting.decl.knob
+                                          : 'default') +
+                     ')', room - 2);
     }
 
     return line + '\n' +
@@ -495,7 +496,7 @@ function bind(
         {
             report(_run, cliSettings.why(_run.program.registry,
                                          resultStatus(bound), name,
-                                         value.slice(0, ROOM - 1), ROOM));
+                                         cutAt(value, ROOM - 1), ROOM));
             held = false;
         }
     }
@@ -583,9 +584,10 @@ function compose(
     {
         const setting = find(_registry, name);
         const text    = name + ' = ' +
-                        envInner.formatQuoted(setting.frame, setting.scope,
-                                              setting.var)
-                            .slice(0, ROOM - 1) + '\n';
+                        cutAt(envInner.formatQuoted(setting.frame,
+                                                    setting.scope,
+                                                    setting.var),
+                              ROOM - 1) + '\n';
 
         if (text.length >= capacity - out.length)
         {

@@ -47,6 +47,7 @@ import data from '../../../generated/option.js';
 import { formatReal } from '../../text/real_format.js';
 import * as optionEnv from '../../option/option_env.js';
 import * as optionEnvRegistry from '../../option/option_env_registry.js';
+import { cutAt } from '../../text/cut.js';
 
 // the types of other modules that this one's comments name
 /** @import { OptionEnv } from '../../option/option_env.js' */
@@ -501,7 +502,7 @@ function cut(
 )
 {
     return (_text.length >= _capacity)
-               ? (_text.slice(0, _capacity - 4) + '...')
+               ? (cutAt(_text, _capacity - 4) + '...')
                : _text;
 }
 

@@ -45,6 +45,7 @@ import { STATUS, resultStatus, statusName }
     from '../../option/option_common.js';
 import * as optionEnv from '../../option/option_env.js';
 import * as optionEnvRegistry from '../../option/option_env_registry.js';
+import { cutAt } from '../../text/cut.js';
 
 // the types of other modules that this one's comments name
 /** @import { OptionEnvRegistry } from '../../option/option_env_registry.js' */
@@ -83,7 +84,7 @@ export function why(
     _capacity = ROOM
 )
 {
-    const shown = _name.slice(0, ROOM);
+    const shown = cutAt(_name, ROOM);
     let   out;
 
     if (_status === STATUS.KEY_ABSENT)
@@ -111,7 +112,7 @@ export function why(
               statusName(_status) + ')';
     }
 
-    return out.slice(0, _capacity - 1);
+    return cutAt(out, _capacity - 1);
 }
 
 
