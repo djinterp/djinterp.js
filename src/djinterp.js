@@ -52,7 +52,7 @@
 * path:      /src/djinterp.js
 * link(s):   TBA
 * author(s): Samuel 'teer' Neal-Blim                         created: 2026.11.15
-*                                                            revised: 2026.11.18
+*                                                            revised: 2026.11.20
 *******************************************************************************/
 
 /*
@@ -86,6 +86,10 @@ import * as djinterpCommands from './tools/djinterp/djinterp_commands.js';
 // the types of other modules that this one's comments name
 /** @import { DjinRecord } from './modules/interp/djin.js' */
 /** @import { DjinSet } from './modules/interp/djin.js' */
+/**
+ * @import { EventDispatcher }
+ *         from './event/event_dispatcher_common.js'
+ */
 /**
  * @import { DjinterpProgram }
  *         from './tools/djinterp/djinterp_commands.js'
@@ -412,6 +416,158 @@ const RUN_SOURCES = [optionEnv.SOURCE.ENVIRONMENT, optionEnv.SOURCE.FILE,
                      optionEnv.SOURCE.COMMAND_LINE,
                      optionEnv.SOURCE.OVERRIDE];
 
+/**
+ * sessionStart
+ *   The program's start, as each process of the reference's starts:
+ * nothing bound but what the page bound at the program's standing, then
+ * the environment, the settings file, and the query as the command line.
+ *
+ * @param {DjinterpProgram} _program  the program.
+ * @param {?string}         _query    the query bound as the command line,
+ *        or null.
+ * @returns {{said: string, asked: string}} what was said of the
+ *          environment and the settings file, and of the query.
+ */
+function sessionStart(
+    _program,
+    _query
+)
+{
+    const registry = _program.registry;
+    const frames   = [optionEnvRegistry.frame(registry)];
+
+    for (let i = 0; i < optionEnvRegistry.count(registry); ++i)
+    {
+        frames.push(optionEnvRegistry.at(registry, i));
+    }
+
+    for (const frame of frames)
+    {
+        // a registry has every frame it counts
+        if (frame === null)
+        {
+            continue;
+        }
+
+        for (const source of RUN_SOURCES)
+        {
+            optionEnv.unsetSource(frame, source);
+        }
+    }
+
+    const asked = (_query !== null) ? takeQuery(_program, _query) : '';
+
+    // the query is the command line's, and is coloured as its settings
+    // are, before its options are read
+    return { said:  djinterpCommands.programStart(_program),
+             asked: _program.colour ? djinterpCommands.coloured(asked)
+                                    : asked };
+}
+
+/**
+ * sessionRun
+ *   A session's `runNow`: one command line, run from the program's start,
+ * with its events posted.
+ *
+ * @param {DjinterpProgram} _program  the program.
+ * @param {?string}         _query    the query bound as the command line,
+ *        or null.
+ * @param {EventDispatcher} _events   the session's events.
+ * @param {*}               _line     a line, or an array of its words;
+ *        anything else is a TypeError.
+ * @returns {DjinterpReply}
+ */
+function sessionRun(
+    _program,
+    _query,
+    _events,
+    _line
+)
+{
+    const line  = (typeof _line === 'string') ? _line : null;
+    const given = ( Array.isArray(_line) &&
+                    _line.every((_word) => (typeof _word === 'string')) );
+
+    if ( (line === null) &&
+         !given )
+    {
+        throw new TypeError('run: neither a line nor an array of words');
+    }
+
+    const words = (line !== null) ? split(line) : [..._line];
+    let   ran;
+
+    // an unclosed quote is found before the program starts
+    if (words === null)
+    {
+        const said = _program.name + ': error: a quote is not closed\n';
+
+        ran = { status: djinterpCommands.EXIT.TROUBLE, out: '',
+                err:    _program.colour ? djinterpCommands.coloured(said)
+                                        : said,
+                set:    [] };
+    }
+    else
+    {
+        const began = sessionStart(_program, _query);
+
+        ran     = djinterpCommands.programRun(_program,
+                                              [_program.name, ...words]);
+        ran.err = began.said + ran.err;
+    }
+
+    const reply = { status: ran.status, out: ran.out, err: ran.err };
+
+    if (ran.set.length !== 0)
+    {
+        event.dispatcherFire(_events, event.keyOfName('djinterp.set'),
+                             { names: ran.set });
+    }
+
+    event.dispatcherFire(_events, event.keyOfName('djinterp.run'),
+                         { line: line, words: words, ...reply });
+
+    return reply;
+}
+
+/**
+ * sessionOn
+ *   A session's `on`: a handler bound to an event's name, which lets the
+ * event pass on where it gives nothing.
+ *
+ * @param {EventDispatcher} _events   the session's events.
+ * @param {*}               _name     the event's name; anything but a
+ *        string is a TypeError.
+ * @param {*}               _handler  the handler; anything but a function
+ *        is a TypeError.
+ * @returns {number} the id `off` takes.
+ */
+function sessionOn(
+    _events,
+    _name,
+    _handler
+)
+{
+    if ( (typeof _name !== 'string') ||
+         (typeof _handler !== 'function') )
+    {
+        throw new TypeError('on: a name and a function are needed');
+    }
+
+    return event.dispatcherBind(
+               _events, event.keyOfName(_name),
+               event.stepMake((_payload) =>
+               {
+                   const verdict = /** @type {number | undefined} */
+                                   (_handler(_payload));
+
+                   return event.verdictIsConsumed(verdict ??
+                                                  event.VERDICT.PASS)
+                              ? event.VERDICT.CONSUME
+                              : event.VERDICT.PASS;
+               })).id;
+}
+
 // 4.1
 /**
  * Opens a session over a program already made
@@ -434,48 +590,7 @@ export function openProgram(
     const events  = event.dispatcherInit();
     const query   = (typeof _options.query === 'string') ? _options.query
                                                          : null;
-
-    /*
-    start
-      The program's start, as each process of the reference's starts:
-    nothing bound but what the page bound at the program's standing, then
-    the environment, the settings file, and the query as the command
-    line. Gives what was said of the first two, and of the query.
-    */
-    const start = () =>
-    {
-        const registry = program.registry;
-        const frames   = [optionEnvRegistry.frame(registry)];
-
-        for (let i = 0; i < optionEnvRegistry.count(registry); ++i)
-        {
-            frames.push(optionEnvRegistry.at(registry, i));
-        }
-
-        for (const frame of frames)
-        {
-            // a registry has every frame it counts
-            if (frame === null)
-            {
-                continue;
-            }
-
-            for (const source of RUN_SOURCES)
-            {
-                optionEnv.unsetSource(frame, source);
-            }
-        }
-
-        const asked = (query !== null) ? takeQuery(program, query) : '';
-
-        // the query is the command line's, and is coloured as its
-        // settings are, before its options are read
-        return { said:  djinterpCommands.programStart(program),
-                 asked: program.colour ? djinterpCommands.coloured(asked)
-                                       : asked };
-    };
-
-    const first = start();
+    const first   = sessionStart(program, query);
 
     return {
         registry: program.registry,
@@ -491,79 +606,12 @@ export function openProgram(
 
         runNow(_line)
         {
-            const line  = (typeof _line === 'string') ? _line : null;
-            const given = ( Array.isArray(_line) &&
-                            _line.every((_word) =>
-                                            (typeof _word === 'string')) );
-
-            if ( (line === null) &&
-                 !given )
-            {
-                throw new TypeError('run: neither a line nor an array ' +
-                                    'of words');
-            }
-
-            const words = (line !== null) ? split(line) : [..._line];
-            let   ran;
-
-            // an unclosed quote is found before the program starts
-            if (words === null)
-            {
-                const said = program.name +
-                             ': error: a quote is not closed\n';
-
-                ran = { status: djinterpCommands.EXIT.TROUBLE, out: '',
-                        err:    program.colour
-                                    ? djinterpCommands.coloured(said)
-                                    : said,
-                        set:    [] };
-            }
-            else
-            {
-                const began = start();
-
-                ran     = djinterpCommands.programRun(
-                              program, [program.name, ...words]);
-                ran.err = began.said + ran.err;
-            }
-
-            const reply = { status: ran.status, out: ran.out, err: ran.err };
-
-            if (ran.set.length !== 0)
-            {
-                event.dispatcherFire(events,
-                                     event.keyOfName('djinterp.set'),
-                                     { names: ran.set });
-            }
-
-            event.dispatcherFire(events, event.keyOfName('djinterp.run'),
-                                 { line: line, words: words, ...reply });
-
-            return reply;
+            return sessionRun(program, query, events, _line);
         },
 
         on(_name, _handler)
         {
-            if ( (typeof _name !== 'string') ||
-                 (typeof _handler !== 'function') )
-            {
-                throw new TypeError('on: a name and a function are needed');
-            }
-
-            return event.dispatcherBind(
-                       events, event.keyOfName(_name),
-                       event.stepMake((_payload) =>
-                       {
-                           // a handler that gives nothing lets the event
-                           // pass on
-                           const verdict = /** @type {number | undefined} */
-                                           (_handler(_payload));
-
-                           return event.verdictIsConsumed(
-                                      verdict ?? event.VERDICT.PASS)
-                                      ? event.VERDICT.CONSUME
-                                      : event.VERDICT.PASS;
-                       })).id;
+            return sessionOn(events, _name, _handler);
         },
 
         off(_id)

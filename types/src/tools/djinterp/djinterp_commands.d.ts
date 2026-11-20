@@ -232,6 +232,25 @@ export type DjinterpLine = {
     misplaced: string | null;
 };
 /**
+ * A command line as it is read: the line so far, and where the reading is.
+ */
+export type DjinterpReading = {
+    /**
+     * the line so far.
+     */
+    line: DjinterpLine;
+    /**
+     * where the reading is: 'program' before a command;
+     * 'command' in one; 'operands' after a command's `--` where it
+     * still needs an operand; 'ended' after one where it needs none.
+     */
+    mode: string;
+    /**
+     * whether the program's own `--` has been read.
+     */
+    only: boolean;
+};
+/**
  * What a run of the program comes to.
  */
 export type DjinterpOutcome = {

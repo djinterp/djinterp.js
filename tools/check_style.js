@@ -13,7 +13,8 @@
 * never an inline `import(...)`.
 *   In a module under src/, a function that is not exported has a JSDoc
 * comment that names it on its first line, ` * name`, as the C guide's
-* definitions are named (the owner's ruling D25, 2026-11-17).
+* definitions are named (the owner's ruling D25, 2026-11-17); and no
+* function is past 100 lines, its comment not counted.
 *   A file's table of contents agrees with its body, as the C guide has
 * it: each section's name in capitals with a line of hyphens beneath it,
 * the name and number its divider has, and as many entries as the section
@@ -29,7 +30,7 @@
 * path:      /tools/check_style.js
 * link(s):   TBA
 * author(s): Samuel 'teer' Neal-Blim                         created: 2026.11.15
-*                                                            revised: 2026.11.18
+*                                                            revised: 2026.11.20
 *******************************************************************************/
 
 import { readFileSync, readdirSync, statSync } from 'node:fs';
@@ -170,6 +171,33 @@ for (const path of filesUnder(ROOT))
             {
                 say(file, index + 1, 'function ' + found[1] + ' has no ' +
                     'comment that names it first');
+            }
+        }
+    }
+
+    // a function is at most 100 lines, its comment not counted: from the
+    // line that declares it to its closing brace at the same indent
+    if (/^src\/.*\.js$/.test(file))
+    {
+        const lines = text.split('\n');
+
+        for (const [index, line] of lines.entries())
+        {
+            const found = /^(\s*)(?:export\s+)?(?:async\s+)?function\*?\s+(\w+)/
+                              .exec(line);
+
+            if (found === null)
+            {
+                continue;
+            }
+
+            const close = lines.indexOf(found[1] + '}', index);
+
+            if ( (close >= 0) &&
+                 ((close - index + 1) > 100) )
+            {
+                say(file, index + 1, 'function ' + found[2] + ' is ' +
+                    (close - index + 1) + ' lines, past 100');
             }
         }
     }

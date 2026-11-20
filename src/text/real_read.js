@@ -21,7 +21,7 @@
 * path:      /src/text/real_read.js
 * link(s):   TBA
 * author(s): Samuel 'teer' Neal-Blim                         created: 2026.11.15
-*                                                            revised: 2026.11.17
+*                                                            revised: 2026.11.20
 *******************************************************************************/
 
 /*
@@ -54,6 +54,90 @@ function bitLength(
 )
 {
     return _value.toString(2).length;
+}
+
+/**
+ * scaleOf
+ *   The power of two a fraction is scaled by, `_top` / `_bottom` *
+ * 2^shift, to leave a whole quotient of 53 bits, 2^52 <= q < 2^53; at most
+ * 1074, since a subnormal keeps fewer bits and its last bit is never under
+ * 2^-1074.
+ *
+ * @param {bigint} _top     the fraction's top, more than 0.
+ * @param {bigint} _bottom  its bottom, more than 0.
+ * @returns {number} the shift.
+ */
+function scaleOf(
+    _top,
+    _bottom
+)
+{
+    let shift = 53 - (bitLength(_top) - bitLength(_bottom));
+
+    for (;;)
+    {
+        const quotient = ((shift >= 0) ? (_top << BigInt(shift)) : _top) /
+                         ((shift >= 0) ? _bottom
+                                       : (_bottom << BigInt(-shift)));
+
+        if (quotient >= (1n << 53n))
+        {
+            --shift;
+        }
+        else if (quotient < (1n << 52n))
+        {
+            ++shift;
+        }
+        else
+        {
+            break;
+        }
+    }
+
+    return Math.min(shift, 1074);
+}
+
+/**
+ * doubleOf
+ *   The double `_whole` * 2^`_exponent`, for a whole number at most 2^53
+ * that is the rounded quotient of a scaling: exact, since its bits are
+ * written directly, with no arithmetic that could round again.
+ *
+ * @param {bigint} _whole     the whole number, 0 to 2^53.
+ * @param {number} _exponent  the power of two.
+ * @returns {{value: number, overflow: boolean}} as `nearestDouble` gives.
+ */
+function doubleOf(
+    _whole,
+    _exponent
+)
+{
+    let whole    = _whole;
+    let exponent = _exponent;
+
+    if (whole === 0n)
+    {
+        return { value: 0, overflow: false };
+    }
+
+    // a carry out of 53 bits
+    if (whole === (1n << 53n))
+    {
+        whole = 1n << 52n;
+        ++exponent;
+    }
+
+    if (exponent + 52 > 1023)
+    {
+        return { value: Infinity, overflow: true };
+    }
+
+    const normal = (whole >= (1n << 52n));
+    const biased = normal ? BigInt(exponent + 1075) : 0n;
+
+    SCRATCH.setBigUint64(0, (biased << 52n) | (whole & ((1n << 52n) - 1n)));
+
+    return { value: SCRATCH.getFloat64(0), overflow: false };
 }
 
 // 1.1
@@ -92,88 +176,134 @@ export function nearestDouble(
     }
 
     // the value as a fraction of whole numbers
-    const top    = (_power >= 0) ? (_digits * (10n ** BigInt(_power)))
-                                 : _digits;
-    const bottom = (_power >= 0) ? 1n : (10n ** BigInt(-_power));
-
-    // the power of two that leaves a quotient of 53 bits: 2^52 <= q < 2^53
-    let shift = 53 - (bitLength(top) - bitLength(bottom));
-    let scaled;
-    let quotient;
-
-    for (;;)
-    {
-        scaled   = (shift >= 0) ? (top << BigInt(shift)) : top;
-        quotient = scaled / ((shift >= 0) ? bottom
-                                          : (bottom << BigInt(-shift)));
-
-        if (quotient >= (1n << 53n))
-        {
-            --shift;
-        }
-        else if (quotient < (1n << 52n))
-        {
-            ++shift;
-        }
-        else
-        {
-            break;
-        }
-    }
-
-    // a subnormal keeps fewer bits: the last bit is never under 2^-1074
-    if (shift > 1074)
-    {
-        shift = 1074;
-    }
-
+    const top     = (_power >= 0) ? (_digits * (10n ** BigInt(_power)))
+                                  : _digits;
+    const bottom  = (_power >= 0) ? 1n : (10n ** BigInt(-_power));
+    const shift   = scaleOf(top, bottom);
     const divisor = (shift >= 0) ? bottom : (bottom << BigInt(-shift));
+    const scaled  = (shift >= 0) ? (top << BigInt(shift)) : top;
+    let   whole   = scaled / divisor;
 
-    scaled   = (shift >= 0) ? (top << BigInt(shift)) : top;
-    quotient = scaled / divisor;
-
-    const twice = (scaled - (quotient * divisor)) * 2n;
+    // to nearest, ties to even
+    const twice = (scaled - (whole * divisor)) * 2n;
 
     if ( (twice > divisor) ||
          ( (twice === divisor) &&
-           ((quotient & 1n) === 1n) ) )
+           ((whole & 1n) === 1n) ) )
     {
-        ++quotient;
+        ++whole;
     }
 
-    // quotient * 2^-shift, with quotient at most 2^53: exact in a double
-    if (quotient === 0n)
-    {
-        return { value: 0, overflow: false };
-    }
-
-    let exponent = -shift;
-
-    if (quotient === (1n << 53n))
-    {
-        quotient = 1n << 52n;
-        ++exponent;
-    }
-
-    if (exponent + 52 > 1023)
-    {
-        return { value: Infinity, overflow: true };
-    }
-
-    // the bits, written directly: no arithmetic that could round again
-    const normal = (quotient >= (1n << 52n));
-    const biased = normal ? BigInt(exponent + 1075) : 0n;
-    const bits   = (biased << 52n) | (quotient & ((1n << 52n) - 1n));
-
-    SCRATCH.setBigUint64(0, bits);
-
-    return { value: SCRATCH.getFloat64(0), overflow: false };
+    return doubleOf(whole, -shift);
 }
 
 
 //==============================================================================
 // 2.  READING
 //==============================================================================
+
+/**
+ * isDigitAt
+ *   Whether a text has a decimal digit at an offset.
+ *
+ * @param {string} _text  the text.
+ * @param {number} _at    the offset; past the end is no digit.
+ * @returns {boolean}
+ */
+function isDigitAt(
+    _text,
+    _at
+)
+{
+    return ( (_text.charCodeAt(_at) >= 48) &&
+             (_text.charCodeAt(_at) <= 57) );
+}
+
+/**
+ * wordOf
+ *   A real written as a word, at an offset after any sign: "infinity",
+ * "inf" or "nan", in any case, the longer one first.
+ *
+ * @param {string}  _text      the text.
+ * @param {number}  _at        where the word would start.
+ * @param {boolean} _negative  whether a '-' came before it.
+ * @returns {?{length: number, value: number, overflow: boolean}} as
+ *          `readReal` gives; null where no word is there.
+ */
+function wordOf(
+    _text,
+    _at,
+    _negative
+)
+{
+    const word = _text.slice(_at, _at + 8).toLowerCase();
+
+    if (word === 'infinity')
+    {
+        return { length: _at + 8, value: _negative ? -Infinity : Infinity,
+                 overflow: false };
+    }
+
+    if (word.startsWith('inf'))
+    {
+        return { length: _at + 3, value: _negative ? -Infinity : Infinity,
+                 overflow: false };
+    }
+
+    if (word.startsWith('nan'))
+    {
+        return { length: _at + 3, value: NaN, overflow: false };
+    }
+
+    return null;
+}
+
+/**
+ * exponentOf
+ *   An exponent at an offset, where it is whole: 'e' or 'E', a sign or
+ * none, and at least one digit. Where it is not whole, none is read.
+ *
+ * @param {string} _text  the text.
+ * @param {number} _at    where the 'e' would be.
+ * @returns {{power: number, end: number}} the power of ten, 0 where none
+ *          was read, and where the reading ends.
+ */
+function exponentOf(
+    _text,
+    _at
+)
+{
+    if ( (_text[_at] !== 'e') &&
+         (_text[_at] !== 'E') )
+    {
+        return { power: 0, end: _at };
+    }
+
+    let       after = _at + 1;
+    const     minus = (_text[after] === '-');
+    let       value = 0;
+
+    if ( minus ||
+         (_text[after] === '+') )
+    {
+        ++after;
+    }
+
+    if (!isDigitAt(_text, after))
+    {
+        return { power: 0, end: _at };
+    }
+
+    while (isDigitAt(_text, after))
+    {
+        // past any double's reach the exact number does not matter
+        value = Math.min((value * 10) + (_text.charCodeAt(after) - 48),
+                         100000);
+        ++after;
+    }
+
+    return { power: minus ? -value : value, end: after };
+}
 
 // 2.1
 /**
@@ -213,34 +343,18 @@ export function readReal(
         ++at;
     }
 
-    // a word: the longer one first
-    const word = _text.slice(at, at + 8).toLowerCase();
+    const word = wordOf(_text, at, negative);
 
-    if (word === 'infinity')
+    if (word !== null)
     {
-        return { length: at + 8, value: negative ? -Infinity : Infinity,
-                 overflow: false };
-    }
-
-    if (word.startsWith('inf'))
-    {
-        return { length: at + 3, value: negative ? -Infinity : Infinity,
-                 overflow: false };
-    }
-
-    if (word.startsWith('nan'))
-    {
-        return { length: at + 3, value: NaN, overflow: false };
+        return word;
     }
 
     // digits, a point, digits
-    /** @type {function(number): boolean} */
-    const isDigit = (_i) => ( (_text.charCodeAt(_i) >= 48) &&
-                              (_text.charCodeAt(_i) <= 57) );
-    let   digits   = '';
-    let   power    = 0;
+    let digits = '';
+    let power  = 0;
 
-    while (isDigit(at))
+    while (isDigitAt(_text, at))
     {
         digits += _text[at++];
     }
@@ -249,7 +363,7 @@ export function readReal(
     {
         let after = at + 1;
 
-        while (isDigit(after))
+        while (isDigitAt(_text, after))
         {
             digits += _text[after++];
             --power;
@@ -265,39 +379,11 @@ export function readReal(
         return none;
     }
 
-    // an exponent, where it is whole: 'e', a sign or none, and a digit
-    if ( (_text[at] === 'e') ||
-         (_text[at] === 'E') )
-    {
-        let       after = at + 1;
-        const     minus = (_text[after] === '-');
-        let       value = 0;
-
-        if ( minus ||
-             (_text[after] === '+') )
-        {
-            ++after;
-        }
-
-        if (isDigit(after))
-        {
-            while (isDigit(after))
-            {
-                // past any double's reach the exact number does not matter
-                value = Math.min((value * 10) + (_text.charCodeAt(after) - 48),
-                                 100000);
-                ++after;
-            }
-
-            power += minus ? -value : value;
-            at     = after;
-        }
-    }
-
-    const nearest = nearestDouble(BigInt(digits), power);
+    const exponent = exponentOf(_text, at);
+    const nearest  = nearestDouble(BigInt(digits), power + exponent.power);
 
     return {
-        length:       at,
+        length:       exponent.end,
         value:        negative ? -nearest.value : nearest.value,
         overflow:     nearest.overflow
     };
