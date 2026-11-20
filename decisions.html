@@ -242,19 +242,18 @@
   <div class="eyebrow">djinterp.js &middot; the port of djinterp&rsquo;s front-end half</div>
   <h1>Decisions for the owner</h1>
   <div class="meta">
-    <span>Wednesday 2026-11-18</span>
-    <span><code>main</code> at <code>d118a65</code>, following djinterp at <code>6fe35d43</code></span>
+    <span>Friday 2026-11-20</span>
+    <span><code>main</code> at <code>89553b9</code>, following djinterp at <code>6fe35d43</code></span>
     <span>1 open; 31 ruled, each with all that was put for it</span>
   </div>
-  <p class="meta" style="margin-top:10px">This page replaces the earlier one of 11-18. One decision is new: D29, put after your word of 14:49 with the wasm module&rsquo;s beta. Every decision before it is ruled. After the open one is every ruling you have made, each closed to a line: open one to see the question as it was put, every option with its advantages and disadvantages, the recommendation, the option you chose and where it stands now.</p>
-  <p class="meta">Decisions now have one number across pages, as yours of the morning already did: the evening&rsquo;s 1 to 7 are D18 to D24, and each says so where it was put.</p>
+  <p class="meta" style="margin-top:10px">This page replaces the one of 11-18. No decision is new since it: D29, the wasm configuration, is still the one open, and every decision before it is ruled. What was done on 11-19 and 11-20 is first in the list of work beyond the rulings. After the open one is every ruling you have made, each closed to a line: open one to see the question as it was put, every option with its advantages and disadvantages, the recommendation, the option you chose and where it stands now.</p>
 </header>
 
 <h2 id="standing">Where things stand</h2>
 <div class="standing">
-  <div class="cell"><div class="num">49 commits</div><div class="lbl">on <code>main</code>, nothing pushed (there is no remote), nothing uncommitted. You have them as a zip with the history, and as a kit that makes them again, a zip a commit.</div></div>
-  <div class="cell"><div class="num">Next</div><div class="lbl">The five functions past 100 lines, each given a reason or taken apart; then a terminal transcript for D27.</div></div>
-  <div class="cell"><div class="num">29 of 31</div><div class="lbl">rulings built or in force. 99 tests and 16 transcripts pass; the type check, every module strict, and the style check have no finding.</div></div>
+  <div class="cell"><div class="num">55 commits</div><div class="lbl">on <code>main</code>, nothing uncommitted. Your repository, <code>djinterp/djinterp.js</code> on GitHub, has the first 50 from the kit of 11-18, pushed on 11-19; the kit of 11-20 brings it the rest.</div></div>
+  <div class="cell"><div class="num">Next</div><div class="lbl">D29, when you rule it and the program answers through the wasm module&rsquo;s console; the rows&rsquo; writer and REAL rows when lane E lands them; D14 when djinterp&rsquo;s tree has CI.</div></div>
+  <div class="cell"><div class="num">29 of 31</div><div class="lbl">rulings built or in force. 100 tests and 17 transcripts pass; the type check, every module strict, and the style check have no finding.</div></div>
   <div class="cell"><div class="num">Waiting on you</div><div class="lbl">D29. Relaying <code>docs/FOR_THE_LANES.md</code> (D15, D18, and the console&rsquo;s nouns for D29). CI in djinterp&rsquo;s tree, for D14.</div></div>
 </div>
 
@@ -262,7 +261,7 @@
 <table class="index">
   <thead><tr><th>#</th><th>Decision</th><th>Decide by</th><th>Recommended</th><th>Your ruling</th></tr></thead>
   <tbody>
-    <tr><td><a href="#d29">D29</a></td><td><a href="#d29">A wasm configuration: djinterp&rsquo;s own module behind the port&rsquo;s interface</a> <span class="flag new">New</span></td><td>2026-11-30, the wasm module&rsquo;s last window</td><td>A</td><td class="ruling none" data-for="d29">&mdash;</td></tr>
+    <tr><td><a href="#d29">D29</a></td><td><a href="#d29">A wasm configuration: djinterp&rsquo;s own module behind the port&rsquo;s interface</a></td><td>2026-11-30, the wasm module&rsquo;s last window</td><td>A</td><td class="ruling none" data-for="d29">&mdash;</td></tr>
   </tbody>
 </table>
 
@@ -274,7 +273,7 @@
 </div>
 
 <section class="decision" id="d29">
-  <header><span class="badge">D29</span><h3>A wasm configuration: djinterp&rsquo;s own module behind the port&rsquo;s interface <span class="flag new">New</span></h3></header>
+  <header><span class="badge">D29</span><h3>A wasm configuration: djinterp&rsquo;s own module behind the port&rsquo;s interface</h3></header>
   <div class="facts"><span><b>Decide by</b> 2026-11-30, the wasm module&rsquo;s last window</span><span><b>Affects</b> <code>open</code>&rsquo;s options, a new <code>src/wasm/</code>, the transcripts, the page</span></div>
   <p>You wrote on 11-18, at 14:49, with the wasm module&rsquo;s beta build: djinterp.js has opt-in features, and a wasm configuration would be one of them. It was in the cards. START drew the interface with <code>await</code> so that what answers it could change, to a wasm module in a Worker or to a remote engine, and the first version was to have neither. That much your word rules: the configuration is optional, and the port stays the default. What is open is its form.</p><p>The beta (seven steps on <code>6fe35d43</code>, for windows from 11-23 to 11-30) gives a console over five host imports declared in <code>host.h</code>: a configuration text in and a status out, a line in and a reply out. The program does not answer through it yet: the console asks for a program&rsquo;s handler, which is not built, and <code>log.c</code> does not build until a module has a mutex (a no-op, since a module has one thread). Until it does, none of this can be checked, so nothing is built before the ruling and the handler. What the port would ask of a reply (the status, the two streams apart, whether standard error is a terminal, and the names a <code>set</code> kept) is written up in <code>docs/FOR_THE_LANES.md</code>, for you to relay.</p>
   <fieldset><legend>Decision D29</legend>
@@ -291,8 +290,12 @@
 <h2 id="beyond">Done beyond the words of a ruling</h2>
 <p>Each of these follows from a ruling and was built with it. None needs a decision; they are here so nothing comes as a surprise.</p>
 <ul>
+  <li><b>Your repository takes kits from here on.</b> It holds the port&rsquo;s trees, not its hashes, so work goes to it as the kit of 11-18 did: a zip, a message and any deletions a commit, and a PowerShell script that makes the commits again and checks every tree. The port&rsquo;s own <code>tools/make_kit.js</code> makes them now, numbering the steps on from the last kit and running each commit&rsquo;s tests, style and types on its own tree; the script continues from the last kit&rsquo;s head, and refuses anything else before it writes. Its default path is where you put the repository, in djinterp&rsquo;s folder, which djinterp&rsquo;s own git is told to leave alone. <code>HANDOFF.md</code> keeps a table of the kits.</li>
+  <li><b>The five functions past 100 lines are taken apart</b> (the guide&rsquo;s section 11): the command line&rsquo;s reader into eight readers of one state, the run into what the line asks of the program, what is wrong with it and the work; the session into its start, run and handlers; the real reader and the nearest double into the word, the exponent, the scale and the bits. The longest function is under 80 lines, and the style check now holds every one to 100. The old and new real readers agree on 500,000 inputs.</li>
+  <li><b>New fuzz seeds found two readings the port did not have</b>, both of a command misplaced after <code>--</code>, which the reference answers by naming the first command used. A command misplaced again goes on with the words it took before (seed 812), and one gives way after its own <code>--</code> as before it (seed 1025). The port reads both as the reference does, and six lines that show them are recorded in <code>program_kit</code>. The program now agrees over seeds 1 to 1,500 at 300 lines, 450,000 command lines; the fuzzer also keeps from <code>--version</code> with <code>-v</code> however it is spelt.</li>
+  <li><b>D27&rsquo;s colour is recorded</b> as a transcript, <code>terminal_colour</code>: 33 command lines with the reference&rsquo;s standard error a terminal, which the port replays with colour drawn and matches byte for byte. Recording it needs <code>script</code>, which the recorder does without by leaving the transcript as it was.</li>
   <li><b>D1 moved the port to the tree you attached on 11-18</b>, at <code>6fe35d43</code>, 17 commits on from <code>3eb096c9</code> (its working copy differs from its head only in line endings). Three things the reference does changed, and the port follows each. The option machine writes a real in the fewest of 15, 16 and 17 digits that read back (<code>0.1</code>, not <code>0.10000000000000001</code>; its log&rsquo;s decision 51), while a description&rsquo;s default and an origin&rsquo;s line still write <code>%.17g</code>; over the sweep&rsquo;s 6,711 distinct doubles, the reference&rsquo;s own driver and the port agree on every one. Layers end with the row&rsquo;s default, always counted, with the knob it came from, and <code>get --show-origin</code> reads up to 64 of them; its text is as before. The djin ABI is 2, which the port took from the generated data. The starting package&rsquo;s <code>bind</code> run, which printed the old real, was recorded again with a line saying why. 99 tests pass; fresh seeds agree (2,440 session lines, 3,030 command lines), as do the colour on a terminal and the version lines. The lanes&rsquo; findings all hold, and the port now copies all three of the program&rsquo;s.</li>
-  <li><b>D24 is done: every module is strict.</b> The six modules left on 11-17 took the strict mode on 11-18, the option machine last, and every function inside a module has D25&rsquo;s comment: 134 took it today. Typing the shared records first did most of it: the frame&rsquo;s fields alone took 60 findings. Where the checker cannot see that a value is there, the code now tests the value itself rather than a flag; nothing a caller sees changed, and both fuzzers agree with the reference over new seeds. The list of strict modules is gone, since it would name every one: a new module is strict from its first line.</li>
+  <li><b>D24 is done: every module is strict.</b> The six modules left on 11-17 took the strict mode on 11-18, the option machine last, and every function inside a module has D25&rsquo;s comment: 134 took it on 11-18. Typing the shared records first did most of it: the frame&rsquo;s fields alone took 60 findings. Where the checker cannot see that a value is there, the code now tests the value itself rather than a flag; nothing a caller sees changed, and both fuzzers agree with the reference over new seeds. The list of strict modules is gone, since it would name every one: a new module is strict from its first line.</li>
   <li><b>The style check grew three checks</b> as the work found the need: each marker heads what its entry in the table names (it found two modules whose markers stood out of order), another module&rsquo;s type comes by <code>@import</code>, and a section numbered past 9 is written <code>10. NAME</code>, as the C guide has it.</li>
   <li><b>D28 moved everything that cited the style.</b> The guide took what only the old file held: the whole measured table of reals, the reader&rsquo;s every example, and a class among the braces. <code>JS_STYLE.md</code> keeps its sections on tests, generated data, and git and handing back word for word, as 1 to 3. The sources, tests and tools that cited its style sections cite the guide&rsquo;s.</li>
   <li><b>D27 was measured on the reference itself, on a terminal.</b> Run under a pseudo-terminal, it colours on <code>always</code> and not on <code>never</code>; <code>auto</code>, no word, and a word that is none of the three fall back to the terminal; and what is said before a line&rsquo;s options are read (a refused setting, the settings file&rsquo;s warnings, with the file and line bold) is coloured whatever the line&rsquo;s <code>--color</code> says. Only the error stream is coloured. The port with colour on agreed byte for byte on 400 lines: 30 chosen, 9 over a settings file with warnings, and 361 of the fuzzer&rsquo;s, 289 of them coloured. The page&rsquo;s own diagnostics, the query&rsquo;s warnings and an unclosed quote, are coloured the same way.</li>
@@ -887,7 +890,7 @@
     d29: "D29. A wasm configuration: djinterp's own module behind the port's interface"
   };
   var ORDER = ["d29"];
-  var KEY = "djinterp-js-decisions-2026-11-18";
+  var KEY = "djinterp-js-decisions-2026-11-20";
   function recOf(name) {
     var el = document.querySelector('label.opt[data-rec] input[name="' + name + '"]');
     return el ? el.value : null;
@@ -969,7 +972,7 @@
   function buildText() {
     var lines = [];
     var open = [];
-    lines.push("djinterp.js's decisions of 2026-11-18 (main at d118a65, following djinterp at 6fe35d43): the owner's rulings");
+    lines.push("djinterp.js's decisions of 2026-11-20 (main at 89553b9, following djinterp at 6fe35d43): the owner's rulings");
     lines.push("");
     ORDER.forEach(function (n) {
       var num = TITLES[n].split(".")[0];
@@ -992,7 +995,7 @@
   }
 
   function buildJson() {
-    var out = { page: "djinterp.js decisions 2026-11-18", base: "d118a65", reference: "6fe35d43", rulings: {} };
+    var out = { page: "djinterp.js decisions 2026-11-20", base: "89553b9", reference: "6fe35d43", rulings: {} };
     ORDER.forEach(function (n) {
       out.rulings[n] = {
         title: TITLES[n],
@@ -1059,7 +1062,7 @@
       var blob = new Blob([buildJson()], { type: "application/json" });
       var a = document.createElement("a");
       a.href = URL.createObjectURL(blob);
-      a.download = "djinterp_js_rulings_2026-11-18.json";
+      a.download = "djinterp_js_rulings_2026-11-20.json";
       document.body.appendChild(a);
       a.click();
       setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 500);
