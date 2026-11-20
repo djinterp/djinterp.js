@@ -1,10 +1,11 @@
 # djinterp.js: handoff
 
-2026-11-16, after the owner's rulings of that day. The port follows
-djinterp at `dfc793c4`.
+2026-11-17. The port follows djinterp at `dfc793c4`.
 
 Read this, then `decisions.html`: its open decisions first, and every
-ruling so far at its end, each with what was done about it.
+ruling so far below them, each with all that was put for it and where it
+stands. Decisions have one number across pages, D1 to D27; this file
+names them so.
 `docs/JS_STYLE.md` is the style. `docs/FOR_THE_LANES.md` has the notes
 for djinterp's lanes.
 
@@ -33,7 +34,7 @@ server.
 | `src/text/` | printf's `%.*g`, and strtod's reading |
 | `generated/` | the reference's data, written by `tools/`; never edited |
 | `types/` | declarations, written by `tools/check_types.js`; never edited |
-| `tests/` | 92 tests; `tests/transcripts/` holds the reference's answers |
+| `tests/` | 97 tests; `tests/transcripts/` holds the reference's answers |
 | `tools/` | C drivers over the reference, the recorder, fuzzers, checks |
 | `examples/console.html` | the port in a page |
 | `decisions.html` | the decisions for the owner, open and decided |
@@ -48,7 +49,7 @@ A function's name is the reference's in camelCase, less `d_` or `dj_`:
 There is nothing to build. node 22 or later, and no dependency:
 
 ```sh
-node --test                  # 92 tests
+node --test                  # 97 tests
 node tools/check_style.js    # 80 columns, tabs, banners
 ```
 
@@ -84,7 +85,7 @@ node --test       # whether the port still follows
 ```
 
 It builds the reference's program and the tools, writes `generated/`,
-makes the fuzzed inputs again from their seeds, records all fifteen
+makes the fuzzed inputs again from their seeds, records all sixteen
 transcripts, checks the starting package's four runs, and writes the
 commit into the banners. Run twice at one commit it changes nothing.
 
@@ -112,12 +113,13 @@ later, which the repository does not depend on.
 | real text (`%.17g`, `%.15g`, `%.6g`, `%.1g`; reading) | `tools/reals.c`: 6,778 doubles | 27,112 texts agree; every `%.17g` reads back to the same bits |
 | the option machine | 7 hand-typed session transcripts, 2 fuzzed | byte for byte |
 | the registry, the djin records | `session_registry`, `session_djin` | byte for byte |
-| the program's commands, **through `run`** | 3 hand-typed program transcripts, 1 fuzzed | byte for byte |
+| the program's commands, **through `run`** | 4 hand-typed program transcripts, 1 fuzzed | byte for byte |
+| the parser and the kit, as the program reads its command line | `program_kit`, 190 lines; 100,000 fuzzed command lines | byte for byte, but `--version` at `-v` (D26) |
 | both, on fresh seeds | `tools/fuzz_check.js` | agree; see below |
 | the event core | `t_event_core.c`'s cases, as 13 tests | pass |
 | the reference's option suite | `tests/option/suite.test.js` | four groups written out; a table of which transcript holds each other group |
-| the page interface | 15 tests; headless Chrome 153 | pass |
-| the JSDoc, as types | `tools/check_types.js`, TypeScript 5.9.3 | no finding |
+| the page interface | 16 tests; headless Chrome 153 | pass |
+| the JSDoc, as types | `tools/check_types.js`, TypeScript 5.9.3 | no finding; seven modules of sixteen held to the strict mode (D24) |
 | the starting package's four runs | `tests/option/prototype.test.js` | reproduce |
 
 A transcript is a file of lines in (`.in`), the reference's bytes out
@@ -137,48 +139,55 @@ agree.
 
 These are differences on purpose. Each has a test that names it.
 
-* **Text is counted in UTF-16 units** (ruling 3). The reference counts
+* **Text is counted in UTF-16 units** (D3). The reference counts
   bytes: an offset into a script, a column's width in `list` and
   `describe`, `get`'s cut at 511, a frame's room for text. For ASCII
   the two agree. For `é` the port counts one where the reference counts
   two. The transcripts are replayed with a unit for each of the
   reference's bytes, which holds the port to it on everything but that
   count. A `\xHH` in a script is the unit `HH`, where in the reference
-  it is a byte that may be part of a longer character. A cut at 511
-  units can part a surrogate pair (`decisions.html`, open decision 6).
-* **Any NaN is `nan`** (ruling 4). The reference, built with glibc,
+  it is a byte that may be part of a longer character. A cut that would
+  part a surrogate pair is one unit earlier (D23).
+* **Any NaN is `nan`** (D4). The reference, built with glibc,
   writes a REAL bound from `-nan` back as `-nan`. No transcript or
   fuzzed input makes a signed NaN any more.
 * **An event's key is still the reference's**: the FNV-1a-64 hash of the
-  name's UTF-8 bytes, for any name (open decision 4).
+  name's UTF-8 bytes, for any name (D21).
 
 ### What the rulings changed in how it behaves
 
-* **A line is a run of the program** (ruling 7). Before each line the
+* **A line is a run of the program** (D7). Before each line the
   port starts again as a process would: what the last line bound from
   the environment, the settings file, its command line or by `set` is
   dropped, and the environment and the file are read again. So `set`'s
   value reads `(file)` on the next line, an option of a line binds for
   that line, and what the program says as it starts comes first in every
   reply's `err`. What a page bound at the program's standing stays. The
-  query is the command line of every line (open decision 5).
-* **`run` takes a line or an array of words** (ruling 8). The words go
+  query is the command line of every line (D22).
+* **`run` takes a line or an array of words** (D8). The words go
   to the program untouched.
-* **The program posts `djinterp.set` and `djinterp.run`** (ruling 10).
-* **A frame from its record has the reference's room** (ruling 5):
+* **The program posts `djinterp.set` and `djinterp.run`** (D10).
+* **The program reads its command line as the reference's does** (D11,
+  D18 to D20): `help`, `completion`, `--help`, `--version`, `-h`, `-q`
+  and `-v` alone or run together, `--color` with its word, and `--`
+  with the reference's own meaning for it, `get`'s refusal of what
+  follows it included. Help's texts, the version and each shell's
+  completion script are the reference's own, in `generated/kit.json`.
+* **A frame from its record has the reference's room** (D5):
   `optionEnv.fromRecord`.
 
 ### What is not ported
 
-* **The rest of the kit (ruling 11, not yet done).** The program's
-  argument reading is a model of the reference's parser and kit for four
-  commands. Still not modelled: `help`, `completion`, `--help`,
-  `--version`, `-q`, `-v`, `--color`, a bare `--`, and short options run
-  together. The port answers each as a word it does not know, and the
-  fuzzers never produce them. This is the next piece of work, and three
-  open decisions in `decisions.html` bear on it.
-* **The argument parser and the kit, whole.** To be asked again with the
-  command language after 12-11 (ruling 11).
+* **`--version` at `-v`.** The reference names the file and the compiler
+  of its own build; the port writes the version alone, and the fuzzer
+  keeps from it (D26, open).
+* **Colour where a page could show it.** `--color=auto` is no colour,
+  since the port is never a terminal; `--color=always` writes the
+  reference's escapes, which the example page shows as text (D27, open).
+* **The argument parser and the kit, whole.** The program's reading of
+  its command line is a model of them, exact as far as its fuzzer
+  reaches. A port of them whole is asked again with the command language
+  after 12-11 (D11).
 * **The kit's own djin and the root's `plugin_path`.** They are in
   `generated/program.json`, and the test harness declares them from
   there; `open` does not.
@@ -186,7 +195,7 @@ These are differences on purpose. Each has a test that names it.
   statistics, footprint, `next_prime`, and the queue's ring of payload
   bytes. A handler's id is a number. A queue's room is a count of
   occurrences. A queued payload is copied with `structuredClone`
-  (ruling 13).
+  (D13).
 * **`D_OPTION_ENV_VALUE_CAPACITY`** as a limit of its own. `format`
   returns the whole text.
 * **Hexadecimal reals and `nan(...)`.** The option machine refuses them
@@ -198,20 +207,20 @@ These are differences on purpose. Each has a test that names it.
 
 ## 4. What is next
 
-1. **Ruling 11:** `--`, `-q`, `-v`, `--color`, `--version`, `--help` and
-   `help`. Teach `tools/fuzz_program.js` each word first, see it differ,
-   then model it. Help and version texts come from a C tool, as rows do.
-   Open decisions 1, 2 and 3 say what to do at three places where the
-   reference alone does not settle it.
-2. **Relay `docs/FOR_THE_LANES.md`** (rulings 15 and 4, and what was
-   found in the program and the kit). When lane E lands the rows'
-   writer, regenerate and bring the port's reader after it.
-3. **Ruling 14:** the move into djinterp's tree, when the tree has CI to
-   run the transcripts.
-4. **REAL rows' range and step**, when lane E lands them: regenerate,
+1. **D25, then D24's second tranche:** the strict mode for the nine
+   modules left (562 findings), a module at a time, in the form D25
+   gives their 72 inner comments. `tools/check_types.js` holds a module
+   to it once it is listed in `STRICT`.
+2. **D26 and D27** as ruled: `--version` at `-v`, and colour in a page.
+3. **Relay `docs/FOR_THE_LANES.md`** (D15, D4, D18, and what was found in
+   the program and the kit). When lane E lands the rows' writer,
+   regenerate and bring the port's reader after it.
+4. **D14:** the move into djinterp's tree, when the tree has CI to run
+   the transcripts.
+5. **REAL rows' range and step**, when lane E lands them: regenerate,
    read the diff, follow.
-5. **After 12-11:** the command language from the frozen grammar, desc's
-   JSON as data, and ruling 11's question of the parser whole.
+6. **After 12-11:** the command language from the frozen grammar, desc's
+   JSON as data, and D11's question of the parser whole.
 
 
 ## 5. What was learned the hard way
@@ -225,7 +234,7 @@ These are differences on purpose. Each has a test that names it.
   believing the port has it.
 * **The page's own path was the unchecked one.** The transcript harness
   made a fresh program a line, as the reference is a process a line,
-  and `run` did not. Ruling 7 closed it: the harness now replays through
+  and `run` did not. D7 closed it: the harness now replays through
   `run`.
 * **A deliberate fault that fails nothing is a finding.** One of six
   did, and became a test.

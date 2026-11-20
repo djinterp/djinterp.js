@@ -5,7 +5,7 @@
 that commit.
 
 
-## For lane E: the rows as JSON (the owner's ruling 15)
+## For lane E: the rows as JSON (the owner's ruling D15)
 
 **Ruled:** lane E takes `tools/rows_json.c` as a kit and makes it the
 reference's own: one function that writes a frame's rows and its room,
@@ -56,7 +56,7 @@ A row with no names has `"names": null` and a count of 0.
   row holds an `int64_t`.
 * A real is its `%.17g` text and its 64 bits in hexadecimal. The bits
   are what a reader should trust.
-* `bindings`, `vars` and `text` are the frame's room (ruling 5): a frame
+* `bindings`, `vars` and `text` are the frame's room (D5): a frame
   a reader makes from the record is then full where the reference's is.
 
 **What would make it the reference's own:** a test there that every
@@ -72,7 +72,7 @@ writer has it.
   or does it want a guard?
 * **A NaN's text is the C library's.** Built with glibc, a REAL bound
   from `-nan` is written back as `-nan`. The port writes `nan` for any
-  NaN (the owner's ruling 4), so this is one place the two differ. A
+  NaN (the owner's ruling D4), so this is one place the two differ. A
   ranged REAL row will have to say what a NaN is in any case.
 
 
