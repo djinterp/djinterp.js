@@ -411,7 +411,9 @@ const start   = (from === undefined)
 let   files   = (deletes.length === 0)
     ? ' No step here deletes.'
     : (' ' + ((deletes.length === 1) ? 'Step ' : 'Steps ') +
-       deletes.join(', ') + ' delete.');
+       deletes.slice(0, -1).join(', ') +
+       ((deletes.length === 1) ? '' : ' and ') + deletes.at(-1) +
+       ((deletes.length === 1) ? ' deletes.' : ' delete.'));
 
 if (runs.length !== 0)
 {

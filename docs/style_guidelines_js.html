@@ -10,7 +10,7 @@
   path:      /docs/style_guidelines_js.html
   link(s):   TBA
   author(s): Samuel 'teer' Neal-Blim                         created: 2026.11.17
-                                                             revised: 2026.11.18
+                                                             revised: 2026.11.20
 -->
 <html lang="en">
 <head>
@@ -919,15 +919,18 @@ The numbers are the tripwire.</p>
 
 <table>
 <tr><th>Measure</th><th>Limit</th><th>Escalation</th></tr>
-<tr><td>Length</td><td>100 lines, without the comment above it; none for
-a test</td><td>take a function out</td></tr>
+<tr><td>Length <span class="b checked">check_style.js</span></td><td>100
+lines, without the comment above it; none for a test</td><td>take a
+function out</td></tr>
 <tr><td>Nesting</td><td>4 levels of braces inside the body</td>
 <td>return early, or take a function out</td></tr>
 </table>
 
 <p>Passing a limit wants a reason, as a dispatch table or a parser's
-<code>switch</code> may have. Five functions pass 100 lines today
-(<a href="#not-yet">section 16</a>).</p>
+<code>switch</code> may have, and the reason goes into the check that
+would otherwise find it. No function passes 100 lines today; the five
+that did were taken apart on 2026-11-20 (<a href="#not-yet">section
+16</a>).</p>
 
 
 <h2 id="types">12. Types</h2>
@@ -1148,21 +1151,24 @@ test('a cut is at the limit, for text that has no pairs', () =&gt;
 
 <h2 id="not-yet">16. Where the code is not yet this guide</h2>
 
-<p>Measured 2026-11-18. Each is known, and has its place.</p>
+<p>Measured 2026-11-20. Each is known, and has its place.</p>
 
 <table>
 <tr><th>What</th><th>Where</th><th>Until</th></tr>
-<tr><td>5 functions past 100 lines</td><td><code>read</code> (212) and
-<code>runInner</code> (134) in the commands; <code>openProgram</code>
-(148); <code>readReal</code> (109) and <code>nearestDouble</code> (101)
-</td><td>a reason each, or a function taken out</td></tr>
 <tr><td>No brief comment of 4.5 anywhere; small declarations have a plain
 one-line comment</td><td>throughout</td><td>the next change to each</td>
 </tr>
 </table>
 
 <p>Done on 2026-11-18: every module is strict (D24), every function
-inside one has D25's comment, and no divider is without its number.</p>
+inside one has D25's comment, and no divider is without its number.
+Done on 2026-11-20: the five functions past 100 lines were taken apart,
+into functions of a reading's state (<code>read</code>), of the line's
+trouble (<code>runInner</code>), of a session's start, run and handlers
+(<code>openProgram</code>), and of the real's word, exponent, scale and
+bits (<code>readReal</code>, <code>nearestDouble</code>); the longest
+function is now under 80 lines, and the style check holds every one to
+100.</p>
 
 
 <h2 id="rulings">17. Rulings</h2>

@@ -161,14 +161,14 @@ why, and the other three runs are as they came.
 | the option machine | 7 hand-typed session transcripts, 2 fuzzed | byte for byte |
 | the registry, the djin records | `session_registry`, `session_djin` | byte for byte |
 | the program's commands, **through `run`** | 4 hand-typed program transcripts, 1 fuzzed | byte for byte |
-| the parser and the kit, as the program reads its command line | `program_kit`, 190 lines; 100,000 fuzzed command lines | byte for byte, but `--version` at `-v`, which says the port's own facts (D26) and a test holds |
+| the parser and the kit, as the program reads its command line | `program_kit`, 198 lines; 450,000 fuzzed command lines (seeds 1 to 1,500) | byte for byte, but `--version` at `-v`, which says the port's own facts (D26) and a test holds |
 | colour on a terminal (D27) | the reference under a pseudo-terminal, against the port with `colour: true`: 400 lines, 9 over a settings file with warnings | byte for byte; not yet recorded as a transcript (section 4) |
 | both, on fresh seeds | `tools/fuzz_check.js` | agree; see below |
 | the event core | `t_event_core.c`'s cases, as 13 tests | pass |
 | the reference's option suite | `tests/option/suite.test.js` | four groups written out; a table of which transcript holds each other group |
 | the page interface | 18 tests; headless Chrome 153, three visits, the third the colour drawn | pass |
 | the JSDoc, as types | `tools/check_types.js`, TypeScript 5.9.3 | no finding, every module in the strict mode (D24, done 2026-11-18); the declarations in `types/` written by the same pass |
-| the style | `tools/check_style.js` | no finding: columns, banners and their geometry, the tables of contents against their bodies and each marker against its entry, the empty lines, types by `@import`, and D25's comment on every function inside a module |
+| the style | `tools/check_style.js` | no finding: columns, banners and their geometry, the tables of contents against their bodies and each marker against its entry, the empty lines, types by `@import`, D25's comment on every function inside a module, and no function past 100 lines |
 | the starting package's four runs | `tests/option/prototype.test.js` | reproduce |
 
 A transcript is a file of lines in (`.in`), the reference's bytes out
@@ -182,7 +182,13 @@ Fuzzing. Before the rulings, 401,400 session lines and 60,000 command
 lines agreed. After each ruling that touched the machine the fuzzers
 were run again on fresh builds of the port: session seeds 1 to 60 at 400
 lines, and program seeds 1 to 80 at 200 lines through `run` itself, all
-agree.
+agree. On 2026-11-20, with the five long functions taken apart, session
+seeds 1 to 100 and 560 to 900 at 500 lines, and program seeds 1 to 900
+and 900 to 1,500 at 300 lines, all agree. The program's new seeds found
+two readings of a command misplaced after `--` that the first 600 had
+not (seeds 812 and 1025): such a command, entered again, goes on with
+the words it took, and gives way after its own `--` as before it. Both
+are in `program_kit` now, recorded from the reference.
 
 ### Where the port leaves the reference, by the owner's ruling
 
@@ -267,24 +273,20 @@ These are differences on purpose. Each has a test that names it.
 
 ## 4. What is next
 
-1. **The five functions past 100 lines** (the guide's section 16):
-   `read` and `runInner` in the commands, `openProgram`, `readReal` and
-   `nearestDouble`. A reason written for each, or a function taken out;
-   the fuzzers are what make taking one out safe.
-2. **A terminal transcript for D27.** The comparison that proved it ran
+1. **A terminal transcript for D27.** The comparison that proved it ran
    the reference under `script` (a Linux utility) outside the
    repository. Recording it would make it an oracle like the rest, at
    the price of `tools/record.js` needing `script` where it records.
-3. **Relay `docs/FOR_THE_LANES.md`** (D15, D4, D18, and what was found in
+2. **Relay `docs/FOR_THE_LANES.md`** (D15, D4, D18, and what was found in
    the program and the kit). When lane E lands the rows' writer,
    regenerate and bring the port's reader after it.
-4. **D14:** the move into djinterp's tree, when the tree has CI to run
+3. **D14:** the move into djinterp's tree, when the tree has CI to run
    the transcripts.
-5. **REAL rows' range and step**, when lane E lands them: regenerate,
+4. **REAL rows' range and step**, when lane E lands them: regenerate,
    read the diff, follow.
-6. **After 12-11:** the command language from the frozen grammar, desc's
+5. **After 12-11:** the command language from the frozen grammar, desc's
    JSON as data, and D11's question of the parser whole.
-7. **D29, the wasm configuration**, open: an opt-in way to answer through
+6. **D29, the wasm configuration**, open: an opt-in way to answer through
    djinterp's own module (the owner's word of 11-18). Nothing is built
    before the ruling and before the program answers through the module's
    console; what the port asks of the console's reply is in
@@ -299,7 +301,9 @@ These are differences on purpose. Each has a test that names it.
   setting's name into `widt`, two edits from `list`. Once the fuzzer
   made near misses on purpose, it found two more differences in minutes,
   and a hand-typed line a fourth. Teach the fuzzer a thing before
-  believing the port has it.
+  believing the port has it. And its seeds are a sample: 600 agreed,
+  and seeds past them found two more readings of a misplaced command.
+  Run new seeds after any change to the reader, not only the old ones.
 * **The page's own path was the unchecked one.** The transcript harness
   made a fresh program a line, as the reference is a process a line,
   and `run` did not. D7 closed it: the harness now replays through
