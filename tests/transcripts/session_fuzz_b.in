@@ -188,7 +188,7 @@ unset_from	net	1	.color
 reg_assign	1	max_depth	-all
 djin_frame	nothing
 attach	cache	printer
-statement_end	  net.host=\t0x10   # c\npaxth\t= -nan  ;  u  = it's  # c\n	1
+statement_end	  net.host=\t0x10   # c\npaxth\t= NaN  ;  u  = it's  # c\n	1
 reg_load	6	printer_two.SUMMARY.host # c\n style = 601 ;-printer_two.local.prot # c\n
 reg_put	3	 color=\tshallow  
 reg_count
@@ -425,7 +425,7 @@ suggest	net	seed.
 unenv	X_P
 get	app	ratio
 unset	printer_two	bits
-set	tiny	2	path	int	-nan
+set	tiny	2	path	int	NaN
 detach	tiny
 import	nothing	APP_
 unset	printer	n
@@ -982,7 +982,7 @@ reg_put	2	  xscale\t= 0.5
 put	net	2	  color  = 100  
 raw_get	app	2	268435456
 reg_take	--scaxle=unbounded
-reg_put	5	 width\t=-nan\t
+reg_put	5	 width\t=NaN\t
 suggest	printer_two	n
 scope	cache	local
 text_copy	printer	net.big	0x10
@@ -1079,7 +1079,7 @@ load	cache	0	- cache.debug.BIG\r\nhost  padded  # c\n
 load	printer_two	6	-style # c\n dpeth= 30 # c\n
 reg_suggest	djinterp.n
 unset_from	nothing	2	tiny.nothing.t
-put	printer_two	0	sieze =-nan\t
+put	printer_two	0	sieze =NaN\t
 import	tiny	APP_
 unset_from	nothing	1	big
 put	app	2	

@@ -115,8 +115,7 @@ function trip(
     switch (want.kind)
     {
         case KIND.REAL:
-            return Object.is(want.real, got.real) &&
-                   (want.negative_nan === got.negative_nan);
+            return Object.is(want.real, got.real);
 
         case KIND.TEXT:
             return (want.text !== null) &&

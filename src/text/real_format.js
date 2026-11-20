@@ -139,15 +139,13 @@ function digits_of(
  *
  * @param {number}  _value         the double.
  * @param {number}  _precision     the significant digits, 0 or more.
- * @param {boolean} [_negative_nan=false]  for a NaN, whether its sign bit
- *        is set. JavaScript has one NaN and does not keep the bit, so a
- *        caller that read "-nan" carries it here.
- * @returns {string} the text.
+ * @returns {string} the text. Any NaN is "nan": JavaScript has one NaN
+ *          and keeps no sign for it, where the reference's C library may
+ *          write "-nan" (the owner's ruling 4 of 2026-11-16).
  */
 export function format_g(
     _value,
-    _precision,
-    _negative_nan = false
+    _precision
 )
 {
     if (typeof _value !== 'number')
@@ -163,7 +161,7 @@ export function format_g(
 
     if (Number.isNaN(_value))
     {
-        return _negative_nan ? '-nan' : 'nan';
+        return 'nan';
     }
 
     const negative = ( (_value < 0) ||
@@ -210,14 +208,11 @@ export function format_g(
  * for any double to read back as itself.
  *
  * @param {number}  _value  the double.
- * @param {boolean} [_negative_nan=false]  for a NaN, whether its sign bit
- *        is set.
  * @returns {string} the text.
  */
 export function format_real(
-    _value,
-    _negative_nan = false
+    _value
 )
 {
-    return format_g(_value, 17, _negative_nan);
+    return format_g(_value, 17);
 }

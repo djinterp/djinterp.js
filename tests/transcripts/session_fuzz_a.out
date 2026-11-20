@@ -759,7 +759,7 @@ no frame
 no frame
 > load	printer	2	  tiny.nothing.MODULE\t="\x41"   ;   .host =\ta#b   ;   app.debug.mode  = off   # c\n n=8 \n
 load fail 1 KEY_ABSENT at 2
-> env	X_HOST	-nan
+> env	X_HOST	NaN
 env
 > detach	printer_two
 detach
@@ -837,7 +837,7 @@ printer  0.9.1  a name a djin has
 cache    2.0    a record for a frame already listed
 tiny     -      settings only
 djin_list 0
-> load	app	1	  path\t=-nan\r\n.scale  =\t"\x41"  ;app.seed 65536 ; path\t=  1e-7 ; seed hello\n
+> load	app	1	  path\t=NaN\r\n.scale  =\t"\x41"  ;app.seed 65536 ; path\t=  1e-7 ; seed hello\n
 load fail 1 KEY_ABSENT at 2
 > reg_put	4	host = low\t
 reg_put fail 1 KEY_ABSENT
@@ -1096,7 +1096,7 @@ reg_suggest 0
 assign fail 1 KEY_ABSENT
 > suggest	nothing	hsot
 no frame
-> put	app	1	KEY_WIDTH = -nan 
+> put	app	1	KEY_WIDTH = NaN 
 put fail 1 KEY_ABSENT
 > scope	printer_two	debug
 scope fail 1 KEY_ABSENT
@@ -1920,7 +1920,7 @@ no frame
 reg_suggest 0 
 > put	app	3	-t
 put fail 1 KEY_ABSENT
-> put	printer_two	5	\tstyle = -nan 
+> put	printer_two	5	\tstyle = NaN 
 put fail 8 INVALID_ARGUMENT
 > put	tiny	0	 ratio =Y 
 put fail 8 INVALID_ARGUMENT
@@ -2139,7 +2139,7 @@ get id=1048576 scope=0 kind=int bound=0 source=default depth=none integer=30 rea
 reg_take -1 at=2 fail 1 KEY_ABSENT
 > put	net	4	 seummary.t= 0o17 
 put fail 1 KEY_ABSENT
-> reg_load	2	 host\t=\t-nan  # c\n-cache.hots;title\n-ode.;cpp_features.p\n
+> reg_load	2	 host\t=\tNaN  # c\n-cache.hots;title\n-ode.;cpp_features.p\n
 reg_load fail 1 KEY_ABSENT at 1
 > attach	printer_two	printer_two
 attach fail 8 INVALID_ARGUMENT

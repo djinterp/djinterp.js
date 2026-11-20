@@ -133,8 +133,6 @@ assign	app	1	ratio	+Infinity
 get	app	ratio
 assign	app	1	ratio	nan
 get	app	ratio
-assign	app	1	ratio	-NaN
-get	app	ratio
 assign	app	1	ratio	infinit
 assign	app	1	ratio	nan(1)
 assign	app	1	ratio	0x10

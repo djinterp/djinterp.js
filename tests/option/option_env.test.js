@@ -245,15 +245,18 @@ test('the readers for one kind', () =>
                      { count: -1, layers: [] });
 });
 
-test('a NaN keeps the sign it was read with', () =>
+test('any NaN is "nan": the one place the port leaves the reference',
+     () =>
 {
     const { env, ids } = frame_of([option_env.row_real('ratio', 0.5)]);
 
-    option_env.assign(env, 'ratio', '-nan');
+    // the reference, built with glibc, writes this one back as "-nan";
+    // the port keeps no sign for a NaN (the owner's ruling 4, 2026-11-16)
+    assert.equal(option_env.assign(env, 'ratio', '-nan').is_ok, true);
     assert.ok(Number.isNaN(option_env.real(env, GLOBAL, ids[0])));
-    assert.equal(option_env.get(env, GLOBAL, ids[0]).got.negative_nan, true);
-    assert.equal(option_env.format(env, GLOBAL, ids[0]), '-nan');
-    option_env.set_real(env, GLOBAL, ids[0], NaN);
+    assert.equal(option_env.format(env, GLOBAL, ids[0]), 'nan');
+    assert.equal(option_env.format_quoted(env, GLOBAL, ids[0]), 'nan');
+    option_env.set_real(env, GLOBAL, ids[0], -NaN);
     assert.equal(option_env.format(env, GLOBAL, ids[0]), 'nan');
 });
 

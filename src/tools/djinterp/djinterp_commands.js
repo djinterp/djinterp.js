@@ -279,8 +279,7 @@ function value_text(
     _decl,
     _text,
     _integer,
-    _real,
-    _negative_nan
+    _real
 )
 {
     let named = null;
@@ -299,7 +298,7 @@ function value_text(
             break;
 
         case KIND.REAL:
-            out = format_real(_real, _negative_nan);
+            out = format_real(_real);
             break;
 
         case KIND.TEXT:
@@ -334,8 +333,7 @@ function origins(
         const value = found.layers[i].value;
 
         out += ('    under it   ' +
-                value_text(decl, value.text, value.integer, value.real,
-                           value.negative_nan) +
+                value_text(decl, value.text, value.integer, value.real) +
                 '   (' + source_word(value.source) + ')\n')
                    .slice(0, (ROOM * 2) - 1);
     }
@@ -343,8 +341,7 @@ function origins(
     if (shown > 0)
     {
         out += ('    default    ' +
-                value_text(decl, decl.text, decl.integer, decl.real,
-                           decl.negative_nan) +
+                value_text(decl, decl.text, decl.integer, decl.real) +
                 '   (' + ((decl.knob !== null) ? decl.knob : 'default') +
                 ')\n').slice(0, (ROOM * 2) - 1);
     }

@@ -301,7 +301,7 @@ unset	nothing	seed
 assign	nothing	4	tilte	
 unset_from	nothing	3	t
 load	printer	2	  tiny.nothing.MODULE\t="\x41"   ;   .host =\ta#b   ;   app.debug.mode  = off   # c\n n=8 \n
-env	X_HOST	-nan
+env	X_HOST	NaN
 detach	printer_two
 reg_import	
 put	printer	4	 format  =  ""
@@ -321,7 +321,7 @@ get	app	host.
 reg_put	1	-app.N
 djin_frame	net
 djin_list
-load	app	1	  path\t=-nan\r\n.scale  =\t"\x41"  ;app.seed 65536 ; path\t=  1e-7 ; seed hello\n
+load	app	1	  path\t=NaN\r\n.scale  =\t"\x41"  ;app.seed 65536 ; path\t=  1e-7 ; seed hello\n
 reg_put	4	host = low\t
 attach	printer_two	printer
 bound	net	summary.path
@@ -432,7 +432,7 @@ detach	tiny
 reg_suggest	djnterp.width
 assign	app	3	style	0o17
 suggest	nothing	hsot
-put	app	1	KEY_WIDTH = -nan 
+put	app	1	KEY_WIDTH = NaN 
 scope	printer_two	debug
 import	cache	APP_
 unenv	BITS
@@ -796,7 +796,7 @@ layers	app	cache.max_depth
 get	nothing	
 reg_suggest	app.bits
 put	app	3	-t
-put	printer_two	5	\tstyle = -nan 
+put	printer_two	5	\tstyle = NaN 
 put	tiny	0	 ratio =Y 
 reg_target	pinter_two.MAX_DEPTH
 reg_assign	0	n	two words
@@ -885,7 +885,7 @@ djin_register	wrong_frame
 get	printer_two	key_width
 reg_take	--set	local.bits=+wide,-c
 put	net	4	 seummary.t= 0o17 
-reg_load	2	 host\t=\t-nan  # c\n-cache.hots;title\n-ode.;cpp_features.p\n
+reg_load	2	 host\t=\tNaN  # c\n-cache.hots;title\n-ode.;cpp_features.p\n
 attach	printer_two	printer_two
 reg_count
 reg_suggest	.

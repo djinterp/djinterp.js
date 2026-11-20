@@ -863,7 +863,6 @@ function normalize(
     const unbuilt = normal_names(_row.unbuilt, _row.unbuilt_count,
                                  'unbuilt');
     let   real    = 0;
-    let   nan     = false;
 
     if (typeof _row.real_bits === 'string')
     {
@@ -872,8 +871,6 @@ function normalize(
 
         view.setBigUint64(0, BigInt('0x' + _row.real_bits));
         real = view.getFloat64(0);
-        nan  = ( Number.isNaN(real) &&
-                 ((view.getUint8(0) & 0x80) !== 0) );
     }
     else if (typeof _row.real === 'string')
     {
@@ -885,7 +882,6 @@ function normalize(
         }
 
         real = read.value;
-        nan  = read.negative_nan;
     }
     else if (typeof _row.real === 'number')
     {
@@ -909,7 +905,6 @@ function normalize(
         minimum:       to_int64(_row.minimum ?? INT64_MIN, 'minimum'),
         maximum:       to_int64(_row.maximum ?? INT64_MAX, 'maximum'),
         real:          real,
-        negative_nan:  nan,
         name_count:    (names !== null) ? names.length
                                         : (_row.name_count ?? 0),
         unbuilt_count: (unbuilt !== null) ? unbuilt.length
@@ -1833,8 +1828,7 @@ function read(
             break;
 
         case KIND.REAL:
-            _value.real         = _cell.real;
-            _value.negative_nan = _cell.negative_nan;
+            _value.real = _cell.real;
             break;
 
         case KIND.TEXT:
@@ -1924,7 +1918,6 @@ function default_value(
         text:         _decl.text,
         integer:      _decl.integer,
         real:         _decl.real,
-        negative_nan: _decl.negative_nan,
         kind:         _decl.kind,
         bound:        false,
         source:       SOURCE.DEFAULT,
@@ -2006,7 +1999,6 @@ function handed(
         text:         (_value.text !== null) ? decode(_value.text) : null,
         integer:      _decl.exact ? Number(_value.integer) : _value.integer,
         real:         _value.real,
-        negative_nan: _value.negative_nan,
         kind:         _value.kind,
         bound:        _value.bound,
         source:       _value.source,
@@ -2024,9 +2016,6 @@ function handed(
  *           a CHOICE or FLAGS: a number where every value the row can hold
  *           is an exact integer of a double, else a bigint.
  * @property {number}  real     a REAL's value.
- * @property {boolean} negative_nan  for a REAL that is NaN, its sign,
- *           which JavaScript's NaN does not carry and the reference
- *           writes.
  * @property {number}  kind     the variable's kind.
  * @property {boolean} bound    whether a binding gave it; false for the
  *           row's default.
@@ -2476,7 +2465,6 @@ function bind(
         var:          _var,
         integer:      _payload.integer ?? 0n,
         real:         _payload.real ?? 0,
-        negative_nan: _payload.negative_nan ?? false,
         text:         _payload.text ?? null
     });
     ++_env.generation;
@@ -2635,8 +2623,7 @@ function set_value_bytes(
 
         case KIND.REAL:
             return bind(_env, _scope, _var, _source, KIND.REAL,
-                        { real:         _value.real,
-                          negative_nan: _value.negative_nan });
+                        { real: _value.real });
 
         case KIND.TEXT:
             return bind(_env, _scope, _var, _source, KIND.TEXT,
@@ -2660,7 +2647,7 @@ function set_value_bytes(
  * @param {number}     _var     the variable's id.
  * @param {number}     _source  the source; any but DEFAULT.
  * @param {{kind: number, integer?: (number|bigint|boolean), real?: number,
- *          text?: ?string, negative_nan?: boolean}} _value  the value: its
+ *          text?: ?string}} _value  the value: its
  *        kind, and the member that kind reads.
  * @returns {option_result} the id; INVALID_ARGUMENT for no value or a
  *          source that is none; VALUE_TYPE_MISMATCH for a kind that is not
@@ -2684,7 +2671,6 @@ export function set_value(
         kind:         _value.kind,
         integer:      to_int64(_value.integer ?? 0, 'the value\'s integer'),
         real:         _value.real ?? 0,
-        negative_nan: _value.negative_nan ?? false,
         text:         to_bytes(_value.text, 'the value\'s text')
     });
 }
@@ -3143,8 +3129,7 @@ function assign_value(
 
             if (read_ !== null)
             {
-                value.real         = read_.value;
-                value.negative_nan = read_.negative_nan;
+                value.real = read_.value;
             }
             break;
 
@@ -3934,7 +3919,7 @@ function format_value(
             return (_value.integer !== 0n) ? 'true' : 'false';
 
         case KIND.REAL:
-            return format_real(_value.real, _value.negative_nan);
+            return format_real(_value.real);
 
         case KIND.TEXT:
             return (_value.text !== null) ? _value.text : '';
@@ -4126,8 +4111,7 @@ export function cached(
 
         _cache.value      = result.is_ok
                                 ? result.got
-                                : { text: null, integer: 0, real: 0,
-                                    negative_nan: false, kind: 0,
+                                : { text: null, integer: 0, real: 0, kind: 0,
                                     bound: false, source: 0, depth: 0 };
         _cache.generation = now;
         _cache.filled     = true;

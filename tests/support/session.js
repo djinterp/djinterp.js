@@ -158,7 +158,7 @@ export function make_session()
         ' depth=' + ((_value.depth === option_env.NONE) ? 'none'
                                                         : _value.depth) +
         ' integer=' + _value.integer +
-        ' real=' + format_g(_value.real, 17, _value.negative_nan) +
+        ' real=' + format_g(_value.real, 17) +
         ' text=' + text_of(_value.text);
 
     /*
@@ -193,8 +193,7 @@ export function make_session()
         {
             const read = read_real(_text);
 
-            return { kind: option_env.KIND.REAL, real: read.value,
-                     negative_nan: read.negative_nan };
+            return { kind: option_env.KIND.REAL, real: read.value };
         }
 
         if (_kind === 'text')

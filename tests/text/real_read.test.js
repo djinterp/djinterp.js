@@ -56,14 +56,16 @@ test('JavaScript\'s readers would have read these otherwise', () =>
 test('the words, in any case, after a sign', () =>
 {
     assert.deepEqual(read_real('inf'),
-                     { length: 3, value: Infinity, overflow: false,
-                       negative_nan: false });
+                     { length: 3, value: Infinity, overflow: false });
     assert.equal(read_real('-INF').value, -Infinity);
     assert.equal(read_real('+Infinity').length, 9);
     assert.equal(read_real('infinit').length, 3);
     assert.ok(Number.isNaN(read_real('nan').value));
-    assert.equal(read_real('NaN').negative_nan, false);
-    assert.equal(read_real('-nan').negative_nan, true);
+    assert.ok(Number.isNaN(read_real('NaN').value));
+
+    // a NaN has no sign here: "-nan" is read whole, and is the one NaN
+    assert.deepEqual(read_real('-nan'),
+                     { length: 4, value: NaN, overflow: false });
     assert.equal(read_real('nan(1)').length, 3);
 });
 
@@ -79,8 +81,7 @@ test('past the largest double is an overflow; under the smallest is not',
      () =>
 {
     assert.deepEqual(read_real('1e309'),
-                     { length: 5, value: Infinity, overflow: true,
-                       negative_nan: false });
+                     { length: 5, value: Infinity, overflow: true });
     assert.equal(read_real('-1e309').value, -Infinity);
     assert.equal(read_real('1.7976931348623157e308').overflow, false);
     assert.equal(read_real('1.7976931348623159e308').overflow, true);

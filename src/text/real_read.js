@@ -182,20 +182,17 @@ export function nearest_double(
  *
  * @param {string} _text  the text; each code unit is read as one character,
  *        so a byte string and a string of ASCII read alike.
- * @returns {{length: number, value: number, overflow: boolean,
- *            negative_nan: boolean}}
+ * @returns {{length: number, value: number, overflow: boolean}}
  *          `length` is how much was read, 0 where the text does not start
  *          with a real. `overflow` is strtod's ERANGE with HUGE_VAL: the
  *          value is past the largest double, and `value` is an infinity.
- *          `negative_nan` is a NaN's sign, which JavaScript's NaN cannot
- *          carry.
+ *          "nan" and "-nan" both read as NaN: no sign is kept for one.
  */
 export function read_real(
     _text
 )
 {
-    const none = { length: 0, value: 0, overflow: false,
-                   negative_nan: false };
+    const none = { length: 0, value: 0, overflow: false };
     let   at   = 0;
 
     if (typeof _text !== 'string')
@@ -217,19 +214,18 @@ export function read_real(
     if (word === 'infinity')
     {
         return { length: at + 8, value: negative ? -Infinity : Infinity,
-                 overflow: false, negative_nan: false };
+                 overflow: false };
     }
 
     if (word.startsWith('inf'))
     {
         return { length: at + 3, value: negative ? -Infinity : Infinity,
-                 overflow: false, negative_nan: false };
+                 overflow: false };
     }
 
     if (word.startsWith('nan'))
     {
-        return { length: at + 3, value: NaN, overflow: false,
-                 negative_nan: negative };
+        return { length: at + 3, value: NaN, overflow: false };
     }
 
     // digits, a point, digits
@@ -297,7 +293,6 @@ export function read_real(
     return {
         length:       at,
         value:        negative ? -nearest.value : nearest.value,
-        overflow:     nearest.overflow,
-        negative_nan: false
+        overflow:     nearest.overflow
     };
 }

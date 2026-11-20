@@ -83,7 +83,7 @@ test('what is not a finite number', () =>
     assert.equal(format_real(Infinity), 'inf');
     assert.equal(format_real(-Infinity), '-inf');
     assert.equal(format_real(NaN), 'nan');
-    assert.equal(format_real(NaN, true), '-nan');
+    assert.equal(format_real(-NaN), 'nan');
 });
 
 test('a precision of 0 is 1', () =>

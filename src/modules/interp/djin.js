@@ -528,7 +528,7 @@ function default_text(
                        DEFAULT_ROOM);
 
         case KIND.REAL:
-            return cut(format_real(_decl.real, _decl.negative_nan),
+            return cut(format_real(_decl.real),
                        DEFAULT_ROOM);
 
         case KIND.TEXT:

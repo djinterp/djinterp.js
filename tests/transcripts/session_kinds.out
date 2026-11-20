@@ -272,10 +272,6 @@ get id=2 scope=0 kind=real bound=1 source=program depth=0 integer=0 real=inf tex
 assign ok 2
 > get	app	ratio
 get id=2 scope=0 kind=real bound=1 source=program depth=0 integer=0 real=nan text=(null) | 3 nan | 3 nan
-> assign	app	1	ratio	-NaN
-assign ok 2
-> get	app	ratio
-get id=2 scope=0 kind=real bound=1 source=program depth=0 integer=0 real=-nan text=(null) | 4 -nan | 4 -nan
 > assign	app	1	ratio	infinit
 assign fail 8 INVALID_ARGUMENT
 > assign	app	1	ratio	nan(1)
@@ -313,7 +309,7 @@ assign fail 8 INVALID_ARGUMENT
 > assign	app	1	ratio	0.00000000000000000000000000000000000000000000000000000000000001
 assign fail 8 INVALID_ARGUMENT
 > get	app	ratio
-get id=2 scope=0 kind=real bound=1 source=program depth=0 integer=0 real=-nan text=(null) | 4 -nan | 4 -nan
+get id=2 scope=0 kind=real bound=1 source=program depth=0 integer=0 real=nan text=(null) | 3 nan | 3 nan
 > assign	printer	1	scale	  3.25  
 assign ok 1048582
 > get	printer	scale
