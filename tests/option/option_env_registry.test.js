@@ -17,87 +17,87 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
 import { STATUS, fail } from '../../src/option/option_common.js';
-import * as option_env from '../../src/option/option_env.js';
-import * as option_env_registry from '../../src/option/option_env_registry.js';
+import * as optionEnv from '../../src/option/option_env.js';
+import * as optionEnvRegistry from '../../src/option/option_env_registry.js';
 import { generated } from '../support/fixture.js';
 
 test('the program\'s registry is one, and named "djinterp"', () =>
 {
-    const registry = option_env_registry.registry();
+    const registry = optionEnvRegistry.registry();
 
-    assert.equal(option_env_registry.registry(), registry);
-    assert.equal(option_env.name(option_env_registry.frame(registry)),
+    assert.equal(optionEnvRegistry.registry(), registry);
+    assert.equal(optionEnv.name(optionEnvRegistry.frame(registry)),
                  'djinterp');
-    assert.equal(option_env_registry.count(registry), 0);
+    assert.equal(optionEnvRegistry.count(registry), 0);
 });
 
 test('a registry has the reference\'s room where it is given none', () =>
 {
     const room     = generated('option.json').registry;
-    const registry = option_env_registry.init('app').registry;
-    const root     = option_env_registry.frame(registry);
+    const registry = optionEnvRegistry.init('app').registry;
+    const root     = optionEnvRegistry.frame(registry);
 
     for (let i = 0; i < room.variables; ++i)
     {
-        assert.equal(option_env.declare(root,
-                                        option_env.row_bool('v' + i, false))
-                               .is_ok, true);
+        assert.equal(optionEnv.declare(root,
+                                       optionEnv.rowBool('v' + i, false))
+                              .isOk, true);
     }
 
-    assert.deepEqual(option_env.declare(root,
-                                        option_env.row_bool('over', false)),
+    assert.deepEqual(optionEnv.declare(root,
+                                       optionEnv.rowBool('over', false)),
                      fail(STATUS.CAPACITY));
 
     for (let i = 0; i < room.djins; ++i)
     {
-        const frame = option_env.init();
+        const frame = optionEnv.init();
 
-        option_env.set_name(frame, 'd' + i);
-        assert.equal(option_env_registry.add(registry, frame).is_ok, true);
+        optionEnv.setName(frame, 'd' + i);
+        assert.equal(optionEnvRegistry.add(registry, frame).isOk, true);
     }
 
-    const over = option_env.init();
+    const over = optionEnv.init();
 
-    option_env.set_name(over, 'over');
-    assert.deepEqual(option_env_registry.add(registry, over),
+    optionEnv.setName(over, 'over');
+    assert.deepEqual(optionEnvRegistry.add(registry, over),
                      fail(STATUS.CAPACITY));
 
     // and other room where it is given some
-    const small = option_env_registry.init('app', { djins: 0 }).registry;
+    const small = optionEnvRegistry.init('app', { djins: 0 }).registry;
 
-    assert.deepEqual(option_env_registry.add(small, over),
+    assert.deepEqual(optionEnvRegistry.add(small, over),
                      fail(STATUS.CAPACITY));
 });
 
 test('a name that is no identifier leaves the root unnamed', () =>
 {
-    const made = option_env_registry.init('not a name');
+    const made = optionEnvRegistry.init('not a name');
 
-    assert.equal(made.is_ok, false);
+    assert.equal(made.isOk, false);
     assert.equal(made.error, STATUS.INVALID_ARGUMENT);
-    assert.equal(option_env.name(option_env_registry.frame(made.registry)),
+    assert.equal(optionEnv.name(optionEnvRegistry.frame(made.registry)),
                  null);
 });
 
 test('what is no registry is answered, not thrown at', () =>
 {
-    assert.equal(option_env_registry.frame(null), null);
-    assert.equal(option_env_registry.count(null), 0);
-    assert.equal(option_env_registry.at(null, 0), null);
-    assert.equal(option_env_registry.find(null, 'a'), null);
-    assert.equal(option_env_registry.target({}, 'a'), null);
-    assert.equal(option_env_registry.suggest(null, 'a'), '');
-    assert.deepEqual(option_env_registry.assign(null, 'a', '1', 1),
+    assert.equal(optionEnvRegistry.frame(null), null);
+    assert.equal(optionEnvRegistry.count(null), 0);
+    assert.equal(optionEnvRegistry.at(null, 0), null);
+    assert.equal(optionEnvRegistry.find(null, 'a'), null);
+    assert.equal(optionEnvRegistry.target({}, 'a'), null);
+    assert.equal(optionEnvRegistry.suggest(null, 'a'), '');
+    assert.deepEqual(optionEnvRegistry.assign(null, 'a', '1', 1),
                      fail(STATUS.INVALID_ARGUMENT));
-    assert.deepEqual(option_env_registry.put(null, 'a = 1', 1),
+    assert.deepEqual(optionEnvRegistry.put(null, 'a = 1', 1),
                      fail(STATUS.INVALID_ARGUMENT));
-    assert.deepEqual(option_env_registry.load(null, 'a = 1', 1),
+    assert.deepEqual(optionEnvRegistry.load(null, 'a = 1', 1),
                      fail(STATUS.INVALID_ARGUMENT));
-    assert.deepEqual(option_env_registry.import(null, '', {}),
+    assert.deepEqual(optionEnvRegistry.import(null, '', {}),
                      fail(STATUS.INVALID_ARGUMENT));
-    assert.deepEqual(option_env_registry.take_option(null, ['--a'], 0),
+    assert.deepEqual(optionEnvRegistry.takeOption(null, ['--a'], 0),
                      { took: 0, at: 0, result: null });
-    assert.deepEqual(option_env_registry.add(null, option_env.init()),
+    assert.deepEqual(optionEnvRegistry.add(null, optionEnv.init()),
                      fail(STATUS.INVALID_ARGUMENT));
-    assert.equal(option_env_registry.import, option_env_registry.import_);
+    assert.equal(optionEnvRegistry.import, optionEnvRegistry.import_);
 });

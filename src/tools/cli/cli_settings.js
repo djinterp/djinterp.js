@@ -12,7 +12,7 @@
 * (HANDOFF.md, "what is not ported").
 *   The reference reads the process's environment and a file under the
 * user's home. A page has neither, so both are given: an environment as
-* `option_env.import` takes one, and a FILE, which is an object
+* `optionEnv.import` takes one, and a FILE, which is an object
 *     { name: string, read(): ?string, write(text: string): void }
 * `name` is what the file is called when the kit speaks of it; `read`
 * gives its text, or null where there is none yet; `write` replaces it, and
@@ -38,17 +38,17 @@ TABLE OF CONTENTS
 3.  A run's settings
     1.  start
     2.  take
-    3.  said_for
+    3.  saidFor
 */
 
-import { STATUS, result_status, status_name }
+import { STATUS, resultStatus, statusName }
     from '../../option/option_common.js';
-import * as option_env from '../../option/option_env.js';
-import * as option_env_registry from '../../option/option_env_registry.js';
+import * as optionEnv from '../../option/option_env.js';
+import * as optionEnvRegistry from '../../option/option_env_registry.js';
 
-const ROOM      = 256;
-const env_inner = option_env.inner;
-const reg_inner = option_env_registry.inner;
+const ROOM     = 256;
+const envInner = optionEnv.inner;
+const regInner = optionEnvRegistry.inner;
 
 
 //==============================================================================
@@ -61,7 +61,7 @@ const reg_inner = option_env_registry.inner;
  * name it was probably meant to be; a value that is not built; a value the
  * setting does not take; or the status's name.
  *
- * @param {option_env_registry} _registry  the registry the name was
+ * @param {OptionEnvRegistry} _registry  the registry the name was
  *        looked for in.
  * @param {number}  _status    the refusal's status.
  * @param {string}  _name      the setting's name as written.
@@ -84,7 +84,7 @@ export function why(
 
     if (_status === STATUS.KEY_ABSENT)
     {
-        const near = reg_inner.suggest(_registry, _name);
+        const near = regInner.suggest(_registry, _name);
 
         out = ( (near.length > 0) &&
                 (near.length < ROOM) )
@@ -104,7 +104,7 @@ export function why(
     else
     {
         out = '\'' + shown + '\' cannot be set so (' +
-              status_name(_status) + ')';
+              statusName(_status) + ')';
     }
 
     return out.slice(0, _capacity - 1);
@@ -116,11 +116,11 @@ export function why(
 //==============================================================================
 
 /*
-name_at
+nameAt
   The name of the statement between two offsets of a script: what stands
 before its '=', less the space around it.
 */
-function name_at(
+function nameAt(
     _script,
     _at,
     _end
@@ -154,12 +154,12 @@ function name_at(
 }
 
 /*
-value_at
+valueAt
   The value of the statement between two offsets of a script: what follows
 its '=', less the space around it, cut to the kit's room; null for a
 statement with no '='.
 */
-function value_at(
+function valueAt(
     _script,
     _at,
     _end
@@ -199,7 +199,7 @@ function value_at(
  * does not stop the rest: it is reported, with its line, and the load
  * goes on after it.
  *
- * @param {option_env_registry} _registry  the registry.
+ * @param {OptionEnvRegistry} _registry  the registry.
  * @param {string} _script  the file's text.
  * @param {function(number, string): void} _report  told each refusal: the
  *        statement's line, from 1, and why.
@@ -210,22 +210,22 @@ export function load(
     _report
 )
 {
-    const script  = env_inner.cstr(_script);
+    const script  = envInner.cstr(_script);
     let   offset  = 0;
     let   line    = 1;
     let   counted = 0;
 
     while (offset < script.length)
     {
-        const done = reg_inner.load(_registry, script.slice(offset),
-                                    option_env.SOURCE.FILE);
+        const done = regInner.load(_registry, script.slice(offset),
+                                   optionEnv.SOURCE.FILE);
 
-        if (done.is_ok)
+        if (done.isOk)
         {
             break;
         }
 
-        const at = offset + (done.error_offset ?? 0);
+        const at = offset + (done.errorOffset ?? 0);
 
         // the failing statement's line
         for (; counted < at; ++counted)
@@ -233,11 +233,11 @@ export function load(
             line += (script[counted] === '\n') ? 1 : 0;
         }
 
-        const end = env_inner.statement_end(script, at);
+        const end = envInner.statementEnd(script, at);
 
-        _report(line, why(_registry, result_status(done),
-                          name_at(script, at, end),
-                          value_at(script, at, end)));
+        _report(line, why(_registry, resultStatus(done),
+                          nameAt(script, at, end),
+                          valueAt(script, at, end)));
 
         // on from the end of the one that failed, and never back
         offset = (end > at) ? end : (at + 1);
@@ -252,11 +252,11 @@ export function load(
 //==============================================================================
 
 /*
-prefix_of
+prefixOf
   A program's own environment prefix: its name in upper case, '-' as '_',
 and a '_' after it; empty for no name.
 */
-function prefix_of(
+function prefixOf(
     _name
 )
 {
@@ -289,17 +289,17 @@ export function start(
     _program
 )
 {
-    const lookup = env_inner.lookup_of(_program.environment);
-    const prefix = prefix_of(_program.name);
+    const lookup = envInner.lookupOf(_program.environment);
+    const prefix = prefixOf(_program.name);
     let   said   = '';
 
     // the shared prefix, then the program's own, whose binding wins
-    reg_inner.import(_program.registry, 'DJINTERP_', lookup);
+    regInner.import(_program.registry, 'DJINTERP_', lookup);
 
     if ( (prefix.length !== 0) &&
          (prefix !== 'DJINTERP_') )
     {
-        reg_inner.import(_program.registry, prefix, lookup);
+        regInner.import(_program.registry, prefix, lookup);
     }
 
     if (_program.file === null)
@@ -363,13 +363,13 @@ function shaped(
  * What the kit says of a setting the command line gave and the registry
  * refused: the message of a usage error.
  *
- * @param {option_env_registry} _registry  the registry.
+ * @param {OptionEnvRegistry} _registry  the registry.
  * @param {Array<string>} _argv    the command line.
  * @param {number}        _at      where the option stands on it.
  * @param {number}        _status  the refusal's status.
  * @returns {string} the message.
  */
-export function said_for(
+export function saidFor(
     _registry,
     _argv,
     _at,
@@ -424,7 +424,7 @@ export function said_for(
  * "--no-DJIN.NAME" -- and binds each as the command line; the arguments
  * left are the command's.
  *
- * @param {option_env_registry} _registry  the registry.
+ * @param {OptionEnvRegistry} _registry  the registry.
  * @param {Array<string>} _argv      the command line, the program's name
  *        first.
  * @param {Array<string>} _commands  the names of the program's commands:
@@ -454,7 +454,7 @@ export function take(
              !ended   &&
              shaped(argument) )
         {
-            taken = reg_inner.take_option(_registry, _argv, at);
+            taken = regInner.takeOption(_registry, _argv, at);
             at    = taken.at;
         }
 
@@ -465,8 +465,8 @@ export function take(
                 kept:    kept,
                 refused: {
                     command: command,
-                    message: said_for(_registry, _argv, first,
-                                      result_status(taken.result))
+                    message: saidFor(_registry, _argv, first,
+                                     resultStatus(taken.result))
                 }
             };
         }

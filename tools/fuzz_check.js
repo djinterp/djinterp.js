@@ -23,9 +23,9 @@ import { spawnSync } from 'node:child_process';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { run_program } from '../tests/support/program.js';
-import { run_session } from '../tests/support/session.js';
-import { program_bytes, program_home, session_bytes } from './record.js';
+import { runProgram } from '../tests/support/program.js';
+import { runSession } from '../tests/support/session.js';
+import { programBytes, programHome, sessionBytes } from './record.js';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const NAME = 'fuzz_check';
@@ -55,26 +55,26 @@ for (let seed = Number(first); seed <= Number(last); ++seed)
 
     const input = made.stdout.toString('latin1');
     const want  = ((kind === 'session')
-                       ? session_bytes(build, made.stdout)
-                       : program_bytes(build, NAME, input))
+                       ? sessionBytes(build, made.stdout)
+                       : programBytes(build, NAME, input))
                       .toString('latin1');
     const got   = (kind === 'session')
-                      ? run_session(input)
-                      : run_program(input, program_home(NAME).settings);
+                      ? runSession(input)
+                      : runProgram(input, programHome(NAME).settings);
 
     if (got !== want)
     {
-        const got_lines  = got.split('\n');
-        const want_lines = want.split('\n');
-        const at         = want_lines.findIndex((_line, _i) =>
-                                                (_line !== got_lines[_i]));
-        const asked      = want_lines.slice(0, at + 1).reverse()
+        const gotLines  = got.split('\n');
+        const wantLines = want.split('\n');
+        const at        = wantLines.findIndex((_line, _i) =>
+                                               (_line !== gotLines[_i]));
+        const asked      = wantLines.slice(0, at + 1).reverse()
                                .find((_line) => _line.startsWith('> '));
 
         console.log('seed ' + seed + ' differs at line ' + (at + 1) +
                     ', answering ' + JSON.stringify(asked) +
-                    '\n  reference: ' + JSON.stringify(want_lines[at]) +
-                    '\n  port:      ' + JSON.stringify(got_lines[at]));
+                    '\n  reference: ' + JSON.stringify(wantLines[at]) +
+                    '\n  port:      ' + JSON.stringify(gotLines[at]));
         process.exit(1);
     }
 }

@@ -8,15 +8,15 @@
 *   A table may be edited by a handler while a dispatch over it runs. A
 * letter unbound then is kept, out of every query, until the outermost
 * dispatch ends: the fold that began before the unbind still reaches it,
-* and its state is released only afterwards (`state_free`). The registry
+* and its state is released only afterwards (`stateFree`). The registry
 * (event_registry_common.js) does the folding and brackets it with
-* `internal.dispatch_begin` and `internal.dispatch_end`.
+* `internal.dispatchBegin` and `internal.dispatchEnd`.
 *   What is the reference's storage is not here: its arena of slots, its
 * buckets and their rehashing, its statistics and footprint. A table here
-* holds its letters in bind order. It has no limit unless `table_init` is
+* holds its letters in bind order. It has no limit unless `tableInit` is
 * given one; given a capacity it reports ERR_CAPACITY when it is full, as
 * the reference's fixed table does. Where the reference walks a word by
-* slot index (`first`, `next`, `at`), this gives the word (`table_word`).
+* slot index (`first`, `next`, `at`), this gives the word (`tableWord`).
 *   reference: inc/djinterp/c/event/event_table_common.h and
 *              src/djinterp/c/event/event_table_common.c, at dfc793c4
 *
@@ -31,18 +31,18 @@
 TABLE OF CONTENTS
 =================
 1.  The table
-    1.  table_init, table_dispose, table_clear, table_clear_key
+    1.  tableInit, tableDispose, tableClear, tableClearKey
 2.  Bind and unbind
-    1.  table_bind, table_unbind
+    1.  tableBind, tableUnbind
 3.  The mask
-    1.  table_enable, table_disable, table_is_enabled, table_contains
+    1.  tableEnable, tableDisable, tableIsEnabled, tableContains
 4.  Reading
-    1.  table_find, table_word
-    2.  table_count, table_enabled_count, table_count_for,
-        table_has_entries_for, table_key_count
-    3.  table_for_each, table_for_each_key
+    1.  tableFind, tableWord
+    2.  tableCount, tableEnabledCount, tableCountFor,
+        tableHasEntriesFor, tableKeyCount
+    3.  tableForEach, tableForEachKey
 5.  Merge
-    1.  table_merge
+    1.  tableMerge
 6.  For the registry
     1.  internal
 */
@@ -55,18 +55,18 @@ import { HANDLER_ID_NULL, STATUS } from './event_common.js';
 //==============================================================================
 
 /**
- * A table. Made by `table_init`; read through the functions here.
+ * A table. Made by `tableInit`; read through the functions here.
  *
- * @typedef {object} event_table
+ * @typedef {object} EventTable
  */
 
 /**
  * A letter, as a reader is shown one.
  *
- * @typedef {object} event_entry
+ * @typedef {object} EventEntry
  * @property {number}     id       its handler id.
  * @property {bigint}     key      the key of its word.
- * @property {event_step} step     the handler.
+ * @property {EventStep} step     the handler.
  * @property {boolean}    enabled  its mask.
  */
 
@@ -94,22 +94,22 @@ function live(
  * @param {object} [_room]  the table's room.
  * @param {number} [_room.capacity=Infinity]  the most letters it holds,
  *        those unbound and not yet released among them.
- * @returns {event_table}
+ * @returns {EventTable}
  */
-export function table_init(
+export function tableInit(
     _room = {}
 )
 {
     return {
-        ready:         true,
-        entries:       [],
-        next_id:       1,
-        count:         0,
-        enabled_count: 0,
-        capacity:      _room.capacity ?? Infinity,
-        dispatching:   false,
-        zombies:       false,
-        dispose_asked: false
+        ready:        true,
+        entries:      [],
+        nextId:       1,
+        count:        0,
+        enabledCount: 0,
+        capacity:     _room.capacity ?? Infinity,
+        dispatching:  false,
+        zombies:      false,
+        disposeAsked: false
     };
 }
 
@@ -124,7 +124,7 @@ function detach(
 {
     _table.entries.splice(_table.entries.indexOf(_entry), 1);
 
-    return { hook: _entry.state_free, state: _entry.step.state };
+    return { hook: _entry.stateFree, state: _entry.step.state };
 }
 
 /*
@@ -141,7 +141,7 @@ function drop(
     // the mask counts only while the letter is bound
     if (_entry.enabled)
     {
-        --_table.enabled_count;
+        --_table.enabledCount;
     }
 
     // mid-dispatch: defer the release to the outermost dispatch's end
@@ -166,11 +166,11 @@ function drop(
 
 /**
  * Unbinds every letter the table had when the call began, running each
- * one's `state_free`. Handler ids are not started again.
+ * one's `stateFree`. Handler ids are not started again.
  *
- * @param {?event_table} _table  the table.
+ * @param {?EventTable} _table  the table.
  */
-export function table_clear(
+export function tableClear(
     _table
 )
 {
@@ -179,7 +179,7 @@ export function table_clear(
         return;
     }
 
-    const bound = _table.next_id - 1;
+    const bound = _table.nextId - 1;
 
     for (const entry of _table.entries.slice())
     {
@@ -196,11 +196,11 @@ export function table_clear(
 /**
  * Unbinds every letter of one key's word.
  *
- * @param {?event_table} _table  the table.
+ * @param {?EventTable} _table  the table.
  * @param {bigint}       _key    the key.
  * @returns {number} how many were unbound.
  */
-export function table_clear_key(
+export function tableClearKey(
     _table,
     _key
 )
@@ -212,7 +212,7 @@ export function table_clear_key(
         return 0;
     }
 
-    const bound = _table.next_id - 1;
+    const bound = _table.nextId - 1;
 
     for (const entry of _table.entries.slice())
     {
@@ -233,9 +233,9 @@ export function table_clear_key(
  * by a handler of a dispatch over it, the table is ended when the
  * outermost dispatch is.
  *
- * @param {?event_table} _table  the table.
+ * @param {?EventTable} _table  the table.
  */
-export function table_dispose(
+export function tableDispose(
     _table
 )
 {
@@ -245,21 +245,21 @@ export function table_dispose(
         return;
     }
 
-    table_clear(_table);
+    tableClear(_table);
 
     // mid-dispatch: the running fold still needs the letters
     if (_table.dispatching)
     {
-        _table.dispose_asked = true;
+        _table.disposeAsked = true;
 
         return;
     }
 
-    _table.ready         = false;
-    _table.entries       = [];
-    _table.next_id       = 1;
-    _table.count         = 0;
-    _table.enabled_count = 0;
+    _table.ready        = false;
+    _table.entries      = [];
+    _table.nextId       = 1;
+    _table.count        = 0;
+    _table.enabledCount = 0;
 
     return;
 }
@@ -273,10 +273,10 @@ export function table_dispose(
 /**
  * Appends a letter to a key's word, its mask on.
  *
- * @param {?event_table} _table  the table.
+ * @param {?EventTable} _table  the table.
  * @param {bigint}       _key    the key.
- * @param {event_step}   _step   the handler.
- * @param {?function(*): void} [_state_free=null]  called with the step's
+ * @param {EventStep}   _step   the handler.
+ * @param {?function(*): void} [_stateFree=null]  called with the step's
  *        state when the letter is unbound or the table cleared; none for
  *        state the caller keeps.
  * @returns {{status: number, id: number}} OK and the letter's id; ERR_NULL
@@ -284,11 +284,11 @@ export function table_dispose(
  *          ERR_CAPACITY for one that is full. The id is HANDLER_ID_NULL
  *          for a failure.
  */
-export function table_bind(
+export function tableBind(
     _table,
     _key,
     _step,
-    _state_free = null
+    _stateFree = null
 )
 {
     if ( (_table === null) ||
@@ -308,23 +308,23 @@ export function table_bind(
     }
 
     const entry = {
-        id:         _table.next_id,
-        key:        _key,
-        step:       _step ?? { fn: null, state: null },
-        state_free: _state_free ?? null,
-        enabled:    true,
-        zombie:     false
+        id:        _table.nextId,
+        key:       _key,
+        step:      _step ?? { fn: null, state: null },
+        stateFree: _stateFree ?? null,
+        enabled:   true,
+        zombie:    false
     };
 
-    ++_table.next_id;
+    ++_table.nextId;
     _table.entries.push(entry);
     ++_table.count;
-    ++_table.enabled_count;
+    ++_table.enabledCount;
 
     return { status: STATUS.OK, id: entry.id };
 }
 
-function entry_of(
+function entryOf(
     _table,
     _id
 )
@@ -348,14 +348,14 @@ function entry_of(
 
 /**
  * Unbinds the letter of an id from whichever word holds it, running its
- * `state_free`.
+ * `stateFree`.
  *
- * @param {?event_table} _table  the table.
+ * @param {?EventTable} _table  the table.
  * @param {number}       _id     the letter's id.
  * @returns {number} OK; ERR_NOT_FOUND for no such letter; ERR_NULL for no
  *          table.
  */
-export function table_unbind(
+export function tableUnbind(
     _table,
     _id
 )
@@ -367,7 +367,7 @@ export function table_unbind(
                                                 : STATUS.ERR_NULL;
     }
 
-    const entry = entry_of(_table, _id);
+    const entry = entryOf(_table, _id);
 
     if (entry === null)
     {
@@ -384,7 +384,7 @@ export function table_unbind(
 // 3.  THE MASK
 //==============================================================================
 
-function set_mask(
+function setMask(
     _table,
     _id,
     _on
@@ -395,7 +395,7 @@ function set_mask(
         return STATUS.ERR_NOT_FOUND;
     }
 
-    const entry = entry_of(_table, _id);
+    const entry = entryOf(_table, _id);
 
     if (entry === null)
     {
@@ -409,7 +409,7 @@ function set_mask(
     }
 
     entry.enabled         = _on;
-    _table.enabled_count += _on ? 1 : -1;
+    _table.enabledCount += _on ? 1 : -1;
 
     return STATUS.OK;
 }
@@ -418,48 +418,48 @@ function set_mask(
 /**
  * Turns a letter's mask on.
  *
- * @param {?event_table} _table  the table.
+ * @param {?EventTable} _table  the table.
  * @param {number}       _id     the letter's id.
  * @returns {number} OK for a letter that was off; ERR_STATE for one
  *          already on; ERR_NOT_FOUND for no such letter.
  */
-export function table_enable(
+export function tableEnable(
     _table,
     _id
 )
 {
-    return set_mask(_table, _id, true);
+    return setMask(_table, _id, true);
 }
 
 /**
  * Turns a letter's mask off: it stays in its word and acts as skip.
  *
- * @param {?event_table} _table  the table.
+ * @param {?EventTable} _table  the table.
  * @param {number}       _id     the letter's id.
  * @returns {number} OK for a letter that was on; ERR_STATE for one
  *          already off; ERR_NOT_FOUND for no such letter.
  */
-export function table_disable(
+export function tableDisable(
     _table,
     _id
 )
 {
-    return set_mask(_table, _id, false);
+    return setMask(_table, _id, false);
 }
 
 /**
  * Whether a letter is bound and its mask on.
  *
- * @param {?event_table} _table  the table.
+ * @param {?EventTable} _table  the table.
  * @param {number}       _id     the letter's id.
  * @returns {boolean}
  */
-export function table_is_enabled(
+export function tableIsEnabled(
     _table,
     _id
 )
 {
-    const entry = ready(_table) ? entry_of(_table, _id) : null;
+    const entry = ready(_table) ? entryOf(_table, _id) : null;
 
     return ( (entry !== null) &&
              entry.enabled );
@@ -468,17 +468,17 @@ export function table_is_enabled(
 /**
  * Whether a letter of an id is bound in any word.
  *
- * @param {?event_table} _table  the table.
+ * @param {?EventTable} _table  the table.
  * @param {number}       _id     the letter's id.
  * @returns {boolean}
  */
-export function table_contains(
+export function tableContains(
     _table,
     _id
 )
 {
     return ( ready(_table) &&
-             (entry_of(_table, _id) !== null) );
+             (entryOf(_table, _id) !== null) );
 }
 
 
@@ -498,16 +498,16 @@ function shown(
 /**
  * The letter of an id.
  *
- * @param {?event_table} _table  the table.
+ * @param {?EventTable} _table  the table.
  * @param {number}       _id     the letter's id.
- * @returns {?event_entry} the letter; null for no such letter.
+ * @returns {?EventEntry} the letter; null for no such letter.
  */
-export function table_find(
+export function tableFind(
     _table,
     _id
 )
 {
-    const entry = ready(_table) ? entry_of(_table, _id) : null;
+    const entry = ready(_table) ? entryOf(_table, _id) : null;
 
     return (entry !== null) ? shown(entry) : null;
 }
@@ -515,11 +515,11 @@ export function table_find(
 /**
  * A key's word: its letters in the order they were bound.
  *
- * @param {?event_table} _table  the table.
+ * @param {?EventTable} _table  the table.
  * @param {bigint}       _key    the key.
- * @returns {Array<event_entry>}
+ * @returns {Array<EventEntry>}
  */
-export function table_word(
+export function tableWord(
     _table,
     _key
 )
@@ -535,10 +535,10 @@ export function table_word(
 /**
  * How many letters are bound, in every word.
  *
- * @param {?event_table} _table  the table.
+ * @param {?EventTable} _table  the table.
  * @returns {number}
  */
-export function table_count(
+export function tableCount(
     _table
 )
 {
@@ -548,53 +548,53 @@ export function table_count(
 /**
  * How many bound letters have their mask on.
  *
- * @param {?event_table} _table  the table.
+ * @param {?EventTable} _table  the table.
  * @returns {number}
  */
-export function table_enabled_count(
+export function tableEnabledCount(
     _table
 )
 {
-    return ready(_table) ? _table.enabled_count : 0;
+    return ready(_table) ? _table.enabledCount : 0;
 }
 
 /**
  * The length of a key's word.
  *
- * @param {?event_table} _table  the table.
+ * @param {?EventTable} _table  the table.
  * @param {bigint}       _key    the key.
  * @returns {number}
  */
-export function table_count_for(
+export function tableCountFor(
     _table,
     _key
 )
 {
-    return table_word(_table, _key).length;
+    return tableWord(_table, _key).length;
 }
 
 /**
  * Whether a key's word has a letter.
  *
- * @param {?event_table} _table  the table.
+ * @param {?EventTable} _table  the table.
  * @param {bigint}       _key    the key.
  * @returns {boolean}
  */
-export function table_has_entries_for(
+export function tableHasEntriesFor(
     _table,
     _key
 )
 {
-    return (table_count_for(_table, _key) !== 0);
+    return (tableCountFor(_table, _key) !== 0);
 }
 
 /**
  * How many keys have a word that is not empty.
  *
- * @param {?event_table} _table  the table.
+ * @param {?EventTable} _table  the table.
  * @returns {number}
  */
-export function table_key_count(
+export function tableKeyCount(
     _table
 )
 {
@@ -625,7 +625,7 @@ function visit(
         return 0;
     }
 
-    const bound = _table.next_id - 1;
+    const bound = _table.nextId - 1;
 
     for (;;)
     {
@@ -656,12 +656,12 @@ function visit(
  * Visits every bound letter in ascending id order, which is the order
  * they were bound in, whatever their keys.
  *
- * @param {?event_table} _table    the table.
- * @param {function(event_entry): boolean} _visitor  shown each letter;
+ * @param {?EventTable} _table    the table.
+ * @param {function(EventEntry): boolean} _visitor  shown each letter;
  *        false stops the walk.
  * @returns {number} how many were visited.
  */
-export function table_for_each(
+export function tableForEach(
     _table,
     _visitor
 )
@@ -672,13 +672,13 @@ export function table_for_each(
 /**
  * Visits one key's word, in word order.
  *
- * @param {?event_table} _table    the table.
+ * @param {?EventTable} _table    the table.
  * @param {bigint}       _key      the key.
- * @param {function(event_entry): boolean} _visitor  shown each letter;
+ * @param {function(EventEntry): boolean} _visitor  shown each letter;
  *        false stops the walk.
  * @returns {number} how many were visited.
  */
-export function table_for_each_key(
+export function tableForEachKey(
     _table,
     _key,
     _visitor
@@ -696,17 +696,17 @@ export function table_for_each_key(
 /**
  * Appends every letter of another table to this one, key by key, this
  * one's letters first. The merged letters are given new ids; each keeps
- * its mask. They borrow their state: `state_free` is not copied, since
+ * its mask. They borrow their state: `stateFree` is not copied, since
  * two tables must not both release one state. The other table is left as
  * it was.
  *
- * @param {?event_table} _table  the table merged into.
- * @param {?event_table} _other  the table merged from.
+ * @param {?EventTable} _table  the table merged into.
+ * @param {?EventTable} _other  the table merged from.
  * @returns {{status: number, merged: number}} OK; ERR_NULL for a table
  *          missing; ERR_CAPACITY for a table that filled, with in
  *          `merged` how far the merge got: it is not undone.
  */
-export function table_merge(
+export function tableMerge(
     _table,
     _other
 )
@@ -726,14 +726,14 @@ export function table_merge(
     }
 
     // copy out first: merging a table into itself must not chase its tail
-    const bound   = _other.next_id - 1;
+    const bound   = _other.nextId - 1;
     const letters = _other.entries.filter((_entry) => ( live(_entry) &&
                                                        (_entry.id <= bound) ))
                                   .map((_entry) => ({ ..._entry }));
 
     for (const letter of letters)
     {
-        const bound_ = table_bind(_table, letter.key, letter.step, null);
+        const bound_ = tableBind(_table, letter.key, letter.step, null);
 
         if (bound_.status !== STATUS.OK)
         {
@@ -743,8 +743,8 @@ export function table_merge(
         // the mask travels with the letter
         if (!letter.enabled)
         {
-            entry_of(_table, bound_.id).enabled = false;
-            --_table.enabled_count;
+            entryOf(_table, bound_.id).enabled = false;
+            --_table.enabledCount;
         }
 
         ++merged;
@@ -759,11 +759,11 @@ export function table_merge(
 //==============================================================================
 
 /*
-dispatch_begin
+dispatchBegin
   Marks the table as dispatching; true when this is the outermost dispatch,
 the one that must end it.
 */
-function dispatch_begin(
+function dispatchBegin(
     _table
 )
 {
@@ -775,11 +775,11 @@ function dispatch_begin(
 }
 
 /*
-dispatch_end
+dispatchEnd
   When outermost: clears the mark, releases the letters unbound meanwhile,
 running their hooks, and ends the table where a handler asked for that.
 */
-function dispatch_end(
+function dispatchEnd(
     _table,
     _outermost
 )
@@ -816,10 +816,10 @@ function dispatch_end(
     }
 
     // a handler asked for the table to be disposed
-    if (_table.dispose_asked)
+    if (_table.disposeAsked)
     {
-        _table.dispose_asked = false;
-        table_dispose(_table);
+        _table.disposeAsked = false;
+        tableDispose(_table);
     }
 
     return;
@@ -831,7 +831,7 @@ function dispatch_end(
  * letters themselves, and the bracket around a dispatch.
  */
 export const internal = Object.freeze({
-    ready:          ready,
-    dispatch_begin: dispatch_begin,
-    dispatch_end:   dispatch_end
+    ready:         ready,
+    dispatchBegin: dispatchBegin,
+    dispatchEnd:   dispatchEnd
 });

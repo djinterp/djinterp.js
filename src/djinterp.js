@@ -24,7 +24,7 @@
 *   `open` and `run` answer with promises, as the interface was first
 * drawn: what answers a page can then become an engine that is not in
 * the page's own thread, and no page changes. With this engine, the port,
-* nothing waits, and `open_now` and `run_now` are the same two with the
+* nothing waits, and `openNow` and `runNow` are the same two with the
 * answer handed straight back; an engine elsewhere will have neither.
 *   The engine is the port: the option machine (src/option), the djin
 * records (src/modules/interp), the program's own commands
@@ -38,8 +38,8 @@
 *     when a transcript is recorded.
 *   - WHERE SETTINGS ARE KEPT. The reference keeps the user's settings in
 *     a file under the user's home. A page gives a FILE object
-*     (src/tools/cli/cli_settings.js): `memory_file` keeps one for as long
-*     as the page is open, and `storage_file` keeps one in a Storage the
+*     (src/tools/cli/cli_settings.js): `memoryFile` keeps one for as long
+*     as the page is open, and `storageFile` keeps one in a Storage the
 *     page hands over, such as its localStorage.
 *   - WHAT IS HEARD. The reference's program posts no events. `on` hears
 *     two, named as the reference names events, by module:
@@ -61,25 +61,25 @@ TABLE OF CONTENTS
 1.  A line's words
     1.  split
 2.  Where settings are kept
-    1.  memory_file
-    2.  storage_file
+    1.  memoryFile
+    2.  storageFile
 3.  Settings a page declares
-    1.  settings_frame
+    1.  settingsFrame
 4.  The program
-    1.  open_program
-    2.  open_now
+    1.  openProgram
+    2.  openNow
     3.  open
 */
 
 import * as event from './event/event.js';
 import * as djin from './modules/interp/djin.js';
-import { result_status, status_name } from './option/option_common.js';
-import * as option_env from './option/option_env.js';
-import * as option_env_registry from './option/option_env_registry.js';
-import * as cli_settings from './tools/cli/cli_settings.js';
-import * as djinterp_commands from './tools/djinterp/djinterp_commands.js';
+import { resultStatus, statusName } from './option/option_common.js';
+import * as optionEnv from './option/option_env.js';
+import * as optionEnvRegistry from './option/option_env_registry.js';
+import * as cliSettings from './tools/cli/cli_settings.js';
+import * as djinterpCommands from './tools/djinterp/djinterp_commands.js';
 
-export { djin, event, option_env, option_env_registry };
+export { djin, event, optionEnv, optionEnvRegistry };
 
 const SETTINGS_NAME = 'djinterp/settings';
 
@@ -180,7 +180,7 @@ export function split(
  * @returns {{name: string, read: function(): ?string,
  *            write: function(string): void}}
  */
-export function memory_file(
+export function memoryFile(
     _name = SETTINGS_NAME,
     _text = null
 )
@@ -212,7 +212,7 @@ export function memory_file(
  * @returns {{name: string, read: function(): ?string,
  *            write: function(string): void}}
  */
-export function storage_file(
+export function storageFile(
     _storage,
     _key = SETTINGS_NAME
 )
@@ -222,7 +222,7 @@ export function storage_file(
          (typeof _storage.getItem !== 'function') ||
          (typeof _storage.setItem !== 'function') )
     {
-        throw new TypeError('storage_file: the storage is not a Storage');
+        throw new TypeError('storageFile: the storage is not a Storage');
     }
 
     return {
@@ -244,37 +244,37 @@ export function storage_file(
  * record. A row the frame refuses is the page's own mistake, and throws.
  *
  * @param {string}            _name    the frame's name: the djin's.
- * @param {Array<option_row>} _rows    its rows.
+ * @param {Array<OptionRow>} _rows    its rows.
  * @param {Array<string>}     [_scopes=[]]  its scopes' names.
- * @returns {option_env} the frame.
+ * @returns {OptionEnv} the frame.
  */
-export function settings_frame(
+export function settingsFrame(
     _name,
     _rows,
     _scopes = []
 )
 {
-    const frame = option_env.init();
+    const frame = optionEnv.init();
     const must  = (_result, _what) =>
     {
-        if (!_result.is_ok)
+        if (!_result.isOk)
         {
-            throw new Error('settings_frame: ' + _what + ' was refused (' +
-                            status_name(result_status(_result)) + ')');
+            throw new Error('settingsFrame: ' + _what + ' was refused (' +
+                            statusName(resultStatus(_result)) + ')');
         }
     };
 
-    must(option_env.set_name(frame, _name), 'the name \'' + _name + '\'');
+    must(optionEnv.setName(frame, _name), 'the name \'' + _name + '\'');
 
     for (const row of _rows)
     {
-        must(option_env.declare(frame, row),
+        must(optionEnv.declare(frame, row),
              'the row \'' + _name + '.' + row?.name + '\'');
     }
 
     if (_scopes.length !== 0)
     {
-        must(option_env.set_scopes(frame, _scopes), 'the scopes');
+        must(optionEnv.setScopes(frame, _scopes), 'the scopes');
     }
 
     return frame;
@@ -286,12 +286,12 @@ export function settings_frame(
 //==============================================================================
 
 /*
-take_query
+takeQuery
   Binds a URL's query as the command line: "name=value" as --set, a bare
 "name" as a bool made true and "no-name" as one made false. What is refused
 is said as a warning.
 */
-function take_query(
+function takeQuery(
     _program,
     _query
 )
@@ -321,16 +321,16 @@ function take_query(
 
         const argv  = text.includes('=') ? ['--set', text]
                                          : ['--' + text];
-        const taken = option_env_registry.inner.take_option(
+        const taken = optionEnvRegistry.inner.takeOption(
                           _program.registry, argv, 0);
 
         if (taken.took <= 0)
         {
             said += _program.name + ': warning: query: ' +
-                    cli_settings.said_for(
+                    cliSettings.saidFor(
                         _program.registry, argv, 0,
                         (taken.result !== null)
-                            ? result_status(taken.result)
+                            ? resultStatus(taken.result)
                             : 0) + '\n';
         }
     }
@@ -341,7 +341,7 @@ function take_query(
 /**
  * What a line is answered with.
  *
- * @typedef {object} djinterp_reply
+ * @typedef {object} DjinterpReply
  * @property {number} status  the program's exit status for the line: 0,
  *           1 for no, 2 for trouble.
  * @property {string} out  what it wrote.
@@ -351,13 +351,13 @@ function take_query(
 /**
  * An open program. Made by `open`.
  *
- * @typedef {object} djinterp_session
- * @property {option_env_registry} registry  its settings.
- * @property {djin_set} set  its djins.
+ * @typedef {object} DjinterpSession
+ * @property {OptionEnvRegistry} registry  its settings.
+ * @property {DjinSet} set  its djins.
  * @property {string} warnings  what was said while its settings were
  *           readied: a line for each statement of the settings file, and
  *           each piece of the query, that was refused.
- * @property {function((string|Array<string>)): Promise<djinterp_reply>}
+ * @property {function((string|Array<string>)): Promise<DjinterpReply>}
  *           run  gives the program one command line: a line, which
  *           `split` makes words of, or an array of the words, which are
  *           passed on untouched. What the program says as it starts
@@ -365,7 +365,7 @@ function take_query(
  *           line has been heard by the time the promise is kept. Anything
  *           but a string or an array of strings is a promise broken with
  *           a TypeError.
- * @property {function((string|Array<string>)): djinterp_reply} run_now
+ * @property {function((string|Array<string>)): DjinterpReply} runNow
  *           the same, with the reply handed straight back; the port's
  *           own.
  * @property {function(string, function(object): (number|void)): number}
@@ -377,30 +377,30 @@ function take_query(
  */
 
 // the sources a run of the program binds at, and its end unbinds
-const RUN_SOURCES = [option_env.SOURCE.ENVIRONMENT, option_env.SOURCE.FILE,
-                     option_env.SOURCE.COMMAND_LINE,
-                     option_env.SOURCE.OVERRIDE];
+const RUN_SOURCES = [optionEnv.SOURCE.ENVIRONMENT, optionEnv.SOURCE.FILE,
+                     optionEnv.SOURCE.COMMAND_LINE,
+                     optionEnv.SOURCE.OVERRIDE];
 
 // 4.1
 /**
  * Opens a session over a program already made
- * (djinterp_commands.program_make): for a caller that built the registry
- * and the set of djins itself. `open_now` is this over a program it
+ * (djinterpCommands.programMake): for a caller that built the registry
+ * and the set of djins itself. `openNow` is this over a program it
  * makes.
  *
  * @param {object}  _program  the program.
  * @param {object}  [_options]
  * @param {?string} [_options.query=null]  a URL's query, bound as the
  *        command line of every line.
- * @returns {djinterp_session}
+ * @returns {DjinterpSession}
  */
-export function open_program(
+export function openProgram(
     _program,
     _options = {}
 )
 {
     const program = _program;
-    const events  = event.dispatcher_init();
+    const events  = event.dispatcherInit();
     const query   = (typeof _options.query === 'string') ? _options.query
                                                          : null;
 
@@ -414,23 +414,23 @@ export function open_program(
     const start = () =>
     {
         const registry = program.registry;
-        const frames   = [option_env_registry.frame(registry)];
+        const frames   = [optionEnvRegistry.frame(registry)];
 
-        for (let i = 0; i < option_env_registry.count(registry); ++i)
+        for (let i = 0; i < optionEnvRegistry.count(registry); ++i)
         {
-            frames.push(option_env_registry.at(registry, i));
+            frames.push(optionEnvRegistry.at(registry, i));
         }
 
         for (const frame of frames)
         {
             for (const source of RUN_SOURCES)
             {
-                option_env.unset_source(frame, source);
+                optionEnv.unsetSource(frame, source);
             }
         }
 
-        return { said:  djinterp_commands.program_start(program),
-                 asked: (query !== null) ? take_query(program, query)
+        return { said:  djinterpCommands.programStart(program),
+                 asked: (query !== null) ? takeQuery(program, query)
                                          : '' };
     };
 
@@ -445,10 +445,10 @@ export function open_program(
         run(_line)
         {
             // a misuse is a promise broken, not a throw past one
-            return new Promise((_keep) => _keep(this.run_now(_line)));
+            return new Promise((_keep) => _keep(this.runNow(_line)));
         },
 
-        run_now(_line)
+        runNow(_line)
         {
             const line  = (typeof _line === 'string') ? _line : null;
             const given = ( Array.isArray(_line) &&
@@ -468,7 +468,7 @@ export function open_program(
             // an unclosed quote is found before the program starts
             if (words === null)
             {
-                ran = { status: djinterp_commands.EXIT.TROUBLE, out: '',
+                ran = { status: djinterpCommands.EXIT.TROUBLE, out: '',
                         err: program.name +
                              ': error: a quote is not closed\n',
                         set: [] };
@@ -477,7 +477,7 @@ export function open_program(
             {
                 const began = start();
 
-                ran     = djinterp_commands.program_run(
+                ran     = djinterpCommands.programRun(
                               program, [program.name, ...words]);
                 ran.err = began.said + ran.err;
             }
@@ -486,13 +486,13 @@ export function open_program(
 
             if (ran.set.length !== 0)
             {
-                event.dispatcher_fire(events,
-                                      event.key_of_name('djinterp.set'),
-                                      { names: ran.set });
+                event.dispatcherFire(events,
+                                     event.keyOfName('djinterp.set'),
+                                     { names: ran.set });
             }
 
-            event.dispatcher_fire(events, event.key_of_name('djinterp.run'),
-                                  { line: line, words: words, ...reply });
+            event.dispatcherFire(events, event.keyOfName('djinterp.run'),
+                                 { line: line, words: words, ...reply });
 
             return reply;
         },
@@ -505,17 +505,17 @@ export function open_program(
                 throw new TypeError('on: a name and a function are needed');
             }
 
-            return event.dispatcher_bind(
-                       events, event.key_of_name(_name),
-                       event.step_make((_payload) =>
-                           (event.verdict_is_consumed(_handler(_payload))
+            return event.dispatcherBind(
+                       events, event.keyOfName(_name),
+                       event.stepMake((_payload) =>
+                           (event.verdictIsConsumed(_handler(_payload))
                                 ? event.VERDICT.CONSUME
                                 : event.VERDICT.PASS))).id;
         },
 
         off(_id)
         {
-            return (event.dispatcher_unbind(events, _id) ===
+            return (event.dispatcherUnbind(events, _id) ===
                     event.STATUS.OK);
         }
     };
@@ -530,30 +530,30 @@ export function open_program(
  * what one line binds stays bound for the next.
  *
  * @param {object} [_options]  what the program is made of.
- * @param {Array<option_row>} [_options.settings=[]]  the program's own
+ * @param {Array<OptionRow>} [_options.settings=[]]  the program's own
  *        settings: the registry's root's.
  * @param {Array<string>} [_options.scopes=[]]  the root's scopes.
- * @param {Array<djin_record>} [_options.djins=[]]  its djins.
- * @param {Array<option_env>} [_options.frames=[]]  named frames of
+ * @param {Array<DjinRecord>} [_options.djins=[]]  its djins.
+ * @param {Array<OptionEnv>} [_options.frames=[]]  named frames of
  *        settings with no djin's record.
  * @param {?object} [_options.file]  the user's settings file; one in
  *        memory where left out, none for null: `set` then binds for the
  *        run and says it has nowhere to keep what it set.
  * @param {*} [_options.environment=null]  the environment, as
- *        `option_env.import` takes one: `DJINTERP_PRINTER_STYLE` names
+ *        `optionEnv.import` takes one: `DJINTERP_PRINTER_STYLE` names
  *        `printer.style`.
  * @param {?string} [_options.query=null]  a URL's query, such as
  *        `location.search`, bound as the command line.
- * @returns {djinterp_session}
+ * @returns {DjinterpSession}
  * @throws {Error} for a row or a djin the reference refuses: the page's
  *         own mistake.
  */
-export function open_now(
+export function openNow(
     _options = {}
 )
 {
-    const registry = option_env_registry.init('djinterp').registry;
-    const root     = option_env_registry.frame(registry);
+    const registry = optionEnvRegistry.init('djinterp').registry;
+    const root     = optionEnvRegistry.frame(registry);
     const must     = (_ok, _what, _why) =>
     {
         if (!_ok)
@@ -565,33 +565,33 @@ export function open_now(
 
     for (const row of (_options.settings ?? []))
     {
-        const declared = option_env.declare(root, row);
+        const declared = optionEnv.declare(root, row);
 
-        must(declared.is_ok, 'the setting \'' + row?.name + '\'',
-             status_name(result_status(declared)));
+        must(declared.isOk, 'the setting \'' + row?.name + '\'',
+             statusName(resultStatus(declared)));
     }
 
     if ((_options.scopes ?? []).length !== 0)
     {
-        const named = option_env.set_scopes(root, _options.scopes);
+        const named = optionEnv.setScopes(root, _options.scopes);
 
-        must(named.is_ok, 'the scopes', status_name(result_status(named)));
+        must(named.isOk, 'the scopes', statusName(resultStatus(named)));
     }
 
-    const program = djinterp_commands.program_make({
+    const program = djinterpCommands.programMake({
         registry:    registry,
-        file:        (_options.file === undefined) ? memory_file()
+        file:        (_options.file === undefined) ? memoryFile()
                                                    : _options.file,
         environment: _options.environment ?? null
     });
 
     for (const frame of (_options.frames ?? []))
     {
-        const added = option_env_registry.add(registry, frame);
+        const added = optionEnvRegistry.add(registry, frame);
 
-        must(added.is_ok,
-             'the frame \'' + option_env.name(frame) + '\'',
-             status_name(result_status(added)));
+        must(added.isOk,
+             'the frame \'' + optionEnv.name(frame) + '\'',
+             statusName(resultStatus(added)));
     }
 
     for (const record of (_options.djins ?? []))
@@ -599,24 +599,24 @@ export function open_now(
         const status = djin.register(program.set, record);
 
         must(status === djin.STATUS.OK, 'the djin \'' + record?.name + '\'',
-             djin.status_name(status));
+             djin.statusName(status));
     }
 
-    return open_program(program, { query: _options.query });
+    return openProgram(program, { query: _options.query });
 }
 
 // 4.3
 /**
- * Opens a program, as `open_now` does, and answers with a promise of it:
+ * Opens a program, as `openNow` does, and answers with a promise of it:
  * the interface a page is written to, whatever engine answers it.
  *
- * @param {object} [_options]  as `open_now` takes them.
- * @returns {Promise<djinterp_session>}  broken with an Error for a row
+ * @param {object} [_options]  as `openNow` takes them.
+ * @returns {Promise<DjinterpSession>}  broken with an Error for a row
  *          or a djin the reference refuses.
  */
 export function open(
     _options = {}
 )
 {
-    return new Promise((_keep) => _keep(open_now(_options)));
+    return new Promise((_keep) => _keep(openNow(_options)));
 }

@@ -18,13 +18,13 @@ import { test } from 'node:test';
 
 import * as djinterp from '../src/djinterp.js';
 
-const { option_env, option_env_registry } = djinterp;
+const { optionEnv, optionEnvRegistry } = djinterp;
 
 /*
-out_of
+outOf
   What an open program writes for a line.
 */
-async function out_of(
+async function outOf(
     _dj,
     _line
 )
@@ -43,18 +43,18 @@ function printer()
         version:  '0.9.0',
         summary:  'prints descriptions',
         commands: [{ name: 'run', summary: 'print a description' }],
-        settings: djinterp.settings_frame('printer', [
-            option_env.row_choice('style', [{ name: 'plain', value: 0 },
-                                            { name: 'json', value: 1 }], 0,
-                                  'how it is written'),
-            option_env.row_int_range('key_width', 30, 1, 120,
-                                     'the width of a key')
+        settings: djinterp.settingsFrame('printer', [
+            optionEnv.rowChoice('style', [{ name: 'plain', value: 0 },
+                                          { name: 'json', value: 1 }], 0,
+                                'how it is written'),
+            optionEnv.rowIntRange('key_width', 30, 1, 120,
+                                  'the width of a key')
         ], ['summary'])
     };
 }
 
-const SETTINGS = [option_env.row_bool('color', true, 'coloured output'),
-                  option_env.row_text('title', null, 'a title')];
+const SETTINGS = [optionEnv.rowBool('color', true, 'coloured output'),
+                  optionEnv.rowText('title', null, 'a title')];
 
 test('a line\'s words', () =>
 {
@@ -86,27 +86,27 @@ test('a line\'s words', () =>
 
 test('a settings file in memory, and one in a Storage', () =>
 {
-    const memory = djinterp.memory_file();
+    const memory = djinterp.memoryFile();
 
     assert.equal(memory.name, 'djinterp/settings');
     assert.equal(memory.read(), null);
     memory.write('a = 1\n');
     assert.equal(memory.read(), 'a = 1\n');
-    assert.equal(djinterp.memory_file('mine', 'x').read(), 'x');
+    assert.equal(djinterp.memoryFile('mine', 'x').read(), 'x');
 
     // a Storage, as a page's localStorage is one
     const items   = new Map();
     const storage = { getItem: (_k) => (items.has(_k) ? items.get(_k) : null),
                       setItem: (_k, _v) => items.set(_k, _v) };
-    const stored  = djinterp.storage_file(storage, 'app/settings');
+    const stored  = djinterp.storageFile(storage, 'app/settings');
 
     assert.equal(stored.name, 'app/settings');
     assert.equal(stored.read(), null);
     stored.write('b = 2\n');
     assert.equal(items.get('app/settings'), 'b = 2\n');
     assert.equal(stored.read(), 'b = 2\n');
-    assert.throws(() => djinterp.storage_file(null), TypeError);
-    assert.throws(() => djinterp.storage_file({}), TypeError);
+    assert.throws(() => djinterp.storageFile(null), TypeError);
+    assert.throws(() => djinterp.storageFile({}), TypeError);
 });
 
 test('open, run: the program\'s commands over a page\'s djins',
@@ -119,12 +119,12 @@ test('open, run: the program\'s commands over a page\'s djins',
     assert.deepEqual(await dj.run('list'),
                      { status: 0, out: 'printer  0.9.0  prints descriptions\n',
                        err: '' });
-    assert.equal(await out_of(dj, 'describe printer'),
+    assert.equal(await outOf(dj, 'describe printer'),
                  'printer  0.9.0\n  prints descriptions\n\ncommands\n' +
                  '  run  print a description\n\nsettings\n' +
                  '  printer.style      choice  plain  -  how it is written\n' +
                  '  printer.key_width  int     30     -  the width of a key\n');
-    assert.equal(await out_of(dj, 'get'),
+    assert.equal(await outOf(dj, 'get'),
                  'color = true\n# title is unset\nprinter.style = plain\n' +
                  'printer.key_width = 30\n');
     assert.deepEqual(await dj.run('get printer.stlye'), {
@@ -152,16 +152,16 @@ test('open and run answer with promises; the port answers at once too',
                                   err: '' });
 
     // the same two with nothing to wait for: the port's own
-    const now = djinterp.open_now({ settings: SETTINGS });
+    const now = djinterp.openNow({ settings: SETTINGS });
 
-    assert.deepEqual(now.run_now('get color'),
+    assert.deepEqual(now.runNow('get color'),
                      { status: 0, out: 'color = true\n', err: '' });
-    assert.deepEqual(await now.run('get color'), now.run_now('get color'));
+    assert.deepEqual(await now.run('get color'), now.runNow('get color'));
 
     // a misuse is a throw from the one, a promise broken from the other
-    assert.throws(() => dj.run_now(7), TypeError);
+    assert.throws(() => dj.runNow(7), TypeError);
     await assert.rejects(dj.run(7), TypeError);
-    assert.throws(() => djinterp.open_now({ djins: [{}] }), Error);
+    assert.throws(() => djinterp.openNow({ djins: [{}] }), Error);
     await assert.rejects(djinterp.open({ djins: [{}] }), Error);
 });
 
@@ -186,7 +186,7 @@ test('what is heard of a line is heard before its promise is kept',
 test('a line is a run of the program: what it binds ends with it',
      async () =>
 {
-    const file = djinterp.memory_file();
+    const file = djinterp.memoryFile();
     const dj   = await djinterp.open({ settings: SETTINGS,
                                        djins: [printer()], file: file });
     const set  = await dj.run('set printer.style=json title="two words"');
@@ -197,38 +197,38 @@ test('a line is a run of the program: what it binds ends with it',
 
     // the next line reads what was kept from the file, as the next
     // process of the reference's program would
-    assert.equal(await out_of(dj, 'get --show-origin printer.style'),
+    assert.equal(await outOf(dj, 'get --show-origin printer.style'),
                  'printer.style = json  (file)\n' +
                  '    default    plain   (default)\n');
 
     // an option of a line binds for that line
-    assert.equal(await out_of(dj, 'get --set printer.key_width=40 ' +
-                                  'printer.key_width'),
+    assert.equal(await outOf(dj, 'get --set printer.key_width=40 ' +
+                                 'printer.key_width'),
                  'printer.key_width = 40\n');
-    assert.equal(await out_of(dj, 'get --show-origin printer.key_width'),
+    assert.equal(await outOf(dj, 'get --show-origin printer.key_width'),
                  'printer.key_width = 30  (default)\n');
 
     // what the page binds at the program's standing stays
-    assert.equal(option_env_registry.assign(dj.registry,
-                                            'printer.key_width', '50',
-                                            option_env.SOURCE.PROGRAM)
-                                    .is_ok, true);
+    assert.equal(optionEnvRegistry.assign(dj.registry,
+                                          'printer.key_width', '50',
+                                          optionEnv.SOURCE.PROGRAM)
+                                  .isOk, true);
     await dj.run('get');
-    assert.equal(await out_of(dj, 'get printer.key_width'),
+    assert.equal(await outOf(dj, 'get printer.key_width'),
                  'printer.key_width = 50\n');
 
     // the page opened again reads the same file
     const again = await djinterp.open({ settings: SETTINGS,
                                         djins: [printer()], file: file });
 
-    assert.equal(await out_of(again, 'get printer.style title'),
+    assert.equal(await outOf(again, 'get printer.style title'),
                  'printer.style = json\ntitle = two words\n');
 });
 
 test('what the program says as it starts comes first in every reply',
      async () =>
 {
-    const file = djinterp.memory_file('page/settings', 'nothing = 1\n');
+    const file = djinterp.memoryFile('page/settings', 'nothing = 1\n');
     const said = 'page/settings:1: warning: no setting is named ' +
                  '\'nothing\'\n';
     const dj   = await djinterp.open({ settings: SETTINGS, file: file });
@@ -260,7 +260,7 @@ test('run takes a line, or the words themselves untouched', async () =>
     // `get` writes it so that a statement would read it back
     assert.equal((await dj.run(['set', 'title= a "b" \\ \'c\' '])).status,
                  0);
-    assert.equal(await out_of(dj, ['get', 'title']),
+    assert.equal(await outOf(dj, ['get', 'title']),
                  'title = " a \\"b\\" \\\\ \'c\' "\n');
     assert.deepEqual(await dj.run(['get', 'title']),
                      await dj.run('get title'));
@@ -270,15 +270,15 @@ test('run takes a line, or the words themselves untouched', async () =>
 
     await assert.rejects(dj.run(['get', 7]), TypeError);
     await assert.rejects(dj.run(null), TypeError);
-    assert.throws(() => dj.run_now({ line: 'get' }), TypeError);
+    assert.throws(() => dj.runNow({ line: 'get' }), TypeError);
 });
 
 test('the settings file\'s refusals are warnings, with their lines',
      async () =>
 {
-    const file = djinterp.memory_file('page/settings',
-                                      'color = no\nprinter.style = yaml\n' +
-                                      'nothing = 1\n');
+    const file = djinterp.memoryFile('page/settings',
+                                     'color = no\nprinter.style = yaml\n' +
+                                     'nothing = 1\n');
     const dj   = await djinterp.open({ settings: SETTINGS,
                                        djins: [printer()], file: file });
 
@@ -287,7 +287,7 @@ test('the settings file\'s refusals are warnings, with their lines',
                  '\'printer.style\' takes\n' +
                  'page/settings:3: warning: no setting is named ' +
                  '\'nothing\'\n');
-    assert.equal(await out_of(dj, 'get --show-origin color'),
+    assert.equal(await outOf(dj, 'get --show-origin color'),
                  'color = false  (file)\n    default    true   (default)\n');
 });
 
@@ -303,7 +303,7 @@ test('no settings file: what set bound is gone at the next line',
     });
 
     // as the reference's program with no home: nothing kept it
-    assert.equal(await out_of(dj, 'get --show-origin color'),
+    assert.equal(await outOf(dj, 'get --show-origin color'),
                  'color = true  (default)\n');
 });
 
@@ -316,7 +316,7 @@ test('a Storage that refuses is said as a file that cannot be written',
                        throw new Error('the quota has been exceeded');
                    } };
     const dj   = await djinterp.open({ settings: SETTINGS,
-                                       file: djinterp.storage_file(full) });
+                                       file: djinterp.storageFile(full) });
 
     assert.deepEqual(await dj.run('set color=no'), {
         status: 2, out: '',
@@ -331,7 +331,7 @@ test('a Storage that refuses is said as a file that cannot be written',
                      setItem: () => {} };
     const shut   = await djinterp.open({
         settings: SETTINGS,
-        file:     djinterp.storage_file(closed)
+        file:     djinterp.storageFile(closed)
     });
 
     assert.equal(shut.warnings,
@@ -359,7 +359,7 @@ test('the environment and the query, each as the source it is',
                  '\'nothing\'\n' +
                  'djinterp: warning: query: \'%zz\' is not percent-encoded ' +
                  'text\n');
-    assert.equal(await out_of(dj, 'get --show-origin'),
+    assert.equal(await outOf(dj, 'get --show-origin'),
                  'color = false  (command line)\n' +
                  '    under it   false   (environment)\n' +
                  '    default    true   (default)\n' +
@@ -410,17 +410,17 @@ test('on and off: what the program does is heard', async () =>
 
 test('frames of settings with no record; scopes of the root', async () =>
 {
-    const cache = djinterp.settings_frame('cache', [
-        option_env.row_int_range('size', 64, 0, 4096)
+    const cache = djinterp.settingsFrame('cache', [
+        optionEnv.rowIntRange('size', 64, 0, 4096)
     ]);
     const dj    = await djinterp.open({ settings: SETTINGS,
                                         scopes: ['debug'], frames: [cache],
                                         djins: [printer()] });
 
-    assert.equal(await out_of(dj, 'list'),
+    assert.equal(await outOf(dj, 'list'),
                  'printer  0.9.0  prints descriptions\n' +
                  'cache    -      settings only\n');
-    assert.equal(await out_of(dj, 'describe cache'),
+    assert.equal(await outOf(dj, 'describe cache'),
                  'cache\n  settings only\n\nsettings\n' +
                  '  cache.size  int  64  -\n');
 
@@ -428,8 +428,8 @@ test('frames of settings with no record; scopes of the root', async () =>
                              'printer.summary.style=json');
 
     assert.equal(set.status, 0);
-    assert.equal(await out_of(dj, 'get color debug.color cache.size ' +
-                                  'printer.style printer.summary.style'),
+    assert.equal(await outOf(dj, 'get color debug.color cache.size ' +
+                                 'printer.style printer.summary.style'),
                  'color = true\ndebug.color = false\ncache.size = 128\n' +
                  'printer.style = plain\nprinter.summary.style = json\n');
 });
@@ -438,7 +438,7 @@ test('a row or a djin the reference refuses is the page\'s mistake',
      async () =>
 {
     await assert.rejects(djinterp.open({
-        settings: [option_env.row_int_range('width', 700, 100, 600)]
+        settings: [optionEnv.rowIntRange('width', 700, 100, 600)]
     }), /the setting 'width' was refused \(INVALID_ARGUMENT\)/);
     await assert.rejects(djinterp.open({
         djins: [{ name: 'list', version: '1', summary: 's' }]
@@ -446,9 +446,9 @@ test('a row or a djin the reference refuses is the page\'s mistake',
     await assert.rejects(djinterp.open({
         djins: [{ name: 'Printer', version: '1', summary: 's' }]
     }), /the djin 'Printer' was refused \(invalid\)/);
-    assert.throws(() => djinterp.settings_frame('printer', [
-        option_env.row_bool('a', false), option_env.row_bool('a', true)
+    assert.throws(() => djinterp.settingsFrame('printer', [
+        optionEnv.rowBool('a', false), optionEnv.rowBool('a', true)
     ]), /the row 'printer.a' was refused \(KEY_DUPLICATE\)/);
-    assert.throws(() => djinterp.settings_frame('not a name', []),
+    assert.throws(() => djinterp.settingsFrame('not a name', []),
                   /was refused \(INVALID_ARGUMENT\)/);
 });

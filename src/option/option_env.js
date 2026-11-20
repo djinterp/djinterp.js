@@ -52,31 +52,31 @@ TABLE OF CONTENTS
 =================
 1.  Vocabulary
     1.  KIND, SOURCE, SOURCES, GLOBAL, NONE, DEPTH_MAX
-    2.  refuses, id_depth, id_index
-    3.  kind_name, source_name
-    4.  row_bool ... row_flags
+    2.  refuses, idDepth, idIndex
+    3.  kindName, sourceName
+    4.  rowBool ... rowFlags
 2.  Setting up
     1.  init
-    2.  declare, declare_all
-    3.  set_scopes, set_parent, set_name
+    2.  declare, declareAll
+    3.  setScopes, setParent, setName
     4.  clear, detach, generation, root, name
 3.  Finding
-    1.  var_count, var_id, var_index, var_at, var_frame
-    2.  scope_name, find, find_scope, resolve
+    1.  varCount, varId, varIndex, varAt, varFrame
+    2.  scopeName, find, findScope, resolve
     3.  distance, suggest
 4.  Reading
     1.  get, bool, int, real, text, source
-    2.  is_bound, scope_is_bound, layers
+    2.  isBound, scopeIsBound, layers
 5.  Binding by value
-    1.  set_bool, set_int, set_real, set_text, set_value, set_text_copy
-    2.  unset, unset_from, unset_source
+    1.  setBool, setInt, setReal, setText, setValue, setTextCopy
+    2.  unset, unsetFrom, unsetSource
 6.  Binding from text
-    1.  assign_from, assign
-    2.  put_from, put, put_n_from
-    3.  statement_end, load_from, load
+    1.  assignFrom, assign
+    2.  putFrom, put, putNFrom
+    3.  statementEnd, loadFrom, load
     4.  import
 7.  Writing text
-    1.  format, format_quoted
+    1.  format, formatQuoted
 8.  Reading on a hot path
     1.  cached
 9.  Inner
@@ -84,8 +84,8 @@ TABLE OF CONTENTS
 */
 
 import data from '../../generated/option.js';
-import { format_real } from '../text/real_format.js';
-import { read_real } from '../text/real_read.js';
+import { formatReal } from '../text/real_format.js';
+import { readReal } from '../text/real_read.js';
 import { STATUS, fail, ok } from './option_common.js';
 
 
@@ -116,7 +116,7 @@ export const SOURCES = 6;
 /** The scope that is none: a binding for every scope. */
 export const GLOBAL = 0;
 
-/** No variable: what `var_id` gives past the last. */
+/** No variable: what `varId` gives past the last. */
 export const NONE = 0xFFFFFFFF;
 
 /** The deepest a frame may be. */
@@ -152,7 +152,7 @@ export function refuses(
  * @param {number} _id  a variable's or a scope's id.
  * @returns {number} the depth.
  */
-export function id_depth(
+export function idDepth(
     _id
 )
 {
@@ -165,7 +165,7 @@ export function id_depth(
  * @param {number} _id  a variable's or a scope's id.
  * @returns {number} the place.
  */
-export function id_index(
+export function idIndex(
     _id
 )
 {
@@ -179,7 +179,7 @@ export function id_index(
  * @param {number} _kind  the kind.
  * @returns {string} the name.
  */
-export function kind_name(
+export function kindName(
     _kind
 )
 {
@@ -194,7 +194,7 @@ export function kind_name(
  * @param {number} _source  the source.
  * @returns {string} the name.
  */
-export function source_name(
+export function sourceName(
     _source
 )
 {
@@ -210,7 +210,7 @@ export function source_name(
  * reference's zero, but `minimum` and `maximum`, which are the least and
  * the greatest 64-bit integers.
  *
- * @typedef {object} option_row
+ * @typedef {object} OptionRow
  * @property {string}  name     an identifier.
  * @property {number}  kind     one of KIND.
  * @property {?string} [help]   a line about it.
@@ -236,9 +236,9 @@ export function source_name(
  * @param {string}  _name     its name.
  * @param {boolean|number} _default  its default.
  * @param {?string} [_help]   a line about it.
- * @returns {option_row}
+ * @returns {OptionRow}
  */
-export function row_bool(
+export function rowBool(
     _name,
     _default,
     _help = null
@@ -255,9 +255,9 @@ export function row_bool(
  * @param {string}  _name     its name.
  * @param {number|bigint} _default  its default.
  * @param {?string} [_help]   a line about it.
- * @returns {option_row}
+ * @returns {OptionRow}
  */
-export function row_int(
+export function rowInt(
     _name,
     _default,
     _help = null
@@ -274,9 +274,9 @@ export function row_int(
  * @param {number|bigint} _minimum  its least value.
  * @param {number|bigint} _maximum  its greatest value.
  * @param {?string} [_help]   a line about it.
- * @returns {option_row}
+ * @returns {OptionRow}
  */
-export function row_int_range(
+export function rowIntRange(
     _name,
     _default,
     _minimum,
@@ -294,9 +294,9 @@ export function row_int_range(
  * @param {string}  _name     its name.
  * @param {number}  _default  its default.
  * @param {?string} [_help]   a line about it.
- * @returns {option_row}
+ * @returns {OptionRow}
  */
-export function row_real(
+export function rowReal(
     _name,
     _default,
     _help = null
@@ -311,9 +311,9 @@ export function row_real(
  * @param {string}  _name     its name.
  * @param {?string} _default  its default.
  * @param {?string} [_help]   a line about it.
- * @returns {option_row}
+ * @returns {OptionRow}
  */
-export function row_text(
+export function rowText(
     _name,
     _default,
     _help = null
@@ -330,9 +330,9 @@ export function row_text(
  *        values.
  * @param {number|bigint} _default  its default, one of them.
  * @param {?string} [_help]   a line about it.
- * @returns {option_row}
+ * @returns {OptionRow}
  */
-export function row_choice(
+export function rowChoice(
     _name,
     _names,
     _default,
@@ -351,9 +351,9 @@ export function row_choice(
  *        bits.
  * @param {number|bigint} _default  its default, of those bits.
  * @param {?string} [_help]   a line about it.
- * @returns {option_row}
+ * @returns {OptionRow}
  */
-export function row_flags(
+export function rowFlags(
     _name,
     _names,
     _default,
@@ -384,10 +384,10 @@ function cstr(
 }
 
 /*
-to_inner
+toInner
   A caller's string, checked to be one; null for null or undefined.
 */
-function to_inner(
+function toInner(
     _text,
     _what
 )
@@ -400,18 +400,18 @@ function to_inner(
 
     if (typeof _text !== 'string')
     {
-        throw new TypeError('option_env: ' + _what + ' is not a string');
+        throw new TypeError('optionEnv: ' + _what + ' is not a string');
     }
 
     return _text;
 }
 
 /*
-to_int64
+toInt64
   A caller's integer as a BigInt: a bigint, a whole number, or a decimal
 string as generated JSON carries one.
 */
-function to_int64(
+function toInt64(
     _value,
     _what
 )
@@ -438,14 +438,14 @@ function to_int64(
     }
     else
     {
-        throw new TypeError('option_env: ' + _what +
+        throw new TypeError('optionEnv: ' + _what +
                             ' is not an exact integer');
     }
 
     if ( (value < INT64_MIN) ||
          (value > INT64_MAX) )
     {
-        throw new RangeError('option_env: ' + _what +
+        throw new RangeError('optionEnv: ' + _what +
                              ' is not a 64-bit integer');
     }
 
@@ -460,7 +460,7 @@ function lower(
              (_c <= 'Z') ) ? String.fromCharCode(_c.charCodeAt(0) + 32) : _c;
 }
 
-function is_space(
+function isSpace(
     _c
 )
 {
@@ -472,7 +472,7 @@ function is_space(
              (_c === '\v') );
 }
 
-function is_name_char(
+function isNameChar(
     _c
 )
 {
@@ -483,7 +483,7 @@ function is_name_char(
                (_c === '_') ) );
 }
 
-function is_identifier(
+function isIdentifier(
     _text
 )
 {
@@ -497,7 +497,7 @@ function is_identifier(
 
     for (let i = 0; i < _text.length; ++i)
     {
-        if (!is_name_char(_text[i]))
+        if (!isNameChar(_text[i]))
         {
             return false;
         }
@@ -546,13 +546,13 @@ function trim(
     let end   = _text.length;
 
     while ( (start < end) &&
-            is_space(_text[start]) )
+            isSpace(_text[start]) )
     {
         ++start;
     }
 
     while ( (end > start) &&
-            is_space(_text[end - 1]) )
+            isSpace(_text[end - 1]) )
     {
         --end;
     }
@@ -560,7 +560,7 @@ function trim(
     return { text: _text.slice(start, end), start: start };
 }
 
-function at_depth(
+function atDepth(
     _env,
     _depth
 )
@@ -579,11 +579,11 @@ function at_depth(
 }
 
 /*
-decl_of
+declOf
   The declaration of a variable's id, as a frame sees it; null for an id it
 does not see.
 */
-function decl_of(
+function declOf(
     _env,
     _var
 )
@@ -595,14 +595,14 @@ function decl_of(
         return null;
     }
 
-    const frame = at_depth(_env, _var >>> DEPTH_SHIFT);
+    const frame = atDepth(_env, _var >>> DEPTH_SHIFT);
     const index = _var & LOCAL;
 
     return ( (frame !== null) &&
              (index < frame.vars.length) ) ? frame.vars[index] : null;
 }
 
-function scope_ok(
+function scopeOk(
     _env,
     _scope
 )
@@ -619,7 +619,7 @@ function scope_ok(
         return false;
     }
 
-    const frame = at_depth(_env, _scope >>> DEPTH_SHIFT);
+    const frame = atDepth(_env, _scope >>> DEPTH_SHIFT);
     const index = _scope & LOCAL;
 
     return ( (frame !== null)                         &&
@@ -638,15 +638,15 @@ function check(
     _var
 )
 {
-    if (!is_env(_env))
+    if (!isEnv(_env))
     {
         return { status: STATUS.INVALID_ARGUMENT, decl: null };
     }
 
-    const decl = decl_of(_env, _var);
+    const decl = declOf(_env, _var);
 
     if ( (decl === null) ||
-         !scope_ok(_env, _scope) )
+         !scopeOk(_env, _scope) )
     {
         return { status: STATUS.KEY_ABSENT, decl: null };
     }
@@ -654,7 +654,7 @@ function check(
     return { status: STATUS.OK, decl: decl };
 }
 
-function source_ok(
+function sourceOk(
     _source
 )
 {
@@ -665,7 +665,7 @@ function source_ok(
 
 const ENV_MARK = Symbol('option_env');
 
-function is_env(
+function isEnv(
     _env
 )
 {
@@ -674,7 +674,7 @@ function is_env(
              (_env[ENV_MARK] === true) );
 }
 
-function make_id(
+function makeId(
     _depth,
     _index
 )
@@ -682,7 +682,7 @@ function make_id(
     return ((_depth << DEPTH_SHIFT) | _index) >>> 0;
 }
 
-function cell_key(
+function cellKey(
     _scope,
     _source,
     _var
@@ -701,10 +701,10 @@ function cell_key(
 // would be decides BUFFER_TOO_SMALL and when the generation moves.
 
 /*
-compact_text
+compactText
   The count of the texts still bound, each once; the generation moves.
 */
-function compact_text(
+function compactText(
     _env
 )
 {
@@ -723,7 +723,7 @@ function compact_text(
         }
     }
 
-    _env.text_used = mark;
+    _env.textUsed = mark;
     ++_env.generation;
 
     return;
@@ -739,17 +739,17 @@ function alloc(
     _size
 )
 {
-    if (_env.text_capacity - _env.text_used <= _size)
+    if (_env.textCapacity - _env.textUsed <= _size)
     {
-        compact_text(_env);
+        compactText(_env);
 
-        if (_env.text_capacity - _env.text_used <= _size)
+        if (_env.textCapacity - _env.textUsed <= _size)
         {
             return false;
         }
     }
 
-    _env.text_used += _size + 1;
+    _env.textUsed += _size + 1;
 
     return true;
 }
@@ -763,7 +763,7 @@ function alloc(
  * A frame. Made by `init`; its members are the machine's own, and are read
  * through the functions here.
  *
- * @typedef {object} option_env
+ * @typedef {object} OptionEnv
  */
 
 // 2.1
@@ -778,7 +778,7 @@ function alloc(
  * @param {number} [_room.vars=Infinity]      variables it declares.
  * @param {number} [_room.text=Infinity]      units of text it keeps
  *        copies of, each with a terminator, as the reference counts them.
- * @returns {option_env} the frame.
+ * @returns {OptionEnv} the frame.
  */
 export function init(
     _room = {}
@@ -791,7 +791,7 @@ export function init(
              ( !Number.isInteger(_value) ||
                (_value < 0) ) )
         {
-            throw new TypeError('option_env.init: ' + _what +
+            throw new TypeError('optionEnv.init: ' + _what +
                                 ' is not a count');
         }
 
@@ -799,27 +799,27 @@ export function init(
     };
 
     return {
-        [ENV_MARK]:       true,
-        parent:           null,
-        vars:             [],
-        scopes:           [],
-        name:             null,
-        cells:            new Map(),
-        binding_capacity: count(_room.bindings, 'bindings'),
-        var_capacity:     Math.min(count(_room.vars, 'vars'), LOCAL),
-        text_capacity:    count(_room.text, 'text'),
-        text_used:        0,
-        generation:       0,
-        depth:            0,
-        child_count:      0
+        [ENV_MARK]:      true,
+        parent:          null,
+        vars:            [],
+        scopes:          [],
+        name:            null,
+        cells:           new Map(),
+        bindingCapacity: count(_room.bindings, 'bindings'),
+        varCapacity:     Math.min(count(_room.vars, 'vars'), LOCAL),
+        textCapacity:    count(_room.text, 'text'),
+        textUsed:        0,
+        generation:      0,
+        depth:           0,
+        childCount:      0
     };
 }
 
 /*
-normal_names
+normalNames
   A row's named values as the machine holds them: null for none given.
 */
-function normal_names(
+function normalNames(
     _names,
     _count,
     _what
@@ -833,7 +833,7 @@ function normal_names(
 
     if (!Array.isArray(_names))
     {
-        throw new TypeError('option_env.declare: ' + _what +
+        throw new TypeError('optionEnv.declare: ' + _what +
                             ' is not an array');
     }
 
@@ -841,8 +841,8 @@ function normal_names(
                                          : Math.min(_count, _names.length);
 
     return _names.slice(0, count).map((_name) => ({
-        name:  to_inner(_name.name, 'a named value\'s name'),
-        value: to_int64(_name.value, 'a named value')
+        name:  toInner(_name.name, 'a named value\'s name'),
+        value: toInt64(_name.value, 'a named value')
     }));
 }
 
@@ -858,12 +858,12 @@ function normalize(
     if ( (_row === null) ||
          (typeof _row !== 'object') )
     {
-        throw new TypeError('option_env.declare: the row is not an object');
+        throw new TypeError('optionEnv.declare: the row is not an object');
     }
 
-    const names   = normal_names(_row.names, _row.name_count, 'names');
-    const unbuilt = normal_names(_row.unbuilt, _row.unbuilt_count,
-                                 'unbuilt');
+    const names   = normalNames(_row.names, _row.name_count, 'names');
+    const unbuilt = normalNames(_row.unbuilt, _row.unbuilt_count,
+                                'unbuilt');
     let   real    = 0;
 
     if (typeof _row.real_bits === 'string')
@@ -876,11 +876,11 @@ function normalize(
     }
     else if (typeof _row.real === 'string')
     {
-        const read = read_real(_row.real);
+        const read = readReal(_row.real);
 
         if (read.length !== _row.real.length)
         {
-            throw new TypeError('option_env.declare: real is not a real');
+            throw new TypeError('optionEnv.declare: real is not a real');
         }
 
         real = read.value;
@@ -891,21 +891,21 @@ function normalize(
     }
     else if (_row.real !== undefined)
     {
-        throw new TypeError('option_env.declare: real is not a number');
+        throw new TypeError('optionEnv.declare: real is not a number');
     }
 
     return {
         row:           _row,
-        name:          to_inner(_row.name, 'name'),
-        help:          to_inner(_row.help, 'help'),
-        alias:         to_inner(_row.alias, 'alias'),
-        knob:          to_inner(_row.knob, 'knob'),
+        name:          toInner(_row.name, 'name'),
+        help:          toInner(_row.help, 'help'),
+        alias:         toInner(_row.alias, 'alias'),
+        knob:          toInner(_row.knob, 'knob'),
         names:         names,
         unbuilt:       unbuilt,
-        text:          to_inner(_row.text, 'text'),
-        integer:       to_int64(_row.integer ?? 0, 'integer'),
-        minimum:       to_int64(_row.minimum ?? INT64_MIN, 'minimum'),
-        maximum:       to_int64(_row.maximum ?? INT64_MAX, 'maximum'),
+        text:          toInner(_row.text, 'text'),
+        integer:       toInt64(_row.integer ?? 0, 'integer'),
+        minimum:       toInt64(_row.minimum ?? INT64_MIN, 'minimum'),
+        maximum:       toInt64(_row.maximum ?? INT64_MAX, 'maximum'),
         real:          real,
         name_count:    (names !== null) ? names.length
                                         : (_row.name_count ?? 0),
@@ -918,11 +918,11 @@ function normalize(
 }
 
 /*
-is_exact
+isExact
   Whether every integer a row can hold lies within the exact integers of a
 double: whether its values are handed out as numbers.
 */
-function is_exact(
+function isExact(
     _decl
 )
 {
@@ -962,7 +962,7 @@ function is_exact(
     }
 }
 
-function is_named(
+function isNamed(
     _decl,
     _value
 )
@@ -982,16 +982,16 @@ function is_named(
 const REFUSABLE = ((refuses(SOURCE.OVERRIDE) << 1) -
                    refuses(SOURCE.PROGRAM)) >>> 0;
 
-function well_formed(
+function wellFormed(
     _decl
 )
 {
-    if ( !is_identifier(_decl.name)                    ||
+    if ( !isIdentifier(_decl.name)                    ||
          ( (_decl.alias !== null) &&
-           !is_identifier(_decl.alias) )               ||
-         !Number.isInteger(_decl.kind)                 ||
-         (_decl.kind < KIND.BOOL)                      ||
-         (_decl.kind > KIND.FLAGS)                     ||
+           !isIdentifier(_decl.alias) )               ||
+         !Number.isInteger(_decl.kind)                ||
+         (_decl.kind < KIND.BOOL)                     ||
+         (_decl.kind > KIND.FLAGS)                    ||
          ( (_decl.unbuilt === null) &&
            (_decl.unbuilt_count !== 0) )               ||
          ( (_decl.names === null) &&
@@ -1010,10 +1010,10 @@ function well_formed(
         case KIND.INT:
             return ( ( (_decl.minimum <= _decl.integer) &&
                        (_decl.integer <= _decl.maximum) ) ||
-                     is_named(_decl, _decl.integer) );
+                     isNamed(_decl, _decl.integer) );
 
         case KIND.CHOICE:
-            return is_named(_decl, _decl.integer);
+            return isNamed(_decl, _decl.integer);
 
         case KIND.FLAGS:
         {
@@ -1056,9 +1056,9 @@ function declares(
 /**
  * Declares a variable in a frame.
  *
- * @param {option_env} _env  the frame.
- * @param {option_row} _row  the row; kept, and what `var_at` gives.
- * @returns {option_result} the variable's id; INVALID_ARGUMENT for a row
+ * @param {OptionEnv} _env  the frame.
+ * @param {OptionRow} _row  the row; kept, and what `varAt` gives.
+ * @returns {OptionResult} the variable's id; INVALID_ARGUMENT for a row
  *          that is not well formed -- a name or alias that is no
  *          identifier, a kind that is none, a default the row itself would
  *          refuse; KEY_DUPLICATE for a name or alias the frame has;
@@ -1069,7 +1069,7 @@ export function declare(
     _row
 )
 {
-    if ( !is_env(_env)     ||
+    if ( !isEnv(_env)      ||
          (_row === null)   ||
          (_row === undefined) )
     {
@@ -1078,7 +1078,7 @@ export function declare(
 
     const decl = normalize(_row);
 
-    if (!well_formed(decl))
+    if (!wellFormed(decl))
     {
         return fail(STATUS.INVALID_ARGUMENT);
     }
@@ -1089,43 +1089,43 @@ export function declare(
         return fail(STATUS.KEY_DUPLICATE);
     }
 
-    if (_env.vars.length >= _env.var_capacity)
+    if (_env.vars.length >= _env.varCapacity)
     {
         return fail(STATUS.CAPACITY);
     }
 
-    decl.exact = is_exact(decl);
+    decl.exact = isExact(decl);
     _env.vars.push(decl);
     ++_env.generation;
 
-    return ok(make_id(_env.depth, _env.vars.length - 1));
+    return ok(makeId(_env.depth, _env.vars.length - 1));
 }
 
 /**
  * Declares each row of a table, stopping at the first the frame refuses.
  *
- * @param {option_env}        _env   the frame.
- * @param {Array<option_row>} _rows  the rows.
- * @returns {option_result} the id of the first, or the refusal.
+ * @param {OptionEnv}        _env   the frame.
+ * @param {Array<OptionRow>} _rows  the rows.
+ * @returns {OptionResult} the id of the first, or the refusal.
  */
-export function declare_all(
+export function declareAll(
     _env,
     _rows
 )
 {
-    if ( !is_env(_env) ||
+    if ( !isEnv(_env) ||
          !Array.isArray(_rows) )
     {
         return fail(STATUS.INVALID_ARGUMENT);
     }
 
-    const first = make_id(_env.depth, _env.vars.length);
+    const first = makeId(_env.depth, _env.vars.length);
 
     for (const row of _rows)
     {
         const result = declare(_env, row);
 
-        if (!result.is_ok)
+        if (!result.isOk)
         {
             return result;
         }
@@ -1138,49 +1138,49 @@ export function declare_all(
 /**
  * Names a frame's scopes; they replace any it had.
  *
- * @param {option_env}    _env    the frame.
+ * @param {OptionEnv}    _env    the frame.
  * @param {Array<string>} _names  the scopes' names, in order.
- * @returns {option_result} the id of the first.
+ * @returns {OptionResult} the id of the first.
  */
-export function set_scopes(
+export function setScopes(
     _env,
     _names
 )
 {
-    if ( !is_env(_env)          ||
+    if ( !isEnv(_env)           ||
          !Array.isArray(_names) ||
          (_names.length > LOCAL) )
     {
         return fail(STATUS.INVALID_ARGUMENT);
     }
 
-    _env.scopes = _names.map((_name) => to_inner(_name, 'a scope\'s name'));
+    _env.scopes = _names.map((_name) => toInner(_name, 'a scope\'s name'));
     ++_env.generation;
 
-    return ok(make_id(_env.depth, 1));
+    return ok(makeId(_env.depth, 1));
 }
 
 /**
  * Puts a frame under a parent, or under none. Its bindings are dropped: a
  * binding's key carries its variable's depth, which this changes.
  *
- * @param {option_env}  _env     the frame; one with no children.
- * @param {?option_env} _parent  the parent, or null.
- * @returns {option_result} INVALID_ARGUMENT for a frame with children or
+ * @param {OptionEnv}  _env     the frame; one with no children.
+ * @param {?OptionEnv} _parent  the parent, or null.
+ * @returns {OptionResult} INVALID_ARGUMENT for a frame with children or
  *          a parent that is the frame or under it; CAPACITY for a parent
  *          at the greatest depth.
  */
-export function set_parent(
+export function setParent(
     _env,
     _parent
 )
 {
     _parent = _parent ?? null;
 
-    if ( !is_env(_env)           ||
-         (_env.child_count !== 0) ||
+    if ( !isEnv(_env)           ||
+         (_env.childCount !== 0) ||
          ( (_parent !== null) &&
-           !is_env(_parent) ) )
+           !isEnv(_parent) ) )
     {
         return fail(STATUS.INVALID_ARGUMENT);
     }
@@ -1203,16 +1203,16 @@ export function set_parent(
 
     if (_env.parent !== null)
     {
-        --_env.parent.child_count;
+        --_env.parent.childCount;
     }
 
     if (_parent !== null)
     {
-        ++_parent.child_count;
+        ++_parent.childCount;
     }
 
     _env.cells.clear();
-    _env.text_used  = 0;
+    _env.textUsed   = 0;
     _env.parent     = _parent;
     _env.depth      = (_parent !== null) ? (_parent.depth + 1) : 0;
     _env.generation = (before + 1) >>> 0;
@@ -1223,20 +1223,20 @@ export function set_parent(
 /**
  * Names a frame: what qualifies its variables, as in "printer.style".
  *
- * @param {option_env} _env   the frame.
+ * @param {OptionEnv} _env   the frame.
  * @param {?string}    _name  an identifier, or null for no name.
- * @returns {option_result}
+ * @returns {OptionResult}
  */
-export function set_name(
+export function setName(
     _env,
     _name
 )
 {
-    const name = to_inner(_name, 'the name');
+    const name = toInner(_name, 'the name');
 
-    if ( !is_env(_env) ||
+    if ( !isEnv(_env) ||
          ( (name !== null) &&
-           !is_identifier(name) ) )
+           !isIdentifier(name) ) )
     {
         return fail(STATUS.INVALID_ARGUMENT);
     }
@@ -1251,16 +1251,16 @@ export function set_name(
 /**
  * Drops every binding of a frame's own.
  *
- * @param {option_env} _env  the frame.
+ * @param {OptionEnv} _env  the frame.
  */
 export function clear(
     _env
 )
 {
-    if (is_env(_env))
+    if (isEnv(_env))
     {
         _env.cells.clear();
-        _env.text_used = 0;
+        _env.textUsed = 0;
         ++_env.generation;
     }
 
@@ -1270,16 +1270,16 @@ export function clear(
 /**
  * Takes a frame from under its parent.
  *
- * @param {option_env} _env  the frame.
+ * @param {OptionEnv} _env  the frame.
  */
 export function detach(
     _env
 )
 {
-    if ( is_env(_env) &&
+    if ( isEnv(_env) &&
          (_env.parent !== null) )
     {
-        set_parent(_env, null);
+        setParent(_env, null);
     }
 
     return;
@@ -1289,7 +1289,7 @@ export function detach(
  * A count that moves whenever what a frame sees may have changed: its own
  * and its ancestors', summed.
  *
- * @param {?option_env} _env  the frame.
+ * @param {?OptionEnv} _env  the frame.
  * @returns {number} the count, of 32 bits.
  */
 export function generation(
@@ -1298,7 +1298,7 @@ export function generation(
 {
     let total = 0;
 
-    for (let f = is_env(_env) ? _env : null; f !== null; f = f.parent)
+    for (let f = isEnv(_env) ? _env : null; f !== null; f = f.parent)
     {
         total = (total + f.generation) >>> 0;
     }
@@ -1309,14 +1309,14 @@ export function generation(
 /**
  * The frame at the top of a frame's chain.
  *
- * @param {?option_env} _env  the frame.
- * @returns {?option_env} the root; null for no frame.
+ * @param {?OptionEnv} _env  the frame.
+ * @returns {?OptionEnv} the root; null for no frame.
  */
 export function root(
     _env
 )
 {
-    if (!is_env(_env))
+    if (!isEnv(_env))
     {
         return null;
     }
@@ -1333,14 +1333,14 @@ export function root(
  * A frame's name. The reference reads the frame's member; a frame here
  * holds its name itself, so this hands it out.
  *
- * @param {?option_env} _env  the frame.
+ * @param {?OptionEnv} _env  the frame.
  * @returns {?string} the name; null for none, and for no frame.
  */
 export function name(
     _env
 )
 {
-    return ( is_env(_env) &&
+    return ( isEnv(_env) &&
              (_env.name !== null) ) ? _env.name : null;
 }
 
@@ -1353,16 +1353,16 @@ export function name(
 /**
  * How many variables a frame sees: its own and its ancestors'.
  *
- * @param {?option_env} _env  the frame.
+ * @param {?OptionEnv} _env  the frame.
  * @returns {number} the count.
  */
-export function var_count(
+export function varCount(
     _env
 )
 {
     let count = 0;
 
-    for (let f = is_env(_env) ? _env : null; f !== null; f = f.parent)
+    for (let f = isEnv(_env) ? _env : null; f !== null; f = f.parent)
     {
         count += f.vars.length;
     }
@@ -1374,18 +1374,18 @@ export function var_count(
  * The id of the variable at a place among those a frame sees, the root's
  * first.
  *
- * @param {?option_env} _env    the frame.
+ * @param {?OptionEnv} _env    the frame.
  * @param {number}      _index  the place, from 0.
  * @returns {number} the id; NONE past the last.
  */
-export function var_id(
+export function varId(
     _env,
     _index
 )
 {
-    let total = var_count(_env);
+    let total = varCount(_env);
 
-    for (let f = is_env(_env) ? _env : null; f !== null; f = f.parent)
+    for (let f = isEnv(_env) ? _env : null; f !== null; f = f.parent)
     {
         const base = total - f.vars.length;
 
@@ -1396,7 +1396,7 @@ export function var_id(
 
         if (_index >= base)
         {
-            return make_id(f.depth, _index - base);
+            return makeId(f.depth, _index - base);
         }
 
         total = base;
@@ -1406,41 +1406,41 @@ export function var_id(
 }
 
 /**
- * A variable's place among those a frame sees: `var_id`'s inverse.
+ * A variable's place among those a frame sees: `varId`'s inverse.
  *
- * @param {?option_env} _env  the frame.
+ * @param {?OptionEnv} _env  the frame.
  * @param {number}      _var  the variable's id.
  * @returns {number} the place; NONE for an id the frame does not see.
  */
-export function var_index(
+export function varIndex(
     _env,
     _var
 )
 {
-    if ( !is_env(_env) ||
-         (decl_of(_env, _var) === null) )
+    if ( !isEnv(_env) ||
+         (declOf(_env, _var) === null) )
     {
         return NONE;
     }
 
-    const frame = at_depth(_env, _var >>> DEPTH_SHIFT);
+    const frame = atDepth(_env, _var >>> DEPTH_SHIFT);
 
-    return var_count(frame.parent) + (_var & LOCAL);
+    return varCount(frame.parent) + (_var & LOCAL);
 }
 
 /**
  * A variable's row: the object it was declared from.
  *
- * @param {?option_env} _env  the frame.
+ * @param {?OptionEnv} _env  the frame.
  * @param {number}      _var  the variable's id.
- * @returns {?option_row} the row; null for an id the frame does not see.
+ * @returns {?OptionRow} the row; null for an id the frame does not see.
  */
-export function var_at(
+export function varAt(
     _env,
     _var
 )
 {
-    const decl = is_env(_env) ? decl_of(_env, _var) : null;
+    const decl = isEnv(_env) ? declOf(_env, _var) : null;
 
     return (decl !== null) ? decl.row : null;
 }
@@ -1448,65 +1448,65 @@ export function var_at(
 /**
  * The frame that declares a variable.
  *
- * @param {?option_env} _env  a frame that sees it.
+ * @param {?OptionEnv} _env  a frame that sees it.
  * @param {number}      _var  the variable's id.
- * @returns {?option_env} the frame; null for an id `_env` does not see.
+ * @returns {?OptionEnv} the frame; null for an id `_env` does not see.
  */
-export function var_frame(
+export function varFrame(
     _env,
     _var
 )
 {
-    if ( !is_env(_env) ||
-         (decl_of(_env, _var) === null) )
+    if ( !isEnv(_env) ||
+         (declOf(_env, _var) === null) )
     {
         return null;
     }
 
-    return at_depth(_env, _var >>> DEPTH_SHIFT);
+    return atDepth(_env, _var >>> DEPTH_SHIFT);
 }
 
-function scope_name_inner(
+function scopeNameInner(
     _env,
     _scope
 )
 {
-    if ( !is_env(_env)     ||
+    if ( !isEnv(_env)     ||
          (_scope === GLOBAL) ||
-         !scope_ok(_env, _scope) )
+         !scopeOk(_env, _scope) )
     {
         return null;
     }
 
-    return at_depth(_env, _scope >>> DEPTH_SHIFT)
-               .scopes[(_scope & LOCAL) - 1];
+    return atDepth(_env, _scope >>> DEPTH_SHIFT)
+              .scopes[(_scope & LOCAL) - 1];
 }
 
 // 3.2
 /**
  * A scope's name.
  *
- * @param {?option_env} _env    the frame.
+ * @param {?OptionEnv} _env    the frame.
  * @param {number}      _scope  the scope's id.
  * @returns {?string} the name; null for GLOBAL or an id the frame does not
  *          see.
  */
-export function scope_name(
+export function scopeName(
     _env,
     _scope
 )
 {
-    const name = scope_name_inner(_env, _scope);
+    const name = scopeNameInner(_env, _scope);
 
     return (name !== null) ? name : null;
 }
 
-function find_inner(
+function findInner(
     _env,
     _name
 )
 {
-    if ( !is_env(_env) ||
+    if ( !isEnv(_env) ||
          (_name === null) )
     {
         return fail(STATUS.INVALID_ARGUMENT);
@@ -1519,7 +1519,7 @@ function find_inner(
             if ( equal(f.vars[i].name, _name, false) ||
                  equal(f.vars[i].alias, _name, false) )
             {
-                return ok(make_id(f.depth, i));
+                return ok(makeId(f.depth, i));
             }
         }
     }
@@ -1530,24 +1530,24 @@ function find_inner(
 /**
  * The variable of a name or an alias, the innermost frame's first.
  *
- * @param {?option_env} _env   the frame.
+ * @param {?OptionEnv} _env   the frame.
  * @param {string}      _name  the name, with no frame or scope before it.
- * @returns {option_result} the id, or KEY_ABSENT.
+ * @returns {OptionResult} the id, or KEY_ABSENT.
  */
 export function find(
     _env,
     _name
 )
 {
-    return find_inner(_env, to_inner(_name, 'the name'));
+    return findInner(_env, toInner(_name, 'the name'));
 }
 
-function find_scope_inner(
+function findScopeInner(
     _env,
     _name
 )
 {
-    if ( !is_env(_env) ||
+    if ( !isEnv(_env) ||
          (_name === null) )
     {
         return fail(STATUS.INVALID_ARGUMENT);
@@ -1559,7 +1559,7 @@ function find_scope_inner(
         {
             if (equal(f.scopes[i], _name, false))
             {
-                return ok(make_id(f.depth, i + 1));
+                return ok(makeId(f.depth, i + 1));
             }
         }
     }
@@ -1570,16 +1570,16 @@ function find_scope_inner(
 /**
  * The scope of a name, the innermost frame's first.
  *
- * @param {?option_env} _env   the frame.
+ * @param {?OptionEnv} _env   the frame.
  * @param {string}      _name  the scope's name.
- * @returns {option_result} the id, or KEY_ABSENT.
+ * @returns {OptionResult} the id, or KEY_ABSENT.
  */
-export function find_scope(
+export function findScope(
     _env,
     _name
 )
 {
-    return find_scope_inner(_env, to_inner(_name, 'the name'));
+    return findScopeInner(_env, toInner(_name, 'the name'));
 }
 
 /*
@@ -1599,12 +1599,12 @@ function unqualify(
              _name.startsWith(_env.name) ) ? _name.slice(own + 1) : _name;
 }
 
-function resolve_inner(
+function resolveInner(
     _env,
     _name
 )
 {
-    if ( !is_env(_env) ||
+    if ( !isEnv(_env) ||
          (_name === null) )
     {
         return { ...fail(STATUS.INVALID_ARGUMENT), scope: GLOBAL };
@@ -1615,26 +1615,26 @@ function resolve_inner(
 
     if (dot < 0)
     {
-        return { ...find_inner(_env, name), scope: GLOBAL };
+        return { ...findInner(_env, name), scope: GLOBAL };
     }
 
-    const scope = find_scope_inner(_env, name.slice(0, dot));
+    const scope = findScopeInner(_env, name.slice(0, dot));
 
-    if (!scope.is_ok)
+    if (!scope.isOk)
     {
         return { ...scope, scope: GLOBAL };
     }
 
-    return { ...find_inner(_env, name.slice(dot + 1)), scope: scope.value };
+    return { ...findInner(_env, name.slice(dot + 1)), scope: scope.value };
 }
 
 /**
  * The variable and the scope a written name means: "name", "scope.name",
  * and either after the frame's own name and a point.
  *
- * @param {?option_env} _env   the frame.
+ * @param {?OptionEnv} _env   the frame.
  * @param {string}      _name  the name as written.
- * @returns {option_result & {scope: number}} the variable's id, and in
+ * @returns {OptionResult & {scope: number}} the variable's id, and in
  *          `scope` the scope's, GLOBAL where none is written; KEY_ABSENT
  *          for a scope or a variable the frame does not see.
  */
@@ -1643,10 +1643,10 @@ export function resolve(
     _name
 )
 {
-    return resolve_inner(_env, to_inner(_name, 'the name'));
+    return resolveInner(_env, toInner(_name, 'the name'));
 }
 
-function distance_inner(
+function distanceInner(
     _name,
     _text
 )
@@ -1720,7 +1720,7 @@ function nearest(
             const name = _scopes        ? f.scopes[i]
                        : ((i % 2) === 0) ? f.vars[i >> 1].name
                        : f.vars[i >> 1].alias;
-            const far  = (name !== null) ? distance_inner(name, _text) : 9;
+            const far  = (name !== null) ? distanceInner(name, _text) : 9;
 
             if (far < most)
             {
@@ -1748,8 +1748,8 @@ export function distance(
     _text
 )
 {
-    const name = to_inner(_name, 'the name');
-    const text = to_inner(_text, 'the text');
+    const name = toInner(_name, 'the name');
+    const text = toInner(_text, 'the text');
 
     if ( (name === null) ||
          (text === null) )
@@ -1757,15 +1757,15 @@ export function distance(
         return 9;
     }
 
-    return distance_inner(cstr(name), text);
+    return distanceInner(cstr(name), text);
 }
 
-function suggest_inner(
+function suggestInner(
     _env,
     _name
 )
 {
-    if ( !is_env(_env) ||
+    if ( !isEnv(_env) ||
          (_name === null) )
     {
         return null;
@@ -1775,7 +1775,7 @@ function suggest_inner(
     const dot  = name.indexOf('.');
 
     if ( (dot >= 0) &&
-         !find_scope_inner(_env, name.slice(0, dot)).is_ok )
+         !findScopeInner(_env, name.slice(0, dot)).isOk )
     {
         return nearest(_env, name.slice(0, dot), true);
     }
@@ -1794,7 +1794,7 @@ function suggest_inner(
  * characters and two for a longer; for "scope.name" with an unknown scope,
  * the nearest scope.
  *
- * @param {?option_env} _env   the frame.
+ * @param {?OptionEnv} _env   the frame.
  * @param {string}      _name  the name as written.
  * @returns {?string} the name, bare; null where none is near.
  */
@@ -1803,7 +1803,7 @@ export function suggest(
     _name
 )
 {
-    const name = suggest_inner(_env, to_inner(_name, 'the name'));
+    const name = suggestInner(_env, toInner(_name, 'the name'));
 
     return (name !== null) ? name : null;
 }
@@ -1867,9 +1867,9 @@ deeper frame, then the scoped over the global.
 */
 function outranks(
     _a,
-    _a_depth,
+    _aDepth,
     _b,
-    _b_depth
+    _bDepth
 )
 {
     if (_a.source !== _b.source)
@@ -1877,16 +1877,16 @@ function outranks(
         return (_a.source > _b.source);
     }
 
-    if (_a_depth !== _b_depth)
+    if (_aDepth !== _bDepth)
     {
-        return (_a_depth > _b_depth);
+        return (_aDepth > _bDepth);
     }
 
     return ( (_a.scope !== GLOBAL) &&
              (_b.scope === GLOBAL) );
 }
 
-function in_force(
+function inForce(
     _env,
     _scope,
     _var
@@ -1912,7 +1912,7 @@ function in_force(
     return { cell: best, frame: frame };
 }
 
-function default_value(
+function defaultValue(
     _decl
 )
 {
@@ -1928,10 +1928,10 @@ function default_value(
 }
 
 /*
-name_value
+nameValue
   For a CHOICE or an INT, the value's name as its text, or none.
 */
-function name_value(
+function nameValue(
     _decl,
     _value
 )
@@ -1958,10 +1958,10 @@ function name_value(
 }
 
 /*
-get_inner
+getInner
   d_option_env_get, its value's text and its integer a BigInt.
 */
-function get_inner(
+function getInner(
     _env,
     _scope,
     _var
@@ -1974,15 +1974,15 @@ function get_inner(
         return fail(status);
     }
 
-    const { cell, frame } = in_force(_env, _scope, _var);
-    const value           = default_value(decl);
+    const { cell, frame } = inForce(_env, _scope, _var);
+    const value           = defaultValue(decl);
 
     if (cell !== null)
     {
         read(frame, cell, value);
     }
 
-    name_value(decl, value);
+    nameValue(decl, value);
 
     return { ...ok(_var), got: value, decl: decl };
 }
@@ -2011,7 +2011,7 @@ function handed(
 /**
  * A value: the reference's struct dj_option_env_value.
  *
- * @typedef {object} option_value
+ * @typedef {object} OptionValue
  * @property {?string} text     a TEXT's value; a CHOICE's or an INT's
  *           value's name, where it has one; else null.
  * @property {number|bigint} integer  the value of a BOOL (0 or 1), an INT,
@@ -2031,10 +2031,10 @@ function handed(
 /**
  * The value in force for a variable in a scope.
  *
- * @param {?option_env} _env    the frame.
+ * @param {?OptionEnv} _env    the frame.
  * @param {number}      _scope  the scope's id, or GLOBAL.
  * @param {number}      _var    the variable's id.
- * @returns {option_result & {got?: option_value}} the id, and in `got`
+ * @returns {OptionResult & {got?: OptionValue}} the id, and in `got`
  *          the value; KEY_ABSENT for an id the frame does not see.
  */
 export function get(
@@ -2043,17 +2043,17 @@ export function get(
     _var
 )
 {
-    const result = get_inner(_env, _scope, _var);
+    const result = getInner(_env, _scope, _var);
 
-    return result.is_ok ? { ...ok(_var),
-                            got: handed(result.decl, result.got) }
-                        : result;
+    return result.isOk ? { ...ok(_var),
+                           got: handed(result.decl, result.got) }
+                       : result;
 }
 
 /**
  * A BOOL's value in force; false for anything else.
  *
- * @param {?option_env} _env    the frame.
+ * @param {?OptionEnv} _env    the frame.
  * @param {number}      _scope  the scope's id, or GLOBAL.
  * @param {number}      _var    the variable's id.
  * @returns {boolean}
@@ -2064,9 +2064,9 @@ export function bool(
     _var
 )
 {
-    const result = get_inner(_env, _scope, _var);
+    const result = getInner(_env, _scope, _var);
 
-    return ( result.is_ok                     &&
+    return ( result.isOk                      &&
              (result.got.kind === KIND.BOOL)  &&
              (result.got.integer !== 0n) );
 }
@@ -2074,7 +2074,7 @@ export function bool(
 /**
  * The value in force of an INT, a CHOICE or FLAGS; 0 for anything else.
  *
- * @param {?option_env} _env    the frame.
+ * @param {?OptionEnv} _env    the frame.
  * @param {number}      _scope  the scope's id, or GLOBAL.
  * @param {number}      _var    the variable's id.
  * @returns {number|bigint} a number or a bigint, as the row's values are.
@@ -2085,9 +2085,9 @@ export function int(
     _var
 )
 {
-    const result = get_inner(_env, _scope, _var);
+    const result = getInner(_env, _scope, _var);
 
-    if ( !result.is_ok                    ||
+    if ( !result.isOk                     ||
          (result.got.kind === KIND.BOOL)  ||
          (result.got.kind === KIND.REAL)  ||
          (result.got.kind === KIND.TEXT) )
@@ -2102,7 +2102,7 @@ export function int(
 /**
  * A REAL's value in force; 0 for anything else.
  *
- * @param {?option_env} _env    the frame.
+ * @param {?OptionEnv} _env    the frame.
  * @param {number}      _scope  the scope's id, or GLOBAL.
  * @param {number}      _var    the variable's id.
  * @returns {number}
@@ -2113,9 +2113,9 @@ export function real(
     _var
 )
 {
-    const result = get_inner(_env, _scope, _var);
+    const result = getInner(_env, _scope, _var);
 
-    return ( result.is_ok &&
+    return ( result.isOk &&
              (result.got.kind === KIND.REAL) ) ? result.got.real : 0;
 }
 
@@ -2123,7 +2123,7 @@ export function real(
  * A TEXT's value in force, or the name of a CHOICE's or an INT's; null for
  * anything else, and for a value with no text.
  *
- * @param {?option_env} _env    the frame.
+ * @param {?OptionEnv} _env    the frame.
  * @param {number}      _scope  the scope's id, or GLOBAL.
  * @param {number}      _var    the variable's id.
  * @returns {?string}
@@ -2134,9 +2134,9 @@ export function text(
     _var
 )
 {
-    const result = get_inner(_env, _scope, _var);
+    const result = getInner(_env, _scope, _var);
 
-    return ( result.is_ok &&
+    return ( result.isOk &&
              ( (result.got.kind === KIND.TEXT)   ||
                (result.got.kind === KIND.CHOICE) ||
                (result.got.kind === KIND.INT) )  &&
@@ -2146,7 +2146,7 @@ export function text(
 /**
  * The source of the value in force.
  *
- * @param {?option_env} _env    the frame.
+ * @param {?OptionEnv} _env    the frame.
  * @param {number}      _scope  the scope's id, or GLOBAL.
  * @param {number}      _var    the variable's id.
  * @returns {number} the source; -1 for an id the frame does not see.
@@ -2157,9 +2157,9 @@ export function source(
     _var
 )
 {
-    const result = get_inner(_env, _scope, _var);
+    const result = getInner(_env, _scope, _var);
 
-    return result.is_ok ? result.got.source : -1;
+    return result.isOk ? result.got.source : -1;
 }
 
 // 4.2
@@ -2167,12 +2167,12 @@ export function source(
  * Whether a frame itself binds a variable in exactly a scope, from any
  * source.
  *
- * @param {?option_env} _env    the frame.
+ * @param {?OptionEnv} _env    the frame.
  * @param {number}      _scope  the scope's id, or GLOBAL.
  * @param {number}      _var    the variable's id.
  * @returns {boolean}
  */
-export function is_bound(
+export function isBound(
     _env,
     _scope,
     _var
@@ -2198,16 +2198,16 @@ export function is_bound(
 /**
  * Whether a frame or an ancestor binds anything in exactly a scope.
  *
- * @param {?option_env} _env    the frame.
+ * @param {?OptionEnv} _env    the frame.
  * @param {number}      _scope  the scope's id, or GLOBAL.
  * @returns {boolean}
  */
-export function scope_is_bound(
+export function scopeIsBound(
     _env,
     _scope
 )
 {
-    for (let f = is_env(_env) ? _env : null; f !== null; f = f.parent)
+    for (let f = isEnv(_env) ? _env : null; f !== null; f = f.parent)
     {
         for (const cell of f.cells.values())
         {
@@ -2222,11 +2222,11 @@ export function scope_is_bound(
 }
 
 /*
-layers_inner
+layersInner
   d_option_env_layers, each layer's value; null for the
 reference's (size_t)-1.
 */
-function layers_inner(
+function layersInner(
     _env,
     _scope,
     _var,
@@ -2254,10 +2254,10 @@ function layers_inner(
             }
 
             const layer = { frame: f, scope: cell.scope, shown: false,
-                            value: default_value(decl) };
+                            value: defaultValue(decl) };
 
             read(f, cell, layer.value);
-            name_value(decl, layer.value);
+            nameValue(decl, layer.value);
 
             // past every layer it does not outrank
             let at = Math.min(count, capacity);
@@ -2295,13 +2295,13 @@ function layers_inner(
  * first and the rest in the order they would come into force: what a
  * reader asked "why is it this?" is shown.
  *
- * @param {?option_env} _env    the frame.
+ * @param {?OptionEnv} _env    the frame.
  * @param {number}      _scope  the scope's id, or GLOBAL.
  * @param {number}      _var    the variable's id.
  * @param {number}      [_capacity=64]  the most layers to give; the
  *        reference gives at most 64.
- * @returns {{count: number, layers: Array<{frame: option_env,
- *            scope: number, shown: boolean, value: option_value}>}}
+ * @returns {{count: number, layers: Array<{frame: OptionEnv,
+ *            scope: number, shown: boolean, value: OptionValue}>}}
  *          `count` is how many bindings bear, which may be more than are
  *          given; -1, with no layers, for an id the frame does not see.
  *          `shown` marks the one in force.
@@ -2313,7 +2313,7 @@ export function layers(
     _capacity = 64
 )
 {
-    const found = layers_inner(_env, _scope, _var, _capacity);
+    const found = layersInner(_env, _scope, _var, _capacity);
 
     if (found === null)
     {
@@ -2353,7 +2353,7 @@ function accepts(
         // within the range, or named; an unbuilt name's value is refused
         if ( ( (_integer >= _decl.minimum) &&
                (_integer <= _decl.maximum) ) ||
-             is_named(_decl, _integer) )
+             isNamed(_decl, _integer) )
         {
             return STATUS.OK;
         }
@@ -2442,7 +2442,7 @@ function bind(
         return fail(STATUS.VALUE_TYPE_MISMATCH);
     }
 
-    if (!source_ok(_source))
+    if (!sourceOk(_source))
     {
         return fail(STATUS.INVALID_ARGUMENT);
     }
@@ -2453,10 +2453,10 @@ function bind(
         return fail(STATUS.POLICY_REJECTED);
     }
 
-    const key = cell_key(_scope, _source, _var);
+    const key = cellKey(_scope, _source, _var);
 
     if ( !_env.cells.has(key) &&
-         (_env.cells.size >= _env.binding_capacity) )
+         (_env.cells.size >= _env.bindingCapacity) )
     {
         return fail(STATUS.CAPACITY);
     }
@@ -2474,7 +2474,7 @@ function bind(
     return ok(_var);
 }
 
-function bind_int(
+function bindInt(
     _env,
     _scope,
     _var,
@@ -2482,7 +2482,7 @@ function bind_int(
     _integer
 )
 {
-    const decl = is_env(_env) ? decl_of(_env, _var) : null;
+    const decl = isEnv(_env) ? declOf(_env, _var) : null;
 
     if (decl !== null)
     {
@@ -2513,15 +2513,15 @@ function borrowed(
 /**
  * Binds a BOOL, as the program.
  *
- * @param {option_env} _env    the frame the binding is made in.
+ * @param {OptionEnv} _env    the frame the binding is made in.
  * @param {number}     _scope  the scope's id, or GLOBAL.
  * @param {number}     _var    the variable's id.
  * @param {boolean}    _value  the value.
- * @returns {option_result} the id; VALUE_TYPE_MISMATCH for a variable of
+ * @returns {OptionResult} the id; VALUE_TYPE_MISMATCH for a variable of
  *          another kind; POLICY_REJECTED for a row that refuses the
  *          program; CAPACITY for a frame that is full.
  */
-export function set_bool(
+export function setBool(
     _env,
     _scope,
     _var,
@@ -2535,36 +2535,36 @@ export function set_bool(
 /**
  * Binds an INT, a CHOICE or FLAGS, as the program.
  *
- * @param {option_env} _env    the frame the binding is made in.
+ * @param {OptionEnv} _env    the frame the binding is made in.
  * @param {number}     _scope  the scope's id, or GLOBAL.
  * @param {number}     _var    the variable's id.
  * @param {number|bigint} _value  the value; a number must be a whole one
  *        that is exact.
- * @returns {option_result} the id; INVALID_ARGUMENT for a value the row
+ * @returns {OptionResult} the id; INVALID_ARGUMENT for a value the row
  *          does not accept; POLICY_REJECTED for one that is named and not
  *          built.
  */
-export function set_int(
+export function setInt(
     _env,
     _scope,
     _var,
     _value
 )
 {
-    return bind_int(_env, _scope, _var, SOURCE.PROGRAM,
-                    to_int64(_value, 'the value'));
+    return bindInt(_env, _scope, _var, SOURCE.PROGRAM,
+                   toInt64(_value, 'the value'));
 }
 
 /**
  * Binds a REAL, as the program.
  *
- * @param {option_env} _env    the frame the binding is made in.
+ * @param {OptionEnv} _env    the frame the binding is made in.
  * @param {number}     _scope  the scope's id, or GLOBAL.
  * @param {number}     _var    the variable's id.
  * @param {number}     _value  the value.
- * @returns {option_result} the id.
+ * @returns {OptionResult} the id.
  */
-export function set_real(
+export function setReal(
     _env,
     _scope,
     _var,
@@ -2573,7 +2573,7 @@ export function set_real(
 {
     if (typeof _value !== 'number')
     {
-        throw new TypeError('option_env.set_real: the value is not a ' +
+        throw new TypeError('optionEnv.setReal: the value is not a ' +
                             'number');
     }
 
@@ -2585,13 +2585,13 @@ export function set_real(
  * Binds a TEXT, as the program. The reference keeps the caller's pointer
  * and counts none of the frame's text room; so does this.
  *
- * @param {option_env} _env    the frame the binding is made in.
+ * @param {OptionEnv} _env    the frame the binding is made in.
  * @param {number}     _scope  the scope's id, or GLOBAL.
  * @param {number}     _var    the variable's id.
  * @param {?string}    _value  the text, or null.
- * @returns {option_result} the id.
+ * @returns {OptionResult} the id.
  */
-export function set_text(
+export function setText(
     _env,
     _scope,
     _var,
@@ -2599,10 +2599,10 @@ export function set_text(
 )
 {
     return bind(_env, _scope, _var, SOURCE.PROGRAM, KIND.TEXT,
-                { text: borrowed(to_inner(_value, 'the value')) });
+                { text: borrowed(toInner(_value, 'the value')) });
 }
 
-function set_value_inner(
+function setValueInner(
     _env,
     _scope,
     _var,
@@ -2612,7 +2612,7 @@ function set_value_inner(
 {
     if ( (_value === null)      ||
          (_value === undefined) ||
-         !source_ok(_source) )
+         !sourceOk(_source) )
     {
         return fail(STATUS.INVALID_ARGUMENT);
     }
@@ -2634,7 +2634,7 @@ function set_value_inner(
         case KIND.INT:
         case KIND.CHOICE:
         case KIND.FLAGS:
-            return bind_int(_env, _scope, _var, _source, _value.integer);
+            return bindInt(_env, _scope, _var, _source, _value.integer);
 
         default:
             return fail(STATUS.VALUE_TYPE_MISMATCH);
@@ -2644,18 +2644,18 @@ function set_value_inner(
 /**
  * Binds a variable to a value, from a source.
  *
- * @param {option_env} _env     the frame the binding is made in.
+ * @param {OptionEnv} _env     the frame the binding is made in.
  * @param {number}     _scope   the scope's id, or GLOBAL.
  * @param {number}     _var     the variable's id.
  * @param {number}     _source  the source; any but DEFAULT.
  * @param {{kind: number, integer?: (number|bigint|boolean), real?: number,
  *          text?: ?string}} _value  the value: its
  *        kind, and the member that kind reads.
- * @returns {option_result} the id; INVALID_ARGUMENT for no value or a
+ * @returns {OptionResult} the id; INVALID_ARGUMENT for no value or a
  *          source that is none; VALUE_TYPE_MISMATCH for a kind that is not
  *          the variable's.
  */
-export function set_value(
+export function setValue(
     _env,
     _scope,
     _var,
@@ -2669,19 +2669,19 @@ export function set_value(
         return fail(STATUS.INVALID_ARGUMENT);
     }
 
-    return set_value_inner(_env, _scope, _var, _source, {
+    return setValueInner(_env, _scope, _var, _source, {
         kind:         _value.kind,
-        integer:      to_int64(_value.integer ?? 0, 'the value\'s integer'),
+        integer:      toInt64(_value.integer ?? 0, 'the value\'s integer'),
         real:         _value.real ?? 0,
-        text:         to_inner(_value.text, 'the value\'s text')
+        text:         toInner(_value.text, 'the value\'s text')
     });
 }
 
 /*
-text_copy
+textCopy
   Binds a TEXT to a copy of text the frame keeps.
 */
-function text_copy(
+function textCopy(
     _env,
     _scope,
     _var,
@@ -2689,7 +2689,7 @@ function text_copy(
     _source
 )
 {
-    if (!source_ok(_source))
+    if (!sourceOk(_source))
     {
         return fail(STATUS.INVALID_ARGUMENT);
     }
@@ -2719,22 +2719,22 @@ function text_copy(
  * Binds a TEXT to a copy of a text, as the program: the copy counts
  * against the frame's text room.
  *
- * @param {option_env} _env    the frame the binding is made in.
+ * @param {OptionEnv} _env    the frame the binding is made in.
  * @param {number}     _scope  the scope's id, or GLOBAL.
  * @param {number}     _var    the variable's id.
  * @param {string}     _value  the text.
- * @returns {option_result} the id; BUFFER_TOO_SMALL for a frame with no
+ * @returns {OptionResult} the id; BUFFER_TOO_SMALL for a frame with no
  *          room for it.
  */
-export function set_text_copy(
+export function setTextCopy(
     _env,
     _scope,
     _var,
     _value
 )
 {
-    return text_copy(_env, _scope, _var, to_inner(_value, 'the value') ?? '',
-                     SOURCE.PROGRAM);
+    return textCopy(_env, _scope, _var, toInner(_value, 'the value') ?? '',
+                    SOURCE.PROGRAM);
 }
 
 // 5.2
@@ -2742,10 +2742,10 @@ export function set_text_copy(
  * Drops a frame's own bindings of a variable in exactly a scope, from
  * every source.
  *
- * @param {option_env} _env    the frame.
+ * @param {OptionEnv} _env    the frame.
  * @param {number}     _scope  the scope's id, or GLOBAL.
  * @param {number}     _var    the variable's id.
- * @returns {option_result} the id, whether or not anything was bound.
+ * @returns {OptionResult} the id, whether or not anything was bound.
  */
 export function unset(
     _env,
@@ -2763,7 +2763,7 @@ export function unset(
 
     for (let from = SOURCE.PROGRAM; from < SOURCES; ++from)
     {
-        removed = _env.cells.delete(cell_key(_scope, from, _var)) || removed;
+        removed = _env.cells.delete(cellKey(_scope, from, _var)) || removed;
     }
 
     if (removed)
@@ -2778,13 +2778,13 @@ export function unset(
  * Drops a frame's own binding of a variable in exactly a scope, from one
  * source.
  *
- * @param {option_env} _env     the frame.
+ * @param {OptionEnv} _env     the frame.
  * @param {number}     _scope   the scope's id, or GLOBAL.
  * @param {number}     _var     the variable's id.
  * @param {number}     _source  the source; any but DEFAULT.
- * @returns {option_result} the id, whether or not anything was bound.
+ * @returns {OptionResult} the id, whether or not anything was bound.
  */
-export function unset_from(
+export function unsetFrom(
     _env,
     _scope,
     _var,
@@ -2798,12 +2798,12 @@ export function unset_from(
         return fail(status);
     }
 
-    if (!source_ok(_source))
+    if (!sourceOk(_source))
     {
         return fail(STATUS.INVALID_ARGUMENT);
     }
 
-    if (_env.cells.delete(cell_key(_scope, _source, _var)))
+    if (_env.cells.delete(cellKey(_scope, _source, _var)))
     {
         ++_env.generation;
     }
@@ -2817,20 +2817,20 @@ export function unset_from(
  * a process bound from its command line ends with the process, and a
  * page's program does not end (src/djinterp.js, `run`).
  *
- * @param {option_env} _env     the frame; its own bindings only, not its
+ * @param {OptionEnv} _env     the frame; its own bindings only, not its
  *        ancestors'.
  * @param {number}     _source  the source; any but DEFAULT.
- * @returns {option_result} how many bindings went.
+ * @returns {OptionResult} how many bindings went.
  */
-export function unset_source(
+export function unsetSource(
     _env,
     _source
 )
 {
     let count = 0;
 
-    if ( !is_env(_env) ||
-         !source_ok(_source) )
+    if ( !isEnv(_env) ||
+         !sourceOk(_source) )
     {
         return fail(STATUS.INVALID_ARGUMENT);
     }
@@ -2860,7 +2860,7 @@ export function unset_source(
 const YES = ['1', 'true', 'yes', 'on', 'y'];
 const NO  = ['0', 'false', 'no', 'off', 'n'];
 
-function read_bool(
+function readBool(
     _text
 )
 {
@@ -2881,11 +2881,11 @@ function read_bool(
 }
 
 /*
-read_int
+readInt
   A 64-bit integer from a text: a sign, a base prefix 0x, 0o or 0b, and
 digits; null for anything else, and for a value that does not fit.
 */
-function read_int(
+function readInt(
     _text
 )
 {
@@ -2962,12 +2962,12 @@ function read_int(
 }
 
 /*
-read_real_text
+readRealText
   A real from a text, whole: C's alphabet, or one of the words, and what
 strtod makes of it; null for anything else, and for a value past the
 largest double.
 */
-function read_real_text(
+function readRealText(
     _text
 )
 {
@@ -3000,7 +3000,7 @@ function read_real_text(
         }
     }
 
-    const read = read_real(_text);
+    const read = readReal(_text);
 
     if ( (read.length !== size) ||
          read.overflow )
@@ -3011,7 +3011,7 @@ function read_real_text(
     return read;
 }
 
-function names_value(
+function namesValue(
     _names,
     _count,
     _text
@@ -3029,41 +3029,41 @@ function names_value(
 }
 
 /*
-read_choice
+readChoice
   A named value by its name, without regard to case, or a number: for a
 CHOICE, an INT, and each term of FLAGS.
 */
-function read_choice(
+function readChoice(
     _decl,
     _text
 )
 {
-    let value = names_value(_decl.names, _decl.name_count, _text);
+    let value = namesValue(_decl.names, _decl.name_count, _text);
 
     if (value !== null)
     {
         return { status: STATUS.OK, value: value };
     }
 
-    value = names_value(_decl.unbuilt, _decl.unbuilt_count, _text);
+    value = namesValue(_decl.unbuilt, _decl.unbuilt_count, _text);
 
     if (value !== null)
     {
         return { status: STATUS.POLICY_REJECTED, value: value };
     }
 
-    value = read_int(_text);
+    value = readInt(_text);
 
     return (value !== null) ? { status: STATUS.OK, value: value }
                             : { status: STATUS.INVALID_ARGUMENT, value: 0n };
 }
 
 /*
-read_flags
+readFlags
   Flags from terms separated by ',', '|' or space. A text that starts with
 a sign edits the value in force: "+name" sets bits and "-name" clears them.
 */
-function read_flags(
+function readFlags(
     _env,
     _scope,
     _var,
@@ -3079,9 +3079,9 @@ function read_flags(
          ( (_text[0] === '+') ||
            (_text[0] === '-') ) )
     {
-        const now = get_inner(_env, _scope, _var);
+        const now = getInner(_env, _scope, _var);
 
-        value = now.is_ok ? now.got.integer : 0n;
+        value = now.isOk ? now.got.integer : 0n;
     }
 
     while (at < size)
@@ -3092,7 +3092,7 @@ function read_flags(
         while ( (at < size) &&
                 ( (_text[at] === ',') ||
                   (_text[at] === '|') ||
-                  is_space(_text[at]) ) )
+                  isSpace(_text[at]) ) )
         {
             ++at;
         }
@@ -3111,14 +3111,14 @@ function read_flags(
         const start = at;
 
         while ( (at < size) &&
-                is_name_char(_text[at]) )
+                isNameChar(_text[at]) )
         {
             ++at;
         }
 
         const term = (at === start)
                          ? { status: STATUS.INVALID_ARGUMENT, value: 0n }
-                         : read_choice(_decl, _text.slice(start, at));
+                         : readChoice(_decl, _text.slice(start, at));
 
         if (term.status !== STATUS.OK)
         {
@@ -3134,10 +3134,10 @@ function read_flags(
 }
 
 /*
-assign_value
+assignValue
   Binds a variable from a value's text, read as its kind reads one.
 */
-function assign_value(
+function assignValue(
     _env,
     _scope,
     _var,
@@ -3145,14 +3145,14 @@ function assign_value(
     _source
 )
 {
-    const decl = decl_of(_env, _var);
+    const decl = declOf(_env, _var);
 
     if (decl.kind === KIND.TEXT)
     {
-        return text_copy(_env, _scope, _var, _value, _source);
+        return textCopy(_env, _scope, _var, _value, _source);
     }
 
-    const value  = default_value(decl);
+    const value  = defaultValue(decl);
     const text_  = trim(_value).text;
     let   status = STATUS.OK;
     let   read_;
@@ -3160,14 +3160,14 @@ function assign_value(
     switch (decl.kind)
     {
         case KIND.BOOL:
-            read_         = read_bool(text_);
+            read_         = readBool(text_);
             status        = (read_ !== null) ? STATUS.OK
                                              : STATUS.INVALID_ARGUMENT;
             value.integer = read_ ?? 0n;
             break;
 
         case KIND.REAL:
-            read_  = read_real_text(text_);
+            read_  = readRealText(text_);
             status = (read_ !== null) ? STATUS.OK : STATUS.INVALID_ARGUMENT;
 
             if (read_ !== null)
@@ -3179,13 +3179,13 @@ function assign_value(
         case KIND.INT:
         case KIND.CHOICE:
             // a number, or one of the row's named values by its name
-            read_         = read_choice(decl, text_);
+            read_         = readChoice(decl, text_);
             status        = read_.status;
             value.integer = read_.value;
             break;
 
         default:
-            read_         = read_flags(_env, _scope, _var, decl, text_);
+            read_         = readFlags(_env, _scope, _var, decl, text_);
             status        = read_.status;
             value.integer = read_.value;
             break;
@@ -3195,33 +3195,33 @@ function assign_value(
     value.text = null;
 
     return (status === STATUS.OK)
-               ? set_value_inner(_env, _scope, _var, _source, value)
+               ? setValueInner(_env, _scope, _var, _source, value)
                : fail(status);
 }
 
-function assign_from_inner(
+function assignFromInner(
     _env,
     _name,
     _value,
     _source
 )
 {
-    if ( !is_env(_env)    ||
+    if ( !isEnv(_env)     ||
          (_name === null) ||
          (_value === null) ||
-         !source_ok(_source) )
+         !sourceOk(_source) )
     {
         return fail(STATUS.INVALID_ARGUMENT);
     }
 
-    const found = resolve_inner(_env, _name);
+    const found = resolveInner(_env, _name);
 
-    if (!found.is_ok)
+    if (!found.isOk)
     {
         return fail(found.error);
     }
 
-    return assign_value(_env, found.scope, found.value, _value, _source);
+    return assignValue(_env, found.scope, found.value, _value, _source);
 }
 
 // 6.1
@@ -3234,35 +3234,35 @@ function assign_from_inner(
  * or a number; FLAGS from names separated by ',' or '|', each perhaps
  * after '+' or '-'; a TEXT from the text as it is.
  *
- * @param {option_env} _env     the frame the binding is made in.
+ * @param {OptionEnv} _env     the frame the binding is made in.
  * @param {string}     _name    the name: "name" or "scope.name", perhaps
  *        after the frame's own name and a point.
  * @param {string}     _value   the value's text.
  * @param {number}     _source  the source; any but DEFAULT.
- * @returns {option_result} the variable's id; KEY_ABSENT for a name the
+ * @returns {OptionResult} the variable's id; KEY_ABSENT for a name the
  *          frame does not see; INVALID_ARGUMENT for a text that is not a
  *          value of the kind, or one the row does not accept;
  *          POLICY_REJECTED for a named value that is not built, or a
  *          source the row refuses.
  */
-export function assign_from(
+export function assignFrom(
     _env,
     _name,
     _value,
     _source
 )
 {
-    return assign_from_inner(_env, to_inner(_name, 'the name'),
-                             to_inner(_value, 'the value') ?? '', _source);
+    return assignFromInner(_env, toInner(_name, 'the name'),
+                           toInner(_value, 'the value') ?? '', _source);
 }
 
 /**
- * `assign_from`, as the program.
+ * `assignFrom`, as the program.
  *
- * @param {option_env} _env    the frame the binding is made in.
+ * @param {OptionEnv} _env    the frame the binding is made in.
  * @param {string}     _name   the name as written.
  * @param {string}     _value  the value's text.
- * @returns {option_result}
+ * @returns {OptionResult}
  */
 export function assign(
     _env,
@@ -3270,7 +3270,7 @@ export function assign(
     _value
 )
 {
-    return assign_from(_env, _name, _value, SOURCE.PROGRAM);
+    return assignFrom(_env, _name, _value, SOURCE.PROGRAM);
 }
 
 /*
@@ -3302,7 +3302,7 @@ function escape(
         return null;
     }
 
-    const code = read_int('0x' + _text[_at + 1] + _text[_at + 2]);
+    const code = readInt('0x' + _text[_at + 1] + _text[_at + 2]);
 
     if (code === null)
     {
@@ -3354,7 +3354,7 @@ function quoted(
     _source
 )
 {
-    const decl = decl_of(_env, _var);
+    const decl = declOf(_env, _var);
 
     if (decl.kind === KIND.TEXT)
     {
@@ -3382,7 +3382,7 @@ function quoted(
         return fail(STATUS.INVALID_ARGUMENT);
     }
 
-    return assign_value(_env, _scope, _var, plain, _source);
+    return assignValue(_env, _scope, _var, plain, _source);
 }
 
 /*
@@ -3407,10 +3407,10 @@ function act(
     {
         if (_unset)
         {
-            return unset_from(_env, _scope, _var, _source);
+            return unsetFrom(_env, _scope, _var, _source);
         }
 
-        return (decl_of(_env, _var).kind === KIND.BOOL)
+        return (declOf(_env, _var).kind === KIND.BOOL)
                    ? bind(_env, _scope, _var, _source, KIND.BOOL,
                           { integer: 1n })
                    : fail(STATUS.INVALID_ARGUMENT);
@@ -3426,13 +3426,13 @@ function act(
     {
         ++at;
     } while ( (at < size) &&
-              is_space(_text[at]) );
+              isSpace(_text[at]) );
 
     // an unquoted value is the rest; a quoted one must end the statement
     if ( (at === size) ||
          (_text[at] !== '"') )
     {
-        return assign_value(_env, _scope, _var, _text.slice(at), _source);
+        return assignValue(_env, _scope, _var, _text.slice(at), _source);
     }
 
     let close = at + 1;
@@ -3465,21 +3465,21 @@ function statement(
 
     // the name: an identifier, with an optional "frame." and "scope."
     while ( (at < size) &&
-            ( is_name_char(text_[at]) ||
+            ( isNameChar(text_[at]) ||
               (text_[at] === '.') ) )
     {
         ++at;
     }
 
-    const found = resolve_inner(_env, text_.slice(unset_, at));
+    const found = resolveInner(_env, text_.slice(unset_, at));
 
     while ( (at < size) &&
-            is_space(text_[at]) )
+            isSpace(text_[at]) )
     {
         ++at;
     }
 
-    if (!found.is_ok)
+    if (!found.isOk)
     {
         return (at === unset_) ? fail(STATUS.INVALID_ARGUMENT)
                                : fail(found.error);
@@ -3489,15 +3489,15 @@ function statement(
                _source);
 }
 
-function put_n_from_inner(
+function putNFromInner(
     _env,
     _statement,
     _source
 )
 {
-    if ( !is_env(_env)          ||
+    if ( !isEnv(_env)           ||
          (_statement === null)  ||
-         !source_ok(_source) )
+         !sourceOk(_source) )
     {
         return fail(STATUS.INVALID_ARGUMENT);
     }
@@ -3512,61 +3512,61 @@ function put_n_from_inner(
  * quotes may hold \" \\ \' \n \r \t \0 and \xHH, and must end the
  * statement.
  *
- * @param {option_env} _env        the frame.
+ * @param {OptionEnv} _env        the frame.
  * @param {string}     _statement  the statement; read up to a NUL.
  * @param {number}     _source     the source; any but DEFAULT.
- * @returns {option_result} the variable's id; INVALID_ARGUMENT for a
+ * @returns {OptionResult} the variable's id; INVALID_ARGUMENT for a
  *          statement with no name, with text after a bare name, or with a
  *          value the variable refuses; KEY_ABSENT for a name the frame
  *          does not see.
  */
-export function put_from(
+export function putFrom(
     _env,
     _statement,
     _source
 )
 {
-    const text_ = to_inner(_statement, 'the statement');
+    const text_ = toInner(_statement, 'the statement');
 
-    return put_n_from_inner(_env, (text_ !== null) ? cstr(text_) : null,
-                            _source);
+    return putNFromInner(_env, (text_ !== null) ? cstr(text_) : null,
+                         _source);
 }
 
 /**
- * `put_from`, as the program.
+ * `putFrom`, as the program.
  *
- * @param {option_env} _env        the frame.
+ * @param {OptionEnv} _env        the frame.
  * @param {string}     _statement  the statement.
- * @returns {option_result}
+ * @returns {OptionResult}
  */
 export function put(
     _env,
     _statement
 )
 {
-    return put_from(_env, _statement, SOURCE.PROGRAM);
+    return putFrom(_env, _statement, SOURCE.PROGRAM);
 }
 
 /**
- * `put_from` for a statement given whole, a NUL in it included: the
+ * `putFrom` for a statement given whole, a NUL in it included: the
  * reference's form for text that carries its length.
  *
- * @param {option_env} _env        the frame.
+ * @param {OptionEnv} _env        the frame.
  * @param {string}     _statement  the statement.
  * @param {number}     _source     the source; any but DEFAULT.
- * @returns {option_result}
+ * @returns {OptionResult}
  */
-export function put_n_from(
+export function putNFrom(
     _env,
     _statement,
     _source
 )
 {
-    return put_n_from_inner(_env, to_inner(_statement, 'the statement') ?? '',
-                            _source);
+    return putNFromInner(_env, toInner(_statement, 'the statement') ?? '',
+                         _source);
 }
 
-function statement_end_inner(
+function statementEndInner(
     _script,
     _at
 )
@@ -3608,17 +3608,17 @@ function statement_end_inner(
  *        script.
  * @returns {number} the index of its end.
  */
-export function statement_end(
+export function statementEnd(
     _script,
     _at
 )
 {
-    const script = to_inner(_script, 'the script');
+    const script = toInner(_script, 'the script');
 
-    return (script !== null) ? statement_end_inner(cstr(script), _at) : _at;
+    return (script !== null) ? statementEndInner(cstr(script), _at) : _at;
 }
 
-function load_from_inner(
+function loadFromInner(
     _env,
     _script,
     _source
@@ -3627,9 +3627,9 @@ function load_from_inner(
     let at    = 0;
     let count = 0;
 
-    if ( !is_env(_env)       ||
+    if ( !isEnv(_env)        ||
          (_script === null)  ||
-         !source_ok(_source) )
+         !sourceOk(_source) )
     {
         return fail(STATUS.INVALID_ARGUMENT);
     }
@@ -3640,7 +3640,7 @@ function load_from_inner(
     {
         const start = at;
 
-        at = statement_end_inner(_script, at);
+        at = statementEndInner(_script, at);
 
         const trimmed = trim(_script.slice(start, at));
 
@@ -3648,9 +3648,9 @@ function load_from_inner(
         {
             const result = statement(_env, trimmed.text, _source);
 
-            if (!result.is_ok)
+            if (!result.isOk)
             {
-                return { ...result, error_offset: start + trimmed.start };
+                return { ...result, errorOffset: start + trimmed.start };
             }
 
             ++count;
@@ -3680,46 +3680,46 @@ function load_from_inner(
  * line break, with '#' starting a comment that runs to its line's end. It
  * stops at the first statement refused; those before it stay carried out.
  *
- * @param {option_env} _env     the frame.
+ * @param {OptionEnv} _env     the frame.
  * @param {string}     _script  the script; read up to a NUL.
  * @param {number}     _source  the source; any but DEFAULT.
- * @returns {option_result & {error_offset?: number}} how many statements
- *          were carried out; or the refusal, with in `error_offset` where
+ * @returns {OptionResult & {errorOffset?: number}} how many statements
+ *          were carried out; or the refusal, with in `errorOffset` where
  *          the refused statement starts, an index into the script.
  */
-export function load_from(
+export function loadFrom(
     _env,
     _script,
     _source
 )
 {
-    const script = to_inner(_script, 'the script');
+    const script = toInner(_script, 'the script');
 
-    return load_from_inner(_env, (script !== null) ? cstr(script) : null,
-                           _source);
+    return loadFromInner(_env, (script !== null) ? cstr(script) : null,
+                         _source);
 }
 
 /**
- * `load_from`, as the program.
+ * `loadFrom`, as the program.
  *
- * @param {option_env} _env     the frame.
+ * @param {OptionEnv} _env     the frame.
  * @param {string}     _script  the script.
- * @returns {option_result & {error_offset?: number}}
+ * @returns {OptionResult & {errorOffset?: number}}
  */
 export function load(
     _env,
     _script
 )
 {
-    return load_from(_env, _script, SOURCE.PROGRAM);
+    return loadFrom(_env, _script, SOURCE.PROGRAM);
 }
 
 /*
-lookup_of
+lookupOf
   An environment as a function from a variable's name to its value, or
 null: from a Map, an object or a function of strings.
 */
-function lookup_of(
+function lookupOf(
     _environment
 )
 {
@@ -3772,7 +3772,7 @@ function getenv(
     return _lookup(key);
 }
 
-function import_inner(
+function importInner(
     _env,
     _prefix,
     _lookup
@@ -3781,22 +3781,22 @@ function import_inner(
     let failure = ok(0);
     let count   = 0;
 
-    if (!is_env(_env))
+    if (!isEnv(_env))
     {
         return fail(STATUS.INVALID_ARGUMENT);
     }
 
-    const total = var_count(_env);
+    const total = varCount(_env);
 
     for (let k = 0; k < total; ++k)
     {
-        const id   = var_id(_env, k);
-        const decl = decl_of(_env, id);
-        const seen = find_inner(_env, decl.name);
+        const id   = varId(_env, k);
+        const decl = declOf(_env, id);
+        const seen = findInner(_env, decl.name);
         let   value = getenv(_lookup, _prefix, decl.name);
 
         // a variable an inner frame's hides is not read
-        if ( !seen.is_ok ||
+        if ( !seen.isOk ||
              (seen.value !== id) )
         {
             continue;
@@ -3809,21 +3809,21 @@ function import_inner(
 
         if (value !== null)
         {
-            const result = assign_value(_env, GLOBAL, id, value,
-                                        SOURCE.ENVIRONMENT);
+            const result = assignValue(_env, GLOBAL, id, value,
+                                       SOURCE.ENVIRONMENT);
 
-            if (result.is_ok)
+            if (result.isOk)
             {
                 ++count;
             }
-            else if (failure.is_ok)
+            else if (failure.isOk)
             {
                 failure = result;
             }
         }
     }
 
-    return failure.is_ok ? ok(count) : failure;
+    return failure.isOk ? ok(count) : failure;
 }
 
 // 6.4
@@ -3835,15 +3835,15 @@ function import_inner(
  * The reference reads the process's environment. A page has none, so the
  * environment is given: the caller decides what stands in for it.
  *
- * Exported as `import` too, the reference's name: `option_env.import(...)`.
+ * Exported as `import` too, the reference's name: `optionEnv.import(...)`.
  *
- * @param {option_env} _env     the frame.
+ * @param {OptionEnv} _env     the frame.
  * @param {?string}    _prefix  what each variable's name follows, or null
  *        for nothing.
  * @param {Map<string, string>|Record<string, string>|
  *         function(string): (string|undefined)} _environment  the
  *        environment: names to values.
- * @returns {option_result} how many were bound; or the first refusal.
+ * @returns {OptionResult} how many were bound; or the first refusal.
  */
 export function import_(
     _env,
@@ -3851,8 +3851,8 @@ export function import_(
     _environment
 )
 {
-    return import_inner(_env, cstr(to_inner(_prefix, 'the prefix') ?? ''),
-                        lookup_of(_environment));
+    return importInner(_env, cstr(toInner(_prefix, 'the prefix') ?? ''),
+                       lookupOf(_environment));
 }
 
 export { import_ as import };
@@ -3872,8 +3872,8 @@ function widest(
     _left
 )
 {
-    let best       = -1;
-    let best_count = 0;
+    let best      = -1;
+    let bestCount = 0;
 
     for (let i = 0; i < _decl.name_count; ++i)
     {
@@ -3891,17 +3891,17 @@ function widest(
             ++count;
         }
 
-        if (count > best_count)
+        if (count > bestCount)
         {
-            best       = i;
-            best_count = count;
+            best      = i;
+            bestCount = count;
         }
     }
 
     return best;
 }
 
-function format_flags(
+function formatFlags(
     _decl,
     _value
 )
@@ -3949,7 +3949,7 @@ function format_flags(
     return out;
 }
 
-function format_value(
+function formatValue(
     _decl,
     _value
 )
@@ -3960,13 +3960,13 @@ function format_value(
             return (_value.integer !== 0n) ? 'true' : 'false';
 
         case KIND.REAL:
-            return format_real(_value.real);
+            return formatReal(_value.real);
 
         case KIND.TEXT:
             return (_value.text !== null) ? _value.text : '';
 
         case KIND.FLAGS:
-            return format_flags(_decl, _value.integer);
+            return formatFlags(_decl, _value.integer);
 
         default:
             // INT and CHOICE: the value's name where it has one, else its
@@ -3976,18 +3976,18 @@ function format_value(
     }
 }
 
-function format_inner(
+function formatInner(
     _env,
     _scope,
     _var
 )
 {
-    const result = get_inner(_env, _scope, _var);
+    const result = getInner(_env, _scope, _var);
 
-    return result.is_ok ? format_value(result.decl, result.got) : null;
+    return result.isOk ? formatValue(result.decl, result.got) : null;
 }
 
-function needs_quotes(
+function needsQuotes(
     _text
 )
 {
@@ -4016,7 +4016,7 @@ function needs_quotes(
 
 const HEX = '0123456789ABCDEF';
 
-function append_quoted(
+function appendQuoted(
     _text
 )
 {
@@ -4044,23 +4044,23 @@ function append_quoted(
     return out + '"';
 }
 
-function format_quoted_inner(
+function formatQuotedInner(
     _env,
     _scope,
     _var
 )
 {
-    const result = get_inner(_env, _scope, _var);
+    const result = getInner(_env, _scope, _var);
 
-    if ( !result.is_ok                    ||
+    if ( !result.isOk                     ||
          (result.got.kind !== KIND.TEXT)  ||
          (result.got.text === null)       ||
-         !needs_quotes(result.got.text) )
+         !needsQuotes(result.got.text) )
     {
-        return format_inner(_env, _scope, _var);
+        return formatInner(_env, _scope, _var);
     }
 
-    return append_quoted(result.got.text);
+    return appendQuoted(result.got.text);
 }
 
 // 7.1
@@ -4073,7 +4073,7 @@ function format_quoted_inner(
  * The reference writes into a buffer and returns the length; this returns
  * the text, whole.
  *
- * @param {?option_env} _env    the frame.
+ * @param {?OptionEnv} _env    the frame.
  * @param {number}      _scope  the scope's id, or GLOBAL.
  * @param {number}      _var    the variable's id.
  * @returns {?string} the text; null for an id the frame does not see.
@@ -4084,7 +4084,7 @@ export function format(
     _var
 )
 {
-    const out = format_inner(_env, _scope, _var);
+    const out = formatInner(_env, _scope, _var);
 
     return (out !== null) ? out : null;
 }
@@ -4095,18 +4095,18 @@ export function format(
  * space or tab, or holds ';', '#', '"', a backslash or a control
  * character.
  *
- * @param {?option_env} _env    the frame.
+ * @param {?OptionEnv} _env    the frame.
  * @param {number}      _scope  the scope's id, or GLOBAL.
  * @param {number}      _var    the variable's id.
  * @returns {?string} the text; null for an id the frame does not see.
  */
-export function format_quoted(
+export function formatQuoted(
     _env,
     _scope,
     _var
 )
 {
-    const out = format_quoted_inner(_env, _scope, _var);
+    const out = formatQuotedInner(_env, _scope, _var);
 
     return (out !== null) ? out : null;
 }
@@ -4121,13 +4121,13 @@ export function format_quoted(
  * The value in force, read again only when the frame's generation has
  * moved since the cache was filled.
  *
- * @param {?option_env} _env    the frame.
+ * @param {?OptionEnv} _env    the frame.
  * @param {number}      _scope  the scope's id, or GLOBAL.
  * @param {number}      _var    the variable's id.
- * @param {{filled?: boolean, generation?: number, value?: option_value}}
+ * @param {{filled?: boolean, generation?: number, value?: OptionValue}}
  *        _cache  the caller's cache for this variable in this scope; an
  *        empty object to start with.
- * @returns {?option_value} the value; one of kind 0 for an id the frame
+ * @returns {?OptionValue} the value; one of kind 0 for an id the frame
  *          does not see; null for no cache.
  */
 export function cached(
@@ -4150,7 +4150,7 @@ export function cached(
     {
         const result = get(_env, _scope, _var);
 
-        _cache.value      = result.is_ok
+        _cache.value      = result.isOk
                                 ? result.got
                                 : { text: null, integer: 0, real: 0, kind: 0,
                                     bound: false, source: 0, depth: 0 };
@@ -4175,24 +4175,24 @@ export function cached(
  */
 export const inner = Object.freeze({
     cstr:          cstr,
-    decl:          (_env, _var) => (is_env(_env) ? decl_of(_env, _var)
-                                                 : null),
-    is_identifier: is_identifier,
-    find:          find_inner,
-    find_scope:    find_scope_inner,
-    resolve:       resolve_inner,
-    distance:      distance_inner,
-    suggest:       suggest_inner,
-    scope_name:    scope_name_inner,
-    get:           get_inner,
-    layers:        layers_inner,
-    assign_from:   assign_from_inner,
-    put_n_from:    put_n_from_inner,
-    load_from:     load_from_inner,
-    statement_end: statement_end_inner,
-    import:        import_inner,
-    lookup_of:     lookup_of,
-    format:        format_inner,
-    format_quoted: format_quoted_inner,
-    format_value:  format_value
+    decl:          (_env, _var) => (isEnv(_env) ? declOf(_env, _var)
+                                                : null),
+    isIdentifier: isIdentifier,
+    find:         findInner,
+    findScope:    findScopeInner,
+    resolve:      resolveInner,
+    distance:     distanceInner,
+    suggest:      suggestInner,
+    scopeName:    scopeNameInner,
+    get:          getInner,
+    layers:       layersInner,
+    assignFrom:   assignFromInner,
+    putNFrom:     putNFromInner,
+    loadFrom:     loadFromInner,
+    statementEnd: statementEndInner,
+    import:       importInner,
+    lookupOf:     lookupOf,
+    format:       formatInner,
+    formatQuoted: formatQuotedInner,
+    formatValue:  formatValue
 });

@@ -30,25 +30,25 @@
 TABLE OF CONTENTS
 =================
 1.  The queue
-    1.  queue_init, queue_clear
-    2.  queue_enqueue, queue_process
-    3.  queue_pending, queue_is_empty, queue_peek
+    1.  queueInit, queueClear
+    2.  queueEnqueue, queueProcess
+    3.  queuePending, queueIsEmpty, queuePeek
 2.  The dispatcher
-    1.  dispatcher_init, dispatcher_dispose
-    2.  dispatcher_bind, dispatcher_unbind, dispatcher_enable,
-        dispatcher_disable, dispatcher_is_enabled, dispatcher_contains
-    3.  dispatcher_fire, dispatcher_queue, dispatcher_process,
-        dispatcher_process_all, dispatcher_run, dispatcher_compile
-    4.  dispatcher_merge
-    5.  dispatcher_handler_count, dispatcher_enabled_count,
-        dispatcher_handler_count_for, dispatcher_pending
+    1.  dispatcherInit, dispatcherDispose
+    2.  dispatcherBind, dispatcherUnbind, dispatcherEnable,
+        dispatcherDisable, dispatcherIsEnabled, dispatcherContains
+    3.  dispatcherFire, dispatcherQueue, dispatcherProcess,
+        dispatcherProcessAll, dispatcherRun, dispatcherCompile
+    4.  dispatcherMerge
+    5.  dispatcherHandlerCount, dispatcherEnabledCount,
+        dispatcherHandlerCountFor, dispatcherPending
 */
 
 import data from '../../generated/event.js';
-import { HANDLER_ID_NULL, STATUS, verdict_is_consumed }
+import { HANDLER_ID_NULL, STATUS, verdictIsConsumed }
     from './event_common.js';
-import * as event_registry from './event_registry_common.js';
-import * as event_table from './event_table_common.js';
+import * as eventRegistry from './event_registry_common.js';
+import * as eventTable from './event_table_common.js';
 
 const DROP_OLDEST = (data.queue_overflow === data.queue_overflow_drop_oldest);
 
@@ -58,9 +58,9 @@ const DROP_OLDEST = (data.queue_overflow === data.queue_overflow_drop_oldest);
 //==============================================================================
 
 /**
- * A queue of occurrences. Made by `queue_init`.
+ * A queue of occurrences. Made by `queueInit`.
  *
- * @typedef {object} event_queue
+ * @typedef {object} EventQueue
  */
 
 // 1.1
@@ -70,9 +70,9 @@ const DROP_OLDEST = (data.queue_overflow === data.queue_overflow_drop_oldest);
  * @param {object} [_room]  the queue's room.
  * @param {number} [_room.capacity=Infinity]  the most occurrences it
  *        holds.
- * @returns {event_queue}
+ * @returns {EventQueue}
  */
-export function queue_init(
+export function queueInit(
     _room = {}
 )
 {
@@ -84,9 +84,9 @@ export function queue_init(
  * Drops every queued occurrence; while the queue is being processed, every
  * one but the one being delivered.
  *
- * @param {?event_queue} _queue  the queue.
+ * @param {?EventQueue} _queue  the queue.
  */
-export function queue_clear(
+export function queueClear(
     _queue
 )
 {
@@ -107,7 +107,7 @@ export function queue_clear(
  * Sets an occurrence aside, after those already queued. Its payload is
  * copied.
  *
- * @param {?event_queue} _queue    the queue.
+ * @param {?EventQueue} _queue    the queue.
  * @param {bigint}       _key      the occurrence's key.
  * @param {*}            [_payload]  its payload; data, as
  *        `structuredClone` takes it.
@@ -115,7 +115,7 @@ export function queue_clear(
  *          that is full, under the reference's overflow policy, which
  *          refuses the new occurrence.
  */
-export function queue_enqueue(
+export function queueEnqueue(
     _queue,
     _key,
     _payload
@@ -155,23 +155,23 @@ export function queue_enqueue(
  * Delivers queued occurrences, oldest first: at most `_max`, and never
  * more than were queued when the call began.
  *
- * @param {?event_queue}    _queue     the queue.
- * @param {?event_registry} _registry  what they are dispatched over.
+ * @param {?EventQueue}    _queue     the queue.
+ * @param {?eventRegistry} _registry  what they are dispatched over.
  * @param {number}          [_max=0]   the most to deliver; 0 for every
  *        one queued at the call.
  * @returns {{processed: number, result: {occurrences: number,
- *            handlers_invoked: number, consumed_count: number}}} how many
+ *            handlersInvoked: number, consumedCount: number}}} how many
  *          were delivered, and their dispatches summed. Nothing, for a
  *          call made by a handler of the queue being processed.
  */
-export function queue_process(
+export function queueProcess(
     _queue,
     _registry,
     _max = 0
 )
 {
-    const run     = { occurrences: 0, handlers_invoked: 0,
-                      consumed_count: 0 };
+    const run     = { occurrences: 0, handlersInvoked: 0,
+                      consumedCount: 0 };
     let processed = 0;
 
     // both are required, and a handler of this queue may not re-enter it
@@ -193,16 +193,16 @@ export function queue_process(
             (_queue.slots.length > 0) )
     {
         const slot   = _queue.slots[0];
-        const result = event_registry.registry_dispatch(_registry, slot.key,
-                                                        slot.payload);
+        const result = eventRegistry.registryDispatch(_registry, slot.key,
+                                                      slot.payload);
 
         ++processed;
         ++run.occurrences;
-        run.handlers_invoked += result.invoked;
+        run.handlersInvoked += result.invoked;
 
-        if (verdict_is_consumed(result.outcome))
+        if (verdictIsConsumed(result.outcome))
         {
-            ++run.consumed_count;
+            ++run.consumedCount;
         }
 
         // release it, unless a handler cleared the queue out from under it
@@ -221,10 +221,10 @@ export function queue_process(
 /**
  * How many occurrences are queued.
  *
- * @param {?event_queue} _queue  the queue.
+ * @param {?EventQueue} _queue  the queue.
  * @returns {number}
  */
-export function queue_pending(
+export function queuePending(
     _queue
 )
 {
@@ -234,23 +234,23 @@ export function queue_pending(
 /**
  * Whether nothing is queued.
  *
- * @param {?event_queue} _queue  the queue.
+ * @param {?EventQueue} _queue  the queue.
  * @returns {boolean}
  */
-export function queue_is_empty(
+export function queueIsEmpty(
     _queue
 )
 {
-    return (queue_pending(_queue) === 0);
+    return (queuePending(_queue) === 0);
 }
 
 /**
  * The oldest queued occurrence, left where it is.
  *
- * @param {?event_queue} _queue  the queue.
+ * @param {?EventQueue} _queue  the queue.
  * @returns {?{key: bigint, payload: *}} null for an empty queue.
  */
-export function queue_peek(
+export function queuePeek(
     _queue
 )
 {
@@ -266,7 +266,7 @@ export function queue_peek(
 /**
  * A dispatcher: `registry` is its registry and `queue` its queue.
  *
- * @typedef {{registry: event_registry, queue: event_queue}}
+ * @typedef {{registry: eventRegistry, queue: EventQueue}}
  *          event_dispatcher
  */
 
@@ -277,15 +277,15 @@ export function queue_peek(
  * @param {object} [_room]  its room.
  * @param {number} [_room.capacity=Infinity]  the most handlers bound.
  * @param {number} [_room.queue=Infinity]     the most occurrences queued.
- * @returns {event_dispatcher}
+ * @returns {EventDispatcher}
  */
-export function dispatcher_init(
+export function dispatcherInit(
     _room = {}
 )
 {
     return {
-        registry: event_registry.registry_init({ capacity: _room.capacity }),
-        queue:    queue_init({ capacity: _room.queue })
+        registry: eventRegistry.registryInit({ capacity: _room.capacity }),
+        queue:    queueInit({ capacity: _room.queue })
     };
 }
 
@@ -294,9 +294,9 @@ export function dispatcher_init(
  * Asked for by a handler while the queue is being processed, the queue is
  * left as it is.
  *
- * @param {?event_dispatcher} _dispatcher  the dispatcher.
+ * @param {?EventDispatcher} _dispatcher  the dispatcher.
  */
-export function dispatcher_dispose(
+export function dispatcherDispose(
     _dispatcher
 )
 {
@@ -311,7 +311,7 @@ export function dispatcher_dispose(
         _dispatcher.queue.slots.length = 0;
     }
 
-    event_registry.registry_dispose(_dispatcher.registry);
+    eventRegistry.registryDispose(_dispatcher.registry);
 
     return;
 }
@@ -320,18 +320,18 @@ export function dispatcher_dispose(
 /**
  * Binds a handler to a key, after those already bound to it.
  *
- * @param {?event_dispatcher} _dispatcher  the dispatcher.
+ * @param {?EventDispatcher} _dispatcher  the dispatcher.
  * @param {bigint}            _key         the key.
- * @param {event_step}        _step        the handler.
- * @param {?function(*): void} [_state_free=null]  called with the step's
+ * @param {EventStep}        _step        the handler.
+ * @param {?function(*): void} [_stateFree=null]  called with the step's
  *        state when the handler is unbound.
  * @returns {{status: number, id: number}} OK and the handler's id.
  */
-export function dispatcher_bind(
+export function dispatcherBind(
     _dispatcher,
     _key,
     _step,
-    _state_free = null
+    _stateFree = null
 )
 {
     if (!_dispatcher)
@@ -339,198 +339,198 @@ export function dispatcher_bind(
         return { status: STATUS.ERR_NULL, id: HANDLER_ID_NULL };
     }
 
-    return event_registry.registry_bind(_dispatcher.registry, _key, _step,
-                                        _state_free);
+    return eventRegistry.registryBind(_dispatcher.registry, _key, _step,
+                                      _stateFree);
 }
 
 /**
  * Unbinds a handler.
  *
- * @param {?event_dispatcher} _dispatcher  the dispatcher.
+ * @param {?EventDispatcher} _dispatcher  the dispatcher.
  * @param {number}            _id          the handler's id.
  * @returns {number} OK; ERR_NOT_FOUND for no such handler.
  */
-export function dispatcher_unbind(
+export function dispatcherUnbind(
     _dispatcher,
     _id
 )
 {
     return _dispatcher
-               ? event_registry.registry_unbind(_dispatcher.registry, _id)
+               ? eventRegistry.registryUnbind(_dispatcher.registry, _id)
                : STATUS.ERR_NULL;
 }
 
 /**
  * Turns a handler on.
  *
- * @param {?event_dispatcher} _dispatcher  the dispatcher.
+ * @param {?EventDispatcher} _dispatcher  the dispatcher.
  * @param {number}            _id          the handler's id.
  * @returns {number} OK; ERR_STATE for one already on; ERR_NOT_FOUND.
  */
-export function dispatcher_enable(
+export function dispatcherEnable(
     _dispatcher,
     _id
 )
 {
     return _dispatcher
-               ? event_table.table_enable(_dispatcher.registry.table, _id)
+               ? eventTable.tableEnable(_dispatcher.registry.table, _id)
                : STATUS.ERR_NULL;
 }
 
 /**
  * Turns a handler off: it keeps its place and is passed over.
  *
- * @param {?event_dispatcher} _dispatcher  the dispatcher.
+ * @param {?EventDispatcher} _dispatcher  the dispatcher.
  * @param {number}            _id          the handler's id.
  * @returns {number} OK; ERR_STATE for one already off; ERR_NOT_FOUND.
  */
-export function dispatcher_disable(
+export function dispatcherDisable(
     _dispatcher,
     _id
 )
 {
     return _dispatcher
-               ? event_table.table_disable(_dispatcher.registry.table, _id)
+               ? eventTable.tableDisable(_dispatcher.registry.table, _id)
                : STATUS.ERR_NULL;
 }
 
 /**
  * Whether a handler is bound and on.
  *
- * @param {?event_dispatcher} _dispatcher  the dispatcher.
+ * @param {?EventDispatcher} _dispatcher  the dispatcher.
  * @param {number}            _id          the handler's id.
  * @returns {boolean}
  */
-export function dispatcher_is_enabled(
+export function dispatcherIsEnabled(
     _dispatcher,
     _id
 )
 {
     return ( !!_dispatcher &&
-             event_table.table_is_enabled(_dispatcher.registry.table, _id) );
+             eventTable.tableIsEnabled(_dispatcher.registry.table, _id) );
 }
 
 /**
  * Whether a handler is bound.
  *
- * @param {?event_dispatcher} _dispatcher  the dispatcher.
+ * @param {?EventDispatcher} _dispatcher  the dispatcher.
  * @param {number}            _id          the handler's id.
  * @returns {boolean}
  */
-export function dispatcher_contains(
+export function dispatcherContains(
     _dispatcher,
     _id
 )
 {
     return ( !!_dispatcher &&
-             event_table.table_contains(_dispatcher.registry.table, _id) );
+             eventTable.tableContains(_dispatcher.registry.table, _id) );
 }
 
 // 2.3
 /**
  * Delivers an occurrence at once.
  *
- * @param {?event_dispatcher} _dispatcher  the dispatcher.
+ * @param {?EventDispatcher} _dispatcher  the dispatcher.
  * @param {bigint}            _key         the occurrence's key.
  * @param {*}                 [_payload]   its payload.
  * @returns {{invoked: number, outcome: number}}
  */
-export function dispatcher_fire(
+export function dispatcherFire(
     _dispatcher,
     _key,
     _payload
 )
 {
     return _dispatcher
-               ? event_registry.registry_dispatch(_dispatcher.registry, _key,
-                                                  _payload)
-               : event_registry.dispatch_result_empty();
+               ? eventRegistry.registryDispatch(_dispatcher.registry, _key,
+                                                _payload)
+               : eventRegistry.dispatchResultEmpty();
 }
 
 /**
- * Sets an occurrence aside, to be delivered by `dispatcher_process`.
+ * Sets an occurrence aside, to be delivered by `dispatcherProcess`.
  *
- * @param {?event_dispatcher} _dispatcher  the dispatcher.
+ * @param {?EventDispatcher} _dispatcher  the dispatcher.
  * @param {bigint}            _key         the occurrence's key.
  * @param {*}                 [_payload]   its payload, copied.
  * @returns {number} OK; ERR_CAPACITY for a queue that is full.
  */
-export function dispatcher_queue(
+export function dispatcherQueue(
     _dispatcher,
     _key,
     _payload
 )
 {
-    return _dispatcher ? queue_enqueue(_dispatcher.queue, _key, _payload)
+    return _dispatcher ? queueEnqueue(_dispatcher.queue, _key, _payload)
                        : STATUS.ERR_NULL;
 }
 
 /**
  * Delivers queued occurrences, oldest first.
  *
- * @param {?event_dispatcher} _dispatcher  the dispatcher.
+ * @param {?EventDispatcher} _dispatcher  the dispatcher.
  * @param {number}            [_max=0]     the most to deliver; 0 for
  *        every one queued at the call.
- * @returns {{processed: number, result: object}} as `queue_process`.
+ * @returns {{processed: number, result: object}} as `queueProcess`.
  */
-export function dispatcher_process(
+export function dispatcherProcess(
     _dispatcher,
     _max = 0
 )
 {
     return _dispatcher
-               ? queue_process(_dispatcher.queue, _dispatcher.registry, _max)
-               : queue_process(null, null, _max);
+               ? queueProcess(_dispatcher.queue, _dispatcher.registry, _max)
+               : queueProcess(null, null, _max);
 }
 
 /**
  * Delivers every occurrence queued at the call.
  *
- * @param {?event_dispatcher} _dispatcher  the dispatcher.
+ * @param {?EventDispatcher} _dispatcher  the dispatcher.
  * @returns {number} how many were delivered.
  */
-export function dispatcher_process_all(
+export function dispatcherProcessAll(
     _dispatcher
 )
 {
-    return dispatcher_process(_dispatcher, 0).processed;
+    return dispatcherProcess(_dispatcher, 0).processed;
 }
 
 /**
  * Delivers a row of occurrences of one key at once, in order.
  *
- * @param {?event_dispatcher} _dispatcher  the dispatcher.
+ * @param {?EventDispatcher} _dispatcher  the dispatcher.
  * @param {bigint}            _key         the key.
  * @param {Array<*>}          _payloads    each occurrence's payload.
- * @returns {{occurrences: number, handlers_invoked: number,
- *            consumed_count: number}}
+ * @returns {{occurrences: number, handlersInvoked: number,
+ *            consumedCount: number}}
  */
-export function dispatcher_run(
+export function dispatcherRun(
     _dispatcher,
     _key,
     _payloads
 )
 {
-    return event_registry.registry_run(_dispatcher ? _dispatcher.registry
-                                                   : null,
-                                       _key, _payloads);
+    return eventRegistry.registryRun(_dispatcher ? _dispatcher.registry
+                                                 : null,
+                                     _key, _payloads);
 }
 
 /**
  * Copies out a key's enabled handlers as a word.
  *
- * @param {?event_dispatcher} _dispatcher  the dispatcher.
+ * @param {?EventDispatcher} _dispatcher  the dispatcher.
  * @param {bigint}            _key         the key.
- * @returns {{status: number, word: ?event_word}}
+ * @returns {{status: number, word: ?EventWord}}
  */
-export function dispatcher_compile(
+export function dispatcherCompile(
     _dispatcher,
     _key
 )
 {
-    return event_registry.registry_compile(_dispatcher ? _dispatcher.registry
-                                                       : null,
-                                           _key);
+    return eventRegistry.registryCompile(_dispatcher ? _dispatcher.registry
+                                                     : null,
+                                         _key);
 }
 
 // 2.4
@@ -538,11 +538,11 @@ export function dispatcher_compile(
  * Appends another dispatcher's handlers to this one's, key by key, this
  * one's first. What the other has queued is not taken.
  *
- * @param {?event_dispatcher} _dispatcher  the dispatcher merged into.
- * @param {?event_dispatcher} _other       the dispatcher merged from.
- * @returns {{status: number, merged: number}} as `table_merge`.
+ * @param {?EventDispatcher} _dispatcher  the dispatcher merged into.
+ * @param {?EventDispatcher} _other       the dispatcher merged from.
+ * @returns {{status: number, merged: number}} as `tableMerge`.
  */
-export function dispatcher_merge(
+export function dispatcherMerge(
     _dispatcher,
     _other
 )
@@ -553,67 +553,67 @@ export function dispatcher_merge(
         return { status: STATUS.ERR_NULL, merged: 0 };
     }
 
-    return event_table.table_merge(_dispatcher.registry.table,
-                                   _other.registry.table);
+    return eventTable.tableMerge(_dispatcher.registry.table,
+                                 _other.registry.table);
 }
 
 // 2.5
 /**
  * How many handlers are bound.
  *
- * @param {?event_dispatcher} _dispatcher  the dispatcher.
+ * @param {?EventDispatcher} _dispatcher  the dispatcher.
  * @returns {number}
  */
-export function dispatcher_handler_count(
+export function dispatcherHandlerCount(
     _dispatcher
 )
 {
     return _dispatcher
-               ? event_table.table_count(_dispatcher.registry.table)
+               ? eventTable.tableCount(_dispatcher.registry.table)
                : 0;
 }
 
 /**
  * How many bound handlers are on.
  *
- * @param {?event_dispatcher} _dispatcher  the dispatcher.
+ * @param {?EventDispatcher} _dispatcher  the dispatcher.
  * @returns {number}
  */
-export function dispatcher_enabled_count(
+export function dispatcherEnabledCount(
     _dispatcher
 )
 {
     return _dispatcher
-               ? event_table.table_enabled_count(_dispatcher.registry.table)
+               ? eventTable.tableEnabledCount(_dispatcher.registry.table)
                : 0;
 }
 
 /**
  * How many handlers are bound to a key.
  *
- * @param {?event_dispatcher} _dispatcher  the dispatcher.
+ * @param {?EventDispatcher} _dispatcher  the dispatcher.
  * @param {bigint}            _key         the key.
  * @returns {number}
  */
-export function dispatcher_handler_count_for(
+export function dispatcherHandlerCountFor(
     _dispatcher,
     _key
 )
 {
     return _dispatcher
-               ? event_table.table_count_for(_dispatcher.registry.table, _key)
+               ? eventTable.tableCountFor(_dispatcher.registry.table, _key)
                : 0;
 }
 
 /**
  * How many occurrences are queued.
  *
- * @param {?event_dispatcher} _dispatcher  the dispatcher.
+ * @param {?EventDispatcher} _dispatcher  the dispatcher.
  * @returns {number}
  */
-export function dispatcher_pending(
+export function dispatcherPending(
     _dispatcher
 )
 {
-    return _dispatcher ? queue_pending(_dispatcher.queue) : 0;
+    return _dispatcher ? queuePending(_dispatcher.queue) : 0;
 }

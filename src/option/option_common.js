@@ -23,13 +23,13 @@ TABLE OF CONTENTS
 1.  Statuses
     1.  STATUS
     2.  STATUS_MECHANICAL_FLOOR
-    3.  status_name
-    4.  status_message
-    5.  status_is_mechanical
+    3.  statusName
+    4.  statusMessage
+    5.  statusIsMechanical
 2.  Results
     1.  ok
     2.  fail
-    3.  result_status
+    3.  resultStatus
 */
 
 import data from '../../generated/option.js';
@@ -69,7 +69,7 @@ export const STATUS_MECHANICAL_FLOOR = data.mechanical_floor;
  * @param {number} _status  the code.
  * @returns {string} the name.
  */
-export function status_name(
+export function statusName(
     _status
 )
 {
@@ -84,7 +84,7 @@ export function status_name(
  * @param {number} _status  the code.
  * @returns {string} the message.
  */
-export function status_message(
+export function statusMessage(
     _status
 )
 {
@@ -99,7 +99,7 @@ export function status_message(
  * @param {number} _status  the code.
  * @returns {boolean}
  */
-export function status_is_mechanical(
+export function statusIsMechanical(
     _status
 )
 {
@@ -112,12 +112,12 @@ export function status_is_mechanical(
 //==============================================================================
 
 /**
- * What an operation answers: `is_ok` with a `value`, or not with an
+ * What an operation answers: `isOk` with a `value`, or not with an
  * `error`, which is a status. The reference's struct dj_option_result, its
  * payload's two members side by side. An operation whose reference has an
  * out-parameter adds that as a member of its own, named in its note.
  *
- * @typedef {{is_ok: boolean, value?: number, error?: number}} option_result
+ * @typedef {{isOk: boolean, value?: number, error?: number}} OptionResult
  */
 
 // 2.1
@@ -125,13 +125,13 @@ export function status_is_mechanical(
  * A success.
  *
  * @param {number} _value  what it carries.
- * @returns {option_result}
+ * @returns {OptionResult}
  */
 export function ok(
     _value
 )
 {
-    return { is_ok: true, value: _value };
+    return { isOk: true, value: _value };
 }
 
 // 2.2
@@ -139,25 +139,25 @@ export function ok(
  * A failure.
  *
  * @param {number} _status  why.
- * @returns {option_result}
+ * @returns {OptionResult}
  */
 export function fail(
     _status
 )
 {
-    return { is_ok: false, error: _status };
+    return { isOk: false, error: _status };
 }
 
 // 2.3
 /**
  * A result's status: OK for a success, the error for a failure.
  *
- * @param {option_result} _result  the result.
+ * @param {OptionResult} _result  the result.
  * @returns {number} the status.
  */
-export function result_status(
+export function resultStatus(
     _result
 )
 {
-    return _result.is_ok ? STATUS.OK : _result.error;
+    return _result.isOk ? STATUS.OK : _result.error;
 }

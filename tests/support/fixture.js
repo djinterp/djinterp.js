@@ -16,8 +16,8 @@
 import { readFileSync } from 'node:fs';
 
 import * as djin from '../../src/modules/interp/djin.js';
-import * as option_env from '../../src/option/option_env.js';
-import * as option_env_registry from '../../src/option/option_env_registry.js';
+import * as optionEnv from '../../src/option/option_env.js';
+import * as optionEnvRegistry from '../../src/option/option_env_registry.js';
 
 /**
  * A generated file's JSON.
@@ -41,11 +41,11 @@ export function generated(
  *            steps: Array<object>, records: Map<string, object>,
  *            set: object}}
  */
-export function make_fixture()
+export function makeFixture()
 {
     const data     = generated('fixture.json');
     const first    = data.frames[0];
-    const made     = option_env_registry.init(first.name, {
+    const made     = optionEnvRegistry.init(first.name, {
         bindings: first.bindings, vars: first.vars, text: first.text
     });
     const registry = made.registry;
@@ -54,31 +54,31 @@ export function make_fixture()
 
     for (const [f, fx] of data.frames.entries())
     {
-        const frame = (f === 0) ? option_env_registry.frame(registry)
-                                : option_env.init({ bindings: fx.bindings,
-                                                    vars:     fx.vars,
-                                                    text:     fx.text });
+        const frame = (f === 0) ? optionEnvRegistry.frame(registry)
+                                : optionEnv.init({ bindings: fx.bindings,
+                                                   vars:     fx.vars,
+                                                   text:     fx.text });
         const step  = { name: fx.name };
 
         frames.set(fx.name, frame);
 
         if (f !== 0)
         {
-            step.name_result = option_env.set_name(frame, fx.name);
+            step.nameResult = optionEnv.setName(frame, fx.name);
         }
 
-        step.declare = option_env.declare_all(frame, fx.rows);
+        step.declare = optionEnv.declareAll(frame, fx.rows);
 
         if (fx.scopes.length !== 0)
         {
-            step.scopes = option_env.set_scopes(frame, fx.scopes);
+            step.scopes = optionEnv.setScopes(frame, fx.scopes);
         }
 
         if (fx.parent !== null)
         {
             step.attach = fx.is_djin
-                ? option_env_registry.add(registry, frame)
-                : option_env.set_parent(frame, frames.get(fx.parent));
+                ? optionEnvRegistry.add(registry, frame)
+                : optionEnv.setParent(frame, frames.get(fx.parent));
         }
 
         steps.push(step);
@@ -102,7 +102,7 @@ export function make_fixture()
         frames:   frames,
         steps:    steps,
         records:  records,
-        set:      djin.set_init({ capacity: 3, registry: registry,
-                                  reserved: data.reserved })
+        set:      djin.setInit({ capacity: 3, registry: registry,
+                                 reserved: data.reserved })
     };
 }

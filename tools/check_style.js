@@ -32,10 +32,10 @@ const SKIPPED = new Set(['.git', 'node_modules', 'generated', 'transcripts']);
 const AS_CAME = new Set(['tools/option_driver.c', 'decisions.html']);
 
 /*
-files_under
+filesUnder
   Every checked file under a directory.
 */
-function files_under(
+function filesUnder(
     _directory
 )
 {
@@ -52,7 +52,7 @@ function files_under(
 
         if (statSync(path).isDirectory())
         {
-            found.push(...files_under(path));
+            found.push(...filesUnder(path));
         }
         else if (CHECKED.test(name))
         {
@@ -81,7 +81,7 @@ function say(
     return;
 }
 
-for (const path of files_under(ROOT))
+for (const path of filesUnder(ROOT))
 {
     const file = relative(ROOT, path).split('\\').join('/');
     const text = readFileSync(path, 'utf8');

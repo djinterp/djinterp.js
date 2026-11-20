@@ -29,8 +29,8 @@ TABLE OF CONTENTS
 1.  A double's parts
     1.  parts
 2.  Writing
-    1.  format_g
-    2.  format_real
+    1.  formatG
+    2.  formatReal
 */
 
 
@@ -73,12 +73,12 @@ export function parts(
 //==============================================================================
 
 /*
-digits_of
+digitsOf
   The decimal digits of a finite double's magnitude, rounded to _precision
 significant digits, to nearest with ties to even, and the power of ten of
 the first: the value is d.ddd * 10^exponent. Zero is "0" at exponent 0.
 */
-function digits_of(
+function digitsOf(
     _value,
     _precision
 )
@@ -143,20 +143,20 @@ function digits_of(
  *          and keeps no sign for it, where the reference's C library may
  *          write "-nan" (the owner's ruling 4 of 2026-11-16).
  */
-export function format_g(
+export function formatG(
     _value,
     _precision
 )
 {
     if (typeof _value !== 'number')
     {
-        throw new TypeError('format_g: the value is not a number');
+        throw new TypeError('formatG: the value is not a number');
     }
 
     if (!Number.isInteger(_precision) ||
         (_precision < 0))
     {
-        throw new TypeError('format_g: the precision is not a count');
+        throw new TypeError('formatG: the precision is not a count');
     }
 
     if (Number.isNaN(_value))
@@ -174,7 +174,7 @@ export function format_g(
     }
 
     const precision            = (_precision === 0) ? 1 : _precision;
-    const { digits, exponent } = digits_of(_value, precision);
+    const { digits, exponent } = digitsOf(_value, precision);
 
     if ( (exponent < -4) ||
          (exponent >= precision) )
@@ -210,9 +210,9 @@ export function format_g(
  * @param {number}  _value  the double.
  * @returns {string} the text.
  */
-export function format_real(
+export function formatReal(
     _value
 )
 {
-    return format_g(_value, 17);
+    return formatG(_value, 17);
 }

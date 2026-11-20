@@ -16,7 +16,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
-import { nearest_double, read_real } from '../../src/text/real_read.js';
+import { nearestDouble, readReal } from '../../src/text/real_read.js';
 
 test('what is read, and how far', () =>
 {
@@ -34,7 +34,7 @@ test('what is read, and how far', () =>
 
     for (const [text, length, value] of cases)
     {
-        const read = read_real(text);
+        const read = readReal(text);
 
         assert.equal(read.length, length, JSON.stringify(text));
         assert.equal(read.value, value, JSON.stringify(text));
@@ -46,70 +46,70 @@ test('JavaScript\'s readers would have read these otherwise', () =>
 {
     // Number('') is 0; Number('0x10') is 16; parseFloat('1abc') is 1 with
     // no word of where it stopped
-    assert.equal(read_real('').length, 0);
-    assert.equal(read_real('0x10').length, 1);
-    assert.equal(read_real('1abc').length, 1);
-    assert.equal(read_real('Infinity').value, Infinity);
-    assert.equal(read_real('infinity').value, Infinity);
+    assert.equal(readReal('').length, 0);
+    assert.equal(readReal('0x10').length, 1);
+    assert.equal(readReal('1abc').length, 1);
+    assert.equal(readReal('Infinity').value, Infinity);
+    assert.equal(readReal('infinity').value, Infinity);
 });
 
 test('the words, in any case, after a sign', () =>
 {
-    assert.deepEqual(read_real('inf'),
+    assert.deepEqual(readReal('inf'),
                      { length: 3, value: Infinity, overflow: false });
-    assert.equal(read_real('-INF').value, -Infinity);
-    assert.equal(read_real('+Infinity').length, 9);
-    assert.equal(read_real('infinit').length, 3);
-    assert.ok(Number.isNaN(read_real('nan').value));
-    assert.ok(Number.isNaN(read_real('NaN').value));
+    assert.equal(readReal('-INF').value, -Infinity);
+    assert.equal(readReal('+Infinity').length, 9);
+    assert.equal(readReal('infinit').length, 3);
+    assert.ok(Number.isNaN(readReal('nan').value));
+    assert.ok(Number.isNaN(readReal('NaN').value));
 
     // a NaN has no sign here: "-nan" is read whole, and is the one NaN
-    assert.deepEqual(read_real('-nan'),
+    assert.deepEqual(readReal('-nan'),
                      { length: 4, value: NaN, overflow: false });
-    assert.equal(read_real('nan(1)').length, 3);
+    assert.equal(readReal('nan(1)').length, 3);
 });
 
 test('zeros keep their sign', () =>
 {
-    assert.ok(Object.is(read_real('0').value, 0));
-    assert.ok(Object.is(read_real('-0').value, -0));
-    assert.ok(Object.is(read_real('-0.0e5').value, -0));
-    assert.ok(Object.is(read_real('-1e-400').value, -0));
+    assert.ok(Object.is(readReal('0').value, 0));
+    assert.ok(Object.is(readReal('-0').value, -0));
+    assert.ok(Object.is(readReal('-0.0e5').value, -0));
+    assert.ok(Object.is(readReal('-1e-400').value, -0));
 });
 
 test('past the largest double is an overflow; under the smallest is not',
      () =>
 {
-    assert.deepEqual(read_real('1e309'),
+    assert.deepEqual(readReal('1e309'),
                      { length: 5, value: Infinity, overflow: true });
-    assert.equal(read_real('-1e309').value, -Infinity);
-    assert.equal(read_real('1.7976931348623157e308').overflow, false);
-    assert.equal(read_real('1.7976931348623159e308').overflow, true);
-    assert.equal(read_real('1e999999999999').overflow, true);
-    assert.equal(read_real('1e-999999999999').value, 0);
-    assert.equal(read_real('1e-400').overflow, false);
+    assert.equal(readReal('-1e309').value, -Infinity);
+    assert.equal(readReal('1.7976931348623157e308').overflow, false);
+    assert.equal(readReal('1.7976931348623159e308').overflow, true);
+    assert.equal(readReal('1e999999999999').overflow, true);
+    assert.equal(readReal('1e-999999999999').value, 0);
+    assert.equal(readReal('1e-400').overflow, false);
 });
 
 test('ties go to even, however many digits decide them', () =>
 {
     // 2^53 + 1 lies half way between two doubles
-    assert.equal(read_real('9007199254740993').value, 9007199254740992);
-    assert.equal(read_real('9007199254740993.0000000000000000000000001')
+    assert.equal(readReal('9007199254740993').value, 9007199254740992);
+    assert.equal(readReal('9007199254740993.0000000000000000000000001')
                      .value, 9007199254740994);
-    assert.equal(read_real('9007199254740995').value, 9007199254740996);
+    assert.equal(readReal('9007199254740995').value, 9007199254740996);
 
     // half the smallest double rounds to zero; a hair more, to it
-    assert.equal(read_real('2.4703282292062327e-324').value, 0);
-    assert.equal(read_real('2.4703282292062328e-324').value, 5e-324);
+    assert.equal(readReal('2.4703282292062327e-324').value, 0);
+    assert.equal(readReal('2.4703282292062328e-324').value, 5e-324);
 
     // the largest double, and the first text that rounds past it
-    assert.equal(nearest_double(17976931348623157n, 292).value,
+    assert.equal(nearestDouble(17976931348623157n, 292).value,
                  Number.MAX_VALUE);
-    assert.equal(nearest_double(0n, 5).value, 0);
+    assert.equal(nearestDouble(0n, 5).value, 0);
 });
 
 test('a misuse throws', () =>
 {
-    assert.throws(() => read_real(1), TypeError);
-    assert.throws(() => read_real(null), TypeError);
+    assert.throws(() => readReal(1), TypeError);
+    assert.throws(() => readReal(null), TypeError);
 });

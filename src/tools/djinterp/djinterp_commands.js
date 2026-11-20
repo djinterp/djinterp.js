@@ -33,24 +33,24 @@ TABLE OF CONTENTS
 =================
 1.  The program
     1.  EXIT, RESERVED, COMMANDS
-    2.  program_make
-    3.  program_start
+    2.  programMake
+    3.  programStart
 2.  Running
-    1.  program_run
+    1.  programRun
 */
 
 import * as djin from '../../modules/interp/djin.js';
-import { STATUS, result_status } from '../../option/option_common.js';
-import * as option_env from '../../option/option_env.js';
-import * as option_env_registry from '../../option/option_env_registry.js';
-import { format_real } from '../../text/real_format.js';
-import * as cli_settings from '../cli/cli_settings.js';
+import { STATUS, resultStatus } from '../../option/option_common.js';
+import * as optionEnv from '../../option/option_env.js';
+import * as optionEnvRegistry from '../../option/option_env_registry.js';
+import { formatReal } from '../../text/real_format.js';
+import * as cliSettings from '../cli/cli_settings.js';
 
-const ROOM      = 512;
-const env_inner = option_env.inner;
-const reg_inner = option_env_registry.inner;
-const KIND      = option_env.KIND;
-const SOURCE    = option_env.SOURCE;
+const ROOM     = 512;
+const envInner = optionEnv.inner;
+const regInner = optionEnvRegistry.inner;
+const KIND     = optionEnv.KIND;
+const SOURCE   = optionEnv.SOURCE;
 
 
 //==============================================================================
@@ -77,15 +77,15 @@ export const COMMANDS = Object.freeze(['list', 'describe', 'get', 'set']);
 
 /**
  * A program: a registry, the djins over it, and where its settings come
- * from. Made by `program_make`.
+ * from. Made by `programMake`.
  *
- * @typedef {object} djinterp_program
+ * @typedef {object} DjinterpProgram
  * @property {string} name  what it calls itself when it speaks.
- * @property {option_env_registry} registry  its settings.
- * @property {djin_set} set  its djins.
+ * @property {OptionEnvRegistry} registry  its settings.
+ * @property {DjinSet} set  its djins.
  * @property {?object} file  the user's settings file
  *           (src/tools/cli/cli_settings.js), or null for none.
- * @property {*} environment  the environment, as `option_env.import`
+ * @property {*} environment  the environment, as `optionEnv.import`
  *           takes one.
  */
 
@@ -94,23 +94,23 @@ export const COMMANDS = Object.freeze(['list', 'describe', 'get', 'set']);
  * A program over a registry.
  *
  * @param {object} _options  what it is made over.
- * @param {option_env_registry} _options.registry  its registry.
+ * @param {OptionEnvRegistry} _options.registry  its registry.
  * @param {?object} [_options.file=null]  the user's settings file.
  * @param {*} [_options.environment=null]  the environment.
  * @param {number} [_options.djins=16]  the most djins its set holds; the
  *        reference's program holds 16.
- * @returns {djinterp_program}
+ * @returns {DjinterpProgram}
  */
-export function program_make(
+export function programMake(
     _options
 )
 {
     return {
         name:        'djinterp',
         registry:    _options.registry,
-        set:         djin.set_init({ capacity: _options.djins ?? 16,
-                                     registry: _options.registry,
-                                     reserved: RESERVED }),
+        set:         djin.setInit({ capacity: _options.djins ?? 16,
+                                    registry: _options.registry,
+                                    reserved: RESERVED }),
         file:        _options.file ?? null,
         environment: _options.environment ?? null
     };
@@ -119,17 +119,17 @@ export function program_make(
 // 1.3
 /**
  * Readies the program's settings for a run, once: the environment's and
- * the user's file's (`cli_settings.start`).
+ * the user's file's (`cliSettings.start`).
  *
- * @param {djinterp_program} _program  the program.
+ * @param {DjinterpProgram} _program  the program.
  * @returns {string} what was said of the file's statements that were
  *          refused: a warning a line.
  */
-export function program_start(
+export function programStart(
     _program
 )
 {
-    return cli_settings.start(_program);
+    return cliSettings.start(_program);
 }
 
 
@@ -152,12 +152,12 @@ function report(
 }
 
 /*
-usage_error
+usageError
   An error of how the program was called, as the kit says one: the command
 before the message where there is one, the parser's suggestions as notes,
 and where to read more.
 */
-function usage_error(
+function usageError(
     _run,
     _command,
     _message,
@@ -182,7 +182,7 @@ function usage_error(
 // LIST AND DESCRIBE
 //==============================================================================
 
-function work_list(
+function workList(
     _run
 )
 {
@@ -191,21 +191,21 @@ function work_list(
     return EXIT.OK;
 }
 
-function work_describe(
+function workDescribe(
     _run,
     _names
 )
 {
     const found = djin.inner.find(_run.program.set, _names[0]);
     const frame = (found === null)
-                      ? reg_inner.find(_run.program.registry, _names[0])
+                      ? regInner.find(_run.program.registry, _names[0])
                       : null;
 
     if ( (found === null) &&
          (frame === null) )
     {
-        return usage_error(_run, 'describe',
-                           'no djin is named \'' + _names[0] + '\'');
+        return usageError(_run, 'describe',
+                          'no djin is named \'' + _names[0] + '\'');
     }
 
     _run.out += (found !== null) ? djin.inner.description(found)
@@ -230,7 +230,7 @@ function find(
     _name
 )
 {
-    const frame = reg_inner.target(_registry, _name);
+    const frame = regInner.target(_registry, _name);
     const dot   = _name.indexOf('.');
 
     if (frame === null)
@@ -238,23 +238,23 @@ function find(
         return null;
     }
 
-    let found = env_inner.resolve(frame, _name);
+    let found = envInner.resolve(frame, _name);
 
-    if ( !found.is_ok &&
-         (dot >= 0)   &&
-         (frame !== option_env_registry.frame(_registry)) )
+    if ( !found.isOk &&
+         (dot >= 0)  &&
+         (frame !== optionEnvRegistry.frame(_registry)) )
     {
-        found = env_inner.resolve(frame, _name.slice(dot + 1));
+        found = envInner.resolve(frame, _name.slice(dot + 1));
     }
 
-    const decl = found.is_ok ? env_inner.decl(frame, found.value) : null;
+    const decl = found.isOk ? envInner.decl(frame, found.value) : null;
 
     return (decl !== null) ? { frame: frame, scope: found.scope,
                                var: found.value, decl: decl }
                            : null;
 }
 
-function source_word(
+function sourceWord(
     _source
 )
 {
@@ -270,11 +270,11 @@ function source_word(
 }
 
 /*
-value_text
+valueText
   A value as an origin's line shows it: a TEXT in quotes, as it is, or
 "unset"; an integer by the last of the row's names that has its value.
 */
-function value_text(
+function valueText(
     _decl,
     _text,
     _integer,
@@ -297,7 +297,7 @@ function value_text(
             break;
 
         case KIND.REAL:
-            out = format_real(_real);
+            out = formatReal(_real);
             break;
 
         case KIND.TEXT:
@@ -321,8 +321,8 @@ function origins(
     _setting
 )
 {
-    const found = env_inner.layers(_setting.frame, _setting.scope,
-                                   _setting.var, 8);
+    const found = envInner.layers(_setting.frame, _setting.scope,
+                                  _setting.var, 8);
     const shown = (found === null) ? 0 : Math.min(found.count, 8);
     const decl  = _setting.decl;
     let   out   = '';
@@ -332,15 +332,15 @@ function origins(
         const value = found.layers[i].value;
 
         out += ('    under it   ' +
-                value_text(decl, value.text, value.integer, value.real) +
-                '   (' + source_word(value.source) + ')\n')
+                valueText(decl, value.text, value.integer, value.real) +
+                '   (' + sourceWord(value.source) + ')\n')
                    .slice(0, (ROOM * 2) - 1);
     }
 
     if (shown > 0)
     {
         out += ('    default    ' +
-                value_text(decl, decl.text, decl.integer, decl.real) +
+                valueText(decl, decl.text, decl.integer, decl.real) +
                 '   (' + ((decl.knob !== null) ? decl.knob : 'default') +
                 ')\n').slice(0, (ROOM * 2) - 1);
     }
@@ -349,23 +349,23 @@ function origins(
 }
 
 /*
-get_one
+getOne
   One setting as a statement that loads back, or a comment for a TEXT that
 is unset; with its origin, where asked: who set it, and what lies under.
 */
-function get_one(
+function getOne(
     _name,
     _setting,
     _origin
 )
 {
-    const in_force = env_inner.get(_setting.frame, _setting.scope,
-                                   _setting.var).got;
+    const inForce = envInner.get(_setting.frame, _setting.scope,
+                                 _setting.var).got;
     const unset    = ( (_setting.decl.kind === KIND.TEXT) &&
-                       (in_force.text === null) );
-    const value    = env_inner.format_quoted(_setting.frame, _setting.scope,
-                                             _setting.var)
-                         .slice(0, ROOM - 1);
+                       (inForce.text === null) );
+    const value    = envInner.formatQuoted(_setting.frame, _setting.scope,
+                                           _setting.var)
+                        .slice(0, ROOM - 1);
     const room     = ROOM * 2;
     let   line     = (unset ? ('# ' + _name + ' is unset')
                             : (_name + ' = ' + value)).slice(0, room - 1);
@@ -373,22 +373,22 @@ function get_one(
     if (_origin)
     {
         line = (line + '  (' +
-                (in_force.bound ? source_word(in_force.source)
-                                : (_setting.decl.knob !== null)
-                                      ? _setting.decl.knob
-                                      : 'default') +
+                (inForce.bound ? sourceWord(inForce.source)
+                               : (_setting.decl.knob !== null)
+                                     ? _setting.decl.knob
+                                     : 'default') +
                 ')').slice(0, room - 2);
     }
 
     return line + '\n' +
-           ( (_origin && in_force.bound) ? origins(_setting) : '' );
+           ( (_origin && inForce.bound) ? origins(_setting) : '' );
 }
 
 /*
-get_frame
+getFrame
   Every setting a frame declares, by its full name.
 */
-function get_frame(
+function getFrame(
     _run,
     _frame,
     _root,
@@ -406,7 +406,7 @@ function get_frame(
 
             if (setting !== null)
             {
-                _run.out += get_one(name, setting, _origin);
+                _run.out += getOne(name, setting, _origin);
             }
         }
     }
@@ -414,7 +414,7 @@ function get_frame(
     return;
 }
 
-function work_get(
+function workGet(
     _run,
     _names,
     _origin
@@ -425,12 +425,12 @@ function work_get(
 
     if (_names.length === 0)
     {
-        get_frame(_run, option_env_registry.frame(registry), true, _origin);
+        getFrame(_run, optionEnvRegistry.frame(registry), true, _origin);
 
-        for (let i = 0; i < option_env_registry.count(registry); ++i)
+        for (let i = 0; i < optionEnvRegistry.count(registry); ++i)
         {
-            get_frame(_run, option_env_registry.at(registry, i), false,
-                      _origin);
+            getFrame(_run, optionEnvRegistry.at(registry, i), false,
+                     _origin);
         }
     }
 
@@ -440,13 +440,13 @@ function work_get(
 
         if (setting !== null)
         {
-            _run.out += get_one(name, setting, _origin);
+            _run.out += getOne(name, setting, _origin);
 
             continue;
         }
 
-        status = report(_run, cli_settings.why(registry, STATUS.KEY_ABSENT,
-                                               name, null, ROOM));
+        status = report(_run, cliSettings.why(registry, STATUS.KEY_ABSENT,
+                                              name, null, ROOM));
     }
 
     return status;
@@ -475,7 +475,7 @@ function bind(
 
         if (equals <= 0)
         {
-            usage_error(_run, 'set', '\'' + item + '\' is not NAME=VALUE');
+            usageError(_run, 'set', '\'' + item + '\' is not NAME=VALUE');
             held = false;
 
             continue;
@@ -483,14 +483,14 @@ function bind(
 
         const name  = item.slice(0, equals);
         const value = item.slice(equals + 1);
-        const bound = reg_inner.assign(_run.program.registry, name, value,
-                                       SOURCE.OVERRIDE);
+        const bound = regInner.assign(_run.program.registry, name, value,
+                                      SOURCE.OVERRIDE);
 
-        if (!bound.is_ok)
+        if (!bound.isOk)
         {
-            report(_run, cli_settings.why(_run.program.registry,
-                                          result_status(bound), name,
-                                          value.slice(0, ROOM - 1), ROOM));
+            report(_run, cliSettings.why(_run.program.registry,
+                                         resultStatus(bound), name,
+                                         value.slice(0, ROOM - 1), ROOM));
             held = false;
         }
     }
@@ -499,11 +499,11 @@ function bind(
 }
 
 /*
-sets_alone
+setsAlone
   Whether a line of the settings file is one statement that sets a name
 and nothing else: the line a new value for the name replaces.
 */
-function sets_alone(
+function setsAlone(
     _line,
     _name
 )
@@ -561,7 +561,7 @@ function compose(
         const end  = _old.indexOf('\n', at);
         const line = _old.slice(at, (end >= 0) ? end : _old.length);
 
-        if (!names.some((_name) => sets_alone(line, _name)))
+        if (!names.some((_name) => setsAlone(line, _name)))
         {
             if (out.length + line.length + 1 >= capacity)
             {
@@ -578,8 +578,8 @@ function compose(
     {
         const setting = find(_registry, name);
         const text    = name + ' = ' +
-                        env_inner.format_quoted(setting.frame, setting.scope,
-                                                setting.var)
+                        envInner.formatQuoted(setting.frame, setting.scope,
+                                              setting.var)
                             .slice(0, ROOM - 1) + '\n';
 
         if (text.length >= capacity - out.length)
@@ -593,7 +593,7 @@ function compose(
     return out;
 }
 
-function work_set(
+function workSet(
     _run,
     _items
 )
@@ -668,13 +668,13 @@ const OWN_OPTIONS    = { get: ['--show-origin'] };
 const SUGGESTION_DISTANCE = 2;
 
 /*
-dashes_of
+dashesOf
   How the parser takes an argument: 2 for a long option's, `--` and a
 name; 1 for a short one's, `-` and a name; 0 for any other, which is a
 word. A name's first character is not '-' and is above '!'. reference:
 d_arg_internal_parse_split_long, _split_short (arg_parse.c).
 */
-function dashes_of(
+function dashesOf(
     _argument
 )
 {
@@ -690,13 +690,13 @@ function dashes_of(
 }
 
 /*
-edit_distance
+editDistance
   The optimal string alignment distance between two names: insertions,
 deletions, substitutions and swaps of two neighbours; a distance past the
 limit is the limit plus one. reference: d_arg_internal_edit_distance
 (arg_suggest.c), which computes only the band that can hold an answer.
 */
-function edit_distance(
+function editDistance(
     _a,
     _b,
     _limit
@@ -749,7 +749,7 @@ function suggestion(
     _command
 )
 {
-    const dashes = dashes_of(_given);
+    const dashes = dashesOf(_given);
     const option = (dashes !== 0);
     const equals = _given.indexOf('=');
     const name   = option
@@ -773,8 +773,8 @@ function suggestion(
                                   : KNOWN_COMMANDS))
     {
         const candidate = written.replace(/^-+/, '');
-        const distance  = edit_distance(name, candidate,
-                                        SUGGESTION_DISTANCE);
+        const distance  = editDistance(name, candidate,
+                                       SUGGESTION_DISTANCE);
 
         // the argument itself, too far to resemble it, or no nearer
         if ( (written === _given)                                     ||
@@ -829,12 +829,12 @@ function suggestions(
 }
 
 /*
-joined_extras
+joinedExtras
   Unexpected arguments as the parser's message lists them: a space between
 each, and a space that ends them all dropped, as the reference's join
 drops it (d_arg_internal_parse_extras_join).
 */
-function joined_extras(
+function joinedExtras(
     _extras
 )
 {
@@ -854,27 +854,27 @@ function unexpected(
     _extras
 )
 {
-    return usage_error(_run, _command,
-                       ((_extras.length === 1)
-                            ? 'the following argument was not expected: '
-                            : 'the following arguments were not expected: ') +
-                       joined_extras(_extras),
-                       suggestions(_command, _extras));
+    return usageError(_run, _command,
+                      ((_extras.length === 1)
+                           ? 'the following argument was not expected: '
+                           : 'the following arguments were not expected: ') +
+                      joinedExtras(_extras),
+                      suggestions(_command, _extras));
 }
 
 /*
-stray_word
+strayWord
   The word the kit says is no command, where the program was given
 arguments and no command: the one argument whole, or, of several, what
 they join to as far as its first space; null where that starts with a
 dash or there is nothing, when the parser's own message stands.
 reference: d_cli_internal_stray_word (cli_program.c).
 */
-function stray_word(
+function strayWord(
     _extras
 )
 {
-    const joined = joined_extras(_extras);
+    const joined = joinedExtras(_extras);
     const space  = joined.indexOf(' ');
     const word   = ( (_extras.length > 1) &&
                      (space >= 0) ) ? joined.slice(0, space) : joined;
@@ -898,7 +898,7 @@ function read(
 
     for (const argument of _arguments)
     {
-        const option = (dashes_of(argument) !== 0);
+        const option = (dashesOf(argument) !== 0);
 
         if (line.command === null)
         {
@@ -940,17 +940,17 @@ function read(
     return line;
 }
 
-function run_inner(
+function runInner(
     _program,
     _argv
 )
 {
     const run   = { program: _program, out: '', err: '', set: [] };
-    const taken = cli_settings.take(_program.registry, _argv, COMMANDS);
+    const taken = cliSettings.take(_program.registry, _argv, COMMANDS);
 
     if (taken.refused !== null)
     {
-        usage_error(run, taken.refused.command, taken.refused.message);
+        usageError(run, taken.refused.command, taken.refused.message);
 
         return { status: EXIT.TROUBLE, out: run.out, err: run.err, set: [] };
     }
@@ -970,27 +970,27 @@ function run_inner(
                        ' --help\' for more information.\n';
             status   = EXIT.TROUBLE;
         }
-        else if (stray_word(line.extras) === null)
+        else if (strayWord(line.extras) === null)
         {
             status = unexpected(run, null, line.extras);
         }
         else
         {
-            status = usage_error(run, null, '\'' + stray_word(line.extras) +
-                                            '\' is not a command',
-                                 suggestions(null, line.extras));
+            status = usageError(run, null, '\'' + strayWord(line.extras) +
+                                           '\' is not a command',
+                                suggestions(null, line.extras));
         }
     }
     else if ( (line.command === 'describe') &&
               (line.operands.length === 0) )
     {
         // what a command requires is missed before what it does not expect
-        status = usage_error(run, 'describe', 'DJIN is required');
+        status = usageError(run, 'describe', 'DJIN is required');
     }
     else if ( (line.command === 'set') &&
               (line.operands.length === 0) )
     {
-        status = usage_error(run, 'set', 'SETTING is required');
+        status = usageError(run, 'set', 'SETTING is required');
     }
     else if (line.extras.length !== 0)
     {
@@ -998,19 +998,19 @@ function run_inner(
     }
     else if (line.command === 'list')
     {
-        status = work_list(run);
+        status = workList(run);
     }
     else if (line.command === 'describe')
     {
-        status = work_describe(run, line.operands);
+        status = workDescribe(run, line.operands);
     }
     else if (line.command === 'get')
     {
-        status = work_get(run, line.operands, line.origin);
+        status = workGet(run, line.operands, line.origin);
     }
     else
     {
-        status = work_set(run, line.operands);
+        status = workSet(run, line.operands);
     }
 
     return { status: status, out: run.out, err: run.err, set: run.set };
@@ -1020,7 +1020,7 @@ function run_inner(
 /**
  * Runs the program on a command line.
  *
- * @param {djinterp_program} _program  the program.
+ * @param {DjinterpProgram} _program  the program.
  * @param {Array<string>}    _argv     the command line's words, the
  *        program's name first: ['djinterp', 'get', 'printer.style'].
  * @returns {{status: number, out: string, err: string,
@@ -1029,13 +1029,13 @@ function run_inner(
  *          the full names a `set` bound and kept, which the reference's
  *          program has no one to tell and a page does.
  */
-export function program_run(
+export function programRun(
     _program,
     _argv
 )
 {
-    const ran = run_inner(_program,
-                          _argv.map((_word) => env_inner.cstr(_word)));
+    const ran = runInner(_program,
+                         _argv.map((_word) => envInner.cstr(_word)));
 
     return { status: ran.status, out: ran.out, err: ran.err,
              set: ran.set };

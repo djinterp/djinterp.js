@@ -87,17 +87,24 @@ for a file with sections, and numbered dividers matching it.
 
 ## 4. Names
 
-* **Identifiers follow the reference's names, in snake_case**, as
-  djinterp's C names are. The module is the namespace, so the C prefix
-  goes: `d_option_env_load` is `option_env.load`.
+* **Identifiers are the reference's names, in camelCase** (the owner's
+  ruling on JS1, 2026-11-16). The module is the namespace, so the C
+  prefix goes, and each `_` and the letter after it become that letter
+  in capitals: `d_option_env_assign_from` is `optionEnv.assignFrom`. A
+  name is found in the C by putting the underscores back. A leading `_`
+  (a parameter's) and a trailing one (`import_`, where the bare word is
+  the language's) stay.
+* **A type's name** (a `@typedef`) is the same words in PascalCase:
+  `OptionEnv`, `DjinterpSession`.
+* **A constant** is in capitals with underscores, as the reference's
+  are: `STATUS.KEY_ABSENT`, `DEPTH_MAX`.
+* **A file keeps the reference's own name**, since its path mirrors the
+  reference's: `src/option/option_env.js`.
 * **Data keeps the reference's spelling exactly**: a row's name, an
   attribute's key, a field of a record or of generated JSON
-  (`sidebar_width`, `bind.value`).
-* The interface a page calls is short words that need no case:
+  (`sidebar_width`, `name_count`, `bind.value`).
+* The interface a page calls is short words where it can be:
   `open`, `run`, `on`, `mount`.
-
-This is the one rule here a web developer will notice. The alternative
-is camelCase, which is the language's convention. (JS1.)
 
 
 ## 5. Behaviour that must match the reference
@@ -188,14 +195,13 @@ first field names the reference's commit.
 
 ## 9. Decisions for the owner
 
-**JS1. Names.** A. The reference's names, in snake_case (section 4). B.
-camelCase, the language's convention. Runs as **A**: a
-port that reads like its reference is one that can be checked against
-it.
+**JS1. Names.** Ruled 2026-11-16: camelCase, the language's convention
+(section 4).
 
-**JS2. Types.** A. JSDoc in the sources; declarations generated from it
-later. B. TypeScript sources, which need a build step. Runs as **A**: no
-build step.
+**JS2. Types.** Ruled 2026-11-16: JSDoc in the sources, with no build
+step, and a checker that reads the JSDoc as types, writes the
+declarations and fails on a mismatch, as a tool beside
+`tools/check_style.js` and never as a step a page needs.
 
 **JS3. One file of style, or two.** Settled by the owner's word of
 2026-11-16: this file is djinterp.js's own, and it is changed only

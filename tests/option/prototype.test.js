@@ -22,42 +22,42 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
 
-import { result_status, status_message }
+import { resultStatus, statusMessage }
     from '../../src/option/option_common.js';
-import * as option_env from '../../src/option/option_env.js';
+import * as optionEnv from '../../src/option/option_env.js';
 
 const ROWS = [
-    option_env.row_real('ratio', 0.5, 'a real'),
-    option_env.row_int_range('width', 240, 100, 600, 'an int in range')
+    optionEnv.rowReal('ratio', 0.5, 'a real'),
+    optionEnv.rowIntRange('width', 240, 100, 600, 'an int in range')
 ];
 
 /*
 option_driver
   tools/option_driver.c's main, over the port: what it prints for a script.
 */
-function option_driver(
+function optionDriver(
     _script
 )
 {
-    const env = option_env.init({ bindings: 16, vars: 8, text: 1024 });
+    const env = optionEnv.init({ bindings: 16, vars: 8, text: 1024 });
     let   out = 'init 0\n';
 
     for (const row of ROWS)
     {
         out += 'declare ' + row.name + ' ' +
-               result_status(option_env.declare(env, row)) + '\n';
+               resultStatus(optionEnv.declare(env, row)) + '\n';
     }
 
-    const loaded = option_env.load(env, _script);
-    const status = result_status(loaded);
+    const loaded = optionEnv.load(env, _script);
+    const status = resultStatus(loaded);
 
-    out += 'load ' + status + ' (' + status_message(status) + ') at ' +
-           (loaded.error_offset ?? 0) + '\n';
+    out += 'load ' + status + ' (' + statusMessage(status) + ') at ' +
+           (loaded.errorOffset ?? 0) + '\n';
 
     for (let i = 0; i < 2; ++i)
     {
-        out += ROWS[i].name + '=' + option_env.format(env, 0, i) + '  [' +
-               option_env.source_name(option_env.source(env, 0, i)) + ']\n';
+        out += ROWS[i].name + '=' + optionEnv.format(env, 0, i) + '  [' +
+               optionEnv.sourceName(optionEnv.source(env, 0, i)) + ']\n';
     }
 
     return out;
@@ -71,6 +71,6 @@ for (const name of ['bind', 'refuse', 'stops', 'exponent'])
             new URL('../transcripts/prototype/' + name + _suffix,
                     import.meta.url), 'utf8');
 
-        assert.equal(option_driver(read('.in')), read('.out'));
+        assert.equal(optionDriver(read('.in')), read('.out'));
     });
 }

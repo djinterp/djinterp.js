@@ -65,11 +65,11 @@ const VISITS = [
     }
 ];
 /*
-text_of
+textOf
   The text of the element with an id, in a page as the browser wrote it
 out: its tags gone, its character references read.
 */
-function text_of(
+function textOf(
     _page,
     _id
 )
@@ -133,8 +133,8 @@ try
 
         same('whether the page finished: ' + visit.url,
              /<body[^>]*data-ready="yes"/.test(page), true);
-        same(visit.url, text_of(page, 'out'), visit.want);
-        same('what was heard', text_of(page, 'heard'), visit.heard);
+        same(visit.url, textOf(page, 'out'), visit.want);
+        same('what was heard', textOf(page, 'heard'), visit.heard);
     }
 }
 finally

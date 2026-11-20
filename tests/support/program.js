@@ -17,11 +17,11 @@
 *                                                            revised: 2026.11.16
 *******************************************************************************/
 
-import * as option_env from '../../src/option/option_env.js';
-import * as option_env_registry from '../../src/option/option_env_registry.js';
-import * as djinterp_commands
+import * as optionEnv from '../../src/option/option_env.js';
+import * as optionEnvRegistry from '../../src/option/option_env_registry.js';
+import * as djinterpCommands
     from '../../src/tools/djinterp/djinterp_commands.js';
-import { open_program } from '../../src/djinterp.js';
+import { openProgram } from '../../src/djinterp.js';
 import { generated } from './fixture.js';
 
 /*
@@ -32,7 +32,7 @@ function must(
     _result
 )
 {
-    if (!_result.is_ok)
+    if (!_result.isOk)
     {
         throw new Error('the program\'s registry could not be made');
     }
@@ -48,43 +48,43 @@ function must(
  * @param {Map<string, string>} _environment  the environment.
  * @returns {object} the program.
  */
-export function make_program(
+export function makeProgram(
     _file,
     _environment
 )
 {
     const data     = generated('program.json');
     const first    = data.frames[0];
-    const registry = must(option_env_registry.init(first.name, {
+    const registry = must(optionEnvRegistry.init(first.name, {
         bindings: first.bindings, vars: first.vars, text: first.text
     })).registry;
 
     for (const fx of data.frames)
     {
         const frame = fx.is_root
-            ? option_env_registry.frame(registry)
-            : option_env.init({ bindings: fx.bindings, vars: fx.vars,
-                                text: fx.text });
+            ? optionEnvRegistry.frame(registry)
+            : optionEnv.init({ bindings: fx.bindings, vars: fx.vars,
+                               text: fx.text });
 
         if (!fx.is_root)
         {
-            must(option_env.set_name(frame, fx.name));
+            must(optionEnv.setName(frame, fx.name));
         }
 
-        must(option_env.declare_all(frame, fx.rows));
+        must(optionEnv.declareAll(frame, fx.rows));
 
         if (fx.scopes.length !== 0)
         {
-            must(option_env.set_scopes(frame, fx.scopes));
+            must(optionEnv.setScopes(frame, fx.scopes));
         }
 
         if (!fx.is_root)
         {
-            must(option_env_registry.add(registry, frame));
+            must(optionEnvRegistry.add(registry, frame));
         }
     }
 
-    const program = djinterp_commands.program_make({
+    const program = djinterpCommands.programMake({
         registry: registry, file: _file, environment: _environment
     });
 
@@ -92,11 +92,11 @@ export function make_program(
 }
 
 /*
-stream_lines
+streamLines
   A stream's text as lines after a prefix; a last line with no line break
 after the prefix with a backslash.
 */
-function stream_lines(
+function streamLines(
     _prefix,
     _text
 )
@@ -125,7 +125,7 @@ function stream_lines(
  *        the transcript's `.meta` names.
  * @returns {string} the `.out` file's bytes, as a byte string.
  */
-export function run_program(
+export function runProgram(
     _input,
     _settings
 )
@@ -148,7 +148,7 @@ export function run_program(
 
     // one program for the whole transcript, as a page has one: `run` is
     // what makes each line a process of the reference's
-    const dj          = open_program(make_program(file, environment));
+    const dj          = openProgram(makeProgram(file, environment));
 
     if (lines[lines.length - 1] === '')
     {
@@ -186,11 +186,11 @@ export function run_program(
         }
         else
         {
-            const ran = dj.run_now(line);
+            const ran = dj.runNow(line);
 
             out += 'exit ' + ran.status + '\n' +
-                   stream_lines('out', ran.out) +
-                   stream_lines('err', ran.err);
+                   streamLines('out', ran.out) +
+                   streamLines('err', ran.err);
         }
     }
 

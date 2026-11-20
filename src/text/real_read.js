@@ -28,9 +28,9 @@
 TABLE OF CONTENTS
 =================
 1.  The nearest double
-    1.  nearest_double
+    1.  nearestDouble
 2.  Reading
-    1.  read_real
+    1.  readReal
 */
 
 
@@ -41,10 +41,10 @@ TABLE OF CONTENTS
 const SCRATCH = new DataView(new ArrayBuffer(8));
 
 /*
-bit_length
+bitLength
   The bits of a positive whole number.
 */
-function bit_length(
+function bitLength(
     _value
 )
 {
@@ -63,7 +63,7 @@ function bit_length(
  *          Infinity. A value under the smallest double is 0, or the
  *          smallest, as it rounds, and is not an overflow.
  */
-export function nearest_double(
+export function nearestDouble(
     _digits,
     _power
 )
@@ -92,7 +92,7 @@ export function nearest_double(
     const bottom = (_power >= 0) ? 1n : (10n ** BigInt(-_power));
 
     // the power of two that leaves a quotient of 53 bits: 2^52 <= q < 2^53
-    let shift = 53 - (bit_length(top) - bit_length(bottom));
+    let shift = 53 - (bitLength(top) - bitLength(bottom));
     let scaled;
     let quotient;
 
@@ -188,7 +188,7 @@ export function nearest_double(
  *          value is past the largest double, and `value` is an infinity.
  *          "nan" and "-nan" both read as NaN: no sign is kept for one.
  */
-export function read_real(
+export function readReal(
     _text
 )
 {
@@ -197,7 +197,7 @@ export function read_real(
 
     if (typeof _text !== 'string')
     {
-        throw new TypeError('read_real: the text is not a string');
+        throw new TypeError('readReal: the text is not a string');
     }
 
     const negative = (_text[0] === '-');
@@ -229,12 +229,12 @@ export function read_real(
     }
 
     // digits, a point, digits
-    const is_digit = (_i) => ( (_text.charCodeAt(_i) >= 48) &&
-                               (_text.charCodeAt(_i) <= 57) );
+    const isDigit = (_i) => ( (_text.charCodeAt(_i) >= 48) &&
+                              (_text.charCodeAt(_i) <= 57) );
     let   digits   = '';
     let   power    = 0;
 
-    while (is_digit(at))
+    while (isDigit(at))
     {
         digits += _text[at++];
     }
@@ -243,7 +243,7 @@ export function read_real(
     {
         let after = at + 1;
 
-        while (is_digit(after))
+        while (isDigit(after))
         {
             digits += _text[after++];
             --power;
@@ -273,9 +273,9 @@ export function read_real(
             ++after;
         }
 
-        if (is_digit(after))
+        if (isDigit(after))
         {
-            while (is_digit(after))
+            while (isDigit(after))
             {
                 // past any double's reach the exact number does not matter
                 value = Math.min((value * 10) + (_text.charCodeAt(after) - 48),
@@ -288,7 +288,7 @@ export function read_real(
         }
     }
 
-    const nearest = nearest_double(BigInt(digits), power);
+    const nearest = nearestDouble(BigInt(digits), power);
 
     return {
         length:       at,

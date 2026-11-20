@@ -35,7 +35,7 @@ TABLE OF CONTENTS
 2.  Settings by full name
     1.  assign, put, load
     2.  import
-    3.  take_option
+    3.  takeOption
     4.  suggest
 3.  Inner
     1.  inner
@@ -43,11 +43,11 @@ TABLE OF CONTENTS
 
 import data from '../../generated/option.js';
 import { STATUS, fail, ok } from './option_common.js';
-import * as option_env from './option_env.js';
+import * as optionEnv from './option_env.js';
 
 const PREFIX_ROOM = 256;
 const REGISTRY    = Symbol('option_env_registry');
-const env_inner   = option_env.inner;
+const envInner    = optionEnv.inner;
 
 
 //==============================================================================
@@ -57,12 +57,12 @@ const env_inner   = option_env.inner;
 /**
  * A registry. Made by `init`; read through the functions here.
  *
- * @typedef {object} option_env_registry
+ * @typedef {object} OptionEnvRegistry
  */
 
 let program = null;
 
-function is_registry(
+function isRegistry(
     _registry
 )
 {
@@ -83,7 +83,7 @@ function is_registry(
  * @param {number}  [_room.vars]      the root's variables.
  * @param {number}  [_room.text]      the root's units of text.
  * @param {number}  [_room.djins]     the djins.
- * @returns {option_result & {registry: option_env_registry}} the
+ * @returns {OptionResult & {registry: OptionEnvRegistry}} the
  *          registry in `registry`, made whatever the result;
  *          INVALID_ARGUMENT for a name that is no identifier, which
  *          leaves the root unnamed.
@@ -95,7 +95,7 @@ export function init(
 {
     const registry = {
         [REGISTRY]: true,
-        frame:      option_env.init({
+        frame:      optionEnv.init({
             bindings: _room.bindings ?? data.registry.bindings,
             vars:     _room.vars ?? data.registry.variables,
             text:     _room.text ?? data.registry.text
@@ -104,7 +104,7 @@ export function init(
         capacity:   _room.djins ?? data.registry.djins
     };
 
-    return { ...option_env.set_name(registry.frame, _name),
+    return { ...optionEnv.setName(registry.frame, _name),
              registry: registry };
 }
 
@@ -113,7 +113,7 @@ export function init(
  * The program's registry: one for the module, its root named "djinterp",
  * as the reference's is.
  *
- * @returns {option_env_registry}
+ * @returns {OptionEnvRegistry}
  */
 export function registry()
 {
@@ -129,22 +129,22 @@ export function registry()
 /**
  * A registry's root frame.
  *
- * @param {?option_env_registry} _registry  the registry.
- * @returns {?option_env} the frame; null for no registry.
+ * @param {?OptionEnvRegistry} _registry  the registry.
+ * @returns {?OptionEnv} the frame; null for no registry.
  */
 export function frame(
     _registry
 )
 {
-    return is_registry(_registry) ? _registry.frame : null;
+    return isRegistry(_registry) ? _registry.frame : null;
 }
 
-function find_inner(
+function findInner(
     _registry,
     _name
 )
 {
-    if ( !is_registry(_registry) ||
+    if ( !isRegistry(_registry) ||
          (_name === null) )
     {
         return null;
@@ -164,11 +164,11 @@ function find_inner(
 // 1.4
 /**
  * Lists a named frame as a djin, under the root. The frame's own bindings
- * are dropped, as `option_env.set_parent` drops them.
+ * are dropped, as `optionEnv.setParent` drops them.
  *
- * @param {option_env_registry} _registry  the registry.
- * @param {option_env}          _djin      the frame; one with a name.
- * @returns {option_result} its place; INVALID_ARGUMENT for a frame with
+ * @param {OptionEnvRegistry} _registry  the registry.
+ * @param {OptionEnv}          _djin      the frame; one with a name.
+ * @returns {OptionResult} its place; INVALID_ARGUMENT for a frame with
  *          no name, or the root itself; KEY_DUPLICATE for a name a djin
  *          has; CAPACITY for a registry that is full.
  */
@@ -177,17 +177,17 @@ export function add(
     _djin
 )
 {
-    if ( !is_registry(_registry)   ||
-         (_djin === null)          ||
-         (_djin === undefined)     ||
-         (_djin.name === null)     ||
+    if ( !isRegistry(_registry)   ||
+         (_djin === null)         ||
+         (_djin === undefined)    ||
+         (_djin.name === null)    ||
          (_djin.name === undefined) ||
          (_djin === _registry.frame) )
     {
         return fail(STATUS.INVALID_ARGUMENT);
     }
 
-    if (find_inner(_registry, _djin.name) !== null)
+    if (findInner(_registry, _djin.name) !== null)
     {
         return fail(STATUS.KEY_DUPLICATE);
     }
@@ -197,9 +197,9 @@ export function add(
         return fail(STATUS.CAPACITY);
     }
 
-    const attached = option_env.set_parent(_djin, _registry.frame);
+    const attached = optionEnv.setParent(_djin, _registry.frame);
 
-    if (!attached.is_ok)
+    if (!attached.isOk)
     {
         return attached;
     }
@@ -212,9 +212,9 @@ export function add(
 /**
  * Takes a djin's frame out of the registry and from under the root.
  *
- * @param {option_env_registry} _registry  the registry.
- * @param {option_env}          _djin      the frame.
- * @returns {option_result} the place it had; KEY_ABSENT for a frame that
+ * @param {OptionEnvRegistry} _registry  the registry.
+ * @param {OptionEnv}          _djin      the frame.
+ * @returns {OptionResult} the place it had; KEY_ABSENT for a frame that
  *          is not listed.
  */
 export function remove(
@@ -222,8 +222,8 @@ export function remove(
     _djin
 )
 {
-    if ( !is_registry(_registry) ||
-         (_djin === null)        ||
+    if ( !isRegistry(_registry) ||
+         (_djin === null)       ||
          (_djin === undefined) )
     {
         return fail(STATUS.INVALID_ARGUMENT);
@@ -236,7 +236,7 @@ export function remove(
         return fail(STATUS.KEY_ABSENT);
     }
 
-    option_env.detach(_djin);
+    optionEnv.detach(_djin);
     _registry.djins.splice(index, 1);
 
     return ok(index);
@@ -246,30 +246,30 @@ export function remove(
 /**
  * How many djins a registry lists.
  *
- * @param {?option_env_registry} _registry  the registry.
+ * @param {?OptionEnvRegistry} _registry  the registry.
  * @returns {number}
  */
 export function count(
     _registry
 )
 {
-    return is_registry(_registry) ? _registry.djins.length : 0;
+    return isRegistry(_registry) ? _registry.djins.length : 0;
 }
 
 /**
  * The djin at a place, in the order they were added.
  *
- * @param {?option_env_registry} _registry  the registry.
+ * @param {?OptionEnvRegistry} _registry  the registry.
  * @param {number}               _index     the place, from 0.
- * @returns {?option_env} the frame; null past the last.
+ * @returns {?OptionEnv} the frame; null past the last.
  */
 export function at(
     _registry,
     _index
 )
 {
-    return ( is_registry(_registry) &&
-             (_index >= 0)          &&
+    return ( isRegistry(_registry) &&
+             (_index >= 0)         &&
              (_index < _registry.djins.length) ) ? _registry.djins[_index]
                                                  : null;
 }
@@ -277,25 +277,25 @@ export function at(
 /**
  * The djin of a name.
  *
- * @param {?option_env_registry} _registry  the registry.
+ * @param {?OptionEnvRegistry} _registry  the registry.
  * @param {string}               _name      the name.
- * @returns {?option_env} the frame; null for no such djin.
+ * @returns {?OptionEnv} the frame; null for no such djin.
  */
 export function find(
     _registry,
     _name
 )
 {
-    return find_inner(_registry, (typeof _name === 'string') ? _name
-                                                             : null);
+    return findInner(_registry, (typeof _name === 'string') ? _name
+                                                            : null);
 }
 
-function target_inner(
+function targetInner(
     _registry,
     _name
 )
 {
-    if ( !is_registry(_registry) ||
+    if ( !isRegistry(_registry) ||
          (_name === null) )
     {
         return null;
@@ -305,7 +305,7 @@ function target_inner(
 
     if (dot >= 0)
     {
-        const djin = find_inner(_registry, _name.slice(0, dot));
+        const djin = findInner(_registry, _name.slice(0, dot));
 
         if (djin !== null)
         {
@@ -320,18 +320,18 @@ function target_inner(
  * The frame a full name is a setting of: the djin named before its first
  * point, or the root.
  *
- * @param {?option_env_registry} _registry  the registry.
+ * @param {?OptionEnvRegistry} _registry  the registry.
  * @param {string}               _name      the full name.
- * @returns {?option_env} the frame; null for no registry.
+ * @returns {?OptionEnv} the frame; null for no registry.
  */
 export function target(
     _registry,
     _name
 )
 {
-    return target_inner(_registry, (typeof _name === 'string')
-                                       ? _name
-                                       : null);
+    return targetInner(_registry, (typeof _name === 'string')
+                                      ? _name
+                                      : null);
 }
 
 
@@ -372,36 +372,36 @@ function route(
         ++i;
     }
 
-    return target_inner(_registry, _text.slice(start, i));
+    return targetInner(_registry, _text.slice(start, i));
 }
 
-function assign_inner(
+function assignInner(
     _registry,
     _name,
     _value,
     _source
 )
 {
-    const frame_ = target_inner(_registry, _name);
+    const frame_ = targetInner(_registry, _name);
 
     if (frame_ === null)
     {
         return fail(STATUS.INVALID_ARGUMENT);
     }
 
-    return env_inner.assign_from(frame_, _name, _value, _source);
+    return envInner.assignFrom(frame_, _name, _value, _source);
 }
 
 // 2.1
 /**
  * Binds a setting by its full name from a value's text, from a source: as
- * `option_env.assign_from`, in the frame the name is a setting of.
+ * `optionEnv.assignFrom`, in the frame the name is a setting of.
  *
- * @param {option_env_registry} _registry  the registry.
+ * @param {OptionEnvRegistry} _registry  the registry.
  * @param {string}              _name      the full name.
  * @param {string}              _value     the value's text.
  * @param {number}              _source    the source; any but DEFAULT.
- * @returns {option_result}
+ * @returns {OptionResult}
  */
 export function assign(
     _registry,
@@ -410,37 +410,37 @@ export function assign(
     _source
 )
 {
-    return assign_inner(_registry,
-                        (typeof _name === 'string') ? _name : null,
-                        (typeof _value === 'string') ? _value : '',
-                        _source);
+    return assignInner(_registry,
+                       (typeof _name === 'string') ? _name : null,
+                       (typeof _value === 'string') ? _value : '',
+                       _source);
 }
 
-function put_inner(
+function putInner(
     _registry,
     _statement,
     _source
 )
 {
-    if ( !is_registry(_registry) ||
+    if ( !isRegistry(_registry) ||
          (_statement === null) )
     {
         return fail(STATUS.INVALID_ARGUMENT);
     }
 
-    return env_inner.put_n_from(route(_registry, _statement), _statement,
-                                _source);
+    return envInner.putNFrom(route(_registry, _statement), _statement,
+                             _source);
 }
 
 /**
  * Carries out one statement by full name, from a source: as
- * `option_env.put_from`, in the frame its name is a setting of.
+ * `optionEnv.putFrom`, in the frame its name is a setting of.
  *
- * @param {option_env_registry} _registry   the registry.
+ * @param {OptionEnvRegistry} _registry   the registry.
  * @param {string}              _statement  the statement; read up to a
  *        NUL.
  * @param {number}              _source     the source; any but DEFAULT.
- * @returns {option_result}
+ * @returns {OptionResult}
  */
 export function put(
     _registry,
@@ -448,14 +448,14 @@ export function put(
     _source
 )
 {
-    return put_inner(_registry,
-                     (typeof _statement === 'string')
-                         ? env_inner.cstr(_statement)
-                         : null,
-                     _source);
+    return putInner(_registry,
+                    (typeof _statement === 'string')
+                        ? envInner.cstr(_statement)
+                        : null,
+                    _source);
 }
 
-function load_inner(
+function loadInner(
     _registry,
     _script,
     _source
@@ -464,7 +464,7 @@ function load_inner(
     let i      = 0;
     let loaded = 0;
 
-    if ( !is_registry(_registry) ||
+    if ( !isRegistry(_registry) ||
          (_script === null) )
     {
         return fail(STATUS.INVALID_ARGUMENT);
@@ -476,7 +476,7 @@ function load_inner(
     {
         const start = i;
 
-        i = env_inner.statement_end(_script, i);
+        i = envInner.statementEnd(_script, i);
 
         // a statement of nothing but space is skipped
         let first = start;
@@ -492,12 +492,12 @@ function load_inner(
         if (first < i)
         {
             const text   = _script.slice(first, i);
-            const result = env_inner.put_n_from(route(_registry, text), text,
-                                                _source);
+            const result = envInner.putNFrom(route(_registry, text), text,
+                                             _source);
 
-            if (!result.is_ok)
+            if (!result.isOk)
             {
-                return { ...result, error_offset: first };
+                return { ...result, errorOffset: first };
             }
 
             ++loaded;
@@ -524,14 +524,14 @@ function load_inner(
 
 /**
  * Carries out a script of statements by full name, from a source: as
- * `option_env.load_from`, each statement in the frame its name is a
+ * `optionEnv.loadFrom`, each statement in the frame its name is a
  * setting of. It stops at the first statement refused.
  *
- * @param {option_env_registry} _registry  the registry.
+ * @param {OptionEnvRegistry} _registry  the registry.
  * @param {string}              _script    the script; read up to a NUL.
  * @param {number}              _source    the source; any but DEFAULT.
- * @returns {option_result & {error_offset?: number}} how many statements
- *          were carried out; or the refusal, with in `error_offset` where
+ * @returns {OptionResult & {errorOffset?: number}} how many statements
+ *          were carried out; or the refusal, with in `errorOffset` where
  *          the refused statement starts, an index into the script.
  */
 export function load(
@@ -540,27 +540,27 @@ export function load(
     _source
 )
 {
-    return load_inner(_registry,
-                      (typeof _script === 'string')
-                          ? env_inner.cstr(_script)
-                          : null,
-                      _source);
+    return loadInner(_registry,
+                     (typeof _script === 'string')
+                         ? envInner.cstr(_script)
+                         : null,
+                     _source);
 }
 
-function import_inner(
+function importInner(
     _registry,
     _prefix,
     _lookup
 )
 {
-    if (!is_registry(_registry))
+    if (!isRegistry(_registry))
     {
         return fail(STATUS.INVALID_ARGUMENT);
     }
 
-    let result  = env_inner.import(_registry.frame, _prefix, _lookup);
-    let total   = result.is_ok ? result.value : 0;
-    let failure = result.is_ok ? ok(0) : result;
+    let result  = envInner.import(_registry.frame, _prefix, _lookup);
+    let total   = result.isOk ? result.value : 0;
+    let failure = result.isOk ? ok(0) : result;
 
     for (const djin of _registry.djins)
     {
@@ -579,17 +579,17 @@ function import_inner(
                           : djin.name[c];
         }
 
-        result = env_inner.import(djin, prefix + '_', _lookup);
-        total += result.is_ok ? result.value : 0;
+        result = envInner.import(djin, prefix + '_', _lookup);
+        total += result.isOk ? result.value : 0;
 
-        if ( !result.is_ok &&
-             failure.is_ok )
+        if ( !result.isOk &&
+             failure.isOk )
         {
             failure = result;
         }
     }
 
-    return failure.is_ok ? ok(total) : failure;
+    return failure.isOk ? ok(total) : failure;
 }
 
 // 2.2
@@ -602,13 +602,13 @@ function import_inner(
  * The reference reads the process's environment; a page gives one.
  * Exported as `import` too.
  *
- * @param {option_env_registry} _registry  the registry.
+ * @param {OptionEnvRegistry} _registry  the registry.
  * @param {?string}             _prefix    what each name follows, or
  *        null for nothing.
  * @param {Map<string, string>|Record<string, string>|
  *         function(string): (string|undefined)} _environment  the
  *        environment: names to values.
- * @returns {option_result} how many were bound; or the first refusal.
+ * @returns {OptionResult} how many were bound; or the first refusal.
  */
 export function import_(
     _registry,
@@ -616,49 +616,49 @@ export function import_(
     _environment
 )
 {
-    return import_inner(_registry,
-                        (typeof _prefix === 'string')
-                            ? env_inner.cstr(_prefix)
-                            : '',
-                        env_inner.lookup_of(_environment));
+    return importInner(_registry,
+                       (typeof _prefix === 'string')
+                           ? envInner.cstr(_prefix)
+                           : '',
+                       envInner.lookupOf(_environment));
 }
 
 export { import_ as import };
 
 /*
-is_bool
+isBool
   1 where a full name is a BOOL's, 0 where another kind's, -1 where none's.
 */
-function is_bool(
+function isBool(
     _registry,
     _name
 )
 {
-    const frame_ = target_inner(_registry, _name);
+    const frame_ = targetInner(_registry, _name);
 
     if (frame_ === null)
     {
         return -1;
     }
 
-    const found = env_inner.resolve(frame_, _name);
+    const found = envInner.resolve(frame_, _name);
 
-    if (!found.is_ok)
+    if (!found.isOk)
     {
         return -1;
     }
 
-    const value = env_inner.get(frame_, found.scope, found.value);
+    const value = envInner.get(frame_, found.scope, found.value);
 
-    if (!value.is_ok)
+    if (!value.isOk)
     {
         return -1;
     }
 
-    return (value.got.kind === option_env.KIND.BOOL) ? 1 : 0;
+    return (value.got.kind === optionEnv.KIND.BOOL) ? 1 : 0;
 }
 
-function take_option_inner(
+function takeOptionInner(
     _registry,
     _argv,
     _at
@@ -666,11 +666,11 @@ function take_option_inner(
 {
     const refusal = fail(STATUS.INVALID_ARGUMENT);
 
-    if ( !is_registry(_registry)         ||
-         !Array.isArray(_argv)           ||
-         !Number.isInteger(_at)          ||
-         (_at < 0)                       ||
-         (_at >= _argv.length)           ||
+    if ( !isRegistry(_registry)         ||
+         !Array.isArray(_argv)          ||
+         !Number.isInteger(_at)         ||
+         (_at < 0)                      ||
+         (_at >= _argv.length)          ||
          (typeof _argv[_at] !== 'string') ||
          !_argv[_at].startsWith('--')    ||
          (_argv[_at].length === 2) )
@@ -709,15 +709,15 @@ function take_option_inner(
     const name = (equals >= 0) ? body.slice(0, equals) : body;
 
     if ( (equals < 0) &&
-         (is_bool(_registry, name) === 0) )
+         (isBool(_registry, name) === 0) )
     {
         return { took: -1, at: i, result: refusal };
     }
 
-    const result = assign_inner(_registry, name, value,
-                                option_env.SOURCE.COMMAND_LINE);
+    const result = assignInner(_registry, name, value,
+                               optionEnv.SOURCE.COMMAND_LINE);
 
-    return { took: result.is_ok ? 1 : -1, at: i, result: result };
+    return { took: result.isOk ? 1 : -1, at: i, result: result };
 }
 
 // 2.3
@@ -726,29 +726,29 @@ function take_option_inner(
  * "--set NAME=VALUE", "--NAME=VALUE", "--NAME" for a BOOL made true and
  * "--no-NAME" for one made false.
  *
- * @param {option_env_registry} _registry  the registry.
+ * @param {OptionEnvRegistry} _registry  the registry.
  * @param {Array<string>}       _argv      the command line's arguments.
  * @param {number}              _at        which one to look at.
- * @returns {{took: number, at: number, result: ?option_result}}
+ * @returns {{took: number, at: number, result: ?OptionResult}}
  *          `took` is 1 for a setting bound, 0 for an argument that is no
  *          option of this form, with no result, and -1 for one that is
  *          and is refused, with why in `result`. `at` is the last
  *          argument used: `_at`, or the one after it for "--set".
  */
-export function take_option(
+export function takeOption(
     _registry,
     _argv,
     _at
 )
 {
-    return take_option_inner(_registry,
-                             Array.isArray(_argv)
-                                 ? _argv.map((_argument) =>
-                                       ((typeof _argument === 'string')
-                                            ? env_inner.cstr(_argument)
-                                            : _argument))
-                                 : _argv,
-                             _at);
+    return takeOptionInner(_registry,
+                           Array.isArray(_argv)
+                               ? _argv.map((_argument) =>
+                                     ((typeof _argument === 'string')
+                                          ? envInner.cstr(_argument)
+                                          : _argument))
+                               : _argv,
+                           _at);
 }
 
 function nearest(
@@ -762,7 +762,7 @@ function nearest(
 
     for (const djin of _registry.djins)
     {
-        const far = env_inner.distance(djin.name, _text);
+        const far = envInner.distance(djin.name, _text);
 
         if (far < most)
         {
@@ -784,7 +784,7 @@ function within(
     _name
 )
 {
-    const near = env_inner.suggest(_frame, _name);
+    const near = envInner.suggest(_frame, _name);
     const dot  = _name.indexOf('.');
 
     if (near === null)
@@ -794,7 +794,7 @@ function within(
 
     // a scope that fails is replaced, and the variable after it kept
     if ( (dot >= 0) &&
-         !env_inner.find_scope(_frame, _name.slice(0, dot)).is_ok )
+         !envInner.findScope(_frame, _name.slice(0, dot)).isOk )
     {
         return near + _name.slice(dot);
     }
@@ -802,12 +802,12 @@ function within(
     return ((dot >= 0) ? _name.slice(0, dot + 1) : '') + near;
 }
 
-function suggest_inner(
+function suggestInner(
     _registry,
     _name
 )
 {
-    if ( !is_registry(_registry) ||
+    if ( !isRegistry(_registry) ||
          (_name === null) )
     {
         return '';
@@ -815,11 +815,11 @@ function suggest_inner(
 
     const dot  = _name.indexOf('.');
     const head = (dot >= 0) ? _name.slice(0, dot) : '';
-    let   djin = (dot >= 0) ? find_inner(_registry, head) : null;
+    let   djin = (dot >= 0) ? findInner(_registry, head) : null;
 
     if ( (dot >= 0)      &&
          (djin === null) &&
-         !env_inner.find_scope(_registry.frame, head).is_ok )
+         !envInner.findScope(_registry.frame, head).isOk )
     {
         djin = nearest(_registry, head);
     }
@@ -829,7 +829,7 @@ function suggest_inner(
         const rest = _name.slice(dot + 1);
 
         // the rest may be right already, when only the djin was wrong
-        if (env_inner.resolve(djin, rest).is_ok)
+        if (envInner.resolve(djin, rest).isOk)
         {
             return djin.name + '.' + rest;
         }
@@ -847,7 +847,7 @@ function suggest_inner(
  * The full name a mistyped one was probably meant to be: its djin
  * corrected, or its scope, or its variable.
  *
- * @param {option_env_registry} _registry  the registry.
+ * @param {OptionEnvRegistry} _registry  the registry.
  * @param {string}              _name      the full name as written.
  * @returns {string} the full name; empty where none is near.
  */
@@ -856,9 +856,9 @@ export function suggest(
     _name
 )
 {
-    return suggest_inner(_registry,
-                                (typeof _name === 'string') ? _name
-                                                            : null);
+    return suggestInner(_registry,
+                               (typeof _name === 'string') ? _name
+                                                           : null);
 }
 
 
@@ -871,12 +871,12 @@ export function suggest(
  * The registry without its checks, for the modules that stand on it.
  */
 export const inner = Object.freeze({
-    find:        find_inner,
-    target:      target_inner,
-    assign:      assign_inner,
-    put:         put_inner,
-    load:        load_inner,
-    import:      import_inner,
-    take_option: take_option_inner,
-    suggest:     suggest_inner
+    find:       findInner,
+    target:     targetInner,
+    assign:     assignInner,
+    put:        putInner,
+    load:       loadInner,
+    import:     importInner,
+    takeOption: takeOptionInner,
+    suggest:    suggestInner
 });

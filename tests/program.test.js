@@ -20,7 +20,7 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { test } from 'node:test';
 
 import { generated } from './support/fixture.js';
-import { run_program } from './support/program.js';
+import { runProgram } from './support/program.js';
 
 const DIRECTORY = new URL('./transcripts/', import.meta.url);
 const NAMES     = readdirSync(DIRECTORY)
@@ -30,10 +30,10 @@ const NAMES     = readdirSync(DIRECTORY)
                       .sort();
 
 /*
-first_difference
+firstDifference
   Where two texts first differ, with the command line being answered.
 */
-function first_difference(
+function firstDifference(
     _got,
     _want
 )
@@ -84,9 +84,9 @@ for (const name of NAMES)
                   'recorded at the generated data\'s commit');
         assert.notEqual(settings, null);
 
-        const got = run_program(read('.in'), settings[1]);
+        const got = runProgram(read('.in'), settings[1]);
 
-        assert.equal(first_difference(got, read('.out')), null);
+        assert.equal(firstDifference(got, read('.out')), null);
         assert.equal(got.length, read('.out').length);
     });
 }

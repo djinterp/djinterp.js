@@ -23,10 +23,10 @@ TABLE OF CONTENTS
 =================
 1.  Keys and ids
     1.  KEY_NONE, HANDLER_ID_NULL
-    2.  key_of_name
+    2.  keyOfName
 2.  Verdicts
     1.  VERDICT
-    2.  verdict_is_consumed
+    2.  verdictIsConsumed
 3.  Statuses
     1.  STATUS
 */
@@ -41,7 +41,7 @@ const strip = (_name, _prefix) => _name.slice(_prefix.length);
 //==============================================================================
 
 // 1.1
-/** The key that names no event. `key_of_name` never gives it. */
+/** The key that names no event. `keyOfName` never gives it. */
 export const KEY_NONE = BigInt(data.key_none);
 
 /**
@@ -63,7 +63,7 @@ const FNV_PRIME  = BigInt(data.fnv1a64_prime);
  * @param {?string} _name  the event's name.
  * @returns {bigint} the key; KEY_NONE for no name.
  */
-export function key_of_name(
+export function keyOfName(
     _name
 )
 {
@@ -129,7 +129,7 @@ export const VERDICT = Object.freeze(Object.fromEntries(
  * @param {number} _verdict  the verdict.
  * @returns {boolean}
  */
-export function verdict_is_consumed(
+export function verdictIsConsumed(
     _verdict
 )
 {

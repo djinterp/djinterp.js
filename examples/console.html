@@ -37,7 +37,7 @@
 <script type="module">
 import * as djinterp from '../src/djinterp.js';
 
-const { option_env } = djinterp;
+const { optionEnv } = djinterp;
 
 const out   = document.getElementById('out');
 const line  = document.getElementById('line');
@@ -63,24 +63,24 @@ function say(
 
 const dj = await djinterp.open({
     settings: [
-        option_env.row_bool('color', true, 'coloured output'),
-        option_env.row_text('title', null, 'the page\'s title')
+        optionEnv.rowBool('color', true, 'coloured output'),
+        optionEnv.rowText('title', null, 'the page\'s title')
     ],
     djins: [{
         name:     'printer',
         version:  '0.9.0',
         summary:  'prints descriptions',
         commands: [{ name: 'run', summary: 'print a description' }],
-        settings: djinterp.settings_frame('printer', [
-            option_env.row_choice('style',
+        settings: djinterp.settingsFrame('printer', [
+            optionEnv.rowChoice('style',
                                   [{ name: 'plain', value: 0 },
                                    { name: 'json', value: 1 }],
                                   0, 'how it is written'),
-            option_env.row_int_range('key_width', 30, 1, 120,
+            optionEnv.rowIntRange('key_width', 30, 1, 120,
                                      'the width of a key')
         ])
     }],
-    file:  djinterp.storage_file(localStorage),
+    file:  djinterp.storageFile(localStorage),
     query: location.search
 });
 

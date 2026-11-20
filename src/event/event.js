@@ -4,10 +4,10 @@
 *   The event core, whole: keys and verdicts, steps, the table, the
 * registry and the dispatcher, under one import.
 *     import * as event from './event/event.js';
-*     const dispatcher = event.dispatcher_init();
-*     const key        = event.key_of_name('set');
-*     event.dispatcher_bind(dispatcher, key, event.step_make(handler));
-*     event.dispatcher_fire(dispatcher, key, payload);
+*     const dispatcher = event.dispatcherInit();
+*     const key        = event.keyOfName('set');
+*     event.dispatcherBind(dispatcher, key, event.stepMake(handler));
+*     event.dispatcherFire(dispatcher, key, payload);
 *   reference: inc/djinterp/c/event/event.h, at dfc793c4
 *
 *

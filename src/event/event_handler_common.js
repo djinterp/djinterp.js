@@ -8,8 +8,8 @@
 * them, stopping at the first consume. With skip as its unit and consume
 * as its left zero, composition is a monoid, and the suite checks its laws.
 *   The reference builds a composed step in storage its caller supplies,
-* since C allocates nothing here. JavaScript does: `step_seq` and
-* `step_from_callback` return a step that holds what it needs.
+* since C allocates nothing here. JavaScript does: `stepSeq` and
+* `stepFromCallback` return a step that holds what it needs.
 *   reference: inc/djinterp/c/event/event_handler_common.h and
 *              src/djinterp/c/event/event_handler_common.c, at dfc793c4
 *
@@ -24,16 +24,16 @@
 TABLE OF CONTENTS
 =================
 1.  The step
-    1.  step_make, step_skip, step_is_skip, step_invoke
+    1.  stepMake, stepSkip, stepIsSkip, stepInvoke
 2.  Adapting a callback
-    1.  step_from_callback
+    1.  stepFromCallback
 3.  Sequencing
-    1.  step_seq
+    1.  stepSeq
 4.  Folding a word
-    1.  step_fold
+    1.  stepFold
 */
 
-import { VERDICT, verdict_is_consumed } from './event_common.js';
+import { VERDICT, verdictIsConsumed } from './event_common.js';
 
 
 //==============================================================================
@@ -43,7 +43,7 @@ import { VERDICT, verdict_is_consumed } from './event_common.js';
 /**
  * A handler: a function and the state it is handed.
  *
- * @typedef {object} event_step
+ * @typedef {object} EventStep
  * @property {?function(*, *): number} fn  takes the occurrence's payload
  *           and `state`; gives a VERDICT. Null for the unit.
  * @property {*} state  what `fn` is handed second.
@@ -55,9 +55,9 @@ import { VERDICT, verdict_is_consumed } from './event_common.js';
  *
  * @param {?function(*, *): number} _fn     the function.
  * @param {*}                       [_state=null]  its state.
- * @returns {event_step}
+ * @returns {EventStep}
  */
-export function step_make(
+export function stepMake(
     _fn,
     _state = null
 )
@@ -68,20 +68,20 @@ export function step_make(
 /**
  * The unit: a step that passes and is never invoked.
  *
- * @returns {event_step}
+ * @returns {EventStep}
  */
-export function step_skip()
+export function stepSkip()
 {
-    return step_make(null, null);
+    return stepMake(null, null);
 }
 
 /**
  * Whether a step is the unit.
  *
- * @param {?event_step} _step  the step.
+ * @param {?EventStep} _step  the step.
  * @returns {boolean}
  */
-export function step_is_skip(
+export function stepIsSkip(
     _step
 )
 {
@@ -93,22 +93,22 @@ export function step_is_skip(
  * Invokes a step over a payload; the unit passes. The one place the core
  * calls a handler.
  *
- * @param {?event_step} _step     the step.
+ * @param {?EventStep} _step     the step.
  * @param {*}           _payload  the payload.
  * @returns {number} a VERDICT: CONSUME where the handler gave it, else
  *          PASS.
  */
-export function step_invoke(
+export function stepInvoke(
     _step,
     _payload
 )
 {
-    if (step_is_skip(_step))
+    if (stepIsSkip(_step))
     {
         return VERDICT.PASS;
     }
 
-    return verdict_is_consumed(_step.fn(_payload, _step.state))
+    return verdictIsConsumed(_step.fn(_payload, _step.state))
                ? VERDICT.CONSUME
                : VERDICT.PASS;
 }
@@ -126,14 +126,14 @@ export function step_invoke(
  * @param {?function(*): void} _callback  the callback; with none, the
  *        step passes without a call.
  * @param {*} [_context=null]  what it is handed.
- * @returns {event_step}
+ * @returns {EventStep}
  */
-export function step_from_callback(
+export function stepFromCallback(
     _callback,
     _context = null
 )
 {
-    return step_make((_payload, _state) =>
+    return stepMake((_payload, _state) =>
     {
         if (_state.fn)
         {
@@ -153,24 +153,24 @@ export function step_from_callback(
 /**
  * Two steps as one: the first, then the second unless the first consumed.
  *
- * @param {event_step} _first   the first.
- * @param {event_step} _second  the second.
- * @returns {event_step}
+ * @param {EventStep} _first   the first.
+ * @param {EventStep} _second  the second.
+ * @returns {EventStep}
  */
-export function step_seq(
+export function stepSeq(
     _first,
     _second
 )
 {
-    return step_make((_payload, _node) =>
+    return stepMake((_payload, _node) =>
     {
         // consume is the left zero: the second stage is never invoked
-        if (verdict_is_consumed(step_invoke(_node.first, _payload)))
+        if (verdictIsConsumed(stepInvoke(_node.first, _payload)))
         {
             return VERDICT.CONSUME;
         }
 
-        return step_invoke(_node.second, _payload);
+        return stepInvoke(_node.second, _payload);
     }, { first: _first, second: _second });
 }
 
@@ -184,12 +184,12 @@ export function step_seq(
  * Folds a word of steps over one payload, in order, stopping at the first
  * consume. The unit is passed over and not counted.
  *
- * @param {?Array<event_step>} _steps    the word.
+ * @param {?Array<EventStep>} _steps    the word.
  * @param {*}                  _payload  the payload.
  * @returns {{verdict: number, invoked: number}} the word's VERDICT, and
  *          how many steps were invoked.
  */
-export function step_fold(
+export function stepFold(
     _steps,
     _payload
 )
@@ -200,7 +200,7 @@ export function step_fold(
     for (const step of (_steps ?? []))
     {
         // the unit passes without being invoked
-        if (step_is_skip(step))
+        if (stepIsSkip(step))
         {
             continue;
         }
@@ -208,7 +208,7 @@ export function step_fold(
         ++invoked;
 
         // consume is the left zero: the remainder is not invoked
-        if (verdict_is_consumed(step_invoke(step, _payload)))
+        if (verdictIsConsumed(stepInvoke(step, _payload)))
         {
             verdict = VERDICT.CONSUME;
 

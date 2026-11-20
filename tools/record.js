@@ -55,11 +55,11 @@ const WRITTEN = new Set(['program', 'arguments', 'reference', 'commit',
                          'recorded', 'home', 'settings', 'environment']);
 
 /*
-write_transcript
+writeTranscript
   A transcript's `.out` and its `.meta`: what was run, on what, and when.
 The date is the one already there where nothing it dates has changed.
 */
-function write_transcript(
+function writeTranscript(
     _name,
     _bytes,
     _program,
@@ -68,17 +68,17 @@ function write_transcript(
     _more
 )
 {
-    const out_path  = join(TRANSCRIPTS, _name + '.out');
-    const meta_path = join(TRANSCRIPTS, _name + '.meta');
-    const before    = existsSync(meta_path)
-                          ? readFileSync(meta_path, 'utf8').split('\n')
+    const outPath  = join(TRANSCRIPTS, _name + '.out');
+    const metaPath = join(TRANSCRIPTS, _name + '.meta');
+    const before   = existsSync(metaPath)
+                          ? readFileSync(metaPath, 'utf8').split('\n')
                                 .filter((_line) => (_line.length !== 0))
                           : [];
-    const key_of    = (_line) => _line.slice(0, _line.indexOf(':'));
-    const had       = (_key) => before.find((_line) =>
-                                                (key_of(_line) === _key));
-    const same      = existsSync(out_path) &&
-                      readFileSync(out_path).equals(_bytes) &&
+    const keyOf    = (_line) => _line.slice(0, _line.indexOf(':'));
+    const had      = (_key) => before.find((_line) =>
+                                                (keyOf(_line) === _key));
+    const same      = existsSync(outPath) &&
+                      readFileSync(outPath).equals(_bytes) &&
                       (had('commit') === ('commit: ' + _commit)) &&
                       (had('recorded') !== undefined);
     const lines     = [
@@ -89,11 +89,11 @@ function write_transcript(
         same ? had('recorded')
              : ('recorded: ' + new Date().toISOString().slice(0, 10)),
         ..._more,
-        ...before.filter((_line) => !WRITTEN.has(key_of(_line)))
+        ...before.filter((_line) => !WRITTEN.has(keyOf(_line)))
     ];
 
-    writeFileSync(out_path, _bytes);
-    writeFileSync(meta_path, lines.join('\n') + '\n');
+    writeFileSync(outPath, _bytes);
+    writeFileSync(metaPath, lines.join('\n') + '\n');
 
     return;
 }
@@ -106,7 +106,7 @@ function write_transcript(
  * @returns {Buffer} its output.
  * @throws {Error} where the program did not exit with 0.
  */
-export function session_bytes(
+export function sessionBytes(
     _build,
     _input
 )
@@ -126,31 +126,31 @@ export function session_bytes(
 }
 
 /*
-record_session
+recordSession
   A session transcript: the whole input to BUILD/session.
 */
-function record_session(
+function recordSession(
     _build,
     _commit,
     _name
 )
 {
-    const bytes = session_bytes(_build, readFileSync(join(TRANSCRIPTS,
-                                                          _name + '.in')));
+    const bytes = sessionBytes(_build, readFileSync(join(TRANSCRIPTS,
+                                                         _name + '.in')));
 
-    write_transcript(_name, bytes, 'tools/session.c',
-                     '(none; the input is its standard input)', _commit,
-                     ['environment: empty']);
+    writeTranscript(_name, bytes, 'tools/session.c',
+                    '(none; the input is its standard input)', _commit,
+                    ['environment: empty']);
 
     return;
 }
 
 /*
-stream_lines
+streamLines
   A stream's bytes as lines after a prefix; a last line with no line break
 after the prefix with a backslash.
 */
-function stream_lines(
+function streamLines(
     _prefix,
     _bytes
 )
@@ -178,7 +178,7 @@ function stream_lines(
  * @param {string} _name  the transcript's name.
  * @returns {{home: string, settings: string}}
  */
-export function program_home(
+export function programHome(
     _name
 )
 {
@@ -196,13 +196,13 @@ export function program_home(
  * @param {string} _input  the input, a byte a code unit.
  * @returns {Buffer} the transcript's `.out`.
  */
-export function program_bytes(
+export function programBytes(
     _build,
     _name,
     _input
 )
 {
-    const { home, settings } = program_home(_name);
+    const { home, settings } = programHome(_name);
     const env      = { HOME: home, XDG_CONFIG_HOME: home };
     const out      = [];
     const unescape = (_text) => _text.replace(/\\([nt\\])/g, (_m, _c) =>
@@ -254,8 +254,8 @@ export function program_bytes(
                                   { env: env });
 
             out.push(Buffer.from('exit ' + run.status + '\n'),
-                     ...stream_lines('out', run.stdout),
-                     ...stream_lines('err', run.stderr));
+                     ...streamLines('out', run.stdout),
+                     ...streamLines('err', run.stderr));
         }
     }
 
@@ -263,25 +263,25 @@ export function program_bytes(
 }
 
 /*
-record_program
+recordProgram
   A program transcript: BUILD/djinterp_fixture, a process a command line.
 */
-function record_program(
+function recordProgram(
     _build,
     _commit,
     _name
 )
 {
-    const { home, settings } = program_home(_name);
-    const bytes = program_bytes(_build, _name,
-                                readFileSync(join(TRANSCRIPTS, _name + '.in'),
-                                             'latin1'));
+    const { home, settings } = programHome(_name);
+    const bytes = programBytes(_build, _name,
+                               readFileSync(join(TRANSCRIPTS, _name + '.in'),
+                                            'latin1'));
 
-    write_transcript(_name, bytes, 'tools/djinterp_fixture_main.c',
-                     '--line LINE, a process a command line', _commit,
-                     ['home: ' + home, 'settings: ' + settings,
-                      'environment: HOME and XDG_CONFIG_HOME are the home; ' +
-                      'then as the input\'s env lines set it']);
+    writeTranscript(_name, bytes, 'tools/djinterp_fixture_main.c',
+                    '--line LINE, a process a command line', _commit,
+                    ['home: ' + home, 'settings: ' + settings,
+                     'environment: HOME and XDG_CONFIG_HOME are the home; ' +
+                     'then as the input\'s env lines set it']);
 
     return;
 }
@@ -314,11 +314,11 @@ function main(
     {
         if (name.startsWith('session_'))
         {
-            record_session(build, commit, name);
+            recordSession(build, commit, name);
         }
         else if (name.startsWith('program_'))
         {
-            record_program(build, commit, name);
+            recordProgram(build, commit, name);
         }
         else
         {

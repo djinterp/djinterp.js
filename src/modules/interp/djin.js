@@ -31,27 +31,27 @@ TABLE OF CONTENTS
 =================
 1.  Vocabulary
     1.  ABI, STATUS
-    2.  status_name
+    2.  statusName
 2.  The set
-    1.  set_init
+    1.  setInit
     2.  register
-    3.  set_count, set_at, set_find
-    4.  command_find
+    3.  setCount, setAt, setFind
+    4.  commandFind
 3.  As text
-    1.  write_list
-    2.  write_description
-    3.  write_frame
+    1.  writeList
+    2.  writeDescription
+    3.  writeFrame
 */
 
 import data from '../../../generated/option.js';
-import { format_real } from '../../text/real_format.js';
-import * as option_env from '../../option/option_env.js';
-import * as option_env_registry from '../../option/option_env_registry.js';
+import { formatReal } from '../../text/real_format.js';
+import * as optionEnv from '../../option/option_env.js';
+import * as optionEnvRegistry from '../../option/option_env_registry.js';
 
 const DEFAULT_ROOM = 96;
 const NAME_ROOM    = 128;
-const env_inner    = option_env.inner;
-const KIND         = option_env.KIND;
+const envInner     = optionEnv.inner;
+const KIND         = optionEnv.KIND;
 
 
 //==============================================================================
@@ -76,7 +76,7 @@ export const STATUS = Object.freeze({
  * @param {number} _status  the status.
  * @returns {string} the name.
  */
-export function status_name(
+export function statusName(
     _status
 )
 {
@@ -89,13 +89,13 @@ export function status_name(
 /**
  * A djin's record: the reference's struct dj_djin, less its size.
  *
- * @typedef {object} djin_record
+ * @typedef {object} DjinRecord
  * @property {string}  name      a lowercase word: a letter, then letters,
  *           digits and '_'.
  * @property {string}  version   one line, not empty.
  * @property {string}  summary   one line, not empty.
- * @property {?Array<djin_command>} [commands]  its commands.
- * @property {?option_env} [settings]  its settings: a frame named as the
+ * @property {?Array<DjinCommand>} [commands]  its commands.
+ * @property {?OptionEnv} [settings]  its settings: a frame named as the
  *           djin is.
  * @property {number}  [abi]     the ABI it was written to; the current
  *           one where left out.
@@ -104,7 +104,7 @@ export function status_name(
 /**
  * A djin's command: the reference's struct dj_djin_command, less its size.
  *
- * @typedef {object} djin_command
+ * @typedef {object} DjinCommand
  * @property {string}   name     a lowercase word: a letter, then letters,
  *           digits and '-'.
  * @property {string}   summary  one line, not empty.
@@ -117,7 +117,7 @@ export function status_name(
 // CHECKING A RECORD
 //==============================================================================
 
-function is_word(
+function isWord(
     _text,
     _extra
 )
@@ -145,7 +145,7 @@ function is_word(
     return true;
 }
 
-function is_line(
+function isLine(
     _text
 )
 {
@@ -156,15 +156,15 @@ function is_line(
 }
 
 /*
-text_of
+textOf
   A record's text as the reference holds it: up to a NUL; what is
 not a string is left as it is, to fail its check.
 */
-function text_of(
+function textOf(
     _text
 )
 {
-    return (typeof _text === 'string') ? env_inner.cstr(_text)
+    return (typeof _text === 'string') ? envInner.cstr(_text)
                                        : _text;
 }
 
@@ -179,21 +179,21 @@ function normal(
     return {
         record:   _djin,
         abi:      _djin.abi ?? ABI,
-        name:     text_of(_djin.name),
-        version:  text_of(_djin.version),
-        summary:  text_of(_djin.summary),
+        name:     textOf(_djin.name),
+        version:  textOf(_djin.version),
+        summary:  textOf(_djin.summary),
         commands: Array.isArray(_djin.commands)
                       ? _djin.commands.map((_command) => ({
                             command: _command,
-                            name:    text_of(_command?.name),
-                            summary: text_of(_command?.summary)
+                            name:    textOf(_command?.name),
+                            summary: textOf(_command?.summary)
                         }))
                       : (_djin.commands ?? []),
         settings: _djin.settings ?? null
     };
 }
 
-function commands_valid(
+function commandsValid(
     _djin
 )
 {
@@ -206,8 +206,8 @@ function commands_valid(
     {
         const command = _djin.commands[i];
 
-        if ( !is_word(command.name, '-') ||
-             !is_line(command.summary) )
+        if ( !isWord(command.name, '-') ||
+             !isLine(command.summary) )
         {
             return false;
         }
@@ -224,15 +224,15 @@ function commands_valid(
     return true;
 }
 
-function record_valid(
+function recordValid(
     _djin
 )
 {
-    return ( (_djin.abi === ABI)       &&
-             is_word(_djin.name, '_')  &&
-             is_line(_djin.version)    &&
-             is_line(_djin.summary)    &&
-             commands_valid(_djin)     &&
+    return ( (_djin.abi === ABI)      &&
+             isWord(_djin.name, '_')  &&
+             isLine(_djin.version)    &&
+             isLine(_djin.summary)    &&
+             commandsValid(_djin)     &&
              ( (_djin.settings === null) ||
                ( (_djin.settings.name !== null)      &&
                  (_djin.settings.name !== undefined) &&
@@ -245,9 +245,9 @@ function record_valid(
 //==============================================================================
 
 /**
- * A set of records. Made by `set_init`; read through the functions here.
+ * A set of records. Made by `setInit`; read through the functions here.
  *
- * @typedef {object} djin_set
+ * @typedef {object} DjinSet
  */
 
 // 2.1
@@ -257,13 +257,13 @@ function record_valid(
  * @param {object} [_options]  what the set is made over.
  * @param {number} [_options.capacity=Infinity]  the most records it
  *        takes.
- * @param {?option_env_registry} [_options.registry=null]  the registry a
+ * @param {?OptionEnvRegistry} [_options.registry=null]  the registry a
  *        record's settings are listed in.
  * @param {Array<string>} [_options.reserved=[]]  the names the program
  *        keeps for itself.
- * @returns {djin_set}
+ * @returns {DjinSet}
  */
-export function set_init(
+export function setInit(
     _options = {}
 )
 {
@@ -271,11 +271,11 @@ export function set_init(
         items:    [],
         capacity: _options.capacity ?? Infinity,
         registry: _options.registry ?? null,
-        reserved: (_options.reserved ?? []).map(text_of)
+        reserved: (_options.reserved ?? []).map(textOf)
     };
 }
 
-function register_settings(
+function registerSettings(
     _set,
     _djin
 )
@@ -290,20 +290,20 @@ function register_settings(
         return STATUS.SETTINGS;
     }
 
-    const present = option_env_registry.inner.find(_set.registry,
-                                                   _djin.name);
+    const present = optionEnvRegistry.inner.find(_set.registry,
+                                                 _djin.name);
 
     if (present !== null)
     {
         return (present === _djin.settings) ? STATUS.OK : STATUS.DUPLICATE;
     }
 
-    return option_env_registry.add(_set.registry, _djin.settings).is_ok
+    return optionEnvRegistry.add(_set.registry, _djin.settings).isOk
                ? STATUS.OK
                : STATUS.SETTINGS;
 }
 
-function find_normal(
+function findNormal(
     _set,
     _name
 )
@@ -324,8 +324,8 @@ function find_normal(
  * Takes a record into a set, and lists its settings in the set's
  * registry.
  *
- * @param {djin_set}    _set   the set.
- * @param {djin_record} _djin  the record; kept, and what `set_find` gives.
+ * @param {DjinSet}    _set   the set.
+ * @param {DjinRecord} _djin  the record; kept, and what `setFind` gives.
  * @returns {number} a STATUS: INVALID for a record that is not well
  *          formed; RESERVED for a name the program keeps; DUPLICATE for a
  *          name the set has, or whose settings' name another frame in the
@@ -348,7 +348,7 @@ export function register(
 
     const djin = normal(_djin);
 
-    if (!record_valid(djin))
+    if (!recordValid(djin))
     {
         return STATUS.INVALID;
     }
@@ -358,7 +358,7 @@ export function register(
         return STATUS.RESERVED;
     }
 
-    if (find_normal(_set, djin.name) !== null)
+    if (findNormal(_set, djin.name) !== null)
     {
         return STATUS.DUPLICATE;
     }
@@ -368,7 +368,7 @@ export function register(
         return STATUS.FULL;
     }
 
-    const status = register_settings(_set, djin);
+    const status = registerSettings(_set, djin);
 
     if (status !== STATUS.OK)
     {
@@ -384,10 +384,10 @@ export function register(
 /**
  * How many records a set has.
  *
- * @param {?djin_set} _set  the set.
+ * @param {?DjinSet} _set  the set.
  * @returns {number}
  */
-export function set_count(
+export function setCount(
     _set
 )
 {
@@ -397,11 +397,11 @@ export function set_count(
 /**
  * The record at a place, in the order they were taken.
  *
- * @param {?djin_set} _set    the set.
+ * @param {?DjinSet} _set    the set.
  * @param {number}    _index  the place, from 0.
- * @returns {?djin_record} the record; null past the last.
+ * @returns {?DjinRecord} the record; null past the last.
  */
-export function set_at(
+export function setAt(
     _set,
     _index
 )
@@ -415,11 +415,11 @@ export function set_at(
 /**
  * The record of a name.
  *
- * @param {?djin_set} _set   the set.
+ * @param {?DjinSet} _set   the set.
  * @param {string}    _name  the name.
- * @returns {?djin_record} the record; null for no such djin.
+ * @returns {?DjinRecord} the record; null for no such djin.
  */
-export function set_find(
+export function setFind(
     _set,
     _name
 )
@@ -430,7 +430,7 @@ export function set_find(
         return null;
     }
 
-    const found = find_normal(_set, _name);
+    const found = findNormal(_set, _name);
 
     return (found !== null) ? found.record : null;
 }
@@ -439,11 +439,11 @@ export function set_find(
 /**
  * A djin's command of a name.
  *
- * @param {?djin_record} _djin  the record.
+ * @param {?DjinRecord} _djin  the record.
  * @param {string}       _name  the command's name.
- * @returns {?djin_command} the command; null for no such command.
+ * @returns {?DjinCommand} the command; null for no such command.
  */
-export function command_find(
+export function commandFind(
     _djin,
     _name
 )
@@ -478,12 +478,12 @@ last, else spaces to its column's width and two more.
 function cell(
     _text,
     _width,
-    _is_last
+    _isLast
 )
 {
-    return _is_last ? (_text + '\n')
-                    : (_text +
-                       ' '.repeat(Math.max(_width - _text.length, 0) + 2));
+    return _isLast ? (_text + '\n')
+                   : (_text +
+                      ' '.repeat(Math.max(_width - _text.length, 0) + 2));
 }
 
 /*
@@ -502,10 +502,10 @@ function cut(
 }
 
 /*
-default_text
+defaultText
   A row's default as a description shows it.
 */
-function default_text(
+function defaultText(
     _decl
 )
 {
@@ -528,7 +528,7 @@ function default_text(
                        DEFAULT_ROOM);
 
         case KIND.REAL:
-            return cut(format_real(_decl.real),
+            return cut(formatReal(_decl.real),
                        DEFAULT_ROOM);
 
         case KIND.TEXT:
@@ -543,11 +543,11 @@ function default_text(
 }
 
 /*
-write_settings
+writeSettings
   A frame's own settings, a row each: full name, kind, default, knob and
 help, in columns. Nothing for a frame that declares none.
 */
-function write_settings(
+function writeSettings(
     _frame
 )
 {
@@ -564,8 +564,8 @@ function write_settings(
     {
         const cells = [
             cut(_frame.name + '.' + decl.name, NAME_ROOM),
-            option_env.kind_name(decl.kind),
-            default_text(decl),
+            optionEnv.kindName(decl.kind),
+            defaultText(decl),
             (decl.knob !== null) ? decl.knob : '-',
             (decl.help !== null) ? decl.help : ''
         ];
@@ -594,51 +594,51 @@ function write_settings(
     return '\nsettings\n' + out;
 }
 
-function list_inner(
+function listInner(
     _set
 )
 {
     const frames = (_set.registry !== null)
-                       ? option_env_registry.count(_set.registry)
+                       ? optionEnvRegistry.count(_set.registry)
                        : 0;
-    let   name_width    = 0;
-    let   version_width = 1;
-    let   out           = '';
+    let   nameWidth    = 0;
+    let   versionWidth = 1;
+    let   out          = '';
 
     for (const item of _set.items)
     {
-        name_width    = Math.max(name_width, item.name.length);
-        version_width = Math.max(version_width, item.version.length);
+        nameWidth    = Math.max(nameWidth, item.name.length);
+        versionWidth = Math.max(versionWidth, item.version.length);
     }
 
     for (let i = 0; i < frames; ++i)
     {
-        const frame = option_env_registry.at(_set.registry, i);
+        const frame = optionEnvRegistry.at(_set.registry, i);
 
-        name_width = Math.max(name_width,
-                              (frame.name !== null) ? frame.name.length : 0);
+        nameWidth = Math.max(nameWidth,
+                             (frame.name !== null) ? frame.name.length : 0);
     }
 
     for (const item of _set.items)
     {
-        out += cell(item.name, name_width, false) +
-               cell(item.version, version_width, false) +
+        out += cell(item.name, nameWidth, false) +
+               cell(item.version, versionWidth, false) +
                cell(item.summary, 0, true);
     }
 
     // a frame of settings with no record is listed after them
     for (let i = 0; i < frames; ++i)
     {
-        const frame = option_env_registry.at(_set.registry, i);
+        const frame = optionEnvRegistry.at(_set.registry, i);
 
         if ( (frame.name === null) ||
-             (find_normal(_set, frame.name) !== null) )
+             (findNormal(_set, frame.name) !== null) )
         {
             continue;
         }
 
-        out += cell(frame.name, name_width, false) +
-               cell('-', version_width, false) +
+        out += cell(frame.name, nameWidth, false) +
+               cell('-', versionWidth, false) +
                cell('settings only', 0, true);
     }
 
@@ -653,17 +653,17 @@ function list_inner(
  *
  * The reference writes to a sink and returns 0; this returns the text.
  *
- * @param {?djin_set} _set  the set.
+ * @param {?DjinSet} _set  the set.
  * @returns {?string} the text; null for no set.
  */
-export function write_list(
+export function writeList(
     _set
 )
 {
-    return (_set) ? list_inner(_set) : null;
+    return (_set) ? listInner(_set) : null;
 }
 
-function description_inner(
+function descriptionInner(
     _djin
 )
 {
@@ -689,7 +689,7 @@ function description_inner(
 
     if (_djin.settings !== null)
     {
-        out += write_settings(_djin.settings);
+        out += writeSettings(_djin.settings);
     }
 
     return out;
@@ -700,38 +700,38 @@ function description_inner(
  * A djin's description: its name and version, its summary, its commands,
  * and its settings with their kinds, defaults, knobs and help.
  *
- * @param {?djin_record} _djin  the record.
+ * @param {?DjinRecord} _djin  the record.
  * @returns {?string} the text; null for no record.
  */
-export function write_description(
+export function writeDescription(
     _djin
 )
 {
-    return (_djin) ? description_inner(normal(_djin)) : null;
+    return (_djin) ? descriptionInner(normal(_djin)) : null;
 }
 
-function frame_inner(
+function frameInner(
     _frame
 )
 {
     return cell(_frame.name, 0, true) + '  settings only\n' +
-           write_settings(_frame);
+           writeSettings(_frame);
 }
 
 // 3.3
 /**
  * The description of a frame of settings that has no record.
  *
- * @param {?option_env} _frame  the frame; one with a name.
+ * @param {?OptionEnv} _frame  the frame; one with a name.
  * @returns {?string} the text; null for no frame, or one with no name.
  */
-export function write_frame(
+export function writeFrame(
     _frame
 )
 {
     return ( (_frame) &&
              (_frame.name !== null) &&
-             (_frame.name !== undefined) ) ? frame_inner(_frame)
+             (_frame.name !== undefined) ) ? frameInner(_frame)
                                            : null;
 }
 
@@ -741,8 +741,8 @@ export function write_frame(
  */
 export const inner = Object.freeze({
     normal:      normal,
-    find:        find_normal,
-    list:        list_inner,
-    description: description_inner,
-    frame:       frame_inner
+    find:        findNormal,
+    list:        listInner,
+    description: descriptionInner,
+    frame:       frameInner
 });

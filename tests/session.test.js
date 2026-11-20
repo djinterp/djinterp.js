@@ -21,7 +21,7 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { test } from 'node:test';
 
 import { generated } from './support/fixture.js';
-import { run_session } from './support/session.js';
+import { runSession } from './support/session.js';
 
 const DIRECTORY = new URL('./transcripts/', import.meta.url);
 const NAMES     = readdirSync(DIRECTORY)
@@ -31,11 +31,11 @@ const NAMES     = readdirSync(DIRECTORY)
                       .sort();
 
 /*
-first_difference
+firstDifference
   Where two texts first differ, with the input line being answered: what a
 failure says, in place of two whole transcripts.
 */
-function first_difference(
+function firstDifference(
     _got,
     _want
 )
@@ -77,9 +77,9 @@ for (const name of NAMES)
                                 generated('option.json').reference + '\n'),
                   'recorded at the generated data\'s commit');
 
-        const got = run_session(read('.in'));
+        const got = runSession(read('.in'));
 
-        assert.equal(first_difference(got, read('.out')), null);
+        assert.equal(firstDifference(got, read('.out')), null);
         assert.equal(got.length, read('.out').length);
     });
 }

@@ -18,8 +18,8 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
 
-import { format_g, format_real } from '../../src/text/real_format.js';
-import { read_real } from '../../src/text/real_read.js';
+import { formatG, formatReal } from '../../src/text/real_format.js';
+import { readReal } from '../../src/text/real_read.js';
 
 const SWEEP = readFileSync(new URL('../../generated/reals.txt',
                                    import.meta.url), 'utf8')
@@ -28,10 +28,10 @@ const SWEEP = readFileSync(new URL('../../generated/reals.txt',
                   .map((_line) => _line.split(' '));
 
 /*
-double_of
+doubleOf
   The double whose bits are sixteen hexadecimal digits.
 */
-function double_of(
+function doubleOf(
     _hex
 )
 {
@@ -43,10 +43,10 @@ function double_of(
 }
 
 /*
-bits_of
+bitsOf
   A double's bits, as sixteen hexadecimal digits.
 */
-function bits_of(
+function bitsOf(
     _value
 )
 {
@@ -74,30 +74,30 @@ test('the table of JS_STYLE.md, section 5.3', () =>
 
     for (const [value, text] of table)
     {
-        assert.equal(format_real(value), text);
+        assert.equal(formatReal(value), text);
     }
 });
 
 test('what is not a finite number', () =>
 {
-    assert.equal(format_real(Infinity), 'inf');
-    assert.equal(format_real(-Infinity), '-inf');
-    assert.equal(format_real(NaN), 'nan');
-    assert.equal(format_real(-NaN), 'nan');
+    assert.equal(formatReal(Infinity), 'inf');
+    assert.equal(formatReal(-Infinity), '-inf');
+    assert.equal(formatReal(NaN), 'nan');
+    assert.equal(formatReal(-NaN), 'nan');
 });
 
 test('a precision of 0 is 1', () =>
 {
-    assert.equal(format_g(2.5, 0), '2');
-    assert.equal(format_g(3.5, 0), '4');
-    assert.equal(format_g(123456, 0), '1e+05');
+    assert.equal(formatG(2.5, 0), '2');
+    assert.equal(formatG(3.5, 0), '4');
+    assert.equal(formatG(123456, 0), '1e+05');
 });
 
 test('a misuse throws', () =>
 {
-    assert.throws(() => format_g('1', 17), TypeError);
-    assert.throws(() => format_g(1, -1), TypeError);
-    assert.throws(() => format_g(1, 1.5), TypeError);
+    assert.throws(() => formatG('1', 17), TypeError);
+    assert.throws(() => formatG(1, -1), TypeError);
+    assert.throws(() => formatG(1, 1.5), TypeError);
 });
 
 test('the sweep: "%.17g", "%.15g", "%.6g" and "%.1g" of every double', () =>
@@ -106,12 +106,12 @@ test('the sweep: "%.17g", "%.15g", "%.6g" and "%.1g" of every double', () =>
 
     for (const [hex, g17, g15, g6, g1] of SWEEP)
     {
-        const value = double_of(hex);
+        const value = doubleOf(hex);
 
-        assert.equal(format_g(value, 17), g17, hex + ' at 17');
-        assert.equal(format_g(value, 15), g15, hex + ' at 15');
-        assert.equal(format_g(value, 6), g6, hex + ' at 6');
-        assert.equal(format_g(value, 1), g1, hex + ' at 1');
+        assert.equal(formatG(value, 17), g17, hex + ' at 17');
+        assert.equal(formatG(value, 15), g15, hex + ' at 15');
+        assert.equal(formatG(value, 6), g6, hex + ' at 6');
+        assert.equal(formatG(value, 1), g1, hex + ' at 1');
     }
 });
 
@@ -119,10 +119,10 @@ test('the sweep, read back: each "%.17g" text gives its double', () =>
 {
     for (const [hex, g17] of SWEEP)
     {
-        const read = read_real(g17);
+        const read = readReal(g17);
 
         assert.equal(read.length, g17.length, g17);
         assert.equal(read.overflow, false, g17);
-        assert.equal(bits_of(read.value), hex, g17);
+        assert.equal(bitsOf(read.value), hex, g17);
     }
 });
