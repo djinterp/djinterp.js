@@ -32,12 +32,12 @@ export function load(_registry: optionEnvRegistry.OptionEnvRegistry, _script: st
  * as the reference passes it; a statement of the file that is refused is
  * said as a warning, `FILE:LINE: warning: MESSAGE`.
  *
- * @param {object} _program  the program
- *        (src/tools/djinterp/djinterp_commands.js): its `registry`,
- *        `name`, `environment` and `file` are read.
+ * @param {import('../djinterp/djinterp_commands.js').DjinterpProgram}
+ *        _program  the program: its `registry`, `name`, `environment` and
+ *        `file` are read.
  * @returns {string} the warnings, a line each.
  */
-export function start(_program: object): string;
+export function start(_program: import("../djinterp/djinterp_commands.js").DjinterpProgram): string;
 /**
  * What the kit says of a setting the command line gave and the registry
  * refused: the message of a usage error.
@@ -74,5 +74,25 @@ export function take(_registry: optionEnvRegistry.OptionEnvRegistry, _argv: Arra
         command: string | null;
         message: string;
     } | null;
+};
+/**
+ * A settings file as the program reads and writes it: a page's storage, a
+ * file kept in memory, or what a caller gives in their place.
+ */
+export type SettingsFile = {
+    /**
+     * what a warning calls it: `NAME:LINE:`.
+     */
+    name: string;
+    /**
+     * its text; null where it is not
+     * there yet. It may throw, and the program says so.
+     */
+    read: () => string | null;
+    /**
+     * makes its text that; it may
+     * throw, and the program says so.
+     */
+    write: (arg0: string) => void;
 };
 import * as optionEnvRegistry from '../../option/option_env_registry.js';

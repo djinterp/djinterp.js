@@ -11,7 +11,7 @@
 * path:      /tools/strict_modules.js
 * link(s):   TBA
 * author(s): Samuel 'teer' Neal-Blim                         created: 2026.11.17
-*                                                            revised: 2026.11.17
+*                                                            revised: 2026.11.18
 *******************************************************************************/
 
 // the modules held to the strict mode
@@ -25,5 +25,6 @@ export const STRICT = Object.freeze([
     'option/option_common.js',
     'text/cut.js',
     'text/real_format.js',
-    'text/real_read.js'
+    'text/real_read.js',
+    'tools/cli/cli_settings.js'
 ]);

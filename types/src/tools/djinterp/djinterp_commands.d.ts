@@ -6,8 +6,8 @@
  * @property {string} name  what it calls itself when it speaks.
  * @property {OptionEnvRegistry} registry  its settings.
  * @property {DjinSet} set  its djins.
- * @property {?object} file  the user's settings file
- *           (src/tools/cli/cli_settings.js), or null for none.
+ * @property {?import('../cli/cli_settings.js').SettingsFile} file  the
+ *           user's settings file, or null for none.
  * @property {*} environment  the environment, as `optionEnv.import`
  *           takes one.
  * @property {boolean} colour  whether what shows its console draws
@@ -107,10 +107,10 @@ export type DjinterpProgram = {
      */
     set: djin.DjinSet;
     /**
-     * the user's settings file
-     * (src/tools/cli/cli_settings.js), or null for none.
+     * the
+     * user's settings file, or null for none.
      */
-    file: object | null;
+    file: import("../cli/cli_settings.js").SettingsFile | null;
     /**
      * the environment, as `optionEnv.import`
      * takes one.

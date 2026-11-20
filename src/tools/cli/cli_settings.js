@@ -25,7 +25,7 @@
 * path:      /src/tools/cli/cli_settings.js
 * link(s):   TBA
 * author(s): Samuel 'teer' Neal-Blim                         created: 2026.11.15
-*                                                            revised: 2026.11.17
+*                                                            revised: 2026.11.18
 *******************************************************************************/
 
 /*
@@ -40,8 +40,8 @@ TABLE OF CONTENTS
 3.  A RUN'S SETTINGS
     ----------------
     1.  start
-    2.  take
-    3.  saidFor
+    2.  saidFor
+    3.  take
 */
 
 import { STATUS, resultStatus, statusName }
@@ -123,11 +123,28 @@ export function why(
 // 2.  THE USER'S FILE
 //==============================================================================
 
-/*
-nameAt
-  The name of the statement between two offsets of a script: what stands
-before its '=', less the space around it.
-*/
+/**
+ * A settings file as the program reads and writes it: a page's storage, a
+ * file kept in memory, or what a caller gives in their place.
+ *
+ * @typedef {object} SettingsFile
+ * @property {string} name  what a warning calls it: `NAME:LINE:`.
+ * @property {function(): ?string} read  its text; null where it is not
+ *           there yet. It may throw, and the program says so.
+ * @property {function(string): void} write  makes its text that; it may
+ *           throw, and the program says so.
+ */
+
+/**
+ * nameAt
+ *   The name of the statement between two offsets of a script: what
+ * stands before its '=', less the space around it.
+ *
+ * @param {string} _script  the script.
+ * @param {number} _at      where the statement begins.
+ * @param {number} _end     where it ends.
+ * @returns {string}
+ */
 function nameAt(
     _script,
     _at,
@@ -161,12 +178,16 @@ function nameAt(
     return _script.slice(from, to);
 }
 
-/*
-valueAt
-  The value of the statement between two offsets of a script: what follows
-its '=', less the space around it, cut to the kit's room; null for a
-statement with no '='.
-*/
+/**
+ * valueAt
+ *   The value of the statement between two offsets of a script: what
+ * follows its '=', less the space around it, cut to the kit's room.
+ *
+ * @param {string} _script  the script.
+ * @param {number} _at      where the statement begins.
+ * @param {number} _end     where it ends.
+ * @returns {?string} the value; null for a statement with no '='.
+ */
 function valueAt(
     _script,
     _at,
@@ -260,11 +281,14 @@ export function load(
 // 3.  A RUN'S SETTINGS
 //==============================================================================
 
-/*
-prefixOf
-  A program's own environment prefix: its name in upper case, '-' as '_',
-and a '_' after it; empty for no name.
-*/
+/**
+ * prefixOf
+ *   A program's own environment prefix: its name in upper case, '-' as
+ * '_', and a '_' after it.
+ *
+ * @param {?string} _name  the program's name.
+ * @returns {string} the prefix; empty for no name.
+ */
 function prefixOf(
     _name
 )
@@ -289,9 +313,9 @@ function prefixOf(
  * as the reference passes it; a statement of the file that is refused is
  * said as a warning, `FILE:LINE: warning: MESSAGE`.
  *
- * @param {object} _program  the program
- *        (src/tools/djinterp/djinterp_commands.js): its `registry`,
- *        `name`, `environment` and `file` are read.
+ * @param {import('../djinterp/djinterp_commands.js').DjinterpProgram}
+ *        _program  the program: its `registry`, `name`, `environment` and
+ *        `file` are read.
  * @returns {string} the warnings, a line each.
  */
 export function start(
@@ -316,36 +340,43 @@ export function start(
         return said;
     }
 
-    let text = null;
+    const file = _program.file;
+    let   text = null;
 
     try
     {
-        text = _program.file.read();
+        text = file.read();
     }
     catch (error)
     {
-        said += _program.name + ': warning: cannot read \'' +
-                _program.file.name + '\': ' +
-                String(error?.message ?? error) + '\n';
+        // what was thrown says why, by its message where it has one
+        const why = ( (typeof error === 'object') &&
+                      (error !== null)            &&
+                      ('message' in error) ) ? error.message : error;
+
+        said += _program.name + ': warning: cannot read \'' + file.name +
+                '\': ' + String(why) + '\n';
     }
 
     if (typeof text === 'string')
     {
         load(_program.registry, text, (_line, _why) =>
         {
-            said += _program.file.name + ':' + _line +
-                    ': warning: ' + _why + '\n';
+            said += file.name + ':' + _line + ': warning: ' + _why + '\n';
         });
     }
 
     return said;
 }
 
-/*
-shaped
-  Whether an argument has a setting's shape: "--set", or "--" and a name
-with a point in it.
-*/
+/**
+ * shaped
+ *   Whether an argument has a setting's shape: "--set", or "--" and a name
+ * with a point in it.
+ *
+ * @param {string} _argument  the argument.
+ * @returns {boolean}
+ */
 function shaped(
     _argument
 )
@@ -367,7 +398,7 @@ function shaped(
                     .includes('.');
 }
 
-// 3.3
+// 3.2
 /**
  * What the kit says of a setting the command line gave and the registry
  * refused: the message of a usage error.
@@ -426,7 +457,7 @@ export function saidFor(
                (equals >= 0) ? text.slice(equals + 1) : null);
 }
 
-// 3.2
+// 3.3
 /**
  * Takes the settings a command line gives, wherever they stand on it --
  * "--set NAME=VALUE", "--DJIN.NAME=VALUE", "--DJIN.NAME" and
@@ -461,7 +492,9 @@ export function take(
     {
         const argument = _argv[at];
         const first    = at;
-        let   taken    = { took: 0, at: at, result: null };
+
+        /** @type {{took: number, at: number, result: ?OptionResult}} */
+        let taken = { took: 0, at: at, result: null };
 
         if ( (at > 0) &&
              !ended   &&
@@ -480,7 +513,9 @@ export function take(
                 refused: {
                     command: command,
                     message: saidFor(_registry, _argv, first,
-                                     resultStatus(taken.result))
+                                     (taken.result === null)
+                                         ? STATUS.INVALID_ARGUMENT
+                                         : resultStatus(taken.result))
                 }
             };
         }

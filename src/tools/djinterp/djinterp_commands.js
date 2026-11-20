@@ -31,7 +31,7 @@
 * path:      /src/tools/djinterp/djinterp_commands.js
 * link(s):   TBA
 * author(s): Samuel 'teer' Neal-Blim                         created: 2026.11.15
-*                                                            revised: 2026.11.17
+*                                                            revised: 2026.11.18
 *******************************************************************************/
 
 /*
@@ -98,8 +98,8 @@ export const COMMANDS = Object.freeze(['list', 'describe', 'get', 'set']);
  * @property {string} name  what it calls itself when it speaks.
  * @property {OptionEnvRegistry} registry  its settings.
  * @property {DjinSet} set  its djins.
- * @property {?object} file  the user's settings file
- *           (src/tools/cli/cli_settings.js), or null for none.
+ * @property {?import('../cli/cli_settings.js').SettingsFile} file  the
+ *           user's settings file, or null for none.
  * @property {*} environment  the environment, as `optionEnv.import`
  *           takes one.
  * @property {boolean} colour  whether what shows its console draws

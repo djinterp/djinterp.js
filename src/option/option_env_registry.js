@@ -20,7 +20,7 @@
 * path:      /src/option/option_env_registry.js
 * link(s):   TBA
 * author(s): Samuel 'teer' Neal-Blim                         created: 2026.11.15
-*                                                            revised: 2026.11.17
+*                                                            revised: 2026.11.18
 *******************************************************************************/
 
 /*
@@ -28,8 +28,8 @@ TABLE OF CONTENTS
 =================
 1.  THE REGISTRY
     ------------
-    1.  registry
-    2.  init
+    1.  init
+    2.  registry
     3.  frame
     4.  add, remove
     5.  count, at, find, target
@@ -78,7 +78,7 @@ function isRegistry(
              (_registry[REGISTRY] === true) );
 }
 
-// 1.2
+// 1.1
 /**
  * A registry with no djins, its root frame named.
  *
@@ -115,7 +115,7 @@ export function init(
              registry: registry };
 }
 
-// 1.1
+// 1.2
 /**
  * The program's registry: one for the module, its root named "djinterp",
  * as the reference's is.

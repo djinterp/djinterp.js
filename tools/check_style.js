@@ -16,9 +16,10 @@
 *   A file's table of contents agrees with its body, as the C guide has
 * it: each section's name in capitals with a line of hyphens beneath it,
 * the name and number its divider has, and as many entries as the section
-* has markers (`// 1.1`). Under src/, two empty lines come before each
-* section's divider and nowhere else. A row of a table
-* in a `.md` file may pass 80 columns, since it cannot be broken.
+* has markers (`// 1.1`), each marker heading what its entry names
+* first. Under src/, two empty lines come before each section's divider
+* and nowhere else. A row of a table in a `.md` file may pass 80 columns,
+* since it cannot be broken.
 *   Generated files, recorded transcripts and the declarations in types/
 * are not people's, and are not checked. Exits 1 where anything is found,
 * having said where.
@@ -27,7 +28,7 @@
 * path:      /tools/check_style.js
 * link(s):   TBA
 * author(s): Samuel 'teer' Neal-Blim                         created: 2026.11.15
-*                                                            revised: 2026.11.17
+*                                                            revised: 2026.11.18
 *******************************************************************************/
 
 import { readFileSync, readdirSync, statSync } from 'node:fs';
@@ -251,6 +252,63 @@ for (const path of filesUnder(ROOT))
         {
             say(file, 0, 'the table of contents is not the body\'s ' +
                 'sections, in capitals, with their entries');
+        }
+
+        // each entry by its number, and the first name it lists
+        const named = new Map();
+        let   at    = 0;
+        let   count = 0;
+
+        for (const line of lines)
+        {
+            const section = /^(\d+)\.\s/.exec(line);
+            const entry   = /^    (\d+)\.\s+(\S+?),?(\s|$)/.exec(line);
+
+            if (section !== null)
+            {
+                at    = Number(section[1]);
+                count = 0;
+            }
+            else if (entry !== null)
+            {
+                named.set(at + '.' + (++count), entry[2]);
+            }
+        }
+
+        // a marker heads the first thing declared after it
+        const all = text.split('\n');
+
+        for (const [index, line] of all.entries())
+        {
+            const marker = /^\/\/ (\d+\.\d+)$/.exec(line);
+
+            if (marker === null)
+            {
+                continue;
+            }
+
+            let declared = null;
+
+            for (let next = index + 1;
+                 (next < all.length) && (declared === null);
+                 ++next)
+            {
+                const found =
+                    /^export (?:async )?(?:function|const|class) (\w+)/
+                        .exec(all[next]) ??
+                    /@typedef \{.*\} (\w+)$/.exec(all[next]);
+
+                // a word the language keeps is exported as the word
+                declared = (found === null) ? null
+                                            : found[1].replace(/_$/, '');
+            }
+
+            if (named.get(marker[1]) !== declared)
+            {
+                say(file, index + 1, 'marker ' + marker[1] + ' heads ' +
+                    declared + ', and its entry names ' +
+                    named.get(marker[1]));
+            }
         }
     }
 
