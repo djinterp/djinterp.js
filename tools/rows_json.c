@@ -9,6 +9,9 @@
 *                                statuses
 *     rows_json fixture COMMIT   the tools' fixture (fixture.h): frames, and
 *                                every member of each struct dj_option_env_var
+*     rows_json event   COMMIT   the event core's vocabulary: statuses,
+*                                verdicts, the reserved values, the hash's
+*                                constants, the queue's overflow policy
 *   Every name and message is asked of the reference's own functions. A
 * 64-bit integer is written as a decimal string, since a JSON number is a
 * double; a real as its "%.17g" text beside its bits in hexadecimal.
@@ -24,7 +27,8 @@
 #include <stdio.h>     // printf, fputs
 #include <string.h>    // strcmp
 // djinterp
-#include "djinterp/c/option/option_common.h"  // statuses
+#include "djinterp/c/event/event_dispatcher_common.h"  // the event core
+#include "djinterp/c/option/option_common.h"           // statuses
 #include "./fixture.h"                        // the fixture
 #include "./json_out.h"                       // json_string, json_rows
 
@@ -197,6 +201,71 @@ write_fixture(
     return;
 }
 
+// NAMED
+//   macro: an enumerator of the reference's as a JSON member: its name,
+// spelled here once, and the value the reference gives it.
+#define NAMED(_enumerator)                                                    \
+    printf("    {\"name\": \"%s\", \"value\": %d}", #_enumerator,           \
+           (int)(_enumerator))
+
+/*
+write_event
+  The event core's vocabulary.
+*/
+static void
+write_event(
+    const char* _commit
+)
+{
+    printf("{\n  \"reference\": \"%s\",\n", _commit);
+    fputs("  \"generated_by\": \"tools/rows_json.c event\",\n", stdout);
+    fputs("  \"statuses\": [\n", stdout);
+    NAMED(D_EVENT_OK);            fputs(",\n", stdout);
+    NAMED(D_EVENT_ERR_NULL);      fputs(",\n", stdout);
+    NAMED(D_EVENT_ERR_CAPACITY);  fputs(",\n", stdout);
+    NAMED(D_EVENT_ERR_ALLOC);     fputs(",\n", stdout);
+    NAMED(D_EVENT_ERR_NOT_FOUND); fputs(",\n", stdout);
+    NAMED(D_EVENT_ERR_KEY);       fputs(",\n", stdout);
+    NAMED(D_EVENT_ERR_STATE);     fputs("\n  ],\n", stdout);
+    fputs("  \"verdicts\": [\n", stdout);
+    NAMED(D_VERDICT_PASS);        fputs(",\n", stdout);
+    NAMED(D_VERDICT_CONSUME);     fputs("\n  ],\n", stdout);
+    printf("  \"handler_id_null\": \"%" PRIu64 "\",\n",
+           (uint64_t)D_HANDLER_ID_NULL);
+    printf("  \"key_none\": \"%" PRIu64 "\",\n", (uint64_t)D_EVENT_KEY_NONE);
+    printf("  \"fnv1a64_offset\": \"%" PRIu64 "\",\n",
+           (uint64_t)D_EVENT_FNV1A64_OFFSET);
+    printf("  \"fnv1a64_prime\": \"%" PRIu64 "\",\n",
+           (uint64_t)D_EVENT_FNV1A64_PRIME);
+    printf("  \"queue_overflow\": %d,\n", (int)D_EVENT_QUEUE_OVERFLOW);
+    printf("  \"queue_overflow_reject\": %d,\n",
+           (int)D_EVENT_QUEUE_OVERFLOW_REJECT);
+    printf("  \"queue_overflow_drop_oldest\": %d,\n",
+           (int)D_EVENT_QUEUE_OVERFLOW_DROP_OLDEST);
+    // keys the port's hash is checked against
+    fputs("  \"keys\": [", stdout);
+    {
+        static const char* const names[] =
+        {
+            "", "a", "set", "run", "snap", "outer", "inner", "click",
+            "djinterp", "a name with spaces", "caf\xC3\xA9",
+            "the quick brown fox jumps over the lazy dog"
+        };
+
+        for (size_t i = 0u; i < sizeof(names) / sizeof(names[0]); ++i)
+        {
+            fputs((i != 0u) ? ", " : "", stdout);
+            fputs("{\"name\": ", stdout);
+            json_string(names[i]);
+            printf(", \"key\": \"%" PRIu64 "\"}",
+                   (uint64_t)d_event_key_of_name(names[i]));
+        }
+    }
+    fputs("]\n}\n", stdout);
+
+    return;
+}
+
 int main(int argc, char** argv)
 {
     if ( (argc == 3) &&
@@ -215,7 +284,15 @@ int main(int argc, char** argv)
         return 0;
     }
 
-    fputs("usage: rows_json option|fixture COMMIT\n", stderr);
+    if ( (argc == 3) &&
+         (strcmp(argv[1], "event") == 0) )
+    {
+        write_event(argv[2]);
+
+        return 0;
+    }
+
+    fputs("usage: rows_json option|fixture|event COMMIT\n", stderr);
 
     return 2;
 }

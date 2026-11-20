@@ -1,0 +1,25 @@
+{
+  "reference": "d20c0b23",
+  "generated_by": "tools/rows_json.c event",
+  "statuses": [
+    {"name": "D_EVENT_OK", "value": 0},
+    {"name": "D_EVENT_ERR_NULL", "value": -1},
+    {"name": "D_EVENT_ERR_CAPACITY", "value": -2},
+    {"name": "D_EVENT_ERR_ALLOC", "value": -3},
+    {"name": "D_EVENT_ERR_NOT_FOUND", "value": -4},
+    {"name": "D_EVENT_ERR_KEY", "value": -5},
+    {"name": "D_EVENT_ERR_STATE", "value": -6}
+  ],
+  "verdicts": [
+    {"name": "D_VERDICT_PASS", "value": 0},
+    {"name": "D_VERDICT_CONSUME", "value": 1}
+  ],
+  "handler_id_null": "0",
+  "key_none": "0",
+  "fnv1a64_offset": "14695981039346656037",
+  "fnv1a64_prime": "1099511628211",
+  "queue_overflow": 0,
+  "queue_overflow_reject": 0,
+  "queue_overflow_drop_oldest": 1,
+  "keys": [{"name": "", "key": "14695981039346656037"}, {"name": "a", "key": "12638187200555641996"}, {"name": "set", "key": "9384242791558811171"}, {"name": "run", "key": "9922177756001819210"}, {"name": "snap", "key": "6367746932521457469"}, {"name": "outer", "key": "3523764787506715604"}, {"name": "inner", "key": "3263991042789642887"}, {"name": "click", "key": "10118785259804131855"}, {"name": "djinterp", "key": "13193027339310367721"}, {"name": "a name with spaces", "key": "154164949257990964"}, {"name": "café", "key": "5253592154431032713"}, {"name": "the quick brown fox jumps over the lazy dog", "key": "8360034000264797104"}]
+}
