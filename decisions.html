@@ -243,16 +243,16 @@
   <h1>Decisions for the owner</h1>
   <div class="meta">
     <span>Wednesday 2026-11-18</span>
-    <span><code>main</code> at <code>2686fe2</code>, following djinterp at <code>3eb096c9</code></span>
+    <span><code>main</code> at <code>ce65c16</code>, following djinterp at <code>6fe35d43</code></span>
     <span>nothing open; 31 ruled, each with all that was put for it</span>
   </div>
-  <p class="meta" style="margin-top:10px">This page replaces the one of 11-17, night. Every decision on that page was ruled, and so was every one before it: nothing is open. Below is every ruling you have made, each closed to a line: open one to see the question as it was put, every option with its advantages and disadvantages, the recommendation, the option you chose and where it stands now.</p>
+  <p class="meta" style="margin-top:10px">This page replaces the earlier one of 11-18. Every decision on that page was ruled, and so was every one before it: nothing is open. Below is every ruling you have made, each closed to a line: open one to see the question as it was put, every option with its advantages and disadvantages, the recommendation, the option you chose and where it stands now.</p>
   <p class="meta">Decisions now have one number across pages, as yours of the morning already did: the evening&rsquo;s 1 to 7 are D18 to D24, and each says so where it was put.</p>
 </header>
 
 <h2 id="standing">Where things stand</h2>
 <div class="standing">
-  <div class="cell"><div class="num">44 commits</div><div class="lbl">on <code>main</code>, nothing pushed (there is no remote), nothing uncommitted. You have them as a zip with the history.</div></div>
+  <div class="cell"><div class="num">47 commits</div><div class="lbl">on <code>main</code>, nothing pushed (there is no remote), nothing uncommitted. You have them as a zip with the history.</div></div>
   <div class="cell"><div class="num">Next</div><div class="lbl">The five functions past 100 lines, each given a reason or taken apart; then a terminal transcript for D27.</div></div>
   <div class="cell"><div class="num">29 of 31</div><div class="lbl">rulings built or in force. 99 tests and 16 transcripts pass; the type check, every module strict, and the style check have no finding.</div></div>
   <div class="cell"><div class="num">Waiting on you</div><div class="lbl">No decision. Relaying <code>docs/FOR_THE_LANES.md</code> (D15, D18). CI in djinterp&rsquo;s tree, for D14.</div></div>
@@ -278,6 +278,7 @@
 <h2 id="beyond">Done beyond the words of a ruling</h2>
 <p>Each of these follows from a ruling and was built with it. None needs a decision; they are here so nothing comes as a surprise.</p>
 <ul>
+  <li><b>D1 moved the port to the tree you attached on 11-18</b>, at <code>6fe35d43</code>, 17 commits on from <code>3eb096c9</code> (its working copy differs from its head only in line endings). Three things the reference does changed, and the port follows each. The option machine writes a real in the fewest of 15, 16 and 17 digits that read back (<code>0.1</code>, not <code>0.10000000000000001</code>; its log&rsquo;s decision 51), while a description&rsquo;s default and an origin&rsquo;s line still write <code>%.17g</code>; over the sweep&rsquo;s 6,711 distinct doubles, the reference&rsquo;s own driver and the port agree on every one. Layers end with the row&rsquo;s default, always counted, with the knob it came from, and <code>get --show-origin</code> reads up to 64 of them; its text is as before. The djin ABI is 2, which the port took from the generated data. The starting package&rsquo;s <code>bind</code> run, which printed the old real, was recorded again with a line saying why. 99 tests pass; fresh seeds agree (2,440 session lines, 3,030 command lines), as do the colour on a terminal and the version lines. The lanes&rsquo; findings all hold, and the port now copies all three of the program&rsquo;s.</li>
   <li><b>D24 is done: every module is strict.</b> The six modules left on 11-17 took the strict mode on 11-18, the option machine last, and every function inside a module has D25&rsquo;s comment: 134 took it today. Typing the shared records first did most of it: the frame&rsquo;s fields alone took 60 findings. Where the checker cannot see that a value is there, the code now tests the value itself rather than a flag; nothing a caller sees changed, and both fuzzers agree with the reference over new seeds. The list of strict modules is gone, since it would name every one: a new module is strict from its first line.</li>
   <li><b>The style check grew three checks</b> as the work found the need: each marker heads what its entry in the table names (it found two modules whose markers stood out of order), another module&rsquo;s type comes by <code>@import</code>, and a section numbered past 9 is written <code>10. NAME</code>, as the C guide has it.</li>
   <li><b>D28 moved everything that cited the style.</b> The guide took what only the old file held: the whole measured table of reals, the reader&rsquo;s every example, and a class among the braces. <code>JS_STYLE.md</code> keeps its sections on tests, generated data, and git and handing back word for word, as 1 to 3. The sources, tests and tools that cited its style sections cite the guide&rsquo;s.</li>
@@ -356,7 +357,7 @@
   <summary><span class="badge">D26</span><span class="title"><code>--version</code> at <code>-v</code>, in a page</span><span class="ruling" title="Your ruling">B</span><span class="state done">built, 11-17</span></summary>
   <div class="body">
   <div class="facts"><span><b>Put</b> 2026-11-17, on the page of that day</span><span><b>Ruled</b> 2026-11-17</span><span><b>Was to be decided by</b> before a page's console is shown to anyone, as D11 was</span><span><b>Affects</b> one command line; D11's model</span></div>
-  <div class="yours"><b class="lead">Your ruling: B.</b> <code>--version</code> at <code>-v</code> writes the reference's three lines with the port's own facts. <span class="statel"><b>State:</b> built, 2026.11.17: <code>program:</code> the address of <code>src/djinterp.js</code>; <code>kit: JavaScript, djinterp 3eb096c9, unbuilt</code>; any <code>-q</code> quiets them, as in the reference.</span></div>
+  <div class="yours"><b class="lead">Your ruling: B.</b> <code>--version</code> at <code>-v</code> writes the reference's three lines with the port's own facts. <span class="statel"><b>State:</b> built, 2026.11.17: <code>program:</code> the address of <code>src/djinterp.js</code>; <code>kit: JavaScript, djinterp 6fe35d43, unbuilt</code>; any <code>-q</code> quiets them, as in the reference.</span></div>
   <p>Every word the program takes is modelled (<a href="#r-d11">D11</a>) but one: <code>--version</code> with <code>-v</code>. <b>Measured</b> on the reference at <code>3eb096c9</code>, as at <code>dfc793c4</code>, it writes three lines:</p>
 <ul><li><code>djinterp 0.8.0-dev</code></li><li><code>program: /tmp/djinterp.js/build4/djinterp_fixture</code></li><li><code>kit: C99, GCC 13.3.0, Debug</code></li></ul>
 <p>The second and third are the file and the compiler of the reference's own build: a recording of them is a fact about the machine that recorded it. So the fuzzer keeps from <code>--version</code> with <code>-v</code>, and the port writes the version alone.</p>
@@ -512,7 +513,7 @@
   <summary><span class="badge">D1</span><span class="title">Which commit of djinterp the port follows (J12)</span><span class="ruling" title="Your ruling">the attached tree</span><span class="state done">in force</span></summary>
   <div class="body">
   <div class="facts"><span><b>Put</b> 2026-11-16, on the page of that morning</span><span><b>Ruled</b> 2026-11-16</span><span><b>Was to be decided by</b> before the next regeneration</span><span><b>Affects</b> every generated file and every transcript, which carry the commit's name</span></div>
-  <div class="yours"><b class="lead">Your ruling: the attached tree.</b> <span class="aside">Recommended was A.</span> The port follows the head of the tree you attach, moved there by <code>tools/regenerate.sh</code> as A has it. <span class="statel"><b>State:</b> in force: moved to <code>dfc793c4</code> on 2026.11.16 and to <code>3eb096c9</code> on 2026.11.17, the heads of the trees you attached. At each, nothing the port reads differed but the commit's name.</span></div>
+  <div class="yours"><b class="lead">Your ruling: the attached tree.</b> <span class="aside">Recommended was A.</span> The port follows the head of the tree you attach, moved there by <code>tools/regenerate.sh</code> as A has it. <span class="statel"><b>State:</b> in force: moved to <code>dfc793c4</code> on 2026.11.16, to <code>3eb096c9</code> on 2026.11.17 and to <code>6fe35d43</code> on 2026.11.18, the heads of the trees you attached. At the first two nothing the port reads differed but the commit's name; at the third, three things the reference does changed, and the port follows each.</span></div>
   <p>START names <code>2bb6b246</code>. The tree attached to this session is three commits on, at <code>d20c0b23</code>. The three commits change math and <code>ladder_known.txt</code> (159 files). <code>git diff</code> between the two is empty for <code>option</code>, <code>event</code>, <code>modules/interp</code>, the argument parser, <code>tools/cli</code> and <code>tools/djinterp</code>.</p>
   <p><b>Measured further:</b> <code>tools/regenerate.sh</code> builds the tools against a checkout, writes the generated data, and records every transcript. Run against each commit, it writes the same files byte for byte, apart from the commit's name and the date. The port's tests pass on both.</p>
   <div class="options">
@@ -955,7 +956,7 @@
   function buildText() {
     var lines = [];
     var open = [];
-    lines.push("djinterp.js's decisions of 2026-11-18 (main at 2686fe2, following djinterp at 3eb096c9): the owner's rulings");
+    lines.push("djinterp.js's decisions of 2026-11-18 (main at ce65c16, following djinterp at 6fe35d43): the owner's rulings");
     lines.push("");
     ORDER.forEach(function (n) {
       var num = TITLES[n].split(".")[0];
@@ -978,7 +979,7 @@
   }
 
   function buildJson() {
-    var out = { page: "djinterp.js decisions 2026-11-18", base: "2686fe2", reference: "3eb096c9", rulings: {} };
+    var out = { page: "djinterp.js decisions 2026-11-18", base: "ce65c16", reference: "6fe35d43", rulings: {} };
     ORDER.forEach(function (n) {
       out.rulings[n] = {
         title: TITLES[n],
