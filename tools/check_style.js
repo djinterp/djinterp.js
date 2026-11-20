@@ -5,8 +5,9 @@
 * repository's people write:
 *     node tools/check_style.js
 *   No line past 80 columns; no tab; no space at a line's end; no carriage
-* return; one line break at the file's end; and, in a `.js` file under
-* src/, tests/ or tools/, the banner's path is the file's own.
+* return; one line break at the file's end; and, in a file under src/,
+* tests/ or tools/, the banner's path is the file's own. A row of a table
+* in a `.md` file may pass 80 columns, since it cannot be broken.
 *   Generated files and recorded transcripts are not people's, and are not
 * checked. Exits 1 where anything is found, having said where.
 *
@@ -14,7 +15,7 @@
 * path:      /tools/check_style.js
 * link(s):   TBA
 * author(s): Samuel 'teer' Neal-Blim                         created: 2026.11.15
-*                                                            revised: 2026.11.15
+*                                                            revised: 2026.11.16
 *******************************************************************************/
 
 import { readFileSync, readdirSync, statSync } from 'node:fs';
@@ -99,7 +100,9 @@ for (const path of files_under(ROOT))
 
     for (const [index, line] of text.split('\n').entries())
     {
-        if ([...line].length > 80)
+        if ( ([...line].length > 80) &&
+             !( file.endsWith('.md') &&
+                line.startsWith('|') ) )
         {
             say(file, index + 1, 'is past 80 columns');
         }

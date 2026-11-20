@@ -10,14 +10,16 @@
 * for the lines after. Every choice follows from SEED, so the same SEED and
 * COUNT give the same file.
 *   It keeps to what the port has: none of the kit's own options or
-* commands, and no word near enough to a command's or an option's name for
-* the reference to add "did you mean" (HANDOFF.md, "what is not ported").
+* commands as they are (HANDOFF.md, "what is not ported"). Words that are
+* nearly their names it does give, and nearly the port's own commands',
+* since the reference's parser answers those with "did you mean" and the
+* port is to answer the same.
 *
 *
 * path:      /tools/fuzz_program.js
 * link(s):   TBA
 * author(s): Samuel 'teer' Neal-Blim                         created: 2026.11.15
-*                                                            revised: 2026.11.15
+*                                                            revised: 2026.11.16
 *******************************************************************************/
 
 let state = (Number(process.argv[2]) >>> 0) || 1;
