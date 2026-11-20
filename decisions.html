@@ -243,91 +243,61 @@
   <h1>Decisions for the owner</h1>
   <div class="meta">
     <span>Tuesday 2026-11-17</span>
-    <span><code>main</code> at <code>98d4180</code>, following djinterp at <code>3eb096c9</code></span>
-    <span>3 open decisions; 27 ruled, each with all that was put for it</span>
+    <span><code>main</code> at <code>a5dafba</code>, following djinterp at <code>3eb096c9</code></span>
+    <span>1 open decision; 30 ruled, each with all that was put for it</span>
   </div>
-  <p class="meta" style="margin-top:10px">This page replaces the one of 11-16, evening. Every decision on that page is ruled, and so is every one before it. Three are open, D25 to D27, which is what carrying out D11 and D24 left. Below them is every ruling you have made, each closed to a line: open one to see the question as it was put, every option with its advantages and disadvantages, the recommendation, the option you chose and where it stands now.</p>
+  <p class="meta" style="margin-top:10px">This page replaces the earlier one of 11-17. Every decision on that page is ruled, and so is every one before it. One is open, D28, which the style guide you asked for raises. Below it is every ruling you have made, each closed to a line: open one to see the question as it was put, every option with its advantages and disadvantages, the recommendation, the option you chose and where it stands now.</p>
   <p class="meta">Decisions now have one number across pages, as yours of the morning already did: the evening&rsquo;s 1 to 7 are D18 to D24, and each says so where it was put.</p>
 </header>
 
 <h2 id="standing">Where things stand</h2>
 <div class="standing">
-  <div class="cell"><div class="num">25 commits</div><div class="lbl">on <code>main</code>, nothing pushed (there is no remote), nothing uncommitted. You have them as a zip with the history.</div></div>
-  <div class="cell"><div class="num">Next</div><div class="lbl">D24&rsquo;s second tranche: the strict mode for the nine modules left, once D25 says the form of their comments.</div></div>
-  <div class="cell"><div class="num">24 of 27</div><div class="lbl">rulings built or in force. 97 tests and 16 transcripts pass; the type check has no finding.</div></div>
-  <div class="cell"><div class="num">Waiting on you</div><div class="lbl">D25, before the strict mode goes on. Relaying <code>docs/FOR_THE_LANES.md</code> (D15, D18). CI in djinterp&rsquo;s tree, for D14.</div></div>
+  <div class="cell"><div class="num">34 commits</div><div class="lbl">on <code>main</code>, nothing pushed (there is no remote), nothing uncommitted. You have them as a zip with the history.</div></div>
+  <div class="cell"><div class="num">Next</div><div class="lbl">D24&rsquo;s second tranche goes on: the option machine and its registry, djin, the commands, the cli settings and the interface, 478 findings, 256 of them in <code>option_env.js</code>.</div></div>
+  <div class="cell"><div class="num">27 of 30</div><div class="lbl">rulings built or in force. 99 tests and 16 transcripts pass; the type check and the style check have no finding.</div></div>
+  <div class="cell"><div class="num">Waiting on you</div><div class="lbl">D28. Relaying <code>docs/FOR_THE_LANES.md</code> (D15, D18). CI in djinterp&rsquo;s tree, for D14.</div></div>
 </div>
 
 <h2 id="index">Open</h2>
 <table class="index">
   <thead><tr><th>#</th><th>Decision</th><th>Decide by</th><th>Recommended</th><th>Your ruling</th></tr></thead>
   <tbody>
-    <tr><td><a href="#d25">D25</a></td><td><a href="#d25">An inner function's comment, under the strict mode</a> <span class="flag new">New</span></td><td>before the strict mode reaches the next module (D24)</td><td>B</td><td class="ruling none" data-for="d25">&mdash;</td></tr>
-    <tr><td><a href="#d26">D26</a></td><td><a href="#d26"><code>--version</code> at <code>-v</code>, in a page</a> <span class="flag new">New</span></td><td>before a page's console is shown to anyone, as D11 was</td><td>B</td><td class="ruling none" data-for="d26">&mdash;</td></tr>
-    <tr><td><a href="#d27">D27</a></td><td><a href="#d27">Colour in a page: what <code>--color=auto</code> means</a> <span class="flag new">New</span></td><td>before a page's console shows colour</td><td>B</td><td class="ruling none" data-for="d27">&mdash;</td></tr>
+    <tr><td><a href="#d28">D28</a></td><td><a href="#d28">Which file is djinterp.js&rsquo;s style: <code>JS_STYLE.md</code> or the guide</a> <span class="flag new">New</span></td><td>before the style next changes</td><td>B</td><td class="ruling none" data-for="d28">&mdash;</td></tr>
   </tbody>
 </table>
 
 <div class="toolbar" id="toolbar">
-  <span class="count" id="count">0 of 3 rulings chosen</span>
+  <span class="count" id="count">0 of 1 rulings chosen</span>
   <button type="button" id="agreeAll">Agree with every recommendation</button>
   <button type="button" id="clearAll">Clear</button>
   <button type="button" class="primary" id="toExport">Copy rulings &darr;</button>
 </div>
 
-<section class="decision" id="d25">
-  <header><span class="badge">D25</span><h3>An inner function's comment, under the strict mode <span class="flag new">New</span></h3></header>
-  <div class="facts"><span><b>Decide by</b> before the strict mode reaches the next module (D24)</span><span><b>Affects</b> the 72 comments of functions inside the nine modules left; <code>docs/JS_STYLE.md</code></span></div>
-  <p>You ruled <a href="#r-d24">D24</a> B: the strict mode brought in a module at a time, &ldquo;with a type on every function's parameters&rdquo;. The checker reads a type only from a JSDoc comment (<code>/** */</code>) or from one written beside a parameter. <code>JS_STYLE.md</code> gives a function inside a module the C guide's plain comment: <code>/*</code>, the function's name on its own line, then what it does, with no types. Only an exported function has JSDoc.</p>
-<p>The first tranche turned three inner comments into JSDoc in an exported function's form, and the name line went (<code>digitsOf</code>, <code>bitLength</code>, <code>widest</code>). Before the other 72 follow, in nine modules, the form is yours: it is a ruling on the house style as much as on checking.</p>
-  <fieldset><legend>Decision D25</legend>
+<section class="decision" id="d28">
+  <header><span class="badge">D28</span><h3>Which file is djinterp.js&rsquo;s style: <code>JS_STYLE.md</code> or the guide <span class="flag new">New</span></h3></header>
+  <div class="facts"><span><b>Decide by</b> before the style next changes</span><span><b>Affects</b> <code>docs/JS_STYLE.md</code>; <code>docs/style_guidelines_js.html</code>; JS3</span></div>
+  <p>You asked on 11-17 for a JavaScript counterpart of djinterp&rsquo;s two style guides. It is at <code>docs/style_guidelines_js.html</code>: their order and form, section for section, each rule marked ruled, checked or recommended, the port&rsquo;s practice as measured, and where the code is not yet the guide. It carries every rule of <code>docs/JS_STYLE.md</code>, which JS3 made djinterp.js&rsquo;s file of style, changed only through you.</p>
+<p>So two files now say the same rules. Until you rule, <code>JS_STYLE.md</code> governs wherever they differ, and the guide says so at its top.</p>
+  <fieldset><legend>Decision D28</legend>
   <div class="options">
     <div class="opt head"><div></div><div>Option</div><div>Advantages</div><div>Disadvantages</div></div>
-    <label class="opt"><span class="pick"><input type="radio" name="d25" value="A"></span><span class="name">A. JSDoc as an exported function has it: what it does, then <code>@param</code> and <code>@returns</code>; the name line goes (ran)</span><span>One form for every function. Every parameter and every return is declared and checked. Editors show it on hover.</span><span>The C guide's mark of an inner function, its name heading its comment, is lost: an inner function's comment reads as an exported one's, less its section number.</span></label>
-    <label class="opt rec" data-rec="1"><span class="pick"><input type="radio" name="d25" value="B"></span><span class="name">B. JSDoc that keeps the C guide's form: the name on its own line first, then what it does, then <code>@param</code> and <code>@returns</code><br><span class="tag">Recommended</span></span><span>Everything A checks, and the house form kept: a reader tells an inner function from an exported one at a glance, as in the C. Editors show it.</span><span>The name is written twice, in the comment and on the line below it, as the C guide already has it. An editor shows the name as the description's first line.</span></label>
-    <label class="opt"><span class="pick"><input type="radio" name="d25" value="C"></span><span class="name">C. The plain comment kept, and a type beside each parameter (<code>/** @type {number} */ _value</code>), one a line as parameters already are</span><span>The comments stay exactly as they are.</span><span>What a function returns is only inferred, never declared, so it is never checked against a claim. A type on each parameter's line pushes long ones past 80 columns. Editors show no description.</span></label>
+    <label class="opt"><span class="pick"><input type="radio" name="d28" value="A"></span><span class="name">A. <code>JS_STYLE.md</code> stays the file; the guide follows it, changed with it</span><span>Nothing moves; JS3 stands as it was settled.</span><span>Two files to keep in step by hand. The counterpart of the C and C++ guides is second to a shorter note.</span></label>
+    <label class="opt rec" data-rec="1"><span class="pick"><input type="radio" name="d28" value="B"></span><span class="name">B. The guide becomes the file of style, and JS3 moves to it; <code>JS_STYLE.md</code> keeps what is not style (tests, generated data, git and handing back) and points to it<br><span class="tag">Recommended</span></span><span>One place for each rule. The port&rsquo;s style is in the form and the place of djinterp&rsquo;s own two.</span><span><code>JS_STYLE.md</code>, the file the first agent was given, changes shape. The guide is HTML, edited by hand.</span></label>
+    <label class="opt"><span class="pick"><input type="radio" name="d28" value="C"></span><span class="name">C. B, with the guide written in Markdown (<code>docs/style_guide_js.md</code>, as djinterp&rsquo;s are) and the page generated from it</span><span>The same format as the other two guides; a change reads as prose in a diff.</span><span>A Markdown renderer written for one page, since the port takes no package; a generated page kept beside its source.</span></label>
   </div></fieldset>
-  <div class="recommend"><b class="lead">Recommendation: B.</b> It checks as much as A, and it keeps the one thing the house form says about a function inside a module. C would leave every return unchecked, which is where the strict mode's first tranche found its real mismatches.</div>
-  <div class="note-row"><label for="n-d25">Note</label><textarea class="note" id="n-d25" data-for="d25" placeholder="Optional"></textarea></div>
-</section>
-
-<section class="decision" id="d26">
-  <header><span class="badge">D26</span><h3><code>--version</code> at <code>-v</code>, in a page <span class="flag new">New</span></h3></header>
-  <div class="facts"><span><b>Decide by</b> before a page's console is shown to anyone, as D11 was</span><span><b>Affects</b> one command line; D11's model</span></div>
-  <p>Every word the program takes is modelled (<a href="#r-d11">D11</a>) but one: <code>--version</code> with <code>-v</code>. <b>Measured</b> on the reference at <code>3eb096c9</code>, as at <code>dfc793c4</code>, it writes three lines:</p>
-<ul><li><code>djinterp 0.8.0-dev</code></li><li><code>program: /tmp/djinterp.js/build4/djinterp_fixture</code></li><li><code>kit: C99, GCC 13.3.0, Debug</code></li></ul>
-<p>The second and third are the file and the compiler of the reference's own build: a recording of them is a fact about the machine that recorded it. So the fuzzer keeps from <code>--version</code> with <code>-v</code>, and the port writes the version alone.</p>
-  <fieldset><legend>Decision D26</legend>
-  <div class="options">
-    <div class="opt head"><div></div><div>Option</div><div>Advantages</div><div>Disadvantages</div></div>
-    <label class="opt"><span class="pick"><input type="radio" name="d26" value="A"></span><span class="name">A. The version alone; <code>-v</code> changes nothing (ran)</span><span>Nothing false is said.</span><span>Says less than the reference, and nothing a report about the port needs: not that it is the port, nor which djinterp it follows.</span></label>
-    <label class="opt rec" data-rec="1"><span class="pick"><input type="radio" name="d26" value="B"></span><span class="name">B. The reference's three lines with the port's own facts: <code>program:</code> the address of the port's module; <code>kit:</code> the language, the commit of djinterp the port follows, and that it is unbuilt<br><span class="tag">Recommended</span></span><span>The reference's form, and every line true of what is running. The commit followed is what a report about the port most needs. Nothing is read from a global: a module knows its own address.</span><span>Wording after <code>kit:</code> that the reference never writes, so no transcript can hold it; a test must.</span></label>
-    <label class="opt"><span class="pick"><input type="radio" name="d26" value="C"></span><span class="name">C. B, and the engine (a browser, or node, and its version) where the page hands it to <code>open</code></span><span>Everything a report needs, the engine included.</span><span>One more thing for <code>open</code> to take, for one line of one command. A page that doesn't hand it in gets B.</span></label>
-    <label class="opt"><span class="pick"><input type="radio" name="d26" value="D"></span><span class="name">D. The reference's own three lines, recorded</span><span>Byte for byte the reference.</span><span>Names a file on the machine that recorded it, and a compiler that compiled nothing in the page: false wherever it is shown.</span></label>
-  </div></fieldset>
-  <div class="recommend"><b class="lead">Recommendation: B.</b> The reference's <code>-v</code> answers &ldquo;what exactly is running&rdquo;, and B answers it truly for the port. C can be added later without changing a line of B; D is the one option that says something false.</div>
-  <div class="note-row"><label for="n-d26">Note</label><textarea class="note" id="n-d26" data-for="d26" placeholder="Optional"></textarea></div>
-</section>
-
-<section class="decision" id="d27">
-  <header><span class="badge">D27</span><h3>Colour in a page: what <code>--color=auto</code> means <span class="flag new">New</span></h3></header>
-  <div class="facts"><span><b>Decide by</b> before a page's console shows colour</span><span><b>Affects</b> what <code>--color=auto</code> means in the port; <code>open</code>; <code>examples/console.html</code></span></div>
-  <p>The reference colours its diagnostics as <code>--color</code> says: <code>always</code>, <code>never</code>, or <code>auto</code> (the default), which is colour where what it writes to is a terminal. The port is never a terminal, so <code>auto</code> is no colour, and <code>--color=always</code> writes the reference's escape sequences byte for byte. <code>examples/console.html</code> shows them as text (<code>[1m</code>).</p>
-<p><b>Measured:</b> 100,000 fuzzed command lines, <code>--color</code> among them, agree with the reference with its output not a terminal.</p>
-  <fieldset><legend>Decision D27</legend>
-  <div class="options">
-    <div class="opt head"><div></div><div>Option</div><div>Advantages</div><div>Disadvantages</div></div>
-    <label class="opt"><span class="pick"><input type="radio" name="d27" value="A"></span><span class="name">A. As now: <code>auto</code> is no colour; <code>always</code> writes the escapes, which a page shows as text (ran)</span><span>Byte for byte the reference off a terminal. Nothing to build.</span><span>A page's console can never show colour, and one that asks for it gets noise.</span></label>
-    <label class="opt rec" data-rec="1"><span class="pick"><input type="radio" name="d27" value="B"></span><span class="name">B. A page says whether what shows its console draws colour: <code>open({ colour: true })</code> makes <code>auto</code> colour, as on a terminal; the escapes stay the reference's, and <code>examples/console.html</code> draws them<br><span class="tag">Recommended</span></span><span><code>auto</code> means what it means natively: colour where colour can be shown. A reply stays the reference's bytes, so every transcript still holds. A page that doesn't ask is unchanged.</span><span>One more thing for <code>open</code> to take. The example page needs a small reader of the reference's five escape sequences.</span></label>
-    <label class="opt"><span class="pick"><input type="radio" name="d27" value="C"></span><span class="name">C. Colour as structure: a reply's <code>err</code> also as a list of what was said and its kind</span><span>A page styles a diagnostic as it likes, with no escapes.</span><span>A second form of every reply, which is the reference's in neither place. The kinds are already in the text's own words (<code>error:</code>, <code>warning:</code>, <code>note:</code>).</span></label>
-  </div></fieldset>
-  <div class="recommend"><b class="lead">Recommendation: B.</b> The question <code>auto</code> asks is whether colour can be shown, and in a page only the page knows. B lets it say so, and changes no byte the reference writes.</div>
-  <div class="note-row"><label for="n-d27">Note</label><textarea class="note" id="n-d27" data-for="d27" placeholder="Optional"></textarea></div>
+  <div class="recommend"><b class="lead">Recommendation: B.</b> You asked for the counterpart of the guides that govern djinterp&rsquo;s C and C++; B makes it govern the port&rsquo;s JavaScript the same way, with one source for each rule. C is B in djinterp&rsquo;s own format, at the price of a renderer the port would otherwise never need.</div>
+  <div class="note-row"><label for="n-d28">Note</label><textarea class="note" id="n-d28" data-for="d28" placeholder="Optional"></textarea></div>
 </section>
 
 <h2 id="beyond">Done beyond the words of a ruling</h2>
-<p>Each of these follows from a ruling of 11-16 and was built with it. None needs a decision; they are here so nothing comes as a surprise.</p>
+<p>Each of these follows from a ruling and was built with it. None needs a decision; they are here so nothing comes as a surprise.</p>
 <ul>
+  <li><b>D27 was measured on the reference itself, on a terminal.</b> Run under a pseudo-terminal, it colours on <code>always</code> and not on <code>never</code>; <code>auto</code>, no word, and a word that is none of the three fall back to the terminal; and what is said before a line&rsquo;s options are read (a refused setting, the settings file&rsquo;s warnings, with the file and line bold) is coloured whatever the line&rsquo;s <code>--color</code> says. Only the error stream is coloured. The port with colour on agreed byte for byte on 400 lines: 30 chosen, 9 over a settings file with warnings, and 361 of the fuzzer&rsquo;s, 289 of them coloured. The page&rsquo;s own diagnostics, the query&rsquo;s warnings and an unclosed quote, are coloured the same way.</li>
+  <li><b>D26&rsquo;s lines cannot be recorded</b>, since they differ from the reference&rsquo;s by design: a test holds them, and the fuzzer still keeps <code>--version</code> from <code>-v</code>.</li>
+  <li><b>D25 is checked.</b> <code>tools/check_style.js</code> holds every function inside a strict module to the form. The strict modules are listed once, in <code>tools/strict_modules.js</code>, which both checks read.</li>
+  <li><b>The style guide&rsquo;s checkable rules are checked.</b> A table of contents agrees with its body, in the C guide&rsquo;s form, which the 15 tables took; two empty lines come before each section&rsquo;s divider and nowhere else; a banner&rsquo;s title and dates end on column 80 and it has all five fields. The example page&rsquo;s banner ended on 77 and had two fields missing.</li>
+  <li><b>D24&rsquo;s second tranche began with the event modules</b>, all six: the table and the queue now name their fields in their types, which took 34 findings at once.</li>
+  <li><b>The reals&rsquo; sweep holds exact ties</b> at 17, 15 and 6 digits, which the C library writes with the even digit. The port&rsquo;s writer already did; now the sweep proves it.</li>
   <li><b>D11&rsquo;s model reached five rules the source alone did not make plain.</b> The fuzzer was taught each of the kit&rsquo;s words before the model had it, and found, in turn: a <code>--color</code> word that is none of the three is refused before any work; a word taken after <code>--</code> gets no option&rsquo;s suggestion; <code>help</code> takes two words, though it has help for one; a version asked for after a misplaced command is still given; and more than one command may be misplaced, the one named being the first as the program lists its commands. Each is in the transcript <code>program_kit</code>.</li>
   <li><b>D19&rsquo;s help is right for any page.</b> The reference&rsquo;s help names its commands and options and never a setting, so the text recorded from the fixture&rsquo;s program is the text for every page. Checked: no setting of the fixture appears in any of it.</li>
   <li><b>D23 reached two cuts beside <code>get</code>&rsquo;s:</b> <code>describe</code>&rsquo;s shortened help and the kit&rsquo;s <code>why</code>, which says what a setting refused.</li>
@@ -353,8 +323,63 @@
   <button type="button" class="filter" data-show="all" aria-pressed="true">All</button>
   <button type="button" class="filter" data-show="todo" aria-pressed="false">To do</button>
   <button type="button" class="filter" data-show="done" aria-pressed="false">Built or in force</button>
-  <span class="count" id="ruledCount">27 shown</span>
+  <span class="count" id="ruledCount">30 shown</span>
 </div>
+
+<h3 class="group" id="ruled-1117">Ruled on 2026-11-17 &middot; put on the page of that day (3)</h3>
+<details class="ruled" id="r-d25" data-state="done">
+  <summary><span class="badge">D25</span><span class="title">An inner function's comment, under the strict mode</span><span class="ruling" title="Your ruling">B</span><span class="state done">built, 11-17</span></summary>
+  <div class="body">
+  <div class="facts"><span><b>Put</b> 2026-11-17, on the page of that day</span><span><b>Ruled</b> 2026-11-17</span><span><b>Was to be decided by</b> before the strict mode reaches the next module (D24)</span><span><b>Affects</b> the 72 comments of functions inside the nine modules left; <code>docs/JS_STYLE.md</code></span></div>
+  <div class="yours"><b class="lead">Your ruling: B.</b> A function inside a module has JSDoc in the C guide's form: its name on its own line first, then what it does, then <code>@param</code> and <code>@returns</code>. <span class="statel"><b>State:</b> built, 2026.11.17: in <code>docs/JS_STYLE.md</code> and the style guide, and held by <code>tools/check_style.js</code> in every strict module; the event table's ten have it.</span></div>
+  <p>You ruled <a href="#r-d24">D24</a> B: the strict mode brought in a module at a time, &ldquo;with a type on every function's parameters&rdquo;. The checker reads a type only from a JSDoc comment (<code>/** */</code>) or from one written beside a parameter. <code>JS_STYLE.md</code> gives a function inside a module the C guide's plain comment: <code>/*</code>, the function's name on its own line, then what it does, with no types. Only an exported function has JSDoc.</p>
+<p>The first tranche turned three inner comments into JSDoc in an exported function's form, and the name line went (<code>digitsOf</code>, <code>bitLength</code>, <code>widest</code>). Before the other 72 follow, in nine modules, the form is yours: it is a ruling on the house style as much as on checking.</p>
+  <div class="options">
+    <div class="opt head"><div></div><div>Option</div><div>Advantages</div><div>Disadvantages</div></div>
+    <div class="opt"><span class="pick"></span><span class="name">A. JSDoc as an exported function has it: what it does, then <code>@param</code> and <code>@returns</code>; the name line goes (ran)</span><span>One form for every function. Every parameter and every return is declared and checked. Editors show it on hover.</span><span>The C guide's mark of an inner function, its name heading its comment, is lost: an inner function's comment reads as an exported one's, less its section number.</span></div>
+    <div class="opt rec ruled"><span class="pick" aria-label="ruled">&#10003;</span><span class="name">B. JSDoc that keeps the C guide's form: the name on its own line first, then what it does, then <code>@param</code> and <code>@returns</code><span class="tags"><span class="tag ruled">Ruled</span><span class="tag">Recommended</span></span></span><span>Everything A checks, and the house form kept: a reader tells an inner function from an exported one at a glance, as in the C. Editors show it.</span><span>The name is written twice, in the comment and on the line below it, as the C guide already has it. An editor shows the name as the description's first line.</span></div>
+    <div class="opt"><span class="pick"></span><span class="name">C. The plain comment kept, and a type beside each parameter (<code>/** @type {number} */ _value</code>), one a line as parameters already are</span><span>The comments stay exactly as they are.</span><span>What a function returns is only inferred, never declared, so it is never checked against a claim. A type on each parameter's line pushes long ones past 80 columns. Editors show no description.</span></div>
+  </div>
+  <div class="recommend"><b class="lead">Recommendation: B.</b> It checks as much as A, and it keeps the one thing the house form says about a function inside a module. C would leave every return unchecked, which is where the strict mode's first tranche found its real mismatches.</div>
+  
+  </div>
+</details>
+<details class="ruled" id="r-d26" data-state="done">
+  <summary><span class="badge">D26</span><span class="title"><code>--version</code> at <code>-v</code>, in a page</span><span class="ruling" title="Your ruling">B</span><span class="state done">built, 11-17</span></summary>
+  <div class="body">
+  <div class="facts"><span><b>Put</b> 2026-11-17, on the page of that day</span><span><b>Ruled</b> 2026-11-17</span><span><b>Was to be decided by</b> before a page's console is shown to anyone, as D11 was</span><span><b>Affects</b> one command line; D11's model</span></div>
+  <div class="yours"><b class="lead">Your ruling: B.</b> <code>--version</code> at <code>-v</code> writes the reference's three lines with the port's own facts. <span class="statel"><b>State:</b> built, 2026.11.17: <code>program:</code> the address of <code>src/djinterp.js</code>; <code>kit: JavaScript, djinterp 3eb096c9, unbuilt</code>; any <code>-q</code> quiets them, as in the reference.</span></div>
+  <p>Every word the program takes is modelled (<a href="#r-d11">D11</a>) but one: <code>--version</code> with <code>-v</code>. <b>Measured</b> on the reference at <code>3eb096c9</code>, as at <code>dfc793c4</code>, it writes three lines:</p>
+<ul><li><code>djinterp 0.8.0-dev</code></li><li><code>program: /tmp/djinterp.js/build4/djinterp_fixture</code></li><li><code>kit: C99, GCC 13.3.0, Debug</code></li></ul>
+<p>The second and third are the file and the compiler of the reference's own build: a recording of them is a fact about the machine that recorded it. So the fuzzer keeps from <code>--version</code> with <code>-v</code>, and the port writes the version alone.</p>
+  <div class="options">
+    <div class="opt head"><div></div><div>Option</div><div>Advantages</div><div>Disadvantages</div></div>
+    <div class="opt"><span class="pick"></span><span class="name">A. The version alone; <code>-v</code> changes nothing (ran)</span><span>Nothing false is said.</span><span>Says less than the reference, and nothing a report about the port needs: not that it is the port, nor which djinterp it follows.</span></div>
+    <div class="opt rec ruled"><span class="pick" aria-label="ruled">&#10003;</span><span class="name">B. The reference's three lines with the port's own facts: <code>program:</code> the address of the port's module; <code>kit:</code> the language, the commit of djinterp the port follows, and that it is unbuilt<span class="tags"><span class="tag ruled">Ruled</span><span class="tag">Recommended</span></span></span><span>The reference's form, and every line true of what is running. The commit followed is what a report about the port most needs. Nothing is read from a global: a module knows its own address.</span><span>Wording after <code>kit:</code> that the reference never writes, so no transcript can hold it; a test must.</span></div>
+    <div class="opt"><span class="pick"></span><span class="name">C. B, and the engine (a browser, or node, and its version) where the page hands it to <code>open</code></span><span>Everything a report needs, the engine included.</span><span>One more thing for <code>open</code> to take, for one line of one command. A page that doesn't hand it in gets B.</span></div>
+    <div class="opt"><span class="pick"></span><span class="name">D. The reference's own three lines, recorded</span><span>Byte for byte the reference.</span><span>Names a file on the machine that recorded it, and a compiler that compiled nothing in the page: false wherever it is shown.</span></div>
+  </div>
+  <div class="recommend"><b class="lead">Recommendation: B.</b> The reference's <code>-v</code> answers &ldquo;what exactly is running&rdquo;, and B answers it truly for the port. C can be added later without changing a line of B; D is the one option that says something false.</div>
+  
+  </div>
+</details>
+<details class="ruled" id="r-d27" data-state="done">
+  <summary><span class="badge">D27</span><span class="title">Colour in a page: what <code>--color=auto</code> means</span><span class="ruling" title="Your ruling">B</span><span class="state done">built, 11-17</span></summary>
+  <div class="body">
+  <div class="facts"><span><b>Put</b> 2026-11-17, on the page of that day</span><span><b>Ruled</b> 2026-11-17</span><span><b>Was to be decided by</b> before a page's console shows colour</span><span><b>Affects</b> what <code>--color=auto</code> means in the port; <code>open</code>; <code>examples/console.html</code></span></div>
+  <div class="yours"><b class="lead">Your ruling: B.</b> A page says whether what shows its console draws colour; then <code>--color=auto</code> colours, as on a terminal, with the reference's escapes, and the example page draws them. <span class="statel"><b>State:</b> built, 2026.11.17: <code>open({ colour: true })</code>, measured against the reference on a terminal, and <code>examples/console.html</code> draws it.</span></div>
+  <p>The reference colours its diagnostics as <code>--color</code> says: <code>always</code>, <code>never</code>, or <code>auto</code> (the default), which is colour where what it writes to is a terminal. The port is never a terminal, so <code>auto</code> is no colour, and <code>--color=always</code> writes the reference's escape sequences byte for byte. <code>examples/console.html</code> shows them as text (<code>[1m</code>).</p>
+<p><b>Measured:</b> 100,000 fuzzed command lines, <code>--color</code> among them, agree with the reference with its output not a terminal.</p>
+  <div class="options">
+    <div class="opt head"><div></div><div>Option</div><div>Advantages</div><div>Disadvantages</div></div>
+    <div class="opt"><span class="pick"></span><span class="name">A. As now: <code>auto</code> is no colour; <code>always</code> writes the escapes, which a page shows as text (ran)</span><span>Byte for byte the reference off a terminal. Nothing to build.</span><span>A page's console can never show colour, and one that asks for it gets noise.</span></div>
+    <div class="opt rec ruled"><span class="pick" aria-label="ruled">&#10003;</span><span class="name">B. A page says whether what shows its console draws colour: <code>open({ colour: true })</code> makes <code>auto</code> colour, as on a terminal; the escapes stay the reference's, and <code>examples/console.html</code> draws them<span class="tags"><span class="tag ruled">Ruled</span><span class="tag">Recommended</span></span></span><span><code>auto</code> means what it means natively: colour where colour can be shown. A reply stays the reference's bytes, so every transcript still holds. A page that doesn't ask is unchanged.</span><span>One more thing for <code>open</code> to take. The example page needs a small reader of the reference's five escape sequences.</span></div>
+    <div class="opt"><span class="pick"></span><span class="name">C. Colour as structure: a reply's <code>err</code> also as a list of what was said and its kind</span><span>A page styles a diagnostic as it likes, with no escapes.</span><span>A second form of every reply, which is the reference's in neither place. The kinds are already in the text's own words (<code>error:</code>, <code>warning:</code>, <code>note:</code>).</span></div>
+  </div>
+  <div class="recommend"><b class="lead">Recommendation: B.</b> The question <code>auto</code> asks is whether colour can be shown, and in a page only the page knows. B lets it say so, and changes no byte the reference writes.</div>
+  
+  </div>
+</details>
 
 <h3 class="group" id="ruled-1116e">Ruled on 2026-11-16, evening &middot; put on the page of that evening (7)</h3>
 <details class="ruled" id="r-d18" data-state="done">
@@ -458,10 +483,10 @@
   </div>
 </details>
 <details class="ruled" id="r-d24" data-state="todo">
-  <summary><span class="badge">D24</span><span class="title">How strictly the types are checked</span><span class="ruling" title="Your ruling">B</span><span class="state">7 of 16 modules</span></summary>
+  <summary><span class="badge">D24</span><span class="title">How strictly the types are checked</span><span class="ruling" title="Your ruling">B</span><span class="state">10 of 16 modules</span></summary>
   <div class="body">
   <div class="facts"><span><b>Put</b> 2026-11-16, on the page of that evening, as 7</span><span><b>Ruled</b> 2026-11-16</span><span><b>Was to be decided by</b> before the next session</span><span><b>Affects</b> every function's comment under <code>src/</code></span></div>
-  <div class="yours"><b class="lead">Your ruling: B.</b> The strict mode, brought in a module at a time, with a type on every function's parameters. <span class="statel"><b>State:</b> the first tranche, 2026.11.17: seven modules held to the strict mode by <code>tools/check_types.js</code>. The other nine have 562 findings, and wait on D25.</span></div>
+  <div class="yours"><b class="lead">Your ruling: B.</b> The strict mode, brought in a module at a time, with a type on every function's parameters. <span class="statel"><b>State:</b> the first tranche, 2026.11.17: seven modules held to the strict mode by <code>tools/check_types.js</code>; the second, begun the same day under D25, brought the event modules, all six, to it: 10 of 16. The other six have 478 findings, 256 of them in <code>option_env.js</code>.</span></div>
   <p>Ruling 17b's tool, <code>tools/check_types.js</code>, reads the JSDoc as types and fails on a mismatch. It runs the checker in its ordinary mode: a function with a JSDoc comment is held to it, and every type a comment names must exist. Exported functions have JSDoc. Functions inside a module have the C guide's plain comment, with no types, so the checker holds them to nothing. <b>Measured:</b> the ordinary mode's first run had 119 findings, now 0. The strict mode wasn't run.</p>
   <div class="options">
     <div class="opt head"><div></div><div>Option</div><div>Advantages</div><div>Disadvantages</div></div>
@@ -837,12 +862,10 @@
   "use strict";
 
   var TITLES = {
-    d25: "D25. An inner function's comment, under the strict mode",
-    d26: "D26. --version at -v, in a page",
-    d27: "D27. Colour in a page: what --color=auto means"
+    d28: "D28. Which file is djinterp.js's style: JS_STYLE.md or the guide"
   };
-  var ORDER = ["d25", "d26", "d27"];
-  var KEY = "djinterp-js-decisions-2026-11-17";
+  var ORDER = ["d28"];
+  var KEY = "djinterp-js-decisions-2026-11-17-evening";
   function recOf(name) {
     var el = document.querySelector('label.opt[data-rec] input[name="' + name + '"]');
     return el ? el.value : null;
@@ -924,7 +947,7 @@
   function buildText() {
     var lines = [];
     var open = [];
-    lines.push("djinterp.js's decisions of 2026-11-17 (main at 98d4180, following djinterp at 3eb096c9): the owner's rulings");
+    lines.push("djinterp.js's decisions of 2026-11-17, evening (main at a5dafba, following djinterp at 3eb096c9): the owner's rulings");
     lines.push("");
     ORDER.forEach(function (n) {
       var num = TITLES[n].split(".")[0];
@@ -947,7 +970,7 @@
   }
 
   function buildJson() {
-    var out = { page: "djinterp.js decisions 2026-11-17", base: "98d4180", reference: "3eb096c9", rulings: {} };
+    var out = { page: "djinterp.js decisions 2026-11-17, evening", base: "a5dafba", reference: "3eb096c9", rulings: {} };
     ORDER.forEach(function (n) {
       out.rulings[n] = {
         title: TITLES[n],
@@ -1014,7 +1037,7 @@
       var blob = new Blob([buildJson()], { type: "application/json" });
       var a = document.createElement("a");
       a.href = URL.createObjectURL(blob);
-      a.download = "djinterp_js_rulings_2026-11-17.json";
+      a.download = "djinterp_js_rulings_2026-11-17_evening.json";
       document.body.appendChild(a);
       a.click();
       setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 500);
