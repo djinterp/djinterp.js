@@ -1,7 +1,7 @@
 program: tools/djinterp_fixture_main.c
 arguments: --line LINE, a process a command line
 reference: djinterp
-commit: dfc793c4
+commit: 3eb096c9
 recorded: 2026-11-17
 home: /tmp/djinterp.js/home/program_fuzz_a
 settings: /tmp/djinterp.js/home/program_fuzz_a/djinterp/settings

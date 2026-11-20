@@ -23,7 +23,7 @@
 *   One thing is not modelled: `--version` at `-v`, which names the file
 * and the compiler of the reference's own build (HANDOFF.md, "what is not
 * ported").
-*   reference: src/djinterp/tools/djinterp/djinterp_commands.c, at dfc793c4
+*   reference: src/djinterp/tools/djinterp/djinterp_commands.c, at 3eb096c9
 *
 *
 * path:      /src/tools/djinterp/djinterp_commands.js

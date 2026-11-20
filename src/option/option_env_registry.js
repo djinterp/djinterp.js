@@ -14,7 +14,7 @@
 * knob (cfg_option_env.h). A registry here has the reference's default
 * room unless `init` is given other.
 *   reference: inc/djinterp/c/option/option_env_registry.h and
-*              src/djinterp/c/option/option_env_registry.c, at dfc793c4
+*              src/djinterp/c/option/option_env_registry.c, at 3eb096c9
 *
 *
 * path:      /src/option/option_env_registry.js

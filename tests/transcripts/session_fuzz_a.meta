@@ -1,8 +1,8 @@
 program: tools/session.c
 arguments: (none; the input is its standard input)
 reference: djinterp
-commit: dfc793c4
-recorded: 2026-11-16
+commit: 3eb096c9
+recorded: 2026-11-17
 environment: empty
 seed: 20261115
 count: 1500

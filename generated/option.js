@@ -1,6 +1,6 @@
 // generated from option.json by tools/json_module.js; never edited by hand
 export default {
-  "reference": "dfc793c4",
+  "reference": "3eb096c9",
   "generated_by": "tools/rows_json.c option",
   "statuses": [
     {"code": 0, "name": "OK", "message": "the operation completed"},

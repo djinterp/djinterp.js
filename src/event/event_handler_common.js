@@ -11,7 +11,7 @@
 * since C allocates nothing here. JavaScript does: `stepSeq` and
 * `stepFromCallback` return a step that holds what it needs.
 *   reference: inc/djinterp/c/event/event_handler_common.h and
-*              src/djinterp/c/event/event_handler_common.c, at dfc793c4
+*              src/djinterp/c/event/event_handler_common.c, at 3eb096c9
 *
 *
 * path:      /src/event/event_handler_common.js

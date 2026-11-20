@@ -1,5 +1,5 @@
 {
-  "reference": "dfc793c4",
+  "reference": "3eb096c9",
   "generated_by": "tools/djinterp_fixture_main.c --rows-json",
   "frames": [
     {"name": "djinterp", "is_root": true,

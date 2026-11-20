@@ -12,7 +12,7 @@
 * the C library the reference was measured with does, so the two agree on
 * every double and not only on those a shorter method happens to get right.
 *   reference: src/djinterp/c/option/option_env.c,
-*              d_internal_option_env_format_real, at dfc793c4 -- which
+*              d_internal_option_env_format_real, at 3eb096c9 -- which
 *              calls snprintf("%.17g"); the conversion itself is the C
 *              library's (ISO C, 7.21.6.1, the g conversion)
 *

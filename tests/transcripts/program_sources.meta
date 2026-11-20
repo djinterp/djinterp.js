@@ -1,8 +1,8 @@
 program: tools/djinterp_fixture_main.c
 arguments: --line LINE, a process a command line
 reference: djinterp
-commit: dfc793c4
-recorded: 2026-11-16
+commit: 3eb096c9
+recorded: 2026-11-17
 home: /tmp/djinterp.js/home/program_sources
 settings: /tmp/djinterp.js/home/program_sources/djinterp/settings
 environment: HOME and XDG_CONFIG_HOME are the home; then as the input's env lines set it

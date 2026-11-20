@@ -19,7 +19,7 @@
 * throws an Error whose message says why where it cannot.
 *   What is said is the reference's, character for character.
 *   reference: inc/djinterp/tools/cli/c/cli_settings.h and
-*              src/djinterp/tools/cli/c/cli_settings.c, at dfc793c4
+*              src/djinterp/tools/cli/c/cli_settings.c, at 3eb096c9
 *
 *
 * path:      /src/tools/cli/cli_settings.js

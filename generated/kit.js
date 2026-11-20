@@ -1,6 +1,6 @@
 // generated from kit.json by tools/json_module.js; never edited by hand
 export default {
- "reference": "dfc793c4",
+ "reference": "3eb096c9",
  "generated_by": "tools/kit_texts.js, from tools/djinterp_fixture_main.c",
  "version": "djinterp 0.8.0-dev\n",
  "help": {

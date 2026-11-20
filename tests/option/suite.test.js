@@ -2,7 +2,7 @@
 * djinterp.js [tests]                                              suite.test.js
 *
 *   The reference's own suite of the option machine
-* (tests/unintegrated/c/option/t_option_env.c, at dfc793c4), group by
+* (tests/unintegrated/c/option/t_option_env.c, at 3eb096c9), group by
 * group, and where the port has each group's cases.
 *   Most are in the session transcripts, where the reference itself gives
 * the answers:

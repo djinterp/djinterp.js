@@ -8,7 +8,7 @@
 *   The statuses are not typed here: generated/option.js holds what
 * tools/rows_json.c asked of d_option_status_name and
 * d_option_status_message.
-*   reference: inc/djinterp/c/option/option_common.h, at dfc793c4
+*   reference: inc/djinterp/c/option/option_common.h, at 3eb096c9
 *
 *
 * path:      /src/option/option_common.js
