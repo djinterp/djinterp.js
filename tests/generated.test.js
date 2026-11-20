@@ -17,6 +17,7 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
 import event from '../generated/event.js';
+import kit from '../generated/kit.js';
 import option from '../generated/option.js';
 import { generated } from './support/fixture.js';
 
@@ -24,6 +25,7 @@ test('a generated module holds what its JSON holds', () =>
 {
     assert.deepEqual(option, generated('option.json'));
     assert.deepEqual(event, generated('event.json'));
+    assert.deepEqual(kit, generated('kit.json'));
 });
 
 test('every generated file names one commit of the reference', () =>
@@ -32,7 +34,8 @@ test('every generated file names one commit of the reference', () =>
 
     assert.match(commit, /^[0-9a-f]{8,40}$/);
 
-    for (const name of ['event.json', 'fixture.json', 'program.json'])
+    for (const name of ['event.json', 'fixture.json', 'kit.json',
+                        'program.json'])
     {
         assert.equal(generated(name).reference, commit, name);
     }

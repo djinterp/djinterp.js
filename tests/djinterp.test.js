@@ -17,6 +17,7 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
 import * as djinterp from '../src/djinterp.js';
+import { generated } from './support/fixture.js';
 
 const { optionEnv, optionEnvRegistry } = djinterp;
 
@@ -451,4 +452,41 @@ test('a row or a djin the reference refuses is the page\'s mistake',
     ]), /the row 'printer.a' was refused \(KEY_DUPLICATE\)/);
     assert.throws(() => djinterp.settingsFrame('not a name', []),
                   /was refused \(INVALID_ARGUMENT\)/);
+});
+
+test('the kit\'s words in a page: help, a version, completion, colour',
+     async () =>
+{
+    const kit = generated('kit.json');
+    const dj  = await djinterp.open({ settings: SETTINGS,
+                                      djins: [printer()] });
+
+    // the reference's own texts, as it wrote them
+    assert.deepEqual(await dj.run('help'),
+                     { status: 0, out: kit.help[''], err: '' });
+    assert.equal(await outOf(dj, '--help'), kit.help['']);
+    assert.equal(await outOf(dj, 'help get'), kit.help.get);
+    assert.equal(await outOf(dj, 'get -h'), kit.help.get);
+    assert.equal(await outOf(dj, '--version'), kit.version);
+    assert.equal(await outOf(dj, 'completion bash'), kit.completion.bash);
+    assert.match(kit.help[''], /^Usage: djinterp /);
+
+    // help asked for is given, whatever else the line holds
+    assert.equal(await outOf(dj, 'get nothing --bogus -h'), kit.help.get);
+
+    // quiet and verbose are taken, alone or run together
+    assert.equal(await outOf(dj, '-qv get color'), 'color = true\n');
+
+    // `--` keeps a value that starts with a dash a value
+    assert.equal((await dj.run('set -- title=-x')).status, 0);
+    assert.equal(await outOf(dj, 'get title'), 'title = -x\n');
+
+    // colour, when it is asked for
+    assert.equal((await dj.run('--color=always get nothing')).err,
+                 '\x1B[1mdjinterp:\x1B[0m \x1B[1;31merror:\x1B[0m no ' +
+                 'setting is named \'nothing\'\n');
+    assert.equal((await dj.run('--color=bright list')).err,
+                 'djinterp: error: --color: \'bright\' is not auto, ' +
+                 'always or never\nTry \'djinterp --help\' for more ' +
+                 'information.\n');
 });

@@ -60,12 +60,15 @@ export function saidFor(_registry: optionEnvRegistry.OptionEnvRegistry, _argv: A
  *        first.
  * @param {ReadonlyArray<string>} _commands  the names of the program's
  *        commands: a refusal is said of the one the walk has reached.
+ * @param {ReadonlyArray<string>} [_own=[]]  the long options that are the
+ *        program's own, as typed without a value: none is taken for a
+ *        setting's, whatever settings there are.
  * @returns {{kept: Array<string>, refused: ?{command: ?string,
  *            message: string}}} the arguments kept; and for a setting
  *          refused, which stops the walk, the command reached, or null
  *          for none, and the usage error's message.
  */
-export function take(_registry: optionEnvRegistry.OptionEnvRegistry, _argv: Array<string>, _commands: ReadonlyArray<string>): {
+export function take(_registry: optionEnvRegistry.OptionEnvRegistry, _argv: Array<string>, _commands: ReadonlyArray<string>, _own?: ReadonlyArray<string>): {
     kept: Array<string>;
     refused: {
         command: string | null;

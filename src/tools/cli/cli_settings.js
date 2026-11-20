@@ -435,6 +435,9 @@ export function saidFor(
  *        first.
  * @param {ReadonlyArray<string>} _commands  the names of the program's
  *        commands: a refusal is said of the one the walk has reached.
+ * @param {ReadonlyArray<string>} [_own=[]]  the long options that are the
+ *        program's own, as typed without a value: none is taken for a
+ *        setting's, whatever settings there are.
  * @returns {{kept: Array<string>, refused: ?{command: ?string,
  *            message: string}}} the arguments kept; and for a setting
  *          refused, which stops the walk, the command reached, or null
@@ -443,7 +446,8 @@ export function saidFor(
 export function take(
     _registry,
     _argv,
-    _commands
+    _commands,
+    _own = []
 )
 {
     const kept    = [];
@@ -458,7 +462,8 @@ export function take(
 
         if ( (at > 0) &&
              !ended   &&
-             shaped(argument) )
+             shaped(argument) &&
+             !_own.includes(argument.split('=')[0]) )
         {
             taken = regInner.takeOption(_registry, _argv, at);
             at    = taken.at;

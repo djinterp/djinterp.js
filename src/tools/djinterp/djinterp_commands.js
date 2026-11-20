@@ -12,13 +12,17 @@
 *
 *   The reference's program reads its command line with djinterp's
 * argument parser and its command-line kit. Neither is ported. This file
-* reads the four commands' own arguments itself, and says what the parser
-* says for a missing command, a word that is no command, arguments a
-* command does not expect and one it requires, with the parser's "did you
-* mean" for an argument that is nearly a name it knows. What the kit adds
-* to every program -- `help`, `completion`, `--help`, `--version`, `-q`,
-* `-v`, `--color` -- is not here, though their names are, since the
-* parser suggests them (HANDOFF.md, "what is not ported").
+* is a model of what the two do for this program, written from their
+* source and held to the reference by a fuzzer that gives every word the
+* program takes (tools/fuzz_program.js): a missing command, a word that
+* is no command, arguments a command does not expect and one it requires,
+* the parser's "did you mean", `--`, and what the kit adds to every
+* program -- `help`, `completion`, `--help`, `--version`, `-q`, `-v` and
+* `--color`. Help's texts, the version and the completion scripts are
+* the reference's own, generated as data (generated/kit.json).
+*   One thing is not modelled: `--version` at `-v`, which names the file
+* and the compiler of the reference's own build (HANDOFF.md, "what is not
+* ported").
 *   reference: src/djinterp/tools/djinterp/djinterp_commands.c, at dfc793c4
 *
 *
@@ -39,6 +43,7 @@ TABLE OF CONTENTS
     1.  programRun
 */
 
+import kit from '../../../generated/kit.js';
 import * as djin from '../../modules/interp/djin.js';
 import { STATUS, resultStatus } from '../../option/option_common.js';
 import * as optionEnv from '../../option/option_env.js';
@@ -812,17 +817,24 @@ function suggestion(
 suggestions
   The parser's notes for arguments it did not expect, a line for each that
 has a suggestion; among several, each says which argument it is for.
+`_words` holds the places of those that were taken as words after a `--`.
 */
 function suggestions(
     _command,
-    _extras
+    _extras,
+    _words = new Set()
 )
 {
     const notes = [];
 
-    for (const extra of _extras)
+    for (const [index, extra] of _extras.entries())
     {
-        const name = suggestion(extra, _command);
+        // an argument taken after `--` is a word, whatever it starts with,
+        // and a word that starts with a dash names nothing
+        const name = ( _words.has(index) &&
+                       extra.startsWith('-') )
+                         ? null
+                         : suggestion(extra, _command);
 
         if (name !== null)
         {
@@ -858,7 +870,8 @@ program with no command: every one of them, in the order they were given.
 function unexpected(
     _run,
     _command,
-    _extras
+    _extras,
+    _words = new Set()
 )
 {
     return usageError(_run, _command,
@@ -866,7 +879,7 @@ function unexpected(
                            ? 'the following argument was not expected: '
                            : 'the following arguments were not expected: ') +
                       joinedExtras(_extras),
-                      suggestions(_command, _extras));
+                      suggestions(_command, _extras, _words));
 }
 
 /*
@@ -890,61 +903,329 @@ function strayWord(
              word.startsWith('-') ) ? null : word;
 }
 
+// the shells the reference writes a completion script for, as it lists them
+const SHELLS = Object.keys(kit.completion);
+
+// the long options that are the program's own, which no setting's option
+// is taken for: the kit's, `--colour` among them, and each command's
+const OWN_LONG = ['--help', '--version', '--quiet', '--verbose', '--color',
+                  '--colour', '--show-origin'];
+
 /*
 read
-  A command line's arguments, read as the reference's parser reads them for
-these commands: the first word that is a command's name is the command;
-what stands before it, and what the command does not take, is unexpected;
-the rest are the command's own.
+  A command line's arguments, read as the reference's parser and kit read
+them for this program (arg_parse.c, cli_program.c):
+  - the first word that is a command's name is the command; a word before
+    it, and what the command does not take, is unexpected;
+  - `-h`, `-q` and `-v`, alone or run together, and `--help`, `--version`,
+    `--quiet`, `--verbose` and `--color[=WHEN]` are taken wherever they
+    stand; a flag given a value with '=' keeps the flag;
+  - `--` ends the options of a command that still needs an operand, and
+    everything after it is that command's; a command that needs none ends
+    at it, and what follows is the program's again, where a word is no
+    longer a command; a `--` of the program's own makes all that follows
+    it unexpected, and a command's name there, where there has been no
+    command, is a command misplaced.
 */
 function read(
     _arguments
 )
 {
-    const line = { command: null, operands: [], extras: [], origin: false };
+    const line  = { command: null, operands: [], extras: [], counted: 0,
+                    origin: false, help: false, version: false, quiet: 0,
+                    verbose: 0, colours: [], colourName: null,
+                    misplaced: null, helped: false, words: new Set() };
+    const queue = [..._arguments];
+    let   mode  = 'program';
+    let   only  = false;
 
-    for (const argument of _arguments)
+    // an argument nothing takes; a `--` is listed and not counted, and
+    // one taken as a word after a `--` is remembered as one
+    const extra = (_argument, _counts = true, _word = false) =>
     {
-        const option = (dashesOf(argument) !== 0);
-
-        if (line.command === null)
+        if (_word)
         {
-            if (COMMANDS.includes(argument))
+            line.words.add(line.extras.length);
+        }
+
+        line.extras.push(_argument);
+        line.counted += _counts ? 1 : 0;
+    };
+
+    // whether the command still needs an operand
+    const needs = () => ( ['describe', 'set', 'completion']
+                              .includes(line.command) &&
+                          (line.operands.length === 0) );
+
+    // a command's name taken where a command cannot stand
+    const misplace = (_argument) =>
+    {
+        line.helped    = (line.misplaced === null) ? line.help : line.helped;
+        line.misplaced = ( (line.misplaced === null) ||
+                           (KNOWN_COMMANDS.indexOf(_argument) <
+                            KNOWN_COMMANDS.indexOf(line.misplaced)) )
+                             ? _argument : line.misplaced;
+        line.command   = _argument;
+        line.operands  = [];
+        mode           = 'command';
+    };
+
+    // a word given to the command
+    const operand = (_argument) =>
+    {
+        // `help` takes two words, though it has help for one
+        if ( (line.command === 'list') ||
+             ( ['describe', 'completion'].includes(line.command) &&
+               (line.operands.length === 1) )           ||
+             ( (line.command === 'help') &&
+               (line.operands.length === 2) ) )
+        {
+            // a word a misplaced command cannot take is the program's
+            // again, where a command's name is another one misplaced
+            if ( (line.misplaced !== null) &&
+                 (mode === 'command')      &&
+                 KNOWN_COMMANDS.includes(_argument) )
             {
-                line.command = argument;
+                misplace(_argument);
             }
             else
             {
-                line.extras.push(argument);
+                extra(_argument, true, mode === 'operands');
             }
         }
-        else if (option)
+        else
         {
-            // get's one flag; the parser lets a flag be given a value
-            if ( (line.command === 'get') &&
-                 ( (argument === '--show-origin') ||
-                   argument.startsWith('--show-origin=') ) )
+            line.operands.push(_argument);
+        }
+    };
+
+    while (queue.length !== 0)
+    {
+        const argument = queue.shift();
+        const dashes   = dashesOf(argument);
+        const equals   = argument.indexOf('=');
+        const name     = (equals < 0) ? argument : argument.slice(0, equals);
+
+        if (mode === 'operands')
+        {
+            operand(argument);
+        }
+        else if ( only &&
+                  (mode !== 'command') )
+        {
+            // after the program's own `--`: a command's name, where no
+            // command has been in its place, is a command misplaced. It
+            // is read on as a command is, though help asked of it is not
+            // help asked for; and when it ends, the next may be another.
+            // The one named is the first of them as the program lists
+            // its commands
+            if ( ( (mode === 'program') ||
+                   (line.misplaced !== null) ) &&
+                 KNOWN_COMMANDS.includes(argument) )
+            {
+                misplace(argument);
+            }
+            else
+            {
+                extra(argument, true, true);
+            }
+        }
+        else if (argument === '--')
+        {
+            if ( (mode === 'command') &&
+                 needs() )
+            {
+                mode = 'operands';
+            }
+            else if (mode === 'command')
+            {
+                mode = 'ended';
+            }
+            else
+            {
+                only = true;
+                extra(argument, false);
+            }
+        }
+        else if (dashes === 2)
+        {
+            if (name === '--help')
+            {
+                line.help = true;
+            }
+            else if (name === '--version')
+            {
+                line.version = true;
+            }
+            else if (name === '--quiet')
+            {
+                ++line.quiet;
+            }
+            else if (name === '--verbose')
+            {
+                ++line.verbose;
+            }
+            else if ( (name === '--color') ||
+                      (name === '--colour') )
+            {
+                // with no word, or an empty one, the flag's own: always
+                line.colours.push( ( (equals < 0) ||
+                                     (equals === argument.length - 1) )
+                                       ? 'always'
+                                       : argument.slice(equals + 1) );
+                line.colourName = name;
+            }
+            else if ( (mode === 'command')     &&
+                      (line.command === 'get') &&
+                      (name === '--show-origin') )
             {
                 line.origin = true;
             }
             else
             {
-                line.extras.push(argument);
+                extra(argument);
             }
         }
-        else if ( (line.command === 'list') ||
-                  ( (line.command === 'describe') &&
-                    (line.operands.length === 1) ) )
+        else if (dashes === 1)
         {
-            line.extras.push(argument);
+            // short flags run together are taken one at a time, and what
+            // is left after one goes back to be read as `-REST`
+            if (!'hqv'.includes(argument[1]))
+            {
+                extra(argument);
+            }
+            else
+            {
+                line.help     = ( line.help ||
+                                  (argument[1] === 'h') );
+                line.quiet   += (argument[1] === 'q') ? 1 : 0;
+                line.verbose += (argument[1] === 'v') ? 1 : 0;
+
+                if (argument.length > 2)
+                {
+                    queue.unshift('-' + argument.slice(2));
+                }
+            }
+        }
+        else if (mode === 'program')
+        {
+            if (KNOWN_COMMANDS.includes(argument))
+            {
+                line.command = argument;
+                mode         = 'command';
+            }
+            else
+            {
+                extra(argument);
+            }
+        }
+        else if (mode === 'ended')
+        {
+            extra(argument);
         }
         else
         {
-            line.operands.push(argument);
+            operand(argument);
         }
     }
 
+    if (line.misplaced !== null)
+    {
+        line.help = line.helped;
+    }
+
     return line;
+}
+
+/*
+coloured
+  What a run said, with each diagnostic's start coloured as the kit colours
+one: the program's name bold, and `error:`, `warning:` or `note:` in its
+own colour. reference: d_cli_vreport (cli_program.c).
+*/
+function coloured(
+    _name,
+    _said
+)
+{
+    const KINDS = [['error', '1;31'], ['warning', '1;35'], ['note', '1;36']];
+
+    return _said.split('\n').map((_line) =>
+    {
+        for (const [kind, colour] of KINDS)
+        {
+            const plain = _name + ': ' + kind + ': ';
+
+            if (_line.startsWith(plain))
+            {
+                return '\x1B[1m' + _name + ':\x1B[0m \x1B[' + colour + 'm' +
+                       kind + ':\x1B[0m ' + _line.slice(plain.length);
+            }
+        }
+
+        return _line;
+    }).join('\n');
+}
+
+/*
+colourAsked
+  Whether `--color`'s words ask for colour: the last decides, and only as
+"always". "auto" is no colour where nothing is a terminal, and a word that
+is none of the three is refused before any work, or changes nothing where
+the line was wrong some other way. reference:
+d_cli_internal_read_standard (cli_program.c).
+*/
+function colourAsked(
+    _words
+)
+{
+    return ( (_words.length !== 0) &&
+             (_words[_words.length - 1] === 'always') );
+}
+
+/*
+workHelp
+  `help`: the program's help, or the help of the one command named.
+*/
+function workHelp(
+    _run,
+    _operands
+)
+{
+    const wrong = !KNOWN_COMMANDS.includes(_operands[0] ?? 'help')
+                      ? _operands[0]
+                      : (_operands.length > 1) ? _operands[1] : null;
+
+    if (wrong !== null)
+    {
+        return usageError(_run, 'help', '\'' + wrong + '\' is not a command');
+    }
+
+    _run.out += kit.help[_operands[0] ?? ''];
+
+    return EXIT.OK;
+}
+
+/*
+workCompletion
+  `completion`: the shell's script, as the reference writes it.
+*/
+function workCompletion(
+    _run,
+    _operands
+)
+{
+    if (!SHELLS.includes(_operands[0]))
+    {
+        return usageError(_run, 'completion',
+                          '\'' + _operands[0] + '\' is not a shell: ' +
+                          SHELLS.slice(0, -1).join(', ') + ' or ' +
+                          SHELLS[SHELLS.length - 1]);
+    }
+
+    _run.out += kit.completion[_operands[0]];
+
+    return EXIT.OK;
 }
 
 function runInner(
@@ -953,74 +1234,120 @@ function runInner(
 )
 {
     const run   = { program: _program, out: '', err: '', set: [] };
-    const taken = cliSettings.take(_program.registry, _argv, COMMANDS);
+    const taken = cliSettings.take(_program.registry, _argv, KNOWN_COMMANDS,
+                                   OWN_LONG);
+    const done  = (_status, _colour) =>
+        ({ status: _status, out: run.out,
+           err: _colour ? coloured(_program.name, run.err) : run.err,
+           set: run.set });
 
     if (taken.refused !== null)
     {
+        // said before the program's own options are read: never coloured
         usageError(run, taken.refused.command, taken.refused.message);
 
-        return { status: EXIT.TROUBLE, out: run.out, err: run.err, set: [] };
+        return done(EXIT.TROUBLE, false);
     }
 
-    const line = read(taken.kept.slice(1));
+    const line   = read(taken.kept.slice(1));
+    const colour = colourAsked(line.colours);
+    const work   = { list:       () => workList(run),
+                     describe:   () => workDescribe(run, line.operands),
+                     get:        () => workGet(run, line.operands,
+                                               line.origin),
+                     set:        () => workSet(run, line.operands),
+                     help:       () => workHelp(run, line.operands),
+                     completion: () => workCompletion(run, line.operands) };
+    const needed = { describe: 'DJIN', set: 'SETTING', completion: 'SHELL' };
     let   status;
 
-    if (line.command === null)
+    if (line.help)
     {
-        if (line.extras.length === 0)
+        // help asked for is given, whatever else the line holds: the
+        // help of the command reached, which a misplaced one is not
+        run.out += kit.help[(line.misplaced === null)
+                                ? (line.command ?? '') : ''];
+        status   = EXIT.OK;
+    }
+    else if (line.version)
+    {
+        run.out += kit.version;
+        status   = EXIT.OK;
+    }
+    else if (line.misplaced !== null)
+    {
+        status = usageError(run, null,
+                            '\'' + line.misplaced + '\' follows \'--\': a ' +
+                            'command comes before it');
+    }
+    else if (line.command === null)
+    {
+        if (line.counted === 0)
         {
             run.err += _program.name + ': error: a command is required\n' +
                        'Usage: ' + _program.name +
                        ' [OPTION]... COMMAND [ARGUMENT]...\n' +
-                       'Commands: ' + COMMANDS.join(', ') + '\n' +
+                       'Commands: ' +
+                       ((_argv.length > 1) ? KNOWN_COMMANDS
+                                           : COMMANDS).join(', ') + '\n' +
                        'Try \'' + _program.name +
                        ' --help\' for more information.\n';
             status   = EXIT.TROUBLE;
         }
         else if (strayWord(line.extras) === null)
         {
-            status = unexpected(run, null, line.extras);
+            status = unexpected(run, null, line.extras, line.words);
         }
         else
         {
             status = usageError(run, null, '\'' + strayWord(line.extras) +
                                            '\' is not a command',
-                                suggestions(null, line.extras));
+                                suggestions(null, line.extras, line.words));
         }
     }
-    else if ( (line.command === 'describe') &&
+    else if ( (needed[line.command] !== undefined) &&
               (line.operands.length === 0) )
     {
         // what a command requires is missed before what it does not expect
-        status = usageError(run, 'describe', 'DJIN is required');
+        status = usageError(run, line.command,
+                            needed[line.command] + ' is required');
     }
-    else if ( (line.command === 'set') &&
-              (line.operands.length === 0) )
+    else if (line.counted !== 0)
     {
-        status = usageError(run, 'set', 'SETTING is required');
+        status = unexpected(run, line.command, line.extras, line.words);
     }
-    else if (line.extras.length !== 0)
+    else if ( (line.colours.length !== 0) &&
+              !['auto', 'always', 'never']
+                   .includes(line.colours[line.colours.length - 1]) )
     {
-        status = unexpected(run, line.command, line.extras);
-    }
-    else if (line.command === 'list')
-    {
-        status = workList(run);
-    }
-    else if (line.command === 'describe')
-    {
-        status = workDescribe(run, line.operands);
-    }
-    else if (line.command === 'get')
-    {
-        status = workGet(run, line.operands, line.origin);
+        // the last word of `--color`, where the line is otherwise right
+        status = usageError(run, null,
+                            line.colourName + ': \'' +
+                            line.colours[line.colours.length - 1] +
+                            '\' is not auto, always or never');
     }
     else
     {
-        status = workSet(run, line.operands);
+        // at -v, an option that keeps one word and was given differing
+        // ones is said before the work (d_cli_internal_say_repeat)
+        if ( (line.quiet === 0)         &&
+             (line.verbose > 0)         &&
+             (line.colours.length > 1)  &&
+             line.colours.some((_word) => (_word !== line.colours[0])) )
+        {
+            run.err += _program.name + ': warning: --color was given ' +
+                       ((line.colours.length === 2)
+                            ? 'twice'
+                            : (line.colours.length + ' times')) +
+                       '; the last, \'' +
+                       line.colours[line.colours.length - 1] +
+                       '\', is taken\n';
+        }
+
+        status = work[line.command]();
     }
 
-    return { status: status, out: run.out, err: run.err, set: run.set };
+    return done(status, colour);
 }
 
 // 2.1

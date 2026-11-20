@@ -48,9 +48,13 @@ env -i HOME=/nonexistent XDG_CONFIG_HOME=/nonexistent                         \
     "$BUILD/djinterp_fixture" --rows-json "$COMMIT"                           \
     > "$ROOT/generated/program.json"
 
+# the program's own texts: its version, its helps, its completion scripts
+node "$HERE/kit_texts.js" "$BUILD" "$COMMIT"
+
 # what src/ imports, as modules
 node "$HERE/json_module.js" "$ROOT/generated/option.json"                     \
-                            "$ROOT/generated/event.json"
+                            "$ROOT/generated/event.json"                      \
+                            "$ROOT/generated/kit.json"
 
 # the sweep of doubles: the edges, then 4000 from a fixed seed
 "$BUILD/reals" 4000 20261115 > "$ROOT/generated/reals.txt"

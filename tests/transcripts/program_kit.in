@@ -1,0 +1,190 @@
+# the kit's words: help, a version, completion, quiet and verbose,
+# colour, and the double dash
+--no-color lst
+--no-color list
+list --no-color
+get --no-color color
+--color get color
+--width=300 get width
+get --width=300 width
+get --width 300 width
+list -- get width
+get -- list
+list -- list
+-- lst
+-- x y
+-- list x
+-- get
+list --
+get --
+file color = maybe\nnothing = 1\n
+-q get nothing
+-q get color
+get color
+-q lst
+-q list x
+--quiet get color
+get -q color
+get color -q
+-v get color
+-vv get color
+-v -v -v get color
+--verbose list
+-qv get color
+-vq get color
+-q -v lst
+--color=always get color
+--color=always get nothing
+--color=always lst
+--color=always list
+--color=always describe printer
+--color=always get --show-origin color
+--color=always -q get nothing
+--color=never --color=always lst
+--color=always --color=bad lst
+get --color=always nothing
+get nothing --color
+--color=always set color
+--color=always set nothing=1
+--color=always --version
+--version -q
+--version
+--color=always --help
+nofile
+--help
+-h
+help
+help list
+help get
+help help
+help completion
+help bogus
+help list x
+list --help
+get --help x
+--help list
+--help --bogus
+--bogus --help
+list x --help
+--help -- x
+--version
+--version list
+--version --bogus
+--help --version
+-V
+--help lst
+lst -h x
+help lst
+help list get
+help --help
+help help help
+help -q
+help -- list
+list -- --help
+-- --help
+get -- -h
+help ""
+--help=x
+-hx
+-hq
+-qh
+-xh
+completion
+completion bash
+completion zsh
+completion fish
+completion powershell
+completion csh
+completion bash zsh
+completion --help
+completion bash --bogus
+completion bash -q
+--color always lst
+--color=bad lst
+--color lst
+--color= lst
+set -- color=no width=300
+set color=no -- width=300
+set --
+describe -- printer x
+describe printer -- x
+describe --
+get width -- color
+list -- x y
+--
+-- --
+list -- --
+get -- --show-origin
+get --show-origin --
+set -- --set
+get -- --set width=1
+--set width=1 -- get
+get width --set width=300
+set -- -q
+set -- color=no -h
+get -- --version
+-- --version
+list -- -q
+get x -- -- y
+completion -- bash
+completion bash --
+help --
+lst --
+lst -- x
+-v --color=never --color=always get color
+-v --color --color=never get color
+--set width=1 --help
+--color=always --set width=1 get
+--set width=1 --color=always get
+-- list --help
+-- list x
+list -- -- get
+--quiet=x list
+-q=1 list
+--version=1
+help list --bogus
+list -qx
+--show-origin get --show-origin color
+get --show-origin --color color
+get --show-origin --no-color color
+x -- list
+-v --color=never --color=always --color=auto get color
+-v --color=never --color=never get color
+-q -v --color=never --color=always get color
+-v --color=never --color=always lst
+-v --color=never --color=always completion bash
+-v --color=never --color=always help
+nofile
+--color=bad get --show-origin
+--color=bad list
+list --color=bad
+--color=bad --color=always list
+--color=always --color=bad list
+--color=bad lst
+--color=bad list x
+--color=bad --help
+--color=bad --version
+--color=bad set
+--color=ALWAYS list
+--colour=bad list
+--color=bad completion bash
+--color=bad help
+-q --color=bad list
+help a b c
+help a b c d
+help list get set
+help a b
+-- get --color
+-- --color get
+-- --color=never get
+-- get --help
+-- list --color
+--color=never -- get --color
+-- get --color=never
+--color -- --color=never get
+-- get --color=bad
+-- --color x
+--color -- x
+-- get --version
+-- get -h
+lst --color=bad --color

@@ -9,11 +9,14 @@
 * command line, and lines that set the environment and the settings file
 * for the lines after. Every choice follows from SEED, so the same SEED and
 * COUNT give the same file.
-*   It keeps to what the port has: none of the kit's own options or
-* commands as they are (HANDOFF.md, "what is not ported"). Words that are
-* nearly their names it does give, and nearly the port's own commands',
-* since the reference's parser answers those with "did you mean" and the
-* port is to answer the same.
+*   It gives every word the program takes: the four commands, `help` and
+* `completion`, the kit's options (`-h`, `-q`, `-v`, run together or
+* apart, and their long forms, `--color` with and without a word,
+* `--version`), `--` wherever it may stand, and words that are nearly
+* any of these, which the reference's parser answers with "did you mean".
+*   One thing it keeps from: `--version` with `-v`, which names the file
+* and the compiler of the reference's own build (HANDOFF.md, "what is not
+* ported").
 *
 *
 * path:      /tools/fuzz_program.js
@@ -86,20 +89,21 @@ function mangle(
     }
 }
 
-// what the reference's parser knows by name and the port does not run:
-// never given as they are, since the port's answer to them is not the
-// reference's (HANDOFF.md, "what is not ported")
-const NOT_RUN = ['help', 'completion', '--quiet', '--verbose', '--color',
-                 '--help', '--version'];
-const KNOWN   = ['list', 'describe', 'get', 'set', '--show-origin',
-                 ...NOT_RUN];
+// what the reference's parser knows by name
+const KNOWN = ['list', 'describe', 'get', 'set', 'help', 'completion',
+               '--show-origin', '--quiet', '--verbose', '--color', '--help',
+               '--version'];
+
+// the kit's options, as a person gives them
+const FLAGS = ['-q', '-v', '-qv', '-vv', '-vq', '--quiet', '--verbose',
+               '--color', '--color=always', '--color=never', '--color=auto',
+               '--color=bad', '--color=', '-qx', '-x', '--quiet=1'];
 
 /*
 stray
   A word that is nearly a name the parser knows, for its "did you mean":
 a name with a character dropped, added, doubled or swapped with its
-neighbour, once or twice. Never a name itself, never `--`, and never one
-dash before letters, which the reference reads as short options.
+neighbour, once or twice. Never empty.
 */
 function stray()
 {
@@ -130,12 +134,7 @@ function stray()
             }
         }
 
-        if ( !KNOWN.includes(word)        &&
-             (word.length !== 0)          &&
-             (word !== '--')              &&
-             !word.startsWith('--color=') &&
-             ( !word.startsWith('-') ||
-               word.startsWith('--') ) )
+        if (word.length !== 0)
         {
             return word;
         }
@@ -235,6 +234,24 @@ function command()
             break;
     }
 
+    // the kit's two commands, in the others' place now and then
+    if (next(8) === 0)
+    {
+        words.length = 0;
+
+        if (next(2) === 0)
+        {
+            words.push('help');
+            many(() => pick([...KNOWN.slice(0, 6), 'nothing', stray()]));
+        }
+        else
+        {
+            words.push('completion');
+            many(() => pick(['bash', 'zsh', 'fish', 'powershell', 'csh',
+                             stray()]));
+        }
+    }
+
     // settings on the command line, wherever they stand
     for (let i = (next(3) === 0) ? (next(2) + 1) : 0; i > 0; --i)
     {
@@ -254,6 +271,34 @@ function command()
         {
             words.splice(next(words.length + 1), 0, stray());
         }
+    }
+
+    // the kit's options, wherever they stand
+    for (let i = (next(3) === 0) ? (next(3) + 1) : 0; i > 0; --i)
+    {
+        words.splice(next(words.length + 1), 0, pick(FLAGS));
+    }
+
+    // a `--`, or two, wherever they stand
+    for (let i = (next(5) === 0) ? (next(2) + 1) : 0; i > 0; --i)
+    {
+        words.splice(next(words.length + 1), 0, '--');
+    }
+
+    // help or a version asked for, which the rest of a line gives way to
+    if (next(14) === 0)
+    {
+        words.splice(next(words.length + 1), 0,
+                     pick(['--help', '-h', '--version', '-hq', '-qh']));
+    }
+
+    // `--version` at -v names the reference's own build: kept from, by
+    // leaving out every short option and every `--verbose` of such a line
+    if (words.some((_word) => /^--version(=|$)/.test(_word)))
+    {
+        return words.filter((_word) => !( /^-[^-]/.test(_word) ||
+                                          _word.startsWith('--verbose') ))
+                    .join(' ');
     }
 
     return words.join(' ');
