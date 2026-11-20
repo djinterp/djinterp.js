@@ -836,7 +836,7 @@ function suggestions(
 joined_extras
   Unexpected arguments as the parser's message lists them: a space between
 each, and a space that ends them all dropped, as the reference's join
-drops it (d_arg_internal_parse_extras_join, after CLI11's).
+drops it (d_arg_internal_parse_extras_join).
 */
 function joined_extras(
     _extras

@@ -1,19 +1,17 @@
-# JavaScript in this environment: a provisional house style
+# JavaScript in djinterp.js: a provisional house style
 
-Written 2026-11-14 for the agents starting djinterp.js and uxoxo.js. The
-same file travels in both packages, so that the two libraries read alike
-from their first line. Read `CONTEXT.md` and `CONTEXT_2.md` first.
+Written 2026-11-14 for the agent starting djinterp.js. Revised 2026-11-16
+at the owner's word that djinterp.js is ignorant of every framework but
+itself: what spoke of other libraries is gone, and no rule has changed.
+The file as it came is in the repository's history.
 
 **Standing.** All of this is **recommended**. The owner has not ruled on
-JavaScript's home or style (the morning's notes, J2 and W12). Where it is
-silent, follow djinterp's and uxoxo's house style (uxoxo's `AGENTS.md`,
-section 5) as far as the language allows. If you change a rule here, say
-so in your handoff, so that the owner can carry the change to the other
-library.
+JavaScript's home or style (the morning's note, J2). Where it is silent,
+follow djinterp's house style as far as the language allows. If you
+change a rule here, say so in your handoff.
 
 There is no JavaScript anywhere in djinterp's tree (**measured**,
-11-13), and none in uxoxo's but the morning's prototype. These are the
-first rules.
+11-13). These are the first rules.
 
 
 ## 1. What the code is
@@ -40,20 +38,17 @@ first rules.
 package.json
 src/MODULE/FILE.js        mirrors the reference's own path:
                           djinterp's c/option/option_env.h becomes
-                          src/option/option_env.js; uxoxo's
-                          inc/uxoxo/vdom/document.hpp becomes
-                          src/vdom/document.js
+                          src/option/option_env.js
 tests/MODULE/FILE.test.js
 tests/transcripts/        recorded from the reference (section 6)
-tools/                    C or C++ programs that record transcripts and
-                          write the generated data, built against the
+tools/                    C programs that record transcripts and write
+                          the generated data, built against the
                           reference unchanged
 generated/                what the tools write; committed; never edited
                           by hand
 ```
 
-The reference is the C or C++ the port follows: djinterp for
-djinterp.js, uxoxo for uxoxo.js.
+The reference is the C the port follows: djinterp.
 
 
 ## 3. The file
@@ -92,11 +87,9 @@ for a file with sections, and numbered dividers matching it.
 
 ## 4. Names
 
-* **Identifiers follow the reference's names, in snake_case**, as the
-  house style rules for C++ (uxoxo's D12) and as djinterp's C names are.
-  The module is the namespace, so the C prefix goes: `d_option_env_load`
-  is `option_env.load`; uxoxo's `vdom::document` is `document`, exported
-  from `src/vdom/document.js`.
+* **Identifiers follow the reference's names, in snake_case**, as
+  djinterp's C names are. The module is the namespace, so the C prefix
+  goes: `d_option_env_load` is `option_env.load`.
 * **Data keeps the reference's spelling exactly**: a row's name, an
   attribute's key, a field of a record or of generated JSON
   (`sidebar_width`, `bind.value`).
@@ -104,8 +97,7 @@ for a file with sections, and numbered dividers matching it.
   `open`, `run`, `on`, `mount`.
 
 This is the one rule here a web developer will notice. The alternative
-is camelCase, which is the language's convention and the one genterp's
-`glue.js` uses (`formatReal`, `createHost`). (JS1.)
+is camelCase, which is the language's convention. (JS1.)
 
 
 ## 5. Behaviour that must match the reference
@@ -120,34 +112,28 @@ is camelCase, which is the language's convention and the one genterp's
    it does not; a row with no stated range is a `bigint` if the reference
    holds it in 64 bits. Never redo 64-bit arithmetic in `number`s. (The
    djinterp.js note's J11, option C.)
-3. **Reals as text.** Never `String(v)`, `toFixed` or `toPrecision`. The
-   two references write reals differently, and JavaScript matches
-   neither. **Measured**, 2026-11-14, from each reference's own code:
+3. **Reals as text.** Never `String(v)`, `toFixed` or `toPrecision`.
+   The reference and JavaScript write reals differently. **Measured**,
+   2026-11-14, from the reference's own code:
 
-   | Value | djinterp `option_env` (`%.17g`) | uxoxo `real_text` | JavaScript `String(v)` |
-   |---|---|---|---|
-   | `0.1` | `0.10000000000000001` | `0.1` | `0.1` |
-   | `1.0/3` | `0.33333333333333331` | `0.3333333333333333` | `0.3333333333333333` |
-   | `420.0` | `420` | `420.0` | `420` |
-   | `-0.0` | `-0` | `-0.0` | `0` |
-   | `1e15` | `1000000000000000` | `1e+15` | `1000000000000000` |
-   | `1e21` | `1e+21` | `1e+21` | `1e+21` |
-   | `1.5e-7` | `1.4999999999999999e-07` | `1.5e-07` | `1.5e-7` |
-   | `2.5e-5` | `2.5000000000000001e-05` | `2.5e-05` | `0.000025` |
-   | `5e-324` | `4.9406564584124654e-324` | `5e-324` | `5e-324` |
-   | `-2.75` | `-2.75` | `-2.75` | `-2.75` |
+   | Value | djinterp `option_env` (`%.17g`) | JavaScript `String(v)` |
+   |---|---|---|
+   | `0.1` | `0.10000000000000001` | `0.1` |
+   | `1.0/3` | `0.33333333333333331` | `0.3333333333333333` |
+   | `420.0` | `420` | `420` |
+   | `-0.0` | `-0` | `0` |
+   | `1e15` | `1000000000000000` | `1000000000000000` |
+   | `1e21` | `1e+21` | `1e+21` |
+   | `1.5e-7` | `1.4999999999999999e-07` | `1.5e-7` |
+   | `2.5e-5` | `2.5000000000000001e-05` | `0.000025` |
+   | `5e-324` | `4.9406564584124654e-324` | `5e-324` |
+   | `-2.75` | `-2.75` | `-2.75` |
 
    djinterp writes `snprintf("%.17g")` (`option_env.c`,
-   `d_internal_option_env_format_real`). uxoxo writes a whole number under
-   1e15 in magnitude as `%.1f`, and otherwise the fewest `%.*g` digits
-   that read back exactly, adding `.0` if the result would read as an
-   integer (`schema.hpp`, `real_text`). Each port has one function that
-   reproduces its reference's writer, tested against this table and a
-   sweep of random doubles printed by the reference. Both rest on
-   printf's `%.*g` written in JavaScript: write it once, in djinterp.js,
-   at `src/text/real_format.js`; uxoxo.js keeps a copy, marked as one,
-   until it imports djinterp.js. `prototypes/reals/` has the program that
-   made the table.
+   `d_internal_option_env_format_real`). The port has one function that
+   reproduces that writer, tested against this table and a sweep of
+   doubles printed by the reference: printf's `%.*g` written in
+   JavaScript, at `src/text/real_format.js`.
 4. **Reals from text.** Never `Number()` or `parseFloat`. `Number("")` is
    0; `Number("0x10")` is 16 but `Number("0x1p3")` is NaN, which `strtod`
    reads as 8; `parseFloat("1abc")` is 1. Read to the grammar the
@@ -195,15 +181,15 @@ first field names the reference's commit.
   each message.
 * Never push. There is no remote.
 * Hand back as the repository zipped whole, `.git` included, with a
-  `HANDOFF.md` at the top in the form of uxoxo's (what is in it; building
-  in five minutes; where the work stands; what is next; what was learned
-  the hard way; conventions).
+  `HANDOFF.md` at the top, in this form: what is in it; building in five
+  minutes; where the work stands; what is next; what was learned the
+  hard way; conventions.
 
 
 ## 9. Decisions for the owner
 
 **JS1. Names.** A. The reference's names, in snake_case (section 4). B.
-camelCase, the language's convention and `glue.js`'s. Runs as **A**: a
+camelCase, the language's convention. Runs as **A**: a
 port that reads like its reference is one that can be checked against
 it.
 
@@ -211,6 +197,6 @@ it.
 later. B. TypeScript sources, which need a build step. Runs as **A**: no
 build step.
 
-**JS3. One file of style, or two.** A. This file, the same in both
-libraries, changed only through the owner. B. Each library its own.
-Runs as **A**.
+**JS3. One file of style, or two.** Settled by the owner's word of
+2026-11-16: this file is djinterp.js's own, and it is changed only
+through the owner.

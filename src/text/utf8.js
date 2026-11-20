@@ -14,7 +14,7 @@
 * decodes to the lone surrogate U+DC00 + the byte (U+DC80 to U+DCFF), and
 * that surrogate encodes to the byte again. Text the reference would write
 * back unchanged is therefore written back unchanged by the port, whatever
-* its bytes. (Python calls this error handler `surrogateescape`.)
+* its bytes.
 *   Nothing here has a counterpart in the reference, which never leaves
 * bytes.
 *
@@ -22,7 +22,7 @@
 * path:      /src/text/utf8.js
 * link(s):   TBA
 * author(s): Samuel 'teer' Neal-Blim                         created: 2026.11.15
-*                                                            revised: 2026.11.15
+*                                                            revised: 2026.11.16
 *******************************************************************************/
 
 /*

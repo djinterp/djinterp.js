@@ -3,33 +3,35 @@
 *
 *   Opens examples/console.html in a browser, twice with one profile, and
 * says whether the page did what the port does under node:
-*     node tools/check_page.js BASE PLAYWRIGHT [CHROME]
+*     node tools/check_page.js BASE [CHROME]
 *   BASE is where a static file server serves this repository, such as
-* http://127.0.0.1:8765 for `python3 -m http.server 8765` run at its top.
-* PLAYWRIGHT is the path of playwright's `index.mjs`; CHROME, the path of
-* a browser for it to drive where it is not to use its own.
-*   The repository depends on neither, and `node --test` does not run
-* this: it is the one check that needs a browser.
-*   The first opening binds the URL's query, runs a `set`, and reads back
-* what was kept in the page's localStorage; the second, with nothing in
-* its URL, reads those settings as the file's. Exits 1 where either
-* differs from what is written here, or the page reported an error.
+* http://127.0.0.1:8765. CHROME is a Chrome or Chromium to run;
+* `google-chrome` where left out. It is run headless and asked for the
+* page as it stands once its script has finished; nothing drives it.
+*   `node --test` does not run this: it is the one check that needs a
+* browser.
+*   The first opening binds the URL's query and runs a `set`, which the
+* page keeps in its localStorage; the second, with nothing in its URL's
+* query, reads those settings as the file's. Exits 1 where either differs
+* from what is written here.
 *
 *
 * path:      /tools/check_page.js
 * link(s):   TBA
 * author(s): Samuel 'teer' Neal-Blim                         created: 2026.11.15
-*                                                            revised: 2026.11.15
+*                                                            revised: 2026.11.16
 *******************************************************************************/
 
-import { pathToFileURL } from 'node:url';
+import { spawnSync } from 'node:child_process';
+import { mkdtempSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 
-const [base, playwright, chrome] = process.argv.slice(2);
+const [base, chrome = 'google-chrome'] = process.argv.slice(2);
 
-if ( (base === undefined) ||
-     (playwright === undefined) )
+if (base === undefined)
 {
-    console.error('usage: node tools/check_page.js BASE PLAYWRIGHT [CHROME]');
+    console.error('usage: node tools/check_page.js BASE [CHROME]');
     process.exit(2);
 }
 
@@ -62,14 +64,33 @@ const VISITS = [
         heard: ''
     }
 ];
-const STORED = 'printer.style = json\ntitle = two words\n';
+/*
+text_of
+  The text of the element with an id, in a page as the browser wrote it
+out: its tags gone, its character references read.
+*/
+function text_of(
+    _page,
+    _id
+)
+{
+    const found = new RegExp('<(\\w+) id="' + _id + '"[^>]*>([^]*?)</\\1>')
+                      .exec(_page);
 
-const { chromium } = await import(pathToFileURL(playwright).href);
-const browser      = await chromium.launch(
-                         (chrome !== undefined) ? { executablePath: chrome }
-                                                : {});
-const context      = await browser.newContext();
-let   problems     = 0;
+    if (found === null)
+    {
+        return null;
+    }
+
+    return found[2].replace(/<[^>]*>/g, '')
+                   .replace(/&lt;/g, '<')
+                   .replace(/&gt;/g, '>')
+                   .replace(/&quot;/g, '"')
+                   .replace(/&#39;/g, '\'')
+                   .replace(/&amp;/g, '&');
+}
+
+let problems = 0;
 
 /*
 same
@@ -91,27 +112,37 @@ function same(
     return;
 }
 
-for (const visit of VISITS)
+const profile = mkdtempSync(join(tmpdir(), 'djinterp.js-page-'));
+let   version = '';
+
+try
 {
-    const page   = await context.newPage();
-    const errors = [];
+    version = spawnSync(chrome, ['--version']).stdout.toString().trim();
 
-    page.on('pageerror', (_error) => errors.push(String(_error)));
-    await page.goto(visit.url);
-    await page.waitForSelector('body[data-ready=yes]', { timeout: 10000 });
+    for (const visit of VISITS)
+    {
+        // a browser run as root wants to be told it has no sandbox
+        const run = spawnSync(chrome, [
+            '--headless=new', '--disable-gpu',
+            ...((process.getuid?.() === 0) ? ['--no-sandbox'] : []),
+            '--user-data-dir=' + profile, '--virtual-time-budget=10000',
+            '--dump-dom', encodeURI(visit.url)
+        ], { maxBuffer: 1 << 26 });
 
-    same(visit.url, await page.locator('#out').textContent(), visit.want);
-    same('what was heard', await page.locator('#heard').textContent(),
-         visit.heard);
-    same('what was kept',
-         await page.evaluate(() => localStorage.getItem('djinterp/settings')),
-         STORED);
-    same('the page\'s errors', errors.join('\n'), '');
-    await page.close();
+        const page = (run.stdout ?? '').toString();
+
+        same('whether the page finished: ' + visit.url,
+             /<body[^>]*data-ready="yes"/.test(page), true);
+        same(visit.url, text_of(page, 'out'), visit.want);
+        same('what was heard', text_of(page, 'heard'), visit.heard);
+    }
+}
+finally
+{
+    rmSync(profile, { recursive: true, force: true });
 }
 
-console.log(await browser.version() + ': ' +
+console.log(version + ': ' +
             ((problems === 0) ? 'the page does as the port does'
                               : (problems + ' differ')));
-await browser.close();
 process.exit((problems === 0) ? 0 : 1);

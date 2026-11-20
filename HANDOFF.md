@@ -2,9 +2,14 @@
 
 2026-11-16. The port follows djinterp at `d20c0b23`.
 
-Read this, then `decisions.html`, which has the eighteen decisions this
-session leaves with the owner. `docs/JS_STYLE.md` is the style, as it
-came.
+Read this, then `decisions.html`, which has the seventeen decisions
+this session leaves with the owner. `docs/JS_STYLE.md` is the style.
+
+**djinterp.js is ignorant of every framework but itself** (the owner,
+2026-11-16). Nothing in this repository names or needs another library:
+not its sources, its tests, its tools, its example or its documents. The
+one other thing it knows is djinterp, the C it is a port of and follows
+by name.
 
 
 ## 1. What is in it
@@ -87,12 +92,11 @@ node tools/fuzz_check.js BUILD program 1 100 200
 BUILD is where `regenerate.sh` built the tools (`/tmp/djinterp.js/build`
 unless told otherwise).
 
-**The page in a browser** (needs playwright and a Chrome; the repository
-depends on neither):
+**The page in a browser** (needs a Chrome or Chromium, which it runs
+headless itself; `google-chrome` unless one is named):
 
 ```sh
-node tools/check_page.js http://127.0.0.1:8765 \
-     /path/to/playwright/index.mjs /usr/bin/google-chrome
+node tools/check_page.js http://127.0.0.1:8765 [/path/to/chrome]
 ```
 
 
@@ -162,8 +166,8 @@ room (5); promises (6); what a line is (7); the line's words (8); the
 query and storage (9); the events' names (10); refusals at `open` (12).
 
 `run` has one known difference from the reference, which no transcript
-catches: lines share what they bind (decision 7). Read it before uxoxo.js
-is built on `run`.
+catches: lines share what they bind (decision 7). Read it before
+anything is built on `run`.
 
 
 ## 4. What is next
@@ -177,20 +181,18 @@ In order, if the recommendations in `decisions.html` stand:
    and `help`. Teach `tools/fuzz_program.js` each word first, see it
    differ, then model it. Help texts come from a C tool, as rows do.
 4. **Notes to lane E:** a NaN's text (4); the rows' writer and its room
-   (5, 16); `d_option_env_statement_end` past a script's end.
+   (5, 15); `d_option_env_statement_end` past a script's end.
 5. **A note to the program's and kit's lanes:** `djinterp get -- NAME`
    refuses NAME (`decisions.html`, "Found while preparing this").
-6. **`glue.js` through `generated/reals.txt`** when the owner sends it
-   (14).
-7. **A type checker over the JSDoc**, as a tool (18b).
-8. **REAL rows' range and step**, when lane E lands them: regenerate,
+6. **A type checker over the JSDoc**, as a tool (17b).
+7. **REAL rows' range and step**, when lane E lands them: regenerate,
    read the diff, follow.
-9. **After 12-11:** the command language from the frozen grammar, and
+8. **After 12-11:** the command language from the frozen grammar, and
    desc's JSON as data.
 
-For uxoxo.js: the option machine and the event core are usable as they
-are. The page interface is usable, with decisions 6, 7, 8 and 10 open
-against it.
+For whatever is built on it: the option machine and the event core are
+usable as they are. The page interface is usable, with decisions 6, 7, 8
+and 10 open against it.
 
 
 ## 5. What was learned the hard way
@@ -202,6 +204,10 @@ against it.
   made near misses on purpose, it found two more differences in minutes,
   and a hand-typed line a fourth. Teach the fuzzer a thing before
   believing the port has it.
+* **A check should need as little as the thing it checks.** The page's
+  check first drove the browser through an automation library. Chrome
+  can be asked for the finished page itself, and now is; the check needs
+  a browser and nothing else.
 * **The page's own path was the unchecked one.** The transcript harness
   makes a fresh program a line, as the reference is a process a line.
   `open` and `run` do not, so they answer differently after the first
@@ -236,8 +242,10 @@ against it.
 
 ## 6. Conventions
 
-`docs/JS_STYLE.md`, as it came, and three things it is silent on, each
-settled by the C guide's habit (decision 18c):
+`docs/JS_STYLE.md`. It was revised on 11-16 so that it speaks of
+djinterp.js alone: what it said of other libraries is gone, and no rule
+changed; the file as it came is in the repository's history. Three
+things it is silent on were settled by the C guide's habit:
 
 * **A file that is not JavaScript** (`.c`, `.h`, `.sh`, `.html`) has the
   same banner in its own comment form, with its `path:`.
