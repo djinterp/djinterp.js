@@ -38,9 +38,9 @@ const ROOT  = join(dirname(fileURLToPath(import.meta.url)), '..');
 const [tsc] = process.argv.slice(2);
 
 // the modules held to the strict mode, by their paths under src/
-const STRICT = ['event/event_common.js', 'event/event_handler_common.js',
-                'option/option_common.js', 'text/cut.js',
-                'text/real_format.js', 'text/real_read.js'];
+const STRICT = ['event/event.js', 'event/event_common.js',
+                'event/event_handler_common.js', 'option/option_common.js',
+                'text/cut.js', 'text/real_format.js', 'text/real_read.js'];
 
 if (tsc === undefined)
 {
