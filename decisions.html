@@ -243,55 +243,42 @@
   <h1>Decisions for the owner</h1>
   <div class="meta">
     <span>Tuesday 2026-11-17</span>
-    <span><code>main</code> at <code>a5dafba</code>, following djinterp at <code>3eb096c9</code></span>
-    <span>1 open decision; 30 ruled, each with all that was put for it</span>
+    <span><code>main</code> at <code>8204d7e</code>, following djinterp at <code>3eb096c9</code></span>
+    <span>nothing open; 31 ruled, each with all that was put for it</span>
   </div>
-  <p class="meta" style="margin-top:10px">This page replaces the earlier one of 11-17. Every decision on that page is ruled, and so is every one before it. One is open, D28, which the style guide you asked for raises. Below it is every ruling you have made, each closed to a line: open one to see the question as it was put, every option with its advantages and disadvantages, the recommendation, the option you chose and where it stands now.</p>
+  <p class="meta" style="margin-top:10px">This page replaces the one of 11-17, evening. Every decision on that page is ruled, and so is every one before it: nothing is open. Below is every ruling you have made, each closed to a line: open one to see the question as it was put, every option with its advantages and disadvantages, the recommendation, the option you chose and where it stands now.</p>
   <p class="meta">Decisions now have one number across pages, as yours of the morning already did: the evening&rsquo;s 1 to 7 are D18 to D24, and each says so where it was put.</p>
 </header>
 
 <h2 id="standing">Where things stand</h2>
 <div class="standing">
-  <div class="cell"><div class="num">34 commits</div><div class="lbl">on <code>main</code>, nothing pushed (there is no remote), nothing uncommitted. You have them as a zip with the history.</div></div>
+  <div class="cell"><div class="num">36 commits</div><div class="lbl">on <code>main</code>, nothing pushed (there is no remote), nothing uncommitted. You have them as a zip with the history.</div></div>
   <div class="cell"><div class="num">Next</div><div class="lbl">D24&rsquo;s second tranche goes on: the option machine and its registry, djin, the commands, the cli settings and the interface, 478 findings, 256 of them in <code>option_env.js</code>.</div></div>
-  <div class="cell"><div class="num">27 of 30</div><div class="lbl">rulings built or in force. 99 tests and 16 transcripts pass; the type check and the style check have no finding.</div></div>
-  <div class="cell"><div class="num">Waiting on you</div><div class="lbl">D28. Relaying <code>docs/FOR_THE_LANES.md</code> (D15, D18). CI in djinterp&rsquo;s tree, for D14.</div></div>
+  <div class="cell"><div class="num">28 of 31</div><div class="lbl">rulings built or in force. 99 tests and 16 transcripts pass; the type check and the style check have no finding.</div></div>
+  <div class="cell"><div class="num">Waiting on you</div><div class="lbl">No decision. Relaying <code>docs/FOR_THE_LANES.md</code> (D15, D18). CI in djinterp&rsquo;s tree, for D14.</div></div>
 </div>
 
 <h2 id="index">Open</h2>
 <table class="index">
   <thead><tr><th>#</th><th>Decision</th><th>Decide by</th><th>Recommended</th><th>Your ruling</th></tr></thead>
   <tbody>
-    <tr><td><a href="#d28">D28</a></td><td><a href="#d28">Which file is djinterp.js&rsquo;s style: <code>JS_STYLE.md</code> or the guide</a> <span class="flag new">New</span></td><td>before the style next changes</td><td>B</td><td class="ruling none" data-for="d28">&mdash;</td></tr>
+    <tr><td colspan="5">Nothing is open: every decision put so far is ruled.</td></tr>
   </tbody>
 </table>
 
 <div class="toolbar" id="toolbar">
-  <span class="count" id="count">0 of 1 rulings chosen</span>
+  <span class="count" id="count">0 of 0 rulings chosen</span>
   <button type="button" id="agreeAll">Agree with every recommendation</button>
   <button type="button" id="clearAll">Clear</button>
   <button type="button" class="primary" id="toExport">Copy rulings &darr;</button>
 </div>
 
-<section class="decision" id="d28">
-  <header><span class="badge">D28</span><h3>Which file is djinterp.js&rsquo;s style: <code>JS_STYLE.md</code> or the guide <span class="flag new">New</span></h3></header>
-  <div class="facts"><span><b>Decide by</b> before the style next changes</span><span><b>Affects</b> <code>docs/JS_STYLE.md</code>; <code>docs/style_guidelines_js.html</code>; JS3</span></div>
-  <p>You asked on 11-17 for a JavaScript counterpart of djinterp&rsquo;s two style guides. It is at <code>docs/style_guidelines_js.html</code>: their order and form, section for section, each rule marked ruled, checked or recommended, the port&rsquo;s practice as measured, and where the code is not yet the guide. It carries every rule of <code>docs/JS_STYLE.md</code>, which JS3 made djinterp.js&rsquo;s file of style, changed only through you.</p>
-<p>So two files now say the same rules. Until you rule, <code>JS_STYLE.md</code> governs wherever they differ, and the guide says so at its top.</p>
-  <fieldset><legend>Decision D28</legend>
-  <div class="options">
-    <div class="opt head"><div></div><div>Option</div><div>Advantages</div><div>Disadvantages</div></div>
-    <label class="opt"><span class="pick"><input type="radio" name="d28" value="A"></span><span class="name">A. <code>JS_STYLE.md</code> stays the file; the guide follows it, changed with it</span><span>Nothing moves; JS3 stands as it was settled.</span><span>Two files to keep in step by hand. The counterpart of the C and C++ guides is second to a shorter note.</span></label>
-    <label class="opt rec" data-rec="1"><span class="pick"><input type="radio" name="d28" value="B"></span><span class="name">B. The guide becomes the file of style, and JS3 moves to it; <code>JS_STYLE.md</code> keeps what is not style (tests, generated data, git and handing back) and points to it<br><span class="tag">Recommended</span></span><span>One place for each rule. The port&rsquo;s style is in the form and the place of djinterp&rsquo;s own two.</span><span><code>JS_STYLE.md</code>, the file the first agent was given, changes shape. The guide is HTML, edited by hand.</span></label>
-    <label class="opt"><span class="pick"><input type="radio" name="d28" value="C"></span><span class="name">C. B, with the guide written in Markdown (<code>docs/style_guide_js.md</code>, as djinterp&rsquo;s are) and the page generated from it</span><span>The same format as the other two guides; a change reads as prose in a diff.</span><span>A Markdown renderer written for one page, since the port takes no package; a generated page kept beside its source.</span></label>
-  </div></fieldset>
-  <div class="recommend"><b class="lead">Recommendation: B.</b> You asked for the counterpart of the guides that govern djinterp&rsquo;s C and C++; B makes it govern the port&rsquo;s JavaScript the same way, with one source for each rule. C is B in djinterp&rsquo;s own format, at the price of a renderer the port would otherwise never need.</div>
-  <div class="note-row"><label for="n-d28">Note</label><textarea class="note" id="n-d28" data-for="d28" placeholder="Optional"></textarea></div>
-</section>
+
 
 <h2 id="beyond">Done beyond the words of a ruling</h2>
 <p>Each of these follows from a ruling and was built with it. None needs a decision; they are here so nothing comes as a surprise.</p>
 <ul>
+  <li><b>D28 moved everything that cited the style.</b> The guide took what only the old file held: the whole measured table of reals, the reader&rsquo;s every example, and a class among the braces. <code>JS_STYLE.md</code> keeps its sections on tests, generated data, and git and handing back word for word, as 1 to 3. The sources, tests and tools that cited its style sections cite the guide&rsquo;s.</li>
   <li><b>D27 was measured on the reference itself, on a terminal.</b> Run under a pseudo-terminal, it colours on <code>always</code> and not on <code>never</code>; <code>auto</code>, no word, and a word that is none of the three fall back to the terminal; and what is said before a line&rsquo;s options are read (a refused setting, the settings file&rsquo;s warnings, with the file and line bold) is coloured whatever the line&rsquo;s <code>--color</code> says. Only the error stream is coloured. The port with colour on agreed byte for byte on 400 lines: 30 chosen, 9 over a settings file with warnings, and 361 of the fuzzer&rsquo;s, 289 of them coloured. The page&rsquo;s own diagnostics, the query&rsquo;s warnings and an unclosed quote, are coloured the same way.</li>
   <li><b>D26&rsquo;s lines cannot be recorded</b>, since they differ from the reference&rsquo;s by design: a test holds them, and the fuzzer still keeps <code>--version</code> from <code>-v</code>.</li>
   <li><b>D25 is checked.</b> <code>tools/check_style.js</code> holds every function inside a strict module to the form. The strict modules are listed once, in <code>tools/strict_modules.js</code>, which both checks read.</li>
@@ -323,10 +310,29 @@
   <button type="button" class="filter" data-show="all" aria-pressed="true">All</button>
   <button type="button" class="filter" data-show="todo" aria-pressed="false">To do</button>
   <button type="button" class="filter" data-show="done" aria-pressed="false">Built or in force</button>
-  <span class="count" id="ruledCount">30 shown</span>
+  <span class="count" id="ruledCount">31 shown</span>
 </div>
 
-<h3 class="group" id="ruled-1117">Ruled on 2026-11-17 &middot; put on the page of that day (3)</h3>
+<h3 class="group" id="ruled-1117e">Ruled on 2026-11-17, 18:50 &middot; put on the page of that evening (1)</h3>
+<details class="ruled" id="r-d28" data-state="done">
+  <summary><span class="badge">D28</span><span class="title">Which file is djinterp.js&rsquo;s style: <code>JS_STYLE.md</code> or the guide</span><span class="ruling" title="Your ruling">B</span><span class="state done">built, 11-17</span></summary>
+  <div class="body">
+  <div class="facts"><span><b>Put</b> 2026-11-17, on the page of that evening</span><span><b>Ruled</b> 2026-11-17</span><span><b>Was to be decided by</b> before the style next changes</span><span><b>Affects</b> <code>docs/JS_STYLE.md</code>; <code>docs/style_guidelines_js.html</code>; JS3</span></div>
+  <div class="yours"><b class="lead">Your ruling: B.</b> The guide is the file of style, and JS3 moves to it; <code>JS_STYLE.md</code> keeps tests, generated data, and git and handing back, and points to it. <span class="statel"><b>State:</b> built, 2026.11.17: the guide took what only the old file held, and every citation moved with it.</span></div>
+  <p>You asked on 11-17 for a JavaScript counterpart of djinterp&rsquo;s two style guides. It is at <code>docs/style_guidelines_js.html</code>: their order and form, section for section, each rule marked ruled, checked or recommended, the port&rsquo;s practice as measured, and where the code is not yet the guide. It carries every rule of <code>docs/JS_STYLE.md</code>, which JS3 made djinterp.js&rsquo;s file of style, changed only through you.</p>
+<p>So two files now say the same rules. Until you rule, <code>JS_STYLE.md</code> governs wherever they differ, and the guide says so at its top.</p>
+  <div class="options">
+    <div class="opt head"><div></div><div>Option</div><div>Advantages</div><div>Disadvantages</div></div>
+    <div class="opt"><span class="pick"></span><span class="name">A. <code>JS_STYLE.md</code> stays the file; the guide follows it, changed with it</span><span>Nothing moves; JS3 stands as it was settled.</span><span>Two files to keep in step by hand. The counterpart of the C and C++ guides is second to a shorter note.</span></div>
+    <div class="opt rec ruled"><span class="pick" aria-label="ruled">&#10003;</span><span class="name">B. The guide becomes the file of style, and JS3 moves to it; <code>JS_STYLE.md</code> keeps what is not style (tests, generated data, git and handing back) and points to it<span class="tags"><span class="tag ruled">Ruled</span><span class="tag">Recommended</span></span></span><span>One place for each rule. The port&rsquo;s style is in the form and the place of djinterp&rsquo;s own two.</span><span><code>JS_STYLE.md</code>, the file the first agent was given, changes shape. The guide is HTML, edited by hand.</span></div>
+    <div class="opt"><span class="pick"></span><span class="name">C. B, with the guide written in Markdown (<code>docs/style_guide_js.md</code>, as djinterp&rsquo;s are) and the page generated from it</span><span>The same format as the other two guides; a change reads as prose in a diff.</span><span>A Markdown renderer written for one page, since the port takes no package; a generated page kept beside its source.</span></div>
+  </div>
+  <div class="recommend"><b class="lead">Recommendation: B.</b> You asked for the counterpart of the guides that govern djinterp&rsquo;s C and C++; B makes it govern the port&rsquo;s JavaScript the same way, with one source for each rule. C is B in djinterp&rsquo;s own format, at the price of a renderer the port would otherwise never need.</div>
+  
+  </div>
+</details>
+
+<h3 class="group" id="ruled-1117">Ruled on 2026-11-17, 17:22 &middot; put on the page of that day (3)</h3>
 <details class="ruled" id="r-d25" data-state="done">
   <summary><span class="badge">D25</span><span class="title">An inner function's comment, under the strict mode</span><span class="ruling" title="Your ruling">B</span><span class="state done">built, 11-17</span></summary>
   <div class="body">
@@ -862,10 +868,10 @@
   "use strict";
 
   var TITLES = {
-    d28: "D28. Which file is djinterp.js's style: JS_STYLE.md or the guide"
+
   };
-  var ORDER = ["d28"];
-  var KEY = "djinterp-js-decisions-2026-11-17-evening";
+  var ORDER = [];
+  var KEY = "djinterp-js-decisions-2026-11-17-night";
   function recOf(name) {
     var el = document.querySelector('label.opt[data-rec] input[name="' + name + '"]');
     return el ? el.value : null;
@@ -947,7 +953,7 @@
   function buildText() {
     var lines = [];
     var open = [];
-    lines.push("djinterp.js's decisions of 2026-11-17, evening (main at a5dafba, following djinterp at 3eb096c9): the owner's rulings");
+    lines.push("djinterp.js's decisions of 2026-11-17, night (main at 8204d7e, following djinterp at 3eb096c9): the owner's rulings");
     lines.push("");
     ORDER.forEach(function (n) {
       var num = TITLES[n].split(".")[0];
@@ -970,7 +976,7 @@
   }
 
   function buildJson() {
-    var out = { page: "djinterp.js decisions 2026-11-17, evening", base: "a5dafba", reference: "3eb096c9", rulings: {} };
+    var out = { page: "djinterp.js decisions 2026-11-17, night", base: "8204d7e", reference: "3eb096c9", rulings: {} };
     ORDER.forEach(function (n) {
       out.rulings[n] = {
         title: TITLES[n],
@@ -1037,7 +1043,7 @@
       var blob = new Blob([buildJson()], { type: "application/json" });
       var a = document.createElement("a");
       a.href = URL.createObjectURL(blob);
-      a.download = "djinterp_js_rulings_2026-11-17_evening.json";
+      a.download = "djinterp_js_rulings_2026-11-17_night.json";
       document.body.appendChild(a);
       a.click();
       setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 500);
