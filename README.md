@@ -4,7 +4,7 @@ djinterp's front-end half, in JavaScript: its settings, registry, djin
 records, events and the `djinterp` program's commands, in a page, with no
 wasm module and no server.
 
-It is a port that follows the C reference, djinterp at `dfc793c4`. The
+It is a port that follows the C reference, djinterp at `3eb096c9`. The
 reference stays the oracle: `tests/transcripts/` holds what it answers,
 recorded by the tools in `tools/`, and the port passes when its bytes
 agree.

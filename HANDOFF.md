@@ -1,6 +1,6 @@
 # djinterp.js: handoff
 
-2026-11-17. The port follows djinterp at `dfc793c4`.
+2026-11-17. The port follows djinterp at `3eb096c9`.
 
 Read this, then `decisions.html`: its open decisions first, and every
 ruling so far below them, each with all that was put for it and where it

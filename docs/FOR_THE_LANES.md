@@ -1,8 +1,9 @@
 # Notes for djinterp's lanes, from the port
 
-2026-11-16. Each is for the owner to relay. The port follows djinterp at
-`dfc793c4`; everything here was measured on the reference built from
-that commit.
+2026-11-16, measured again 2026-11-17. Each is for the owner to relay.
+The port follows djinterp at `3eb096c9`; everything here was measured on
+the reference built from `dfc793c4`, and again from `3eb096c9`, and
+holds at both.
 
 
 ## For lane E: the rows as JSON (the owner's ruling D15)
