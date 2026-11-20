@@ -97,3 +97,28 @@ writer has it.
 
 The port copies all three, as the reference does them now, and its
 transcripts and fuzzers hold them.
+
+
+## For the wasm lane and the program's lane: the console's nouns
+
+The wasm module's console (its step 6 of 2026-11-18) takes a
+configuration text and gives a status, and takes a line and gives a
+reply, all as bytes, with its nouns "yours to agree before either side
+freezes them". If the owner rules D29 as recommended, the port will
+answer `run` through that console, so it asks that a reply carry what a
+run of the program gives the port now, each apart:
+
+* **the exit status**, as the program's `main` returns it;
+* **what it wrote to standard output**, and **what it said on standard
+  error**, as two texts, not one: the port gives them apart, and
+  colours only the second;
+* **whether standard error is a terminal**, given with the
+  configuration, since the program colours by it (the owner's ruling
+  D27);
+* **the full names a `set` bound and kept**, which the port reports in
+  its `djinterp.set` event and which the program's settings file holds
+  from the next run on.
+
+The port takes the console's five host imports from `host.h` as
+generated data, so they can change until they freeze; it asks only that
+these four things be in a reply's frame.

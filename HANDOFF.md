@@ -267,6 +267,11 @@ These are differences on purpose. Each has a test that names it.
    read the diff, follow.
 6. **After 12-11:** the command language from the frozen grammar, desc's
    JSON as data, and D11's question of the parser whole.
+7. **D29, the wasm configuration**, open: an opt-in way to answer through
+   djinterp's own module (the owner's word of 11-18). Nothing is built
+   before the ruling and before the program answers through the module's
+   console; what the port asks of the console's reply is in
+   `docs/FOR_THE_LANES.md`.
 
 
 ## 5. What was learned the hard way
