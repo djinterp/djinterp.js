@@ -38,7 +38,7 @@ server.
 | `generated/` | the reference's data, written by `tools/`; never edited |
 | `types/` | declarations, written by `tools/check_types.js`; never edited |
 | `tests/` | 99 tests; `tests/transcripts/` holds the reference's answers |
-| `tools/` | C drivers over the reference, the recorder, fuzzers, checks |
+| `tools/` | C drivers over the reference, the recorder, fuzzers, checks, and the kit maker (`make_kit.js`, its templates in `tools/kit/`) |
 | `examples/console.html` | the port in a page |
 | `decisions.html` | the decisions for the owner, open and decided |
 
@@ -108,6 +108,23 @@ later, which the repository does not depend on.
 
 
 ## 3. Where the work stands
+
+### The owner's repository, and kits
+
+The owner's repository is `djinterp/djinterp.js` on GitHub, private,
+pushed on 2026-11-19. It sits in djinterp's folder, at
+`D:\sam\code\projects\repos\djinterp\djinterp.js`, excluded from
+djinterp's git by a line in its `.git/info/exclude`, so neither
+repository holds the other. It was made by a kit: per commit, a zip of
+the files the commit writes, its message and what it deletes, and a
+PowerShell script that makes the commits again and checks every tree.
+So it has the port's trees, not its hashes, and work goes to it the
+same way: `tools/make_kit.js` makes a kit of the commits after the last
+kit's head, and the owner runs it and pushes.
+
+| Kit | Steps | Ends at |
+| --- | --- | --- |
+| 2026-11-18 | 1 to 50 | `b66507d`, decisions.html: D29 open |
 
 ### The move to 6fe35d43
 

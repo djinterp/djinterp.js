@@ -49,8 +49,14 @@ first field names the reference's commit.
 
 * A commit a change, each passing `node --test`; your own attribution in
   each message.
-* Never push. There is no remote.
-* Hand back as the repository zipped whole, `.git` included, with a
-  `HANDOFF.md` at the top, in this form: what is in it; building in five
-  minutes; where the work stands; what is next; what was learned the
-  hard way; conventions.
+* Never push: the owner does. The owner's repository (`djinterp/djinterp.js`
+  on GitHub) holds the port's trees, not its hashes; HANDOFF.md says
+  where and how it was made.
+* Hand back as a kit of the commits after the last kit's head:
+  `node tools/make_kit.js OUT NAME FROM --tsc TSC`, which runs each
+  commit's gates on its own tree. The kit's last commit adds its row to
+  HANDOFF.md's table of kits. Zip the repository whole, `.git` included,
+  only where the owner asks for it.
+* Keep `HANDOFF.md` at the top, in this form: what is in it; building in
+  five minutes; where the work stands; what is next; what was learned
+  the hard way; conventions.

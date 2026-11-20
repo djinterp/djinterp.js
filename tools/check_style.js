@@ -37,7 +37,7 @@ import { dirname, join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ROOT    = join(dirname(fileURLToPath(import.meta.url)), '..');
-const CHECKED = /\.(js|c|h|sh|md|json|html)$/;
+const CHECKED = /\.(js|c|h|sh|ps1|txt|md|json|html)$/;
 const SKIPPED = new Set(['.git', 'node_modules', 'generated', 'transcripts',
                          'types']);
 
@@ -356,7 +356,7 @@ for (const path of filesUnder(ROOT))
     }
 
     // a banner names the file it is in
-    if ( /^(src|tests|tools)\/.*\.(js|c|h|sh)$/.test(file) &&
+    if ( /^(src|tests|tools)\/.*\.(js|c|h|sh|ps1)$/.test(file) &&
          !text.includes('path:      /' + file + '\n') )
     {
         say(file, 0, 'has no banner naming /' + file);
