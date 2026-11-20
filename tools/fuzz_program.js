@@ -14,15 +14,16 @@
 * apart, and their long forms, `--color` with and without a word,
 * `--version`), `--` wherever it may stand, and words that are nearly
 * any of these, which the reference's parser answers with "did you mean".
-*   One thing it keeps from: `--version` with `-v`, which names the file
-* and the compiler of the reference's own build (HANDOFF.md, "what is not
-* ported").
+*   One thing it keeps from: `--version` with `-v`. There the reference
+* names its own file and compiler, and the port its module and the commit
+* it follows (the owner's ruling D26), so the two differ by design;
+* tests/djinterp.test.js holds the port's lines.
 *
 *
 * path:      /tools/fuzz_program.js
 * link(s):   TBA
 * author(s): Samuel 'teer' Neal-Blim                         created: 2026.11.15
-*                                                            revised: 2026.11.16
+*                                                            revised: 2026.11.17
 *******************************************************************************/
 
 let state = (Number(process.argv[2]) >>> 0) || 1;
@@ -292,7 +293,7 @@ function command()
                      pick(['--help', '-h', '--version', '-hq', '-qh']));
     }
 
-    // `--version` at -v names the reference's own build: kept from, by
+    // `--version` at -v names each one's own build (D26): kept from, by
     // leaving out every short option and every `--verbose` of such a line
     if (words.some((_word) => /^--version(=|$)/.test(_word)))
     {

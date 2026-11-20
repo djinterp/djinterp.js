@@ -20,9 +20,11 @@
 * program -- `help`, `completion`, `--help`, `--version`, `-q`, `-v` and
 * `--color`. Help's texts, the version and the completion scripts are
 * the reference's own, generated as data (generated/kit.json).
-*   One thing is not modelled: `--version` at `-v`, which names the file
-* and the compiler of the reference's own build (HANDOFF.md, "what is not
-* ported").
+*   `--version` at `-v` writes the reference's three lines with the port's
+* own facts (the owner's ruling D26, 2026-11-17): the version; `program:`
+* and the address of the port's module, where the reference names its
+* file; and `kit:` with the language, the commit of djinterp the port
+* follows and "unbuilt", where it names its compiler and build.
 *   reference: src/djinterp/tools/djinterp/djinterp_commands.c, at 3eb096c9
 *
 *
@@ -908,6 +910,16 @@ function strayWord(
 // the shells the reference writes a completion script for, as it lists them
 const SHELLS = Object.keys(kit.completion);
 
+// what `--version` at `-v` says after the version (D26): the port's module,
+// as the reference names its own file, and how the port was made, as it
+// names its kit's build. The module knows its own address; no global is
+// read.
+const BUILD_SAID = 'program: ' +
+                   new URL('../../djinterp.js', import.meta.url).href +
+                   '\n' +
+                   'kit: JavaScript, djinterp ' + kit.reference +
+                   ', unbuilt\n';
+
 // the long options that are the program's own, which no setting's option
 // is taken for: the kit's, `--colour` among them, and each command's
 const OWN_LONG = ['--help', '--version', '--quiet', '--verbose', '--color',
@@ -1274,7 +1286,15 @@ function runInner(
     else if (line.version)
     {
         run.out += kit.version;
-        status   = EXIT.OK;
+
+        // at -v, and not quieted, what is running
+        if ( (line.quiet === 0) &&
+             (line.verbose > 0) )
+        {
+            run.out += BUILD_SAID;
+        }
+
+        status = EXIT.OK;
     }
     else if (line.misplaced !== null)
     {

@@ -10,7 +10,7 @@
 * path:      /tests/djinterp.test.js
 * link(s):   TBA
 * author(s): Samuel 'teer' Neal-Blim                         created: 2026.11.15
-*                                                            revised: 2026.11.16
+*                                                            revised: 2026.11.17
 *******************************************************************************/
 
 import assert from 'node:assert/strict';
@@ -489,4 +489,32 @@ test('the kit\'s words in a page: help, a version, completion, colour',
                  'djinterp: error: --color: \'bright\' is not auto, ' +
                  'always or never\nTry \'djinterp --help\' for more ' +
                  'information.\n');
+});
+
+test('--version at -v names the port and the djinterp it follows',
+     async () =>
+{
+    const kit  = generated('kit.json');
+    const dj   = await djinterp.open({ settings: SETTINGS });
+    const said = kit.version +
+                 'program: ' +
+                 new URL('../src/djinterp.js', import.meta.url).href + '\n' +
+                 'kit: JavaScript, djinterp ' + kit.reference +
+                 ', unbuilt\n';
+
+    // the reference's three lines, with the port's own facts (D26)
+    assert.equal(await outOf(dj, '--version -v'), said);
+    assert.equal(await outOf(dj, '-v --version'), said);
+    assert.equal(await outOf(dj, '--version --verbose'), said);
+    assert.equal(await outOf(dj, '--version -vv'), said);
+    assert.equal(await outOf(dj, '--version -v list'), said);
+
+    // as the reference: any -q quiets it, wherever it stands
+    assert.equal(await outOf(dj, '--version -v -q'), kit.version);
+    assert.equal(await outOf(dj, '-qv --version'), kit.version);
+    assert.equal(await outOf(dj, '--version --verbose --quiet'),
+                 kit.version);
+
+    // the commit is the one the port's data was made from
+    assert.match(kit.reference, /^[0-9a-f]{7,40}$/);
 });
