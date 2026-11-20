@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+<!--
+  djinterp.js [docs]                                    style_guidelines_js.html
+
+    The JavaScript style of djinterp.js, written out in the form of
+  djinterp's C and C++ guides (docs/style_guide_c.md and
+  docs/style_guide_cpp.md in djinterp's tree), section for section where
+  the language has the same thing to say.
+
+  path:      /docs/style_guidelines_js.html
+  link(s):   TBA
+  author(s): Samuel 'teer' Neal-Blim                         created: 2026.11.17
+                                                             revised: 2026.11.17
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>djinterp.js: JavaScript Coding Style Guide</title>
+<style>
+  :root {
+    --bg: #fbfaf7; --paper: #ffffff; --ink: #1d1d1b; --ink-2: #4a4a46;
+    --ink-3: #75756f; --rule: #e3e0d8; --rule-2: #cfcbc0;
+    --accent: #1f5f8b; --accent-soft: #e8f0f6; --rec: #2f6f3e;
+    --rec-soft: #eaf3ec; --warn: #8a4b0f; --warn-soft: #fbf0e3;
+    --code-bg: #f2f0ea;
+    --mono: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas,
+            monospace;
+    --sans: system-ui, -apple-system, "Segoe UI", Roboto,
+            "Helvetica Neue", Arial, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #161614; --paper: #1e1e1b; --ink: #ecebe6; --ink-2: #c4c2ba;
+      --ink-3: #96948c; --rule: #34332f; --rule-2: #4a4843;
+      --accent: #7fb3d9; --accent-soft: #1f2a33; --rec: #8fcf9e;
+      --rec-soft: #1d2b21; --warn: #f0b878; --warn-soft: #2f2418;
+      --code-bg: #2a2925;
+    }
+  }
+  * { box-sizing: border-box; }
+  html { background: var(--bg); }
+  body { margin: 0; color: var(--ink); background: var(--bg);
+         font: 15.5px/1.55 var(--sans); }
+  .page { max-width: 980px; margin: 0 auto; padding: 40px 28px 80px; }
+  header.top { border-bottom: 2px solid var(--ink); padding-bottom: 18px;
+               margin-bottom: 28px; }
+  .eyebrow { font: 600 12px/1.2 var(--sans); letter-spacing: .08em;
+             text-transform: uppercase; color: var(--ink-3); }
+  h1 { font-size: 30px; line-height: 1.15; margin: 8px 0 10px;
+       letter-spacing: -.01em; }
+  h2 { font-size: 22px; margin: 48px 0 12px; padding-bottom: 6px;
+       border-bottom: 1px solid var(--rule-2); scroll-margin-top: 20px; }
+  h3 { font-size: 18px; margin: 30px 0 8px; scroll-margin-top: 20px; }
+  h4 { font-size: 13px; margin: 20px 0 6px; text-transform: uppercase;
+       letter-spacing: .06em; color: var(--ink-3); }
+  p { margin: 8px 0; }
+  .meta { color: var(--ink-2); font-size: 14px; }
+  a { color: var(--accent); }
+  ul, ol { margin: 6px 0; padding-left: 24px; }
+  li { margin: 3px 0; }
+  code { font: 13px/1.4 var(--mono); background: var(--code-bg);
+         padding: 1px 5px; border-radius: 4px; }
+  pre { font: 13px/1.45 var(--mono); background: var(--code-bg);
+        border: 1px solid var(--rule); border-radius: 8px;
+        padding: 12px 14px; overflow-x: auto; margin: 10px 0; }
+  pre code { background: none; padding: 0; }
+  table { border-collapse: collapse; width: 100%; font-size: 14.5px;
+          margin: 10px 0; }
+  th, td { text-align: left; vertical-align: top; padding: 7px 10px;
+           border-bottom: 1px solid var(--rule); }
+  th { font-size: 12.5px; text-transform: uppercase; letter-spacing: .05em;
+       color: var(--ink-3); font-weight: 600;
+       border-bottom: 1px solid var(--rule-2); }
+  .callout { background: var(--accent-soft);
+             border-left: 4px solid var(--accent); padding: 12px 16px;
+             border-radius: 0 8px 8px 0; margin: 14px 0; }
+  .callout.warn { background: var(--warn-soft);
+                  border-left-color: var(--warn); }
+  .b { display: inline-block; font: 600 11px/1.6 var(--sans);
+       letter-spacing: .04em; padding: 0 7px; border-radius: 10px;
+       vertical-align: 2px; margin-left: 6px; white-space: nowrap; }
+  .b.ruled { background: var(--rec-soft); color: var(--rec); }
+  .b.checked { background: var(--accent-soft); color: var(--accent); }
+  .b.open { background: var(--warn-soft); color: var(--warn); }
+  .label { font-weight: 700; margin-top: 14px; }
+  nav.toc ol { list-style: none; padding-left: 0; columns: 2;
+               column-gap: 32px; }
+  nav.toc ol ol { columns: 1; padding-left: 22px; font-size: 14px; }
+  nav.toc li { break-inside: avoid; }
+</style>
+</head>
+<body>
+<div class="page">
+
+<header class="top">
+  <div class="eyebrow">djinterp.js · docs</div>
+  <h1>JavaScript Coding Style Guide</h1>
+  <p class="meta">The counterpart of djinterp's
+  <code>style_guide_c.md</code> and <code>style_guide_cpp.md</code>, for
+  the port. Written 2026-11-17.</p>
+</header>
+
+<p>This is the style of djinterp.js, in the order and form of djinterp's
+C and C++ guides. Where the language has the same thing to say, the
+section has the same name and the same rule. Where JavaScript has no such
+thing (include guards, macros, the preprocessor), the section says what
+stands in its place. Where this guide is silent, the C guide governs, and
+after it the C++ guide's additions, as far as JavaScript allows.</p>
+
+<p>Each rule is one of three kinds:</p>
+<ul>
+<li><span class="b ruled">ruled</span> the owner has ruled on it; the
+ruling is named.</li>
+<li><span class="b checked">checked</span> a tool in <code>tools/</code>
+holds every file to it.</li>
+<li>Unmarked: <b>recommended</b>, the house style written for the port
+on 2026-11-14 and not yet ruled on point by point.</li>
+</ul>
+
+<div class="callout warn"><b>This guide and <code>JS_STYLE.md</code>.</b>
+<code>docs/JS_STYLE.md</code> is djinterp.js's file of style, changed
+only through the owner (JS3). This guide carries every rule in it, and
+adds the C guide's rules that the port follows without the file saying
+so. Which of the two governs from now on is open (D28,
+<a href="#rulings">section 17</a>). Until it is ruled,
+<code>JS_STYLE.md</code> governs wherever the two differ.</div>
+
+<nav class="toc">
+<h2 id="contents">Contents</h2>
+<ol>
+  <li>1. <a href="#layout">Layout</a></li>
+  <li>2. <a href="#formatting">General formatting</a>
+    <ol>
+      <li>2.1 <a href="#spacing">Spacing</a></li>
+      <li>2.2 <a href="#guards">Module guards</a></li>
+      <li>2.3 <a href="#constant-names">Constant names</a></li>
+      <li>2.4 <a href="#imports">Imports</a></li>
+      <li>2.5 <a href="#brackets">Brackets</a></li>
+      <li>2.6 <a href="#boolean">Boolean expressions</a></li>
+      <li>2.7 <a href="#calls">Function calls and returns</a></li>
+      <li>2.8 <a href="#variables">Variable declarations</a></li>
+      <li>2.9 <a href="#control-flow">Control flow and spacing</a></li>
+    </ol></li>
+  <li>3. <a href="#naming">Naming conventions</a>
+    <ol>
+      <li>3.1 <a href="#names">Names</a></li>
+      <li>3.2 <a href="#reserved">Reserved identifiers</a></li>
+    </ol></li>
+  <li>4. <a href="#comments">Comments</a>
+    <ol>
+      <li>4.1 <a href="#comment-style">Comment style</a></li>
+      <li>4.2 <a href="#banner">File header comments</a></li>
+      <li>4.3 <a href="#structure">Structure, numbering and contents</a>
+      </li>
+      <li>4.4 <a href="#comment-formatting">Comment formatting</a></li>
+      <li>4.5 <a href="#brief">Brief comment format</a></li>
+    </ol></li>
+  <li>5. <a href="#functions">Functions</a>
+    <ol>
+      <li>5.1 <a href="#exported">Exported functions</a></li>
+      <li>5.2 <a href="#inner">Functions inside a module</a></li>
+      <li>5.3 <a href="#nothing">Functions that give nothing</a></li>
+      <li>5.4 <a href="#arrows">Arrow functions</a></li>
+      <li>5.5 <a href="#test-functions">Test functions</a></li>
+    </ol></li>
+  <li>6. <a href="#failures">Failures and errors</a></li>
+  <li>7. <a href="#language">Language and checks</a></li>
+  <li>8. <a href="#assertions">Assertions</a></li>
+  <li>9. <a href="#conditional">Conditional code</a></li>
+  <li>10. <a href="#transfer">Control transfer</a></li>
+  <li>11. <a href="#size">Function size and complexity</a></li>
+  <li>12. <a href="#types">Types</a></li>
+  <li>13. <a href="#behaviour">What the reference fixes</a></li>
+  <li>14. <a href="#transcripts">Transcripts and generated data</a></li>
+  <li>15. <a href="#file-structure">File structure</a></li>
+  <li>16. <a href="#not-yet">Where the code is not yet this guide</a></li>
+  <li>17. <a href="#rulings">Rulings</a></li>
+</ol>
+</nav>
+
+
+<h2 id="layout">1. Layout</h2>
+
+<p>The port is one tree. A module's path is the reference's own path for
+the same thing, under <code>src/</code>, with djinterp's
+<code>inc/djinterp/</code> and its language folder dropped:
+<code>inc/djinterp/c/option/option_env.h</code> becomes
+<code>src/option/option_env.js</code>, and
+<code>inc/djinterp/tools/cli/c/cli_settings.h</code> becomes
+<code>src/tools/cli/cli_settings.js</code>. A JavaScript module is both a
+header and its source, so one file stands for the pair.</p>
+
+<table>
+<tr><th>Path</th><th>Holds</th></tr>
+<tr><td><code>src/djinterp.js</code></td><td>the interface a page calls:
+<code>open</code>, <code>run</code>, <code>on</code> and the rest. It has
+no counterpart in the reference</td></tr>
+<tr><td><code>src/MODULE/FILE.js</code></td><td>the port of a reference
+module, at the reference's path</td></tr>
+<tr><td><code>src/text/</code></td><td>what the reference does inside
+another file and the port keeps apart: reals written and read, and text
+cut at a limit</td></tr>
+<tr><td><code>tests/MODULE/FILE.test.js</code></td><td>a module's tests,
+mirroring <code>src/</code></td></tr>
+<tr><td><code>tests/transcripts/</code></td><td>what the reference wrote,
+recorded by a tool, never by hand (<a href="#transcripts">section
+14</a>)</td></tr>
+<tr><td><code>tools/</code></td><td>the checks, and the C programs that
+record transcripts and write the generated data, built against the
+reference unchanged</td></tr>
+<tr><td><code>generated/</code></td><td>what the tools write: JSON, and a
+module for each file that a page imports. Committed; never edited by
+hand</td></tr>
+<tr><td><code>types/</code></td><td>the declarations the type check
+writes from the JSDoc. Committed; never edited by hand</td></tr>
+<tr><td><code>examples/</code></td><td>pages that use the port</td></tr>
+<tr><td><code>docs/</code></td><td>documentation</td></tr>
+</table>
+
+<p><b>The port knows only itself.</b><span class="b ruled">owner's word,
+2026-11-16</span> Nothing in the repository (sources, tests, tools,
+examples, documents) names or needs a library other than djinterp.js. The
+reference, djinterp, is the one thing the port speaks of, since it is
+what the port follows.</p>
+
+
+<h2 id="formatting">2. General formatting</h2>
+
+<h3 id="spacing">2.1 Spacing</h3>
+
+<h4>Line length</h4>
+
+<p>As the C guide: a line is measured in <b>characters</b>, the count of
+Unicode code points on it, without its line break.</p>
+
+<ul>
+<li><b>No tab characters</b> anywhere.
+<span class="b checked">check_style.js</span></li>
+<li><b>UTF-8, with no byte-order mark.</b></li>
+<li><b>Single-width characters only.</b> A wide character or an emoji is
+written by its code point in a string, as <code>'\u{1F600}'</code>, never
+as a literal.</li>
+<li><b>80 characters at most.</b><span class="b checked">check_style.js
+</span> In the port this is a limit, not the C guide's target: every
+line of every file people write is held to it. A long string is broken
+into parts joined with <code>+</code>. A row of a Markdown table, which
+cannot be broken, may pass it.</li>
+<li>Depth is not a reason to run long. A line that is long because it
+sits five levels deep wants a function taken out of it.</li>
+</ul>
+
+<p>Generated files, recorded transcripts and <code>types/</code> are not
+held to this section. The generator is; its output need not be.</p>
+
+<h4>Whitespace</h4>
+
+<ul>
+<li>Four spaces to a level. Spaces, never tabs.</li>
+<li>No space at the end of a line.<span class="b checked">check_style.js
+</span></li>
+<li><code>LF</code> line breaks; no carriage return.
+<span class="b checked">check_style.js</span></li>
+<li>Every file ends with exactly one line break.
+<span class="b checked">check_style.js</span></li>
+<li>Line related things up where it helps the eye: the <code>=</code> of
+a run of declarations, the names and descriptions of
+<code>@param</code> tags, the operators of a boolean expression.</li>
+</ul>
+
+<h3 id="guards">2.2 Module guards</h3>
+
+<p>None. An ES module is evaluated once for each address it is imported
+by, so the C guide's include guard has no work to do. A module never
+guards against being loaded twice, and never sets a global to say that
+it has been.</p>
+
+<h3 id="constant-names">2.3 Constant names</h3>
+
+<p>There are no macros. What the C guide says of a macro's name, that no
+two may share it with different meanings, holds for the port's exports:
+a name is exported by one module only, and a module that needs another's
+imports it.</p>
+
+<h3 id="imports">2.4 Imports</h3>
+
+<p><b>Import what you use.</b> Every module imports exactly what its own
+code needs, and does not lean on another module to bring it.</p>
+
+<ul>
+<li>A path is relative (<code>./</code> or <code>../</code>) and ends in
+<code>.js</code>. Under <code>src/</code> there is no bare name: nothing
+is imported from a package.</li>
+<li>Generated data comes first, as a default import:
+<code>import data from '../../generated/option.js';</code></li>
+<li>Then the port's modules. A few names are imported by name
+(<code>import { cutAt } from '../text/cut.js';</code>); a module whose
+functions are used throughout is imported whole, under its file's name
+in camelCase
+(<code>import * as optionEnv from './option_env.js';</code>).</li>
+<li>In <code>tests/</code> and <code>tools/</code>, node's own modules
+come first, written with <code>node:</code>
+(<code>import assert from 'node:assert/strict';</code>), then an empty
+line, then the port's.</li>
+<li>An import that runs past 80 characters breaks after its closing
+brace, with <code>from</code> on the next line, indented four.</li>
+</ul>
+
+<p>The C guide's trailing comment on each include is not used: an import
+names what it brings, so the comment would say it twice.</p>
+
+<pre>
+import data from '../../generated/option.js';
+import { formatReal } from '../text/real_format.js';
+import { readReal } from '../text/real_read.js';
+import { STATUS, fail, ok } from './option_common.js';
+</pre>
+
+<h3 id="brackets">2.5 Brackets</h3>
+
+<ul>
+<li>Every opening brace of a function or a block is on its own line, in
+the column of the line that opened it: a function, an
+<code>if</code>, a loop, a <code>switch</code>, an arrow function's
+block.</li>
+<li>No <code>if</code>, <code>else</code> or loop without braces, even
+for one statement.</li>
+<li>An object or array literal opens its brace on the line it starts
+on.</li>
+</ul>
+
+<pre>
+if (_text.length &lt;= _limit)
+{
+    return _text;
+}
+</pre>
+
+<h3 id="boolean">2.6 Boolean expressions</h3>
+
+<p>As the C guide. An expression of more than one condition is held in
+one pair of parentheses, each condition in its own, one to a line, their
+opening parentheses lined up and their operators aligned. A single
+condition takes no extra pair.</p>
+
+<pre>
+// a high surrogate kept and its low one cut off
+return _text.slice(0, ( (last &gt;= 0xD800) &amp;&amp;
+                        (last &lt;= 0xDBFF) &amp;&amp;
+                        (next &gt;= 0xDC00) &amp;&amp;
+                        (next &lt;= 0xDFFF) ) ? (_limit - 1) : _limit);
+</pre>
+
+<p>The same holds for a <code>while</code>, a <code>return</code> and an
+assignment: <code>while ( (_line[at] === ' ') ||</code> and so on.
+A conditional expression's test is parenthesized when it is more than a
+name: <code>((power &lt; 10) ? '0' : '')</code>.</p>
+
+<h3 id="calls">2.7 Function calls and returns</h3>
+
+<p>As the C guide: a call with more than one argument, or one that runs
+past 80 characters, puts each argument on its own line, aligned with the
+first after the opening parenthesis.</p>
+
+<pre>
+return putInner(_registry,
+                (typeof _statement === 'string')
+                    ? envInner.cstr(_statement)
+                    : null,
+                _source);
+</pre>
+
+<p>The port keeps one exception the C guide does not name: a call whose
+arguments are all short (a name, a literal, <code>index + 1</code>) stays
+on one line when it fits, as <code>formatG(_value, 17)</code> and
+<code>_text.slice(0, nul)</code> do.</p>
+
+<h3 id="variables">2.8 Variable declarations and initialization</h3>
+
+<ul>
+<li>Validate parameters first, then declare.</li>
+<li>Declare each variable where it is first used, and give it its value
+in the same statement.</li>
+<li><code>const</code> for anything never assigned again;
+<code>let</code> otherwise. Never <code>var</code>.</li>
+<li>Line up the names and <code>=</code> of a run of declarations.</li>
+</ul>
+
+<pre>
+const whole    = digits.slice(0, exponent + 1);
+const fraction = digits.slice(exponent + 1).replace(/0+$/, '');
+</pre>
+
+<h3 id="control-flow">2.9 Control flow and spacing</h3>
+
+<ul>
+<li>Most <code>if</code>s and loops have a comment above them saying
+what they are for.</li>
+<li>An <code>if</code> is followed by an empty line, unless the next line
+closes an outer block.</li>
+<li>A <code>return</code> is preceded by an empty line, unless it is the
+first statement of its block.</li>
+<li>A function that gives nothing ends in an explicit
+<code>return;</code> (<a href="#nothing">5.3</a>).</li>
+</ul>
+
+
+<h2 id="naming">3. Naming conventions</h2>
+
+<h3 id="names">3.1 Names</h3>
+
+<p><span class="b ruled">D17a, 2026-11-16</span> Identifiers are the
+reference's names, in camelCase. The module is the namespace, so the C
+prefix goes, and each <code>_</code> and the letter after it become that
+letter in capitals: <code>d_option_env_assign_from</code> is
+<code>optionEnv.assignFrom</code>. A name is found in the C by putting
+the underscores back.</p>
+
+<table>
+<tr><th>What</th><th>Form</th><th>Example</th></tr>
+<tr><td>a function or variable</td><td>camelCase</td>
+<td><code>assignFrom</code>, <code>statusName</code></td></tr>
+<tr><td>a type (a <code>@typedef</code>)</td><td>PascalCase, the same
+words <span class="b ruled">D17a</span></td>
+<td><code>OptionEnv</code>, <code>EventEntry</code></td></tr>
+<tr><td>a named constant</td><td>capitals and underscores, as the
+reference's</td><td><code>STATUS.KEY_ABSENT</code>,
+<code>DEPTH_MAX</code></td></tr>
+<tr><td>a parameter</td><td>a single leading underscore</td>
+<td><code>_text</code>, <code>_limit</code></td></tr>
+<tr><td>a private field</td><td><code>#m_</code> and the name</td>
+<td><code>#m_count</code></td></tr>
+<tr><td>a module imported whole</td><td>its file's name in camelCase</td>
+<td><code>optionEnvRegistry</code></td></tr>
+<tr><td>a word the language keeps</td><td>a trailing underscore, exported
+under the word</td><td><code>import_</code>, exported as
+<code>import</code></td></tr>
+<tr><td>a file</td><td>the reference's own name</td>
+<td><code>option_env.js</code></td></tr>
+<tr><td>data</td><td>the reference's spelling, exactly</td>
+<td><code>sidebar_width</code>, <code>name_count</code>,
+<code>bind.value</code></td></tr>
+<tr><td>the interface a page calls</td><td>short words where it can</td>
+<td><code>open</code>, <code>run</code>, <code>on</code></td></tr>
+</table>
+
+<p>A <b>named constant</b>, as in the C guide, is a <code>const</code>
+standing in for a literal or holding a fixed table:
+<code>MAX_PATH_LENGTH</code>, <code>STATUS</code>. The rule is about
+that role,
+not the keyword: a <code>const</code> holding a value worked out at run
+time is an ordinary variable and stays camelCase.</p>
+
+<pre>
+const MAX_PATH_LENGTH = 4096;                 // named constant
+
+function isValid(
+    _path                                     // a parameter
+)
+{
+    const length = _path.length;              // const, not a constant
+
+    return length &lt; MAX_PATH_LENGTH;
+}
+</pre>
+
+<h3 id="reserved">3.2 Reserved identifiers</h3>
+
+<ul>
+<li>No leading underscore except a parameter's.</li>
+<li>No double underscore anywhere. The language keeps that form for its
+own (<code>__proto__</code>), as C keeps it.</li>
+<li>No name strict code refuses or the language may take:
+<code>arguments</code>, <code>eval</code>, <code>let</code>,
+<code>static</code>, <code>implements</code>, <code>package</code> and
+the rest. Use the trailing underscore of <a href="#names">3.1</a>.</li>
+<li>Never assign to, or create, a global.</li>
+</ul>
+
+
+<h2 id="comments">4. Comments</h2>
+
+<h3 id="comment-style">4.1 Comment style</h3>
+
+<ul>
+<li><code>//</code> comments by default.</li>
+<li>Block comments for: the file's banner; its table of contents; and a
+function's or a type's comment (<code>/** ... */</code>, or the C
+guide's <code>/* ... */</code> in a module not yet held to the strict
+mode, as <a href="#inner">5.2</a> says).</li>
+<li>Section and entry markers are the <code>//</code> forms of
+<a href="#structure">4.3</a>.</li>
+<li>An ordinary comment begins in lower case unless its first word is a
+name or keeps its capitals.</li>
+<li>Prose says what is true, plainly. No "we".</li>
+</ul>
+
+<h3 id="banner">4.2 File header comments</h3>
+
+<p>Every file people write begins with the reference's banner, in the
+comment of its language, 80 characters wide, with the reference's
+fields at the reference's columns.</p>
+
+<pre>
+/*******************************************************************************
+* djinterp.js [option]                                          option_common.js
+*
+*   What every part of the option machine answers with: a result that is a
+* value or a status, and the statuses with the reference's own codes, names
+* and messages. An expected failure is a value here, as it is in the
+* reference; nothing in the machine throws one.
+*   reference: inc/djinterp/c/option/option_common.h, at 3eb096c9
+*
+*
+* path:      /src/option/option_common.js
+* link(s):   TBA
+* author(s): Samuel 'teer' Neal-Blim                         created: 2026.11.15
+*                                                            revised: 2026.11.16
+*******************************************************************************/
+</pre>
+
+<p class="label">Rules:</p>
+<ul>
+<li>The geometry is the C guide's: the rules end on character 80, the
+file's name ends on 80, the <code>created:</code> value ends on 80 with
+<code>revised:</code> beneath it, and the values of <code>path:</code>,
+<code>link(s):</code> and <code>author(s):</code> begin on 14.</li>
+<li>All five fields, always. <code>link(s):</code> is <code>TBA</code>
+until there is one. Dates are <code>YYYY.MM.DD</code>.</li>
+<li>The title is <code>djinterp.js</code> and a tag in brackets. The tag
+is the folder the file sits in: <code>[text]</code>,
+<code>[option]</code>, <code>[event]</code>, <code>[interp]</code>,
+<code>[cli]</code>; <code>[tests]</code> for a test and
+<code>[tools]</code> for a tool. <code>src/djinterp.js</code>, at the
+top of <code>src/</code>, has none. (The C guide's tag is the top
+folder; the port's tree is shallow enough to name the nearest.)</li>
+<li>The description is prose. Each paragraph's first line is indented
+two more spaces than the rest.</li>
+<li>A port of a reference module names it, with the commit the port
+follows: <code>reference: PATH, at COMMIT</code>.
+<code>tools/regenerate.sh</code> writes the commit when the reference
+moves.</li>
+<li><code>path:</code> is the file's own.<span class="b checked">
+check_style.js</span></li>
+<li>An HTML file carries the same banner in an HTML comment, two spaces
+in; a shell script, in <code>#</code> lines.</li>
+</ul>
+
+<h3 id="structure">4.3 Structure, numbering and contents</h3>
+
+<p>A module with more than one section has a table of contents after its
+banner, and numbered dividers in its body that match it, in the C
+guide's decimal form.<span class="b checked">check_style.js</span></p>
+
+<p>The port's modules number two levels: <b>sections</b>
+(<code>1.</code>) and <b>entries</b> (<code>1.1</code>). An entry's
+marker carries no text, as the C guide's item markers carry none; the
+entry's own comment begins on the next line. A module that one day needs
+a third level uses the C guide's subsection divider at the second
+(<code>// 1.1    Name</code> and a line of hyphens) and its item markers
+at the third (<code>// 1.1.1</code>).</p>
+
+<p class="label">The table of contents:</p>
+<pre>
+/*
+TABLE OF CONTENTS
+=================
+1.  STATUSES
+    --------
+    1.  STATUS
+    2.  STATUS_MECHANICAL_FLOOR
+    3.  statusName
+2.  RESULTS
+    -------
+    1.  ok
+    2.  fail
+*/
+</pre>
+
+<ul>
+<li>A section's name is in capitals, two spaces after its number, with a
+line of hyphens beneath it exactly as long.</li>
+<li>An entry is indented four, numbered from 1 under each section, two
+spaces after its number (one after a two-digit number). An entry may
+name several things that share one marker:
+<code>1.  KIND, SOURCE, SOURCES, GLOBAL, NONE, DEPTH_MAX</code>.</li>
+<li>No empty line inside the table.</li>
+<li>The table is the body's: each section's name and number are its
+divider's, and it lists as many entries as the section has
+markers.<span class="b checked">check_style.js</span></li>
+</ul>
+
+<p class="label">The body:</p>
+<pre>
+import data from '../../generated/option.js';
+
+
+//==============================================================================
+// 1.  STATUSES
+//==============================================================================
+
+// 1.1
+/**
+ * The statuses, by the reference's names without their prefix.
+ *
+ * @type {Readonly&lt;Record&lt;string, number&gt;&gt;}
+ */
+export const STATUS = ...
+</pre>
+
+<ul>
+<li>Two empty lines before each section's divider, and two empty lines
+nowhere else.<span class="b checked">check_style.js</span></li>
+<li>A section's description, when it has a useful one, follows its
+closing rule at once, as the C guide's does. Then one empty line, and the
+first entry.</li>
+<li>One empty line between entries.</li>
+<li>A function the module does not export has no marker and no line in
+the table: it stands in its section, before the entries that use it,
+and its comment names it (<a href="#inner">5.2</a>).</li>
+</ul>
+
+<h3 id="comment-formatting">4.4 Comment formatting</h3>
+
+<ul>
+<li>Indent only the first line of each paragraph; the lines after it
+align with the comment's text.</li>
+<li>A JSDoc comment is a description, an empty <code> *</code> line, then
+its tags: <code>@param</code> for each parameter, with its type in
+braces, then <code>@returns</code>. The names and descriptions of the
+<code>@param</code>s line up.</li>
+<li>JSDoc stands where the C guide writes Doxygen. It is a format read by
+the type check and by editors; no generator is run.
+<span class="b ruled">D17b, 2026-11-16</span></li>
+</ul>
+
+<pre>
+/**
+ * The first units of a text, as many as a limit allows, and one fewer
+ * where the last of them would be the first half of a surrogate pair.
+ *
+ * @param {string} _text   the text.
+ * @param {number} _limit  the most units to keep; under 1 keeps none.
+ * @returns {string} the text, whole or cut.
+ */
+</pre>
+
+<h3 id="brief">4.5 Brief comment format</h3>
+
+<p>For a small declaration that is not a function (a constant or a table
+inside a module), the C guide's brief form:</p>
+
+<pre>
+// MAX_PATH_LENGTH
+//   constant: the longest path a settings file may have.
+</pre>
+
+<p>An exported constant or type carries JSDoc instead, with
+<code>@type</code> or <code>@typedef</code>, since that is what an
+editor and the type check read.</p>
+
+
+<h2 id="functions">5. Functions</h2>
+
+<p>A JavaScript function is declared and defined in one place, so the C
+guide's two comments, the contract on the declaration and the mechanism
+on the definition, become one: the contract above the function, in
+JSDoc, and the mechanism as <code>//</code> comments inside it where it
+applies, or as prose after the tags, as the C guide does for a file-local
+function.</p>
+
+<h3 id="exported">5.1 Exported functions</h3>
+
+<ul>
+<li>Every exported function has a JSDoc contract: what it does, its
+<code>@param</code>s and what it <code>@returns</code>.</li>
+<li>Parameters one to a line, indented four; the closing parenthesis on
+its own line; then the opening brace on its own line. A function with no
+parameters keeps <code>()</code> on its name's line.</li>
+<li>A default value follows its parameter: <code>_options = {}</code>.
+</li>
+<li>Exports are declared where they stand
+(<code>export function</code>, <code>export const</code>). An export
+list (<code>export { ... }</code>) is only for a name exported under
+another (<code>export { import_ as import };</code>) or for modules the
+interface hands on whole.</li>
+</ul>
+
+<pre>
+// 2.2
+/**
+ * A real as the option machine writes one: "%.17g", which is enough
+ * digits for any double to read back as itself.
+ *
+ * @param {number}  _value  the double.
+ * @returns {string} the text.
+ */
+export function formatReal(
+    _value
+)
+{
+    return formatG(_value, 17);
+}
+</pre>
+
+<h3 id="inner">5.2 Functions inside a module</h3>
+
+<p><span class="b ruled">D25, 2026-11-17</span> A function a module does
+not export has a JSDoc comment in the C guide's form: <code>/**</code>,
+then the function's name on its own line, then what it does with its
+first line indented, then <code>@param</code> and
+<code>@returns</code>.</p>
+
+<pre>
+/**
+ * bitLength
+ *   The bits of a positive whole number.
+ *
+ * @param {bigint} _value  the number.
+ * @returns {number}
+ */
+function bitLength(
+    _value
+)
+{
+    ...
+}
+</pre>
+
+<ul>
+<li>In a module held to the strict mode (<code>tools/strict_modules.js
+</code>), every function inside it has this comment.
+<span class="b checked">check_style.js</span></li>
+<li>A module not yet held to it keeps the C guide's plain form until it
+is (D24): <code>/*</code>, the name, what it does, <code>*/</code>. It
+moves to the JSDoc form when it joins the strict mode.</li>
+</ul>
+
+<pre>
+/*
+cstr
+  A string as C reads one handed to it without a length: up to its
+first NUL.
+*/
+</pre>
+
+<h3 id="nothing">5.3 Functions that give nothing</h3>
+
+<p>As the C guide's void functions:</p>
+<ol>
+<li>No <code>@returns</code>.</li>
+<li>An explicit empty <code>return;</code> at the end. Every such
+function in <code>src/</code> has one (14, measured 2026-11-17).</li>
+</ol>
+
+<h3 id="arrows">5.4 Arrow functions</h3>
+
+<ul>
+<li>For a callback or a short value, not for a function with a name.</li>
+<li>Parameters in parentheses, always, and named as parameters:
+<code>(_payload) =&gt;</code>.</li>
+<li>A block body opens its brace on its own line, in the column of the
+line the arrow is on.</li>
+<li>An expression body stays on the arrow's line when it fits.</li>
+</ul>
+
+<pre>
+event.stepMake((_payload) =&gt;
+{
+    // a handler that gives nothing lets the event
+    // pass on
+    ...
+})
+</pre>
+
+<h3 id="test-functions">5.5 Test functions</h3>
+
+<ul>
+<li>A test is node's <code>test(name, function)</code>. Its name is a
+sentence saying what holds: <code>'a cut that would part a pair is one
+unit earlier'</code>.</li>
+<li>Its body is an arrow function, with its brace on its own line.</li>
+<li>One test file for each module, at the module's path under
+<code>tests/</code>.</li>
+<li>Assertions are <code>node:assert/strict</code>'s.</li>
+<li>A test has no length limit.</li>
+</ul>
+
+<pre>
+test('a cut is at the limit, for text that has no pairs', () =&gt;
+{
+    assert.equal(cutAt('abcdef', 4), 'abcd');
+});
+</pre>
+
+
+<h2 id="failures">6. Failures and errors</h2>
+
+<p>The C++ guide's rule, which the port shares: a failure a caller can
+handle is a value, not an exception.</p>
+
+<ul>
+<li><b>Expected failures are values.</b> Where the reference returns a
+status, the port returns the same status, by the same code and name,
+with the reference's message: a row out of range is refused as
+djinterp refuses it.</li>
+<li><b>Throw only for a misuse no correct caller makes</b>, such as a
+value of the wrong type handed in by the programmer: a
+<code>TypeError</code> for a wrong type, an <code>Error</code> for the
+rest. The message begins with the function's name and a colon:
+<code>'run: neither a line nor an array of words'</code>.</li>
+<li>A function that gives a promise breaks the promise for a misuse; it
+does not throw past it.</li>
+<li>Never throw for control flow.</li>
+<li><code>@throws</code> is written for a misuse, and only there. A
+failure that is a value is described under <code>@returns</code>.</li>
+</ul>
+
+
+<h2 id="language">7. Language and checks</h2>
+
+<ul>
+<li><b>ES modules</b>, in <code>.js</code> files, with
+<code>"type": "module"</code> in <code>package.json</code>. A module's
+code is strict by the language's rule.</li>
+<li><b>No build step.</b> What is in the repository is what a page
+imports.</li>
+<li><b>No dependency at run time.</b> Not one package. Tests and tools
+use what node ships with.</li>
+<li><b>The same code in a browser and in node.</b> Nothing under
+<code>src/</code> reads a node built-in (<code>fs</code>,
+<code>process</code>, <code>Buffer</code>).</li>
+<li><b>Node 22</b> for the tests: <code>node --test</code>.</li>
+<li><b>No globals.</b> A module exports what it offers and touches
+nothing it did not import.</li>
+<li><code>===</code> and <code>!==</code>, never <code>==</code> or
+<code>!=</code>.</li>
+<li><code>??</code> and <code>?.</code> are the language's and are used.
+A <code>bigint</code> holds what needs 64 bits
+(<a href="#behaviour">section 13</a>).</li>
+</ul>
+
+<p>The checks stand where the C guide's warning flags stand:</p>
+
+<table>
+<tr><th>Run</th><th>Holds the code to</th></tr>
+<tr><td><code>node --test</code></td><td>every test, and every
+transcript replayed byte for byte</td></tr>
+<tr><td><code>node tools/check_style.js</code></td><td>section 2.1's
+columns, tabs, trailing spaces, carriage returns and final line break;
+a banner's <code>path:</code>; the comment of 5.2 in a strict module;
+the table of contents of 4.3 and its body; the empty lines before a
+section's divider</td></tr>
+<tr><td><code>node tools/check_types.js TSC</code></td><td>the JSDoc,
+read as types, in every module; the strict mode, in the modules listed
+in <code>tools/strict_modules.js</code>; and it writes
+<code>types/</code> <span class="b ruled">D17b, D24</span></td></tr>
+<tr><td><code>node tools/check_page.js BASE</code></td><td>the example
+page, opened in a headless browser, against what the port does under
+node</td></tr>
+</table>
+
+<p>The type check is a tool beside the style check, never a step a page
+needs, and the repository does not depend on it: its path is given on
+the command line. The strict mode comes in a module at a time; a module
+joins <code>tools/strict_modules.js</code> when it has no finding there.
+<span class="b ruled">D24, 2026-11-16</span></p>
+
+<p>A finding genuinely not worth putting right is suppressed at the
+narrowest scope, with a comment saying why, never for the project. There
+are none today.</p>
+
+
+<h2 id="assertions">8. Assertions</h2>
+
+<ul>
+<li>What the C guide asks of a static assertion (a stated assumption
+about a type that the code depends on), the port asks of its JSDoc: a
+type written down is a type the check holds the code to.</li>
+<li>Nothing under <code>src/</code> asserts at run time: node's
+<code>assert</code> is node's, and a page has none. A check of a
+caller's input is validation, and a failure is a value
+(<a href="#failures">section 6</a>).</li>
+<li>Tests assert with <code>node:assert/strict</code>.</li>
+</ul>
+
+
+<h2 id="conditional">9. Conditional code</h2>
+
+<p>The port has no preprocessor, and in its place the rule is shorter
+still: nothing under <code>src/</code> asks where it is running. There
+is no test of <code>window</code>, <code>document</code>,
+<code>process</code> or <code>globalThis</code> (none, measured
+2026-11-17). What differs between a page and node is handed in by the
+caller: a page that keeps its settings hands its <code>Storage</code>
+to <code>storageFile</code>, and anything else keeps them with
+<code>memoryFile</code>, which holds them in memory.</p>
+
+
+<h2 id="transfer">10. Control transfer</h2>
+
+<p>JavaScript has no <code>goto</code>; the C guide's rule for it holds
+for <code>break</code>, <code>continue</code> and labels. They are used
+where they remove nesting or a repeated line, never where they add
+either.</p>
+
+<ul>
+<li><code>for (;;)</code> for a loop whose end is inside it.</li>
+<li>A label only to leave several loops at once, named for what happens
+there. There are none today.</li>
+<li>Every <code>case</code> of a <code>switch</code> that has statements
+ends in <code>break</code>, <code>return</code> or
+<code>continue</code>; no case falls into the next.</li>
+</ul>
+
+
+<h2 id="size">11. Function size and complexity</h2>
+
+<p>As the C guide: a function does one thing, nameable without "and".
+The numbers are the tripwire.</p>
+
+<table>
+<tr><th>Measure</th><th>Limit</th><th>Escalation</th></tr>
+<tr><td>Length</td><td>100 lines, without the comment above it; none for
+a test</td><td>take a function out</td></tr>
+<tr><td>Nesting</td><td>4 levels of braces inside the body</td>
+<td>return early, or take a function out</td></tr>
+</table>
+
+<p>Passing a limit wants a reason, as a dispatch table or a parser's
+<code>switch</code> may have. Five functions pass 100 lines today
+(<a href="#not-yet">section 16</a>).</p>
+
+
+<h2 id="types">12. Types</h2>
+
+<ul>
+<li>A type is a <code>@typedef</code> in JSDoc, named in PascalCase,
+with a <code>@property</code> for each field, their names and
+descriptions lined up.</li>
+<li>A record's fields keep the reference's spelling
+(<a href="#names">3.1</a>).</li>
+<li>An exported constant carries its <code>@type</code>.</li>
+<li><code>{*}</code> says a value's type is not yet written down. A
+module held to the strict mode has none where a type can be named.</li>
+<li><code>types/</code> is what the type check writes from these, and is
+never edited.</li>
+</ul>
+
+
+<h2 id="behaviour">13. What the reference fixes</h2>
+
+<p>The C guides have no such section; the port needs one, since the
+reference is its oracle and JavaScript's own habits differ from C's in
+ways that change bytes.</p>
+
+<ol>
+<li><b>Integers.</b> A number is exact to 2<sup>53</sup> − 1. A value is
+a <code>number</code> when its range lies inside ±(2<sup>53</sup> − 1),
+and a <code>bigint</code> when it does not; a row with no stated range
+is a <code>bigint</code> if the reference holds it in 64 bits. 64-bit
+arithmetic is never done in <code>number</code>s.</li>
+<li><b>Reals as text.</b> Never <code>String(v)</code>,
+<code>toFixed</code> or <code>toPrecision</code>. The reference writes
+<code>%.17g</code>; the port has one function that writes as it does,
+<code>formatReal</code> in <code>src/text/real_format.js</code>, tested
+against the C library's own output, exact ties among them: a value
+halfway between two texts is written with the even digit, as C writes
+it, and never as JavaScript's rounding would.</li>
+<li><b>Reals from text.</b> Never <code>Number()</code> or
+<code>parseFloat</code>: <code>Number("")</code> is 0, and
+<code>parseFloat("1abc")</code> is 1. Read to the grammar the reference
+accepts, with <code>readReal</code> in
+<code>src/text/real_read.js</code>, and refuse the rest as it does.</li>
+<li><b>Not a number.</b> Any NaN is written <code>nan</code>.
+<span class="b ruled">D4, 2026-11-16</span></li>
+<li><b>Text.</b> Text is a JavaScript string, counted in UTF-16 units.
+<span class="b ruled">D3, 2026-11-16</span> A cut at a limit never
+parts a surrogate pair: where it would, it is one unit earlier
+(<code>cutAt</code>).<span class="b ruled">D23, 2026-11-16</span></li>
+<li><b>Order.</b> Where the reference's output has an order, the port
+makes that order on purpose. A <code>Map</code>'s order of insertion is
+not a reason.</li>
+<li><b>Nothing a result depends on reads the clock or
+<code>Math.random</code>.</b></li>
+</ol>
+
+<table>
+<tr><th>Value</th><th>djinterp (<code>%.17g</code>)</th>
+<th>JavaScript <code>String(v)</code></th></tr>
+<tr><td><code>0.1</code></td><td><code>0.10000000000000001</code></td>
+<td><code>0.1</code></td></tr>
+<tr><td><code>-0.0</code></td><td><code>-0</code></td>
+<td><code>0</code></td></tr>
+<tr><td><code>1.5e-7</code></td><td><code>1.4999999999999999e-07</code>
+</td><td><code>1.5e-7</code></td></tr>
+<tr><td><code>2.5e-5</code></td><td><code>2.5000000000000001e-05</code>
+</td><td><code>0.000025</code></td></tr>
+</table>
+<p class="meta">Measured 2026-11-14 from the reference's own code; the
+whole table is in <code>docs/JS_STYLE.md</code>, section 5.</p>
+
+
+<h2 id="transcripts">14. Transcripts and generated data</h2>
+
+<p><b>The reference is the oracle.</b> The port passes when it gives the
+reference's bytes.</p>
+
+<ul>
+<li>A <b>transcript</b> is three files in
+<code>tests/transcripts/</code>: <code>NAME.in</code>, what was given to
+the reference; <code>NAME.out</code>, what it wrote, byte for byte; and
+<code>NAME.meta</code>, the program, its arguments, the reference's
+commit and the date. A tool records it; no one writes one by hand.</li>
+<li>When the reference moves, every transcript is recorded again at the
+new commit (<code>tools/regenerate.sh</code>), and a difference is a
+change to review, not to accept.</li>
+<li>Whatever the reference holds as data (rows and their ranges,
+statuses and their messages, the kit's texts) is written out as JSON by a
+tool and read by the port. It is never typed again in JavaScript. Each
+generated file's first field names the reference's commit.</li>
+</ul>
+
+
+<h2 id="file-structure">15. File structure</h2>
+
+<h3>A module</h3>
+<ol>
+<li>The banner (<a href="#banner">4.2</a>).</li>
+<li>An empty line, and the table of contents, for a module with
+sections.</li>
+<li>An empty line, and the imports (<a href="#imports">2.4</a>).</li>
+<li>Two empty lines, and the first section's divider.</li>
+<li>Each section's entries, each a marker and the entity's comment, then
+the entity.</li>
+</ol>
+
+<pre>
+/*******************************************************************************
+* djinterp.js [foo]                                                       bar.js
+*
+*   Brief description of the module.
+*   Extended description: what it ports, and anything a reader should know
+* first.
+*   reference: inc/djinterp/c/foo/bar.h and src/djinterp/c/foo/bar.c, at
+* COMMIT
+*
+*
+* path:      /src/foo/bar.js
+* link(s):   TBA
+* author(s): Author Name                                     created: YYYY.MM.DD
+*                                                            revised: YYYY.MM.DD
+*******************************************************************************/
+
+/*
+TABLE OF CONTENTS
+=================
+1.  OPERATIONS
+    ----------
+    1.  someFunction
+*/
+
+import data from '../../generated/foo.js';
+import { cutAt } from '../text/cut.js';
+
+
+//==============================================================================
+// 1.  OPERATIONS
+//==============================================================================
+// Declares the operations the module offers.
+
+/**
+ * someHelper
+ *   What the helper does, in a sentence or two.
+ *
+ * @param {string} _name  what it is given.
+ * @returns {boolean}
+ */
+function someHelper(
+    _name
+)
+{
+    ...
+}
+
+// 1.1
+/**
+ * What the function does, for a caller.
+ *
+ * @param {string} _name   what it is given.
+ * @param {number} _limit  the most it may write.
+ * @returns {string} what it gives back.
+ */
+export function someFunction(
+    _name,
+    _limit
+)
+{
+    // parameter validation first
+    if (!someHelper(_name))
+    {
+        return '';
+    }
+
+    return cutAt(_name, _limit);
+}
+</pre>
+
+<h3>A test file</h3>
+<ol>
+<li>The banner, tagged <code>[tests]</code>.</li>
+<li>An empty line, node's modules, an empty line, the port's.</li>
+<li>An empty line, and the tests.</li>
+</ol>
+
+<pre>
+import assert from 'node:assert/strict';
+import { test } from 'node:test';
+
+import { cutAt } from '../../src/text/cut.js';
+
+test('a cut is at the limit, for text that has no pairs', () =&gt;
+{
+    assert.equal(cutAt('abcdef', 4), 'abcd');
+});
+</pre>
+
+
+<h2 id="not-yet">16. Where the code is not yet this guide</h2>
+
+<p>Measured 2026-11-17. Each is work that is known and has its place.</p>
+
+<table>
+<tr><th>What</th><th>Where</th><th>Until</th></tr>
+<tr><td>9 of the 16 modules are not yet held to the strict mode (562
+findings there)</td><td>the event table, registry and dispatcher; the
+option machine and its registry; djin; the commands; the cli settings;
+<code>src/djinterp.js</code></td><td>D24's second tranche: a module at a
+time</td></tr>
+<tr><td>In those modules, of the functions not exported, 72 have the
+plain comment of 5.2, one has a JSDoc comment without its name, and 71
+have none</td><td>the same</td><td>each module, as it joins the strict
+mode</td></tr>
+<tr><td>7 dividers without a number, outside the table of contents
+</td><td><code>option_env.js</code>, <code>djin.js</code>,
+<code>djinterp_commands.js</code></td><td>the same</td></tr>
+<tr><td>5 functions past 100 lines</td><td><code>read</code> (209) and
+<code>runInner</code> (121) in the commands; <code>openProgram</code>
+(134); <code>readReal</code> (109) and <code>nearestDouble</code> (101)
+</td><td>a reason each, or a function taken out</td></tr>
+<tr><td>No brief comment of 4.5 anywhere; small declarations have a plain
+one-line comment</td><td>throughout</td><td>the owner's word on
+D28</td></tr>
+</table>
+
+
+<h2 id="rulings">17. Rulings</h2>
+
+<p>The owner's rulings that bear on how the code is written. The rest,
+and the reasons for all of them, are on <code>decisions.html</code>.</p>
+
+<table>
+<tr><th>Ruling</th><th>When</th><th>What</th></tr>
+<tr><td>owner's word</td><td>2026-11-16</td><td>djinterp.js is ignorant
+of every framework but itself (<a href="#layout">1</a>)</td></tr>
+<tr><td>D3</td><td>2026-11-16</td><td>text is a JavaScript string,
+counted in UTF-16 units (<a href="#behaviour">13</a>)</td></tr>
+<tr><td>D4</td><td>2026-11-16</td><td>any NaN is written
+<code>nan</code> (<a href="#behaviour">13</a>)</td></tr>
+<tr><td>D17a (JS1)</td><td>2026-11-16</td><td>the reference's names in
+camelCase; types in PascalCase (<a href="#names">3.1</a>)</td></tr>
+<tr><td>D17b (JS2)</td><td>2026-11-16</td><td>JSDoc read as types by a
+check beside the style check, never a step a page needs
+(<a href="#language">7</a>)</td></tr>
+<tr><td>JS3</td><td>2026-11-16</td><td><code>JS_STYLE.md</code> is
+djinterp.js's own, changed only through the owner</td></tr>
+<tr><td>D23</td><td>2026-11-16</td><td>a cut never parts a surrogate
+pair (<a href="#behaviour">13</a>)</td></tr>
+<tr><td>D24</td><td>2026-11-16</td><td>the strict mode brought in a
+module at a time (<a href="#language">7</a>)</td></tr>
+<tr><td>D25</td><td>2026-11-17</td><td>a function inside a module has
+JSDoc in the C guide's form, its name first
+(<a href="#inner">5.2</a>)</td></tr>
+<tr><td>D28 <span class="b open">open</span></td><td>2026-11-17</td>
+<td>which governs from now on, <code>JS_STYLE.md</code> or this guide;
+and with it, whether 4.5's brief form stays a rule</td></tr>
+</table>
+
+</div>
+</body>
+</html>
