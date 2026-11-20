@@ -18,7 +18,10 @@
 export const STRICT = Object.freeze([
     'event/event.js',
     'event/event_common.js',
+    'event/event_dispatcher_common.js',
     'event/event_handler_common.js',
+    'event/event_registry_common.js',
+    'event/event_table_common.js',
     'option/option_common.js',
     'text/cut.js',
     'text/real_format.js',

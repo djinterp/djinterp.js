@@ -67,6 +67,31 @@ import { HANDLER_ID_NULL, STATUS } from './event_common.js';
  * A table. Made by `tableInit`; read through the functions here.
  *
  * @typedef {object} EventTable
+ * @property {boolean} ready  made by `tableInit`, and not yet disposed.
+ * @property {Array<EventLetter>} entries  its letters, in the order they
+ *           were bound; one unbound during a dispatch stays, a zombie,
+ *           until the outermost dispatch ends.
+ * @property {number}  nextId        the id the next letter bound takes.
+ * @property {number}  count         its letters, zombies not counted.
+ * @property {number}  enabledCount  those of them enabled.
+ * @property {number}  capacity      the most letters it holds.
+ * @property {boolean} dispatching   whether a dispatch is under way.
+ * @property {boolean} zombies       whether a letter was unbound during
+ *           it, to be released when the outermost dispatch ends.
+ * @property {boolean} disposeAsked  whether the table was disposed during
+ *           it, to be cleared when the outermost dispatch ends.
+ */
+
+/**
+ * A letter as the table holds it.
+ *
+ * @typedef {object} EventLetter
+ * @property {number}    id         its handler id.
+ * @property {bigint}    key        the key of its word.
+ * @property {EventStep} step       the handler.
+ * @property {?function} stateFree  what releases the step's state.
+ * @property {boolean}   enabled    its mask.
+ * @property {boolean}   zombie     unbound during a dispatch.
  */
 
 /**
@@ -75,10 +100,17 @@ import { HANDLER_ID_NULL, STATUS } from './event_common.js';
  * @typedef {object} EventEntry
  * @property {number}     id       its handler id.
  * @property {bigint}     key      the key of its word.
- * @property {EventStep} step     the handler.
+ * @property {EventStep}  step     the handler.
  * @property {boolean}    enabled  its mask.
  */
 
+/**
+ * ready
+ *   Whether a table was made by `tableInit` and is not yet disposed.
+ *
+ * @param {*} _table  what may be a table.
+ * @returns {_table is EventTable}
+ */
 function ready(
     _table
 )
@@ -88,6 +120,14 @@ function ready(
              (_table.ready === true) );
 }
 
+/**
+ * live
+ *   Whether a letter is bound: it has an id, and was not unbound
+ * during a dispatch.
+ *
+ * @param {EventLetter} _entry  the letter.
+ * @returns {boolean}
+ */
 function live(
     _entry
 )
@@ -122,10 +162,14 @@ export function tableInit(
     };
 }
 
-/*
-detach
-  Takes a letter out of the table, and gives its hook and state back.
-*/
+/**
+ * detach
+ *   Takes a letter out of the table, and gives its hook and state back.
+ *
+ * @param {EventTable}  _table  the table.
+ * @param {EventLetter} _entry  a letter of it.
+ * @returns {{hook: ?function, state: *}}
+ */
 function detach(
     _table,
     _entry
@@ -136,10 +180,13 @@ function detach(
     return { hook: _entry.stateFree, state: _entry.step.state };
 }
 
-/*
-drop
-  Unbinds a letter: at once, or, while a dispatch runs, at its end.
-*/
+/**
+ * drop
+ *   Unbinds a letter: at once, or, while a dispatch runs, at its end.
+ *
+ * @param {EventTable}  _table  the table.
+ * @param {EventLetter} _entry  a bound letter of it.
+ */
 function drop(
     _table,
     _entry
@@ -333,6 +380,14 @@ export function tableBind(
     return { status: STATUS.OK, id: entry.id };
 }
 
+/**
+ * entryOf
+ *   The bound letter with an id.
+ *
+ * @param {EventTable} _table  the table.
+ * @param {number}     _id     the handler id.
+ * @returns {?EventLetter} the letter; null for none.
+ */
 function entryOf(
     _table,
     _id
@@ -393,6 +448,16 @@ export function tableUnbind(
 // 3.  THE MASK
 //==============================================================================
 
+/**
+ * setMask
+ *   Enables or disables a bound letter.
+ *
+ * @param {?EventTable} _table  the table.
+ * @param {number}      _id     the handler id.
+ * @param {boolean}     _on     enabled, or not.
+ * @returns {number} STATUS.OK; ERR_NOT_FOUND for no such letter;
+ *          ERR_STATE where it is so already.
+ */
 function setMask(
     _table,
     _id,
@@ -495,6 +560,14 @@ export function tableContains(
 // 4.  READING
 //==============================================================================
 
+/**
+ * shown
+ *   A letter as a reader is shown one: without what the table keeps of
+ * it for itself.
+ *
+ * @param {EventLetter} _entry  the letter.
+ * @returns {EventEntry}
+ */
 function shown(
     _entry
 )
@@ -613,12 +686,18 @@ export function tableKeyCount(
                : 0;
 }
 
-/*
-visit
-  Visits the letters that pass a test, in bind order: each time the one of
-the least id above the last visited, so that a visitor may edit the table.
-Letters bound after the visit began are not visited.
-*/
+/**
+ * visit
+ *   Visits the letters that pass a test, in bind order: each time the one of
+ * the least id above the last visited, so that a visitor may edit the table.
+ * Letters bound after the visit began are not visited.
+ *
+ * @param {?EventTable}                    _table    the table.
+ * @param {function(EventLetter): boolean} _test     which letters.
+ * @param {function(EventEntry): boolean}  _visitor  given each, as a reader
+ *        is shown it; false stops the visit.
+ * @returns {number} how many were visited.
+ */
 function visit(
     _table,
     _test,
@@ -749,10 +828,13 @@ export function tableMerge(
             return { status: bound_.status, merged: merged };
         }
 
-        // the mask travels with the letter
-        if (!letter.enabled)
+        const taken = entryOf(_table, bound_.id);
+
+        // the mask travels with the letter, bound a line ago
+        if ( (taken !== null) &&
+             !letter.enabled )
         {
-            entryOf(_table, bound_.id).enabled = false;
+            taken.enabled = false;
             --_table.enabledCount;
         }
 
@@ -767,11 +849,14 @@ export function tableMerge(
 // 6.  FOR THE REGISTRY
 //==============================================================================
 
-/*
-dispatchBegin
-  Marks the table as dispatching; true when this is the outermost dispatch,
-the one that must end it.
-*/
+/**
+ * dispatchBegin
+ *   Marks the table as dispatching; true when this is the outermost
+ * dispatch, the one that must end it.
+ *
+ * @param {EventTable} _table  the table.
+ * @returns {boolean}
+ */
 function dispatchBegin(
     _table
 )
@@ -783,11 +868,15 @@ function dispatchBegin(
     return outermost;
 }
 
-/*
-dispatchEnd
-  When outermost: clears the mark, releases the letters unbound meanwhile,
-running their hooks, and ends the table where a handler asked for that.
-*/
+/**
+ * dispatchEnd
+ *   When outermost: clears the mark, releases the letters unbound
+ * meanwhile, running their hooks, and ends the table where a handler asked
+ * for that.
+ *
+ * @param {EventTable} _table      the table.
+ * @param {boolean}    _outermost  what `dispatchBegin` gave.
+ */
 function dispatchEnd(
     _table,
     _outermost

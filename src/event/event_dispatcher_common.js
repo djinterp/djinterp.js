@@ -68,6 +68,11 @@ const DROP_OLDEST = (data.queue_overflow === data.queue_overflow_drop_oldest);
  * A queue of occurrences. Made by `queueInit`.
  *
  * @typedef {object} EventQueue
+ * @property {Array<{key: bigint, payload: *}>} slots  the occurrences
+ *           queued, the oldest first, each with a copy of its payload.
+ * @property {number}  capacity    the most it holds.
+ * @property {boolean} processing  whether it is being processed, the
+ *           first slot being the occurrence in flight.
  */
 
 // 1.1
