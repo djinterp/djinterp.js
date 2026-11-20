@@ -126,6 +126,7 @@ kit's head, and the owner runs it and pushes.
 | Kit | Steps | Ends at |
 | --- | --- | --- |
 | 2026-11-18 | 1 to 50 | `b66507d`, decisions.html: D29 open |
+| 2026-11-20 | 51 to 58 | the commit that adds this row |
 
 ### The move to 6fe35d43
 
