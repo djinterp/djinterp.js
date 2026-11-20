@@ -3,8 +3,8 @@
 *
 *   A real as text, as C writes one: printf's "%.*g" for a double, digit
 * for digit. JavaScript's own writers -- String, toFixed, toPrecision --
-* agree with it for few values (docs/JS_STYLE.md, section 5.3), so none of
-* them is used.
+* agree with it for few values (docs/style_guidelines_js.html, section
+* 13), so none of them is used.
 *   The digits are exact. A double is an integer times a power of two, and
 * so has a finite decimal expansion; this file writes that expansion out
 * with whole-number arithmetic, rounds it once to the precision asked for,

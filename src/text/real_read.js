@@ -4,7 +4,7 @@
 *   A real from text, as C reads one: strtod, for the forms the reference
 * lets reach it. JavaScript's own readers are not used: Number("") is 0,
 * Number reads "0x10", and parseFloat reads the front of "1abc"
-* (docs/JS_STYLE.md, section 5.4).
+* (docs/style_guidelines_js.html, section 13).
 *   The value is exact: the nearest double to the decimal written, ties to
 * even, found with whole-number arithmetic however many digits there are.
 *   What is read: an optional sign; then "inf", "infinity" or "nan" in any

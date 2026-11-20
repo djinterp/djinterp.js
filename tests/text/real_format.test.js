@@ -1,9 +1,10 @@
 /*******************************************************************************
 * djinterp.js [tests]                                        real_format.test.js
 *
-*   The real writer against the reference: the table of docs/JS_STYLE.md,
-* section 5.3, and the sweep tools/reals.c printed with the C library the
-* reference calls -- every double's "%.17g", "%.15g", "%.6g" and "%.1g".
+*   The real writer against the reference: the table of
+* docs/style_guidelines_js.html, section 13, and the sweep tools/reals.c
+* printed with the C library the reference calls -- every double's
+* "%.17g", "%.15g", "%.6g" and "%.1g".
 *   The same sweep is read back: each "%.17g" text must give the double it
 * was written from, bit for bit.
 *
@@ -11,7 +12,7 @@
 * path:      /tests/text/real_format.test.js
 * link(s):   TBA
 * author(s): Samuel 'teer' Neal-Blim                         created: 2026.11.15
-*                                                            revised: 2026.11.16
+*                                                            revised: 2026.11.17
 *******************************************************************************/
 
 import assert from 'node:assert/strict';
@@ -57,7 +58,7 @@ function bitsOf(
     return view.getBigUint64(0).toString(16).padStart(16, '0');
 }
 
-test('the table of JS_STYLE.md, section 5.3', () =>
+test('the table of the style guide, section 13', () =>
 {
     const table = [
         [0.1,     '0.10000000000000001'],

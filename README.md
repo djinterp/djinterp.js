@@ -29,8 +29,9 @@ node --test        # node 22 or later; no dependency, no build step
 * `HANDOFF.md`: what is in it, how it was checked, where it leaves the
   reference by the owner's ruling, what is not ported, what is next.
 * `decisions.html`: the decisions for the owner, open and decided.
-* `docs/JS_STYLE.md`: the style; `docs/style_guidelines_js.html`: the
-  style written out as the counterpart of djinterp's C and C++ guides.
+* `docs/style_guidelines_js.html`: the style, the counterpart of
+  djinterp's C and C++ guides.
+* `docs/JS_STYLE.md`: tests, generated data, and git and handing back.
 * `docs/FOR_THE_LANES.md`: notes for djinterp's lanes, to relay.
 * `examples/console.html`: a page with a console over it.
 * `types/`: declarations, written by `tools/check_types.js`.

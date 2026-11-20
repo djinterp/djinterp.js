@@ -6,10 +6,10 @@ Read this, then `decisions.html`: its open decisions first, and every
 ruling so far below them, each with all that was put for it and where it
 stands. Decisions have one number across pages, D1 to D28; this file
 names them so.
-`docs/JS_STYLE.md` is the style, and `docs/style_guidelines_js.html` is
-it written out as the counterpart of djinterp's C and C++ guides; which of
-the two governs is D28. `docs/FOR_THE_LANES.md` has the notes for
-djinterp's lanes.
+`docs/style_guidelines_js.html` is the style, the counterpart of
+djinterp's C and C++ guides (D28). `docs/JS_STYLE.md` has what is not
+style: tests, generated data, and git and handing back.
+`docs/FOR_THE_LANES.md` has the notes for djinterp's lanes.
 
 **djinterp.js is ignorant of every framework but itself** (the owner,
 2026-11-16). Nothing in this repository names or needs another library:
@@ -231,20 +231,18 @@ These are differences on purpose. Each has a test that names it.
    took 34 findings at once) is the cheap way in. A module joins
    `tools/strict_modules.js` when it has no finding; the style check
    then holds its comments too.
-2. **D28**, when ruled: which of `docs/JS_STYLE.md` and the guide is the
-   file of style.
-3. **A terminal transcript for D27.** The comparison that proved it ran
+2. **A terminal transcript for D27.** The comparison that proved it ran
    the reference under `script` (a Linux utility) outside the
    repository. Recording it would make it an oracle like the rest, at
    the price of `tools/record.js` needing `script` where it records.
-4. **Relay `docs/FOR_THE_LANES.md`** (D15, D4, D18, and what was found in
+3. **Relay `docs/FOR_THE_LANES.md`** (D15, D4, D18, and what was found in
    the program and the kit). When lane E lands the rows' writer,
    regenerate and bring the port's reader after it.
-5. **D14:** the move into djinterp's tree, when the tree has CI to run
+4. **D14:** the move into djinterp's tree, when the tree has CI to run
    the transcripts.
-6. **REAL rows' range and step**, when lane E lands them: regenerate,
+5. **REAL rows' range and step**, when lane E lands them: regenerate,
    read the diff, follow.
-7. **After 12-11:** the command language from the frozen grammar, desc's
+6. **After 12-11:** the command language from the frozen grammar, desc's
    JSON as data, and D11's question of the parser whole.
 
 
@@ -302,8 +300,9 @@ These are differences on purpose. Each has a test that names it.
 
 ## 6. Conventions
 
-`docs/JS_STYLE.md`, and `docs/style_guidelines_js.html`, which writes it
-out in the form of djinterp's C and C++ guides. Since the rulings:
+`docs/style_guidelines_js.html`, in the form of djinterp's C and C++
+guides, is the style (D28); `docs/JS_STYLE.md` has tests, generated data,
+and git and handing back. Since the rulings:
 identifiers in camelCase, a type's name in PascalCase, constants, files
 and data in the reference's spelling (JS1); JSDoc read as types by a tool
 (JS2); a function inside a module named first in its JSDoc (D25). Three

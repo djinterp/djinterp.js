@@ -1,8 +1,8 @@
 /*******************************************************************************
 * djinterp.js [tools]                                             check_style.js
 *
-*   Checks what of docs/JS_STYLE.md a program can check, in every file this
-* repository's people write:
+*   Checks what of docs/style_guidelines_js.html a program can check, in
+* every file this repository's people write:
 *     node tools/check_style.js
 *   No line past 80 columns; no tab; no space at a line's end; no carriage
 * return; one line break at the file's end; and, in a file under src/,

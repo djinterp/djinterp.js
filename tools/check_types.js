@@ -8,7 +8,7 @@
 *   TSC is the path of a TypeScript compiler's `tsc`, 5.5 or later. The
 * repository does not depend on one, no page needs one, and
 * `node --test` does not run this: the sources are what a page imports,
-* as they are written (docs/JS_STYLE.md, JS2).
+* as they are written (docs/style_guidelines_js.html, section 7).
 *   Everywhere, what is checked is what the comments claim: a function
 * with a JSDoc comment is held to its parameters and what it returns, and
 * every type a comment names must be one that exists.

@@ -1,7 +1,7 @@
 /*******************************************************************************
 * djinterp.js [tools]                                                  record.js
 *
-*   Records transcripts from the reference (docs/JS_STYLE.md, section 6):
+*   Records transcripts from the reference (docs/JS_STYLE.md, section 1):
 *     node tools/record.js BUILD COMMIT [NAME ...]
 *   BUILD is where tools/build.sh built the tools; COMMIT is the
 * reference's commit, written into each `.meta`. With no NAME, every
@@ -36,7 +36,7 @@
 * path:      /tools/record.js
 * link(s):   TBA
 * author(s): Samuel 'teer' Neal-Blim                         created: 2026.11.15
-*                                                            revised: 2026.11.16
+*                                                            revised: 2026.11.17
 *******************************************************************************/
 
 import { spawnSync } from 'node:child_process';

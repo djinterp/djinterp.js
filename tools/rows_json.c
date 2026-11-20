@@ -2,7 +2,7 @@
 * djinterp.js [tools]                                                rows_json.c
 *
 *   Writes what the reference holds as data, as JSON, so that the port reads
-* it and types none of it again (JS_STYLE.md, section 7):
+* it and types none of it again (JS_STYLE.md, section 2):
 *     rows_json option  COMMIT   the option machine's vocabulary: statuses
 *                                with their names and messages, kinds,
 *                                sources, the registry's room, the djin
@@ -20,7 +20,7 @@
 * path:      /tools/rows_json.c
 * link(s):   TBA
 * author(s): Samuel 'teer' Neal-Blim                         created: 2026.11.15
-*                                                            revised: 2026.11.15
+*                                                            revised: 2026.11.17
 *******************************************************************************/
 
 // std

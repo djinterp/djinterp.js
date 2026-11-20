@@ -29,7 +29,7 @@
 *   - INTEGERS ARE EXACT. A row's integers are held as BigInt. A value is
 *     handed out as a number where every value the row can hold lies
 *     within the exact integers of a double, and as a bigint where one
-*     does not (docs/JS_STYLE.md, section 5.2).
+*     does not (docs/style_guidelines_js.html, section 13).
 *   - ROOM IS OPTIONAL. The reference's frame is given its storage and can
 *     be full. A frame here has no limit unless `init` is given one; given
 *     the reference's sizes it reports CAPACITY and BUFFER_TOO_SMALL where
@@ -44,7 +44,7 @@
 * path:      /src/option/option_env.js
 * link(s):   TBA
 * author(s): Samuel 'teer' Neal-Blim                         created: 2026.11.15
-*                                                            revised: 2026.11.16
+*                                                            revised: 2026.11.17
 *******************************************************************************/
 
 /*

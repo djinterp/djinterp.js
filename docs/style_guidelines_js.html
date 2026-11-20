@@ -98,7 +98,7 @@
   <h1>JavaScript Coding Style Guide</h1>
   <p class="meta">The counterpart of djinterp's
   <code>style_guide_c.md</code> and <code>style_guide_cpp.md</code>, for
-  the port. Written 2026-11-17.</p>
+  the port, and djinterp.js's file of style. Written 2026-11-17.</p>
 </header>
 
 <p>This is the style of djinterp.js, in the order and form of djinterp's
@@ -118,13 +118,12 @@ holds every file to it.</li>
 on 2026-11-14 and not yet ruled on point by point.</li>
 </ul>
 
-<div class="callout warn"><b>This guide and <code>JS_STYLE.md</code>.</b>
-<code>docs/JS_STYLE.md</code> is djinterp.js's file of style, changed
-only through the owner (JS3). This guide carries every rule in it, and
-adds the C guide's rules that the port follows without the file saying
-so. Which of the two governs from now on is open (D28,
-<a href="#rulings">section 17</a>). Until it is ruled,
-<code>JS_STYLE.md</code> governs wherever the two differ.</div>
+<div class="callout"><b>The file of style.</b><span class="b ruled">D28,
+2026-11-17</span> This guide is djinterp.js's style, and is changed only
+through the owner (JS3, which moved to it with D28).
+<code>docs/JS_STYLE.md</code>, where the style was first written, keeps
+what is not style: how the port is tested, where its data comes from, and
+how work is committed and handed back.</div>
 
 <nav class="toc">
 <h2 id="contents">Contents</h2>
@@ -320,7 +319,7 @@ import { STATUS, fail, ok } from './option_common.js';
 
 <ul>
 <li>Every opening brace of a function or a block is on its own line, in
-the column of the line that opened it: a function, an
+the column of the line that opened it: a function, a class, an
 <code>if</code>, a loop, a <code>switch</code>, an arrow function's
 block.</li>
 <li>No <code>if</code>, <code>else</code> or loop without braces, even
@@ -960,15 +959,22 @@ a <code>number</code> when its range lies inside ±(2<sup>53</sup> − 1),
 and a <code>bigint</code> when it does not; a row with no stated range
 is a <code>bigint</code> if the reference holds it in 64 bits. 64-bit
 arithmetic is never done in <code>number</code>s.</li>
-<li><b>Reals as text.</b> Never <code>String(v)</code>,
+<li><b>Reals as text</b>, the table below. JavaScript writes reals
+otherwise than the reference does.</li>
+<li><b>Reals as text: the writer.</b> Never <code>String(v)</code>,
 <code>toFixed</code> or <code>toPrecision</code>. The reference writes
-<code>%.17g</code>; the port has one function that writes as it does,
+<code>snprintf("%.17g")</code> (<code>option_env.c</code>,
+<code>d_internal_option_env_format_real</code>); the port has one
+function that writes as it does, printf's <code>%.*g</code> written in
+JavaScript,
 <code>formatReal</code> in <code>src/text/real_format.js</code>, tested
 against the C library's own output, exact ties among them: a value
 halfway between two texts is written with the even digit, as C writes
 it, and never as JavaScript's rounding would.</li>
 <li><b>Reals from text.</b> Never <code>Number()</code> or
-<code>parseFloat</code>: <code>Number("")</code> is 0, and
+<code>parseFloat</code>: <code>Number("")</code> is 0;
+<code>Number("0x10")</code> is 16 but <code>Number("0x1p3")</code> is
+NaN, which <code>strtod</code> reads as 8; and
 <code>parseFloat("1abc")</code> is 1. Read to the grammar the reference
 accepts, with <code>readReal</code> in
 <code>src/text/real_read.js</code>, and refuse the rest as it does.</li>
@@ -990,36 +996,39 @@ not a reason.</li>
 <th>JavaScript <code>String(v)</code></th></tr>
 <tr><td><code>0.1</code></td><td><code>0.10000000000000001</code></td>
 <td><code>0.1</code></td></tr>
+<tr><td><code>1.0/3</code></td><td><code>0.33333333333333331</code></td>
+<td><code>0.3333333333333333</code></td></tr>
+<tr><td><code>420.0</code></td><td><code>420</code></td>
+<td><code>420</code></td></tr>
 <tr><td><code>-0.0</code></td><td><code>-0</code></td>
 <td><code>0</code></td></tr>
+<tr><td><code>1e15</code></td><td><code>1000000000000000</code></td>
+<td><code>1000000000000000</code></td></tr>
+<tr><td><code>1e21</code></td><td><code>1e+21</code></td>
+<td><code>1e+21</code></td></tr>
 <tr><td><code>1.5e-7</code></td><td><code>1.4999999999999999e-07</code>
 </td><td><code>1.5e-7</code></td></tr>
 <tr><td><code>2.5e-5</code></td><td><code>2.5000000000000001e-05</code>
 </td><td><code>0.000025</code></td></tr>
+<tr><td><code>5e-324</code></td><td><code>4.9406564584124654e-324</code>
+</td><td><code>5e-324</code></td></tr>
+<tr><td><code>-2.75</code></td><td><code>-2.75</code></td>
+<td><code>-2.75</code></td></tr>
 </table>
-<p class="meta">Measured 2026-11-14 from the reference's own code; the
-whole table is in <code>docs/JS_STYLE.md</code>, section 5.</p>
+<p class="meta">Measured 2026-11-14 from the reference's own code.
+<code>tests/text/real_format.test.js</code> holds the port to it, and to
+a sweep of doubles the C library printed.</p>
 
 
 <h2 id="transcripts">14. Transcripts and generated data</h2>
 
-<p><b>The reference is the oracle.</b> The port passes when it gives the
-reference's bytes.</p>
-
-<ul>
-<li>A <b>transcript</b> is three files in
-<code>tests/transcripts/</code>: <code>NAME.in</code>, what was given to
-the reference; <code>NAME.out</code>, what it wrote, byte for byte; and
-<code>NAME.meta</code>, the program, its arguments, the reference's
-commit and the date. A tool records it; no one writes one by hand.</li>
-<li>When the reference moves, every transcript is recorded again at the
-new commit (<code>tools/regenerate.sh</code>), and a difference is a
-change to review, not to accept.</li>
-<li>Whatever the reference holds as data (rows and their ranges,
-statuses and their messages, the kit's texts) is written out as JSON by a
-tool and read by the port. It is never typed again in JavaScript. Each
-generated file's first field names the reference's commit.</li>
-</ul>
+<p>How the port is tested and where its data comes from are not style,
+and are in <code>docs/JS_STYLE.md</code> (D28): the reference is the
+oracle, a transcript is recorded by a tool and never written by hand, and
+whatever the reference holds as data is generated and never typed again.
+What bears on the code is here already: a test's form in
+<a href="#test-functions">5.5</a>, and generated files, transcripts and
+<code>types/</code> outside <a href="#spacing">2.1</a>.</p>
 
 
 <h2 id="file-structure">15. File structure</h2>
@@ -1172,8 +1181,9 @@ camelCase; types in PascalCase (<a href="#names">3.1</a>)</td></tr>
 <tr><td>D17b (JS2)</td><td>2026-11-16</td><td>JSDoc read as types by a
 check beside the style check, never a step a page needs
 (<a href="#language">7</a>)</td></tr>
-<tr><td>JS3</td><td>2026-11-16</td><td><code>JS_STYLE.md</code> is
-djinterp.js's own, changed only through the owner</td></tr>
+<tr><td>JS3</td><td>2026-11-16</td><td>the file of style is
+djinterp.js's own, changed only through the owner; since D28, this
+guide</td></tr>
 <tr><td>D23</td><td>2026-11-16</td><td>a cut never parts a surrogate
 pair (<a href="#behaviour">13</a>)</td></tr>
 <tr><td>D24</td><td>2026-11-16</td><td>the strict mode brought in a
@@ -1181,9 +1191,9 @@ module at a time (<a href="#language">7</a>)</td></tr>
 <tr><td>D25</td><td>2026-11-17</td><td>a function inside a module has
 JSDoc in the C guide's form, its name first
 (<a href="#inner">5.2</a>)</td></tr>
-<tr><td>D28 <span class="b open">open</span></td><td>2026-11-17</td>
-<td>which governs from now on, <code>JS_STYLE.md</code> or this
-guide</td></tr>
+<tr><td>D28</td><td>2026-11-17</td><td>this guide is the file of style;
+<code>JS_STYLE.md</code> keeps tests, generated data, and git and handing
+back (<a href="#contents">the top</a>)</td></tr>
 </table>
 
 </div>
