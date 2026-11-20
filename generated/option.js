@@ -1,0 +1,30 @@
+// generated from option.json by tools/json_module.js; never edited by hand
+export default {
+  "reference": "d20c0b23",
+  "generated_by": "tools/rows_json.c option",
+  "statuses": [
+    {"code": 0, "name": "OK", "message": "the operation completed"},
+    {"code": 1, "name": "KEY_ABSENT", "message": "no option in the set carries that key"},
+    {"code": 2, "name": "KEY_DUPLICATE", "message": "the key is already present; a set's keys are unique"},
+    {"code": 3, "name": "VALUE_TYPE_MISMATCH", "message": "the value's width does not match the slot's"},
+    {"code": 4, "name": "KEY_TYPE_MISMATCH", "message": "the key's declared type does not match the set's"},
+    {"code": 5, "name": "NO_VALUE", "message": "the option is unary and carries no value"},
+    {"code": 6, "name": "POLICY_REJECTED", "message": "the merge policy refused this position"},
+    {"code": 7, "name": "CONFLICT", "message": "the sets conflict; their plain union is not defined"},
+    {"code": 8, "name": "INVALID_ARGUMENT", "message": "an argument was null, aliased, or out of range"},
+    {"code": 256, "name": "BUFFER_TOO_SMALL", "message": "the destination is too small; the required size is reported"},
+    {"code": 257, "name": "CAPACITY", "message": "the schema array is full"},
+    {"code": 258, "name": "VALUE_CAPACITY", "message": "the value block is full"},
+    {"code": 259, "name": "NO_MEMORY", "message": "an allocation failed"}
+  ],
+  "status_unknown": {"name": "UNKNOWN", "message": "unknown status"},
+  "mechanical_floor": 256,
+  "kinds": ["unknown", "bool", "int", "real", "text", "choice", "flags"],
+  "sources": ["default", "program", "file", "environment", "command line", "override"],
+  "source_unknown": "unknown",
+  "depth_max": 255,
+  "registry": {"bindings": 256, "variables": 64, "text": 4096, "djins": 32},
+  "djin_abi": 1,
+  "djin_statuses": ["ok", "invalid", "duplicate", "reserved", "full", "settings"],
+  "djin_status_unknown": "unknown"
+};

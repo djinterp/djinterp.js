@@ -1,0 +1,17 @@
+{
+  "name": "djinterp.js",
+  "version": "0.0.1",
+  "description": "djinterp in a page: the option machine, the registry of djins and their settings, and events. A port of the C core that follows it.",
+  "type": "module",
+  "private": true,
+  "exports": {
+    ".": "./src/djinterp.js",
+    "./src/*": "./src/*"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test": "node --test"
+  }
+}
