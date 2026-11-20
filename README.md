@@ -13,7 +13,7 @@ agree.
 import * as djinterp from './src/djinterp.js';
 
 const dj    = await djinterp.open({ djins: [printer] });
-const reply = await dj.run('get --show-origin printer.style');
+const reply = await dj.run(['get', '--show-origin', 'printer.style']);
 
 dj.on('djinterp.set', (_event) => { /* _event.names */ });
 ```
@@ -22,8 +22,10 @@ dj.on('djinterp.set', (_event) => { /* _event.names */ });
 node --test        # node 22 or later; no dependency, no build step
 ```
 
-* `HANDOFF.md`: what is in it, how it was checked, what is not ported,
-  what is next.
-* `decisions.html`: the decisions for the owner.
+* `HANDOFF.md`: what is in it, how it was checked, where it leaves the
+  reference by the owner's ruling, what is not ported, what is next.
+* `decisions.html`: the decisions for the owner, open and decided.
 * `docs/JS_STYLE.md`: the style.
+* `docs/FOR_THE_LANES.md`: notes for djinterp's lanes, to relay.
 * `examples/console.html`: a page with a console over it.
+* `types/`: declarations, written by `tools/check_types.js`.

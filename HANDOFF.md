@@ -1,9 +1,12 @@
-# djinterp.js: handoff after the first session
+# djinterp.js: handoff
 
-2026-11-16. The port follows djinterp at `dfc793c4`.
+2026-11-16, after the owner's rulings of that day. The port follows
+djinterp at `dfc793c4`.
 
-Read this, then `decisions.html`, which has the seventeen decisions
-this session leaves with the owner. `docs/JS_STYLE.md` is the style.
+Read this, then `decisions.html`: its open decisions first, and every
+ruling so far at its end, each with what was done about it.
+`docs/JS_STYLE.md` is the style. `docs/FOR_THE_LANES.md` has the notes
+for djinterp's lanes.
 
 **djinterp.js is ignorant of every framework but itself** (the owner,
 2026-11-16). Nothing in this repository names or needs another library:
@@ -21,21 +24,23 @@ server.
 
 | Path | What |
 |---|---|
-| `src/djinterp.js` | what a page imports: `open`, `run`, `on`, `off`; `split`; `memory_file`, `storage_file`; `settings_frame` |
-| `src/option/` | the option machine (`option_env`), its registry, statuses |
+| `src/djinterp.js` | what a page imports: `open`, `run`, `on`, `off`; `split`; `memoryFile`, `storageFile`; `settingsFrame` |
+| `src/option/` | the option machine (`optionEnv`), its registry, statuses |
 | `src/modules/interp/djin.js` | djin records, the set, `list` and `describe`'s text |
 | `src/event/` | the event core: keys, verdicts, table, registry, dispatcher, queue |
 | `src/tools/cli/cli_settings.js` | the kit's settings: start, take, why |
 | `src/tools/djinterp/djinterp_commands.js` | the program: `list`, `describe`, `get`, `set` |
-| `src/text/` | printf's `%.*g`, strtod's reading, UTF-8 with bytes kept |
+| `src/text/` | printf's `%.*g`, and strtod's reading |
 | `generated/` | the reference's data, written by `tools/`; never edited |
-| `tests/` | 95 tests; `tests/transcripts/` holds the reference's answers |
+| `types/` | declarations, written by `tools/check_types.js`; never edited |
+| `tests/` | 92 tests; `tests/transcripts/` holds the reference's answers |
 | `tools/` | C drivers over the reference, the recorder, fuzzers, checks |
 | `examples/console.html` | the port in a page |
-| `decisions.html` | the decisions for the owner |
+| `decisions.html` | the decisions for the owner, open and decided |
 
-Every file under `src/` mirrors a path of the reference and names it in
-its banner. A name is the reference's, less `d_` or `dj_`.
+A file under `src/` mirrors a path of the reference and keeps its name.
+A function's name is the reference's in camelCase, less `d_` or `dj_`:
+`d_option_env_assign_from` is `optionEnv.assignFrom`.
 
 
 ## 2. Building in five minutes
@@ -43,7 +48,7 @@ its banner. A name is the reference's, less `d_` or `dj_`.
 There is nothing to build. node 22 or later, and no dependency:
 
 ```sh
-node --test                  # 95 tests
+node --test                  # 92 tests
 node tools/check_style.js    # 80 columns, tabs, banners
 ```
 
@@ -58,13 +63,14 @@ python3 -m http.server 8765
 import * as djinterp from './src/djinterp.js';
 
 const dj = await djinterp.open({
-    settings: [djinterp.option_env.row_bool('color', true)],
-    file:     djinterp.storage_file(localStorage),
+    settings: [djinterp.optionEnv.rowBool('color', true)],
+    file:     djinterp.storageFile(localStorage),
     query:    location.search
 });
 
 const reply = await dj.run('get --show-origin color');
 // { status: 0, out: 'color = true  (default)\n', err: '' }
+await dj.run(['set', 'color=no']);      // the words, untouched
 dj.on('djinterp.set', (_event) => { /* _event.names */ });
 ```
 
@@ -79,25 +85,22 @@ node --test       # whether the port still follows
 
 It builds the reference's program and the tools, writes `generated/`,
 makes the fuzzed inputs again from their seeds, records all fifteen
-transcripts, and checks the starting package's four runs. Run twice at
-one commit it changes nothing.
+transcripts, checks the starting package's four runs, and writes the
+commit into the banners. Run twice at one commit it changes nothing.
 
-**To set the port against the reference on lines nobody typed:**
+**The other checks**, none of which `node --test` runs:
 
 ```sh
 node tools/fuzz_check.js BUILD session 1 100 500
 node tools/fuzz_check.js BUILD program 1 100 200
+node tools/check_page.js http://127.0.0.1:8765 [/path/to/chrome]
+node tools/check_types.js /path/to/typescript/bin/tsc
 ```
 
 BUILD is where `regenerate.sh` built the tools (`/tmp/djinterp.js/build`
-unless told otherwise).
-
-**The page in a browser** (needs a Chrome or Chromium, which it runs
-headless itself; `google-chrome` unless one is named):
-
-```sh
-node tools/check_page.js http://127.0.0.1:8765 [/path/to/chrome]
-```
+unless told otherwise). The page's check runs a Chrome or Chromium
+headless itself. The types' check needs a TypeScript compiler, 5.5 or
+later, which the repository does not depend on.
 
 
 ## 3. Where the work stands
@@ -109,12 +112,13 @@ node tools/check_page.js http://127.0.0.1:8765 [/path/to/chrome]
 | real text (`%.17g`, `%.15g`, `%.6g`, `%.1g`; reading) | `tools/reals.c`: 6,778 doubles | 27,112 texts agree; every `%.17g` reads back to the same bits |
 | the option machine | 7 hand-typed session transcripts, 2 fuzzed | byte for byte |
 | the registry, the djin records | `session_registry`, `session_djin` | byte for byte |
-| the program's commands | 3 hand-typed program transcripts, 1 fuzzed | byte for byte |
-| both, on fresh seeds | `tools/fuzz_check.js` | 401,400 session lines and 60,000 command lines agree |
+| the program's commands, **through `run`** | 3 hand-typed program transcripts, 1 fuzzed | byte for byte |
+| both, on fresh seeds | `tools/fuzz_check.js` | agree; see below |
 | the event core | `t_event_core.c`'s cases, as 13 tests | pass |
 | the reference's option suite | `tests/option/suite.test.js` | four groups written out; a table of which transcript holds each other group |
-| the page interface | 13 tests; headless Chrome 153 | pass |
-| the starting package's four runs | `tests/option/prototype.test.js` | reproduce; the reference at `d20c0b23` still prints them |
+| the page interface | 15 tests; headless Chrome 153 | pass |
+| the JSDoc, as types | `tools/check_types.js`, TypeScript 5.9.3 | no finding |
+| the starting package's four runs | `tests/option/prototype.test.js` | reproduce |
 
 A transcript is a file of lines in (`.in`), the reference's bytes out
 (`.out`) and what recorded it (`.meta`). `session_*` are given whole to
@@ -123,22 +127,58 @@ and the djin set. `program_*` are given a command line a process to the
 reference's program with the fixture's frames
 (`tools/djinterp_fixture_main.c`), in a home of the transcript's own.
 
-Six deliberate faults were put in, one to a module, to see the gates
-fail. Five failed a suite at once. The sixth, in `utf8.js`, failed
-nothing: no test encoded a pair whose low surrogate is U+DC00. That case
-is now a test, and the fault fails it.
+Fuzzing. Before the rulings, 401,400 session lines and 60,000 command
+lines agreed. After each ruling that touched the machine the fuzzers
+were run again on fresh builds of the port: session seeds 1 to 60 at 400
+lines, and program seeds 1 to 80 at 200 lines through `run` itself, all
+agree.
 
-The port was also regenerated against `2bb6b246`, the commit START
-names. Nothing differs but the commit's name (decision 1).
+### Where the port leaves the reference, by the owner's ruling
+
+These are differences on purpose. Each has a test that names it.
+
+* **Text is counted in UTF-16 units** (ruling 3). The reference counts
+  bytes: an offset into a script, a column's width in `list` and
+  `describe`, `get`'s cut at 511, a frame's room for text. For ASCII
+  the two agree. For `é` the port counts one where the reference counts
+  two. The transcripts are replayed with a unit for each of the
+  reference's bytes, which holds the port to it on everything but that
+  count. A `\xHH` in a script is the unit `HH`, where in the reference
+  it is a byte that may be part of a longer character. A cut at 511
+  units can part a surrogate pair (`decisions.html`, open decision 6).
+* **Any NaN is `nan`** (ruling 4). The reference, built with glibc,
+  writes a REAL bound from `-nan` back as `-nan`. No transcript or
+  fuzzed input makes a signed NaN any more.
+* **An event's key is still the reference's**: the FNV-1a-64 hash of the
+  name's UTF-8 bytes, for any name (open decision 4).
+
+### What the rulings changed in how it behaves
+
+* **A line is a run of the program** (ruling 7). Before each line the
+  port starts again as a process would: what the last line bound from
+  the environment, the settings file, its command line or by `set` is
+  dropped, and the environment and the file are read again. So `set`'s
+  value reads `(file)` on the next line, an option of a line binds for
+  that line, and what the program says as it starts comes first in every
+  reply's `err`. What a page bound at the program's standing stays. The
+  query is the command line of every line (open decision 5).
+* **`run` takes a line or an array of words** (ruling 8). The words go
+  to the program untouched.
+* **The program posts `djinterp.set` and `djinterp.run`** (ruling 10).
+* **A frame from its record has the reference's room** (ruling 5):
+  `optionEnv.fromRecord`.
 
 ### What is not ported
 
-* **The argument parser and the command-line kit.** The program's
-  argument reading is a model of them for four commands (decision 11).
-  Not modelled: `help`, `completion`, `--help`, `--version`, `-q`, `-v`,
-  `--color`, a bare `--`, and short options run together. The port
-  answers each as a word it does not know. The fuzzers never produce
-  them. The usage text's `Commands:` line lists the port's four.
+* **The rest of the kit (ruling 11, not yet done).** The program's
+  argument reading is a model of the reference's parser and kit for four
+  commands. Still not modelled: `help`, `completion`, `--help`,
+  `--version`, `-q`, `-v`, `--color`, a bare `--`, and short options run
+  together. The port answers each as a word it does not know, and the
+  fuzzers never produce them. This is the next piece of work, and three
+  open decisions in `decisions.html` bear on it.
+* **The argument parser and the kit, whole.** To be asked again with the
+  command language after 12-11 (ruling 11).
 * **The kit's own djin and the root's `plugin_path`.** They are in
   `generated/program.json`, and the test harness declares them from
   there; `open` does not.
@@ -146,53 +186,32 @@ names. Nothing differs but the commit's name (decision 1).
   statistics, footprint, `next_prime`, and the queue's ring of payload
   bytes. A handler's id is a number. A queue's room is a count of
   occurrences. A queued payload is copied with `structuredClone`
-  (decision 13).
+  (ruling 13).
 * **`D_OPTION_ENV_VALUE_CAPACITY`** as a limit of its own. `format`
-  returns the whole text, with no buffer to be too small. `get`'s cuts
-  at 511 and 1,023 bytes are the program's and are ported.
+  returns the whole text.
 * **Hexadecimal reals and `nan(...)`.** The option machine refuses them
-  before a reader sees them, so `real_read.js` does not read them.
-* **A locale.** The reference's suite has a group for a locale whose
-  decimal point is a comma. The port reads and writes a real by its own
-  arithmetic, and no locale reaches it.
+  before a reader sees them.
+* **A locale.** The port reads and writes a real by its own arithmetic.
 * **The command language, desc, and everything in START's table below
   them.**
-
-### Where the port chose
-
-Each is a decision in `decisions.html`, with what runs now marked:
-integers as numbers or bigints (2); bytes inside (3); a NaN's sign (4);
-room (5); promises (6); what a line is (7); the line's words (8); the
-query and storage (9); the events' names (10); refusals at `open` (12).
-
-`run` has one known difference from the reference, which no transcript
-catches: lines share what they bind (decision 7). Read it before
-anything is built on `run`.
 
 
 ## 4. What is next
 
-In order, if the recommendations in `decisions.html` stand:
-
-1. **Decision 7:** `run` as a run of the program, and the program
-   transcripts replayed through `run` itself.
-2. **Decision 8:** `run` takes the words as well as a line.
-3. **Decision 11:** `--`, `-q`, `-v`, `--color`, `--version`, `--help`
-   and `help`. Teach `tools/fuzz_program.js` each word first, see it
-   differ, then model it. Help texts come from a C tool, as rows do.
-4. **Notes to lane E:** a NaN's text (4); the rows' writer and its room
-   (5, 15); `d_option_env_statement_end` past a script's end.
-5. **A note to the program's and kit's lanes:** `djinterp get -- NAME`
-   refuses NAME (`decisions.html`, "Found while preparing this").
-6. **A type checker over the JSDoc**, as a tool (17b).
-7. **REAL rows' range and step**, when lane E lands them: regenerate,
+1. **Ruling 11:** `--`, `-q`, `-v`, `--color`, `--version`, `--help` and
+   `help`. Teach `tools/fuzz_program.js` each word first, see it differ,
+   then model it. Help and version texts come from a C tool, as rows do.
+   Open decisions 1, 2 and 3 say what to do at three places where the
+   reference alone does not settle it.
+2. **Relay `docs/FOR_THE_LANES.md`** (rulings 15 and 4, and what was
+   found in the program and the kit). When lane E lands the rows'
+   writer, regenerate and bring the port's reader after it.
+3. **Ruling 14:** the move into djinterp's tree, when the tree has CI to
+   run the transcripts.
+4. **REAL rows' range and step**, when lane E lands them: regenerate,
    read the diff, follow.
-8. **After 12-11:** the command language from the frozen grammar, and
-   desc's JSON as data.
-
-For whatever is built on it: the option machine and the event core are
-usable as they are. The page interface is usable, with decisions 6, 7, 8
-and 10 open against it.
+5. **After 12-11:** the command language from the frozen grammar, desc's
+   JSON as data, and ruling 11's question of the parser whole.
 
 
 ## 5. What was learned the hard way
@@ -204,70 +223,68 @@ and 10 open against it.
   made near misses on purpose, it found two more differences in minutes,
   and a hand-typed line a fourth. Teach the fuzzer a thing before
   believing the port has it.
-* **A check should need as little as the thing it checks.** The page's
-  check first drove the browser through an automation library. Chrome
-  can be asked for the finished page itself, and now is; the check needs
-  a browser and nothing else.
 * **The page's own path was the unchecked one.** The transcript harness
-  makes a fresh program a line, as the reference is a process a line.
-  `open` and `run` do not, so they answer differently after the first
-  line and every test passes (decision 7).
+  made a fresh program a line, as the reference is a process a line,
+  and `run` did not. Ruling 7 closed it: the harness now replays through
+  `run`.
 * **A deliberate fault that fails nothing is a finding.** One of six
-  did.
+  did, and became a test.
+* **`git checkout FILE` to undo an experiment undoes everything
+  uncommitted in the file.** It cost two re-dos in one day. Copy the
+  file aside and copy it back, or commit first.
+* **A type checker's first run is a review.** 119 findings: types named
+  across modules with nothing importing them, a type never defined, a
+  typedef missing a member, a handful of real mismatches. An alias made
+  with `@typedef` is exported again by `export *`; `@import` is not.
+* **A rename can keep what was aligned aligned.** 298 names went from
+  snake_case to camelCase by a tokenising script that re-indented
+  continuation lines by what the line above them lost and re-padded
+  aligned columns. Every test, both fuzzers and the style check passed
+  on its first run. It is not in the repository; the names are.
 * **Record in an empty environment.** A fuzzed `import` with an empty
   prefix read the shell's `PATH` into a setting named `path`, on the C
-  side only. `tools/record.js` gives the reference no environment but
-  what the input sets.
+  side only.
 * **The reference borrows text.** `d_option_env_set_text` keeps the
-  pointer it is given. `tools/session.c` first passed its line buffer,
-  which the next line overwrote. The driver now copies.
-* **Text is bytes.** Columns are padded by bytes, offsets are byte
-  offsets, limits are byte limits. A port that counts in UTF-16 units
-  passes every ASCII test and fails on `é`.
+  pointer it is given, and `tools/session.c` first passed its line
+  buffer. The driver now copies.
 * **The parser's wording has rules of its own.** What a command requires
   is missed before what it does not expect. Every unexpected argument is
   listed. `---x` is a word, not an option. A space that ends the list is
   dropped. The kit names a stray word only as far as its first space.
-  All from the source, each confirmed on the binary.
-* **`node --test DIRECTORY` does not run a directory.** Run plain
-  `node --test`, or name files.
-* **Recording must change nothing when nothing changed**, or every
-  regeneration is a diff to read. `record.js` keeps a recording's date
-  when its bytes and commit are the same, and keeps a person's lines of
-  a `.meta` (a fuzzed input's seed and count).
-* **`await` on a plain value works**, which is how a synchronous `run`
-  passed for the drawn interface until the brief was read again. It
-  returns promises now.
+* **A check should need as little as the thing it checks.** The page's
+  check runs Chrome itself; nothing drives it.
+* **`node --test DIRECTORY` does not run a directory.**
+* **Recording must change nothing when nothing changed.** `record.js`
+  keeps a recording's date when its bytes and commit are the same.
 
 
 ## 6. Conventions
 
-`docs/JS_STYLE.md`. It was revised on 11-16 so that it speaks of
-djinterp.js alone: what it said of other libraries is gone, and no rule
-changed; the file as it came is in the repository's history. Three
-things it is silent on were settled by the C guide's habit:
+`docs/JS_STYLE.md`. Since the rulings: identifiers in camelCase, a
+type's name in PascalCase, constants, files and data in the reference's
+spelling (JS1); JSDoc read as types by a tool (JS2). Three things the
+style is silent on were settled by the C guide's habit:
 
 * **A file that is not JavaScript** (`.c`, `.h`, `.sh`, `.html`) has the
   same banner in its own comment form, with its `path:`.
-* **A tool that is a program** has its usage in its banner, reads
-  `process.argv` in a `main` or at the foot of the file, and exits 2 for
-  a wrong call. One that is also imported (`tools/record.js`) runs only
-  when it is the program.
+* **A tool that is a program** has its usage in its banner and exits 2
+  for a wrong call. One that is also imported (`tools/record.js`) runs
+  only when it is the program.
 * **A test file** has no table of contents or numbered sections. Its
-  banner says what it holds and where the rest is held; its tests are
-  named for the behaviour, in the reference's words where it has them.
+  banner says what it holds and where the rest is held.
 
 And the port's own:
 
 * **Generated files are never edited.** `tools/regenerate.sh` writes
-  them. `src/` imports `generated/*.js`, which `tools/json_module.js`
-  makes from the JSON; a test holds the two equal.
+  `generated/`, and `tools/check_types.js` writes `types/`.
 * **Every transcript's `.meta` names the commit** the generated data
   names. The tests fail if they differ.
-* **An expected failure is a value:** `{ is_ok, value }` or
-  `{ is_ok, error }` with the reference's status. A throw is a
-  `TypeError` or a `RangeError` for a misuse.
-* **A function that takes text has a byte-level twin** under `.bytes`
-  (`option_env.bytes`, `djin.bytes`), which the program uses, so that
-  what it writes is counted as the reference counts it.
+* **An expected failure is a value:** `{ isOk, value }` or
+  `{ isOk, error }` with the reference's status. A throw, or a promise
+  broken, is a `TypeError` or a `RangeError` for a misuse.
+* **A module's exported functions check what they are handed; its
+  `inner` has the same functions without the checks**, for the modules
+  that stand on it.
+* **A type another module defines is brought in with `@import`**, in a
+  block after the imports.
 * **Commits** are small and say what was checked. There is no remote.
