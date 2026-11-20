@@ -11,16 +11,19 @@
 * to nearest with ties to even, and lays it out as "%g" does. That is what
 * the C library the reference was measured with does, so the two agree on
 * every double and not only on those a shorter method happens to get right.
-*   reference: src/djinterp/c/option/option_env.c,
-*              d_internal_option_env_format_real, at 3eb096c9 -- which
-*              calls snprintf("%.17g"); the conversion itself is the C
-*              library's (ISO C, 7.21.6.1, the g conversion)
+*   reference: snprintf's "%.*g" as the reference calls it, at 6fe35d43:
+*              "%.17g" for a description's default (djin.c) and an
+*              origin's line (djinterp_commands.c), and 15, 16 or 17
+*              digits for the option machine's own
+*              (d_internal_option_env_format_real, option_env.c); the
+*              conversion itself is the C library's (ISO C, 7.21.6.1, the
+*              g conversion)
 *
 *
 * path:      /src/text/real_format.js
 * link(s):   TBA
 * author(s): Samuel 'teer' Neal-Blim                         created: 2026.11.15
-*                                                            revised: 2026.11.17
+*                                                            revised: 2026.11.18
 *******************************************************************************/
 
 /*
@@ -211,8 +214,10 @@ export function formatG(
 
 // 2.2
 /**
- * A real as the option machine writes one: "%.17g", which is enough digits
- * for any double to read back as itself.
+ * A real as a description's default and an origin's line write one:
+ * "%.17g", which is enough digits for any double to read back as itself.
+ * The option machine writes its own in the fewest of 15, 16 and 17 that
+ * do (`format`, in src/option/option_env.js).
  *
  * @param {number}  _value  the double.
  * @returns {string} the text.

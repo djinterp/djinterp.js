@@ -17,7 +17,7 @@
 * an object: it has no size, and its `abi` is the current one where left
 * out.
 *   reference: inc/djinterp/c/modules/interp/djin.h and
-*              src/djinterp/c/modules/interp/djin.c, at 3eb096c9
+*              src/djinterp/c/modules/interp/djin.c, at 6fe35d43
 *
 *
 * path:      /src/modules/interp/djin.js

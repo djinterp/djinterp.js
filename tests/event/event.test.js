@@ -2,7 +2,7 @@
 * djinterp.js [tests]                                              event.test.js
 *
 *   The event core, by the cases of the reference's own suite
-* (tests/djinterp/c/event/t_event_core.c, at 3eb096c9), in its order and
+* (tests/djinterp/c/event/t_event_core.c, at 6fe35d43), in its order and
 * under its headings: the monoid laws, the table, merge, dispatch, the
 * snapshot semantics, run, the fused word and its coherence law, and the
 * queue with its deferral coherence law and re-entrancy.

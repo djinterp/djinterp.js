@@ -72,14 +72,16 @@ load fail 8 INVALID_ARGUMENT at 0
 > load	app	2	width = 300; color = yes
 load ok 2
 > layers	app	width
-layers 2
+layers 3
   [0] frame=app scope=0 shown=1 kind=int bound=1 source=file depth=0 integer=300 real=0 text=(null)
   [1] frame=app scope=0 shown=0 kind=int bound=1 source=program depth=0 integer=270 real=0 text=(null)
+  [2] frame=app scope=0 shown=0 kind=int bound=0 source=default depth=none integer=240 real=0 text=(null)
 > load	app	1	-width; -color
 load ok 2
 > layers	app	width
-layers 1
+layers 2
   [0] frame=app scope=0 shown=1 kind=int bound=1 source=file depth=0 integer=300 real=0 text=(null)
+  [1] frame=app scope=0 shown=0 kind=int bound=0 source=default depth=none integer=240 real=0 text=(null)
 > load	app	1	color; -color; color = no; color
 load ok 4
 > get	app	color

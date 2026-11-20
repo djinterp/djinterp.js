@@ -1,6 +1,6 @@
 // generated from option.json by tools/json_module.js; never edited by hand
 export default {
-  "reference": "3eb096c9",
+  "reference": "6fe35d43",
   "generated_by": "tools/rows_json.c option",
   "statuses": [
     {"code": 0, "name": "OK", "message": "the operation completed"},
@@ -24,7 +24,7 @@ export default {
   "source_unknown": "unknown",
   "depth_max": 255,
   "registry": {"bindings": 256, "variables": 64, "text": 4096, "djins": 32},
-  "djin_abi": 1,
+  "djin_abi": 2,
   "djin_statuses": ["ok", "invalid", "duplicate", "reserved", "full", "settings"],
   "djin_status_unknown": "unknown"
 };

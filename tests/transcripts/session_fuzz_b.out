@@ -21,7 +21,8 @@ detach
 > put	net	0	  bits  =  legacy
 put fail 8 INVALID_ARGUMENT
 > layers	printer	module
-layers 0
+layers 1
+  [0] frame=printer scope=0 shown=1 kind=text bound=0 source=default depth=none integer=0 real=0 text=builtin
 > text_copy	app	VERBOSE	"open
 text_copy fail 1 KEY_ABSENT
 > raw_get	nothing	1048578	268435456
@@ -2224,7 +2225,8 @@ reg_take -1 at=1 fail 1 KEY_ABSENT
 > raw_get	app	1048578	268435456
 raw_get fail 1 KEY_ABSENT source=-1 | -1 (null) | -1 (null)
 > layers	cache	n	64
-layers 0
+layers 1
+  [0] frame=tiny scope=0 shown=1 kind=int bound=0 source=default depth=none integer=0 real=0 text=(null)
 > reg_load	3	\tdjinterpi.size = it's # c\n\tratio =  a|b\r\n
 reg_load fail 1 KEY_ABSENT at 1
 > clear	tiny
@@ -2279,7 +2281,8 @@ reg_put fail 1 KEY_ABSENT
 > text_copy	printer	scale	1
 text_copy fail 3 VALUE_TYPE_MISMATCH
 > layers	printer	select	8
-layers 0
+layers 1
+  [0] frame=printer scope=0 shown=1 kind=flags bound=0 source=default depth=none integer=3 real=0 text=(null)
 > put	app	5	 . =65  
 put fail 1 KEY_ABSENT
 > reg_target	app.depth
@@ -2590,7 +2593,8 @@ unset_from ok 1048576
 > reg_take	--set	depth=on
 reg_take -1 at=2 fail 8 INVALID_ARGUMENT
 > layers	printer	module	1
-layers 0
+layers 1
+  [0] frame=printer scope=0 shown=1 kind=text bound=0 source=default depth=none integer=0 real=0 text=builtin
 > text_copy	printer	p	65536
 text_copy fail 1 KEY_ABSENT
 > set	net	0	net.mod	text	legacy
@@ -2874,7 +2878,8 @@ attach ok 0
 > reg_target	SEED
 reg_target app
 > layers	net	bits
-layers 0
+layers 1
+  [0] frame=net scope=0 shown=1 kind=flags bound=0 source=default depth=none integer=0 real=0 text=(null)
 > raw_get	printer	1048578	1048585
 raw_get fail 1 KEY_ABSENT source=-1 | -1 (null) | -1 (null)
 > reg_load	1	tx = "\x41" \n- depth\r\n

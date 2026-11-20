@@ -46,16 +46,18 @@ reg_assign ok 0
 > get	printer	debug.color
 get id=0 scope=1 kind=bool bound=1 source=program depth=1 integer=0 real=0 text=(null) | 5 false | 5 false
 > layers	printer	debug.color
-layers 3
+layers 4
   [0] frame=printer scope=1 shown=1 kind=bool bound=1 source=program depth=1 integer=0 real=0 text=(null)
   [1] frame=app scope=1 shown=0 kind=bool bound=1 source=program depth=0 integer=1 real=0 text=(null)
   [2] frame=app scope=0 shown=0 kind=bool bound=1 source=program depth=0 integer=0 real=0 text=(null)
+  [3] frame=app scope=0 shown=0 kind=bool bound=0 source=default depth=none integer=1 real=0 text=(null)
 > reg_assign	1	printer.color	yes
 reg_assign ok 0
 > layers	printer	color
-layers 2
+layers 3
   [0] frame=printer scope=0 shown=1 kind=bool bound=1 source=program depth=1 integer=1 real=0 text=(null)
   [1] frame=app scope=0 shown=0 kind=bool bound=1 source=program depth=0 integer=0 real=0 text=(null)
+  [2] frame=app scope=0 shown=0 kind=bool bound=0 source=default depth=none integer=1 real=0 text=(null)
 > reg_assign	1	nothing.color	yes
 reg_assign fail 1 KEY_ABSENT
 > reg_assign	1	app.color	yes
@@ -188,10 +190,11 @@ get id=1048576 scope=0 kind=int bound=1 source=file depth=1 integer=128 real=0 t
 > get	printer_two	verbose
 get id=2097152 scope=0 kind=bool bound=0 source=default depth=none integer=0 real=0 text=(null) | 5 false | 5 false
 > layers	printer	style
-layers 3
+layers 4
   [0] frame=printer scope=0 shown=1 kind=choice bound=1 source=environment depth=1 integer=1 real=0 text=json
   [1] frame=printer scope=0 shown=0 kind=choice bound=1 source=file depth=1 integer=2 real=0 text=table
   [2] frame=printer scope=0 shown=0 kind=choice bound=1 source=program depth=1 integer=0 real=0 text=plain
+  [3] frame=printer scope=0 shown=0 kind=choice bound=0 source=default depth=none integer=0 real=0 text=plain
 > unenv	APP_PRINTER_BANNER
 unenv
 > unenv	APP_NET_PORT
@@ -288,11 +291,12 @@ reg_take 1 at=1 ok 0
 > get	app	debug.color
 get id=0 scope=1 kind=bool bound=1 source=command line depth=0 integer=1 real=0 text=(null) | 4 true | 4 true
 > layers	printer	style
-layers 4
+layers 5
   [0] frame=printer scope=0 shown=1 kind=choice bound=1 source=command line depth=1 integer=0 real=0 text=plain
   [1] frame=printer scope=0 shown=0 kind=choice bound=1 source=environment depth=1 integer=1 real=0 text=json
   [2] frame=printer scope=0 shown=0 kind=choice bound=1 source=file depth=1 integer=2 real=0 text=table
   [3] frame=printer scope=0 shown=0 kind=choice bound=1 source=program depth=1 integer=0 real=0 text=plain
+  [4] frame=printer scope=0 shown=0 kind=choice bound=0 source=default depth=none integer=0 real=0 text=plain
 > # suggesting a full name
 > reg_suggest	printer.stlye
 reg_suggest 13 printer.style

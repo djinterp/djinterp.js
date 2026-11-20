@@ -15,7 +15,7 @@
 *   The reference's `run` is handed a block of equal-sized occurrences; here
 * it is handed an array.
 *   reference: inc/djinterp/c/event/event_registry_common.h and
-*              src/djinterp/c/event/event_registry_common.c, at 3eb096c9
+*              src/djinterp/c/event/event_registry_common.c, at 6fe35d43
 *
 *
 * path:      /src/event/event_registry_common.js

@@ -9,7 +9,7 @@
 * key made here is the key the reference makes of the same name.
 *   The statuses and constants are not typed here: generated/event.js holds
 * what tools/rows_json.c read from the reference.
-*   reference: inc/djinterp/c/event/event_common.h, at 3eb096c9
+*   reference: inc/djinterp/c/event/event_common.h, at 6fe35d43
 *
 *
 * path:      /src/event/event_common.js

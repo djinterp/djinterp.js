@@ -99,7 +99,7 @@ exit 0
 err: /tmp/djinterp.js/home/program_set/djinterp/settings:8: warning: 'printer.module' cannot be 'mine' in this build
 > get ratio printer.scale
 exit 0
-out: ratio = 0.10000000000000001
+out: ratio = 0.1
 out: printer.scale = 1e+21
 err: /tmp/djinterp.js/home/program_set/djinterp/settings:8: warning: 'printer.module' cannot be 'mine' in this build
 > set depth=unbounded
@@ -177,7 +177,7 @@ err: /tmp/djinterp.js/home/program_set/djinterp/settings:7: warning: 'printer.mo
 exit 0
 out: color = false
 out: width = 130
-out: ratio = 0.10000000000000001
+out: ratio = 0.1
 out: title = ""
 out: depth = 3
 out: # plugin_path is unset

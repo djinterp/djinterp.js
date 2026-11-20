@@ -2,5 +2,5 @@ init 0
 declare ratio 0
 declare width 0
 load 0 (the operation completed) at 0
-ratio=0.10000000000000001  [program]
+ratio=0.1  [program]
 width=300  [program]

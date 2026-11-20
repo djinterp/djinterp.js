@@ -84,8 +84,9 @@ reg_import ok 1
 > get	app	title
 get id=3 scope=0 kind=text bound=1 source=environment depth=0 integer=0 real=0 text=€ 5 | 5 € 5 | 5 € 5
 > layers	app	title
-layers 2
+layers 3
   [0] frame=app scope=0 shown=1 kind=text bound=1 source=environment depth=0 integer=0 real=0 text=€ 5
   [1] frame=app scope=0 shown=0 kind=text bound=1 source=program depth=0 integer=0 real=0 text=€
+  [2] frame=app scope=0 shown=0 kind=text bound=0 source=default depth=none integer=0 real=0 text=(null)
 > statement_end	\xe2\x82\xac; b	0
 statement_end 3

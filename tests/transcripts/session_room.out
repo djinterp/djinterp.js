@@ -20,9 +20,10 @@ put ok 2
 > put	tiny	3	n = 3
 put fail 257 CAPACITY
 > layers	tiny	n
-layers 2
+layers 3
   [0] frame=tiny scope=0 shown=1 kind=int bound=1 source=file depth=0 integer=2 real=0 text=(null)
   [1] frame=tiny scope=0 shown=0 kind=int bound=1 source=program depth=0 integer=1 real=0 text=(null)
+  [2] frame=tiny scope=0 shown=0 kind=int bound=0 source=default depth=none integer=0 real=0 text=(null)
 > put	tiny	2	n = 4
 put ok 2
 > unset_from	tiny	1	n
@@ -30,9 +31,10 @@ unset_from ok 2
 > put	tiny	3	n = 3
 put ok 2
 > layers	tiny	n
-layers 2
+layers 3
   [0] frame=tiny scope=0 shown=1 kind=int bound=1 source=environment depth=0 integer=3 real=0 text=(null)
   [1] frame=tiny scope=0 shown=0 kind=int bound=1 source=file depth=0 integer=4 real=0 text=(null)
+  [2] frame=tiny scope=0 shown=0 kind=int bound=0 source=default depth=none integer=0 real=0 text=(null)
 > clear	tiny
 clear
 > generation	tiny

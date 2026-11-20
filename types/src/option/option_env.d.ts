@@ -427,10 +427,14 @@ export function suggest(_env: OptionEnv | null, _name: string): string | null;
  * gives one.
  *
  * @typedef {object} OptionLayer
- * @property {OptionEnv}   frame  the frame that holds the binding.
- * @property {number}      scope  the binding's scope.
+ * @property {OptionEnv}   frame  the frame that holds the binding; for
+ *           the default's layer, the frame that declares the variable.
+ * @property {number}      scope  the binding's scope; GLOBAL for the
+ *           default's.
  * @property {boolean}     shown  whether it is the one in force.
  * @property {OptionValue} value  its value.
+ * @property {?string}     knob   the default's: the compile-time knob its
+ *           value came from; null for a binding, and for a row with none.
  */
 /**
  * A layer as the machine works it, its value an OptionValueInner.
@@ -541,28 +545,28 @@ export function isBound(_env: OptionEnv | null, _scope: number, _var: number): b
 export function scopeIsBound(_env: OptionEnv | null, _scope: number): boolean;
 /**
  * Every binding that bears on a variable in a scope, the one in force
- * first and the rest in the order they would come into force: what a
- * reader asked "why is it this?" is shown.
+ * first and the rest in the order they would come into force, and under
+ * them all the row's default: what a reader asked "why is it this?" is
+ * shown, as `get --show-origin` shows it.
+ *
+ * The default's layer is always last and always counted, so a variable
+ * nothing binds has one layer, the one in force. It is unbound (source
+ * DEFAULT, depth NONE), its frame is the one that declares the variable,
+ * and its `knob` names the knob its value came from.
  *
  * @param {?OptionEnv} _env    the frame.
  * @param {number}      _scope  the scope's id, or GLOBAL.
  * @param {number}      _var    the variable's id.
  * @param {number}      [_capacity=64]  the most layers to give; the
  *        reference gives at most 64.
- * @returns {{count: number, layers: Array<{frame: OptionEnv,
- *            scope: number, shown: boolean, value: OptionValue}>}}
- *          `count` is how many bindings bear, which may be more than are
- *          given; -1, with no layers, for an id the frame does not see.
- *          `shown` marks the one in force.
+ * @returns {{count: number, layers: Array<OptionLayer>}} `count` is how
+ *          many there are, the default's included, which may be more than
+ *          are given; -1, with no layers, for an id the frame does not
+ *          see. `shown` marks the one in force.
  */
 export function layers(_env: OptionEnv | null, _scope: number, _var: number, _capacity?: number): {
     count: number;
-    layers: Array<{
-        frame: OptionEnv;
-        scope: number;
-        shown: boolean;
-        value: OptionValue;
-    }>;
+    layers: Array<OptionLayer>;
 };
 /**
  * Binds a BOOL, as the program.
@@ -793,8 +797,9 @@ export function load(_env: OptionEnv, _script: string): OptionResult & {
  */
 export function import_(_env: OptionEnv, _prefix: string | null, _environment: Map<string, string> | Record<string, string> | ((arg0: string) => (string | undefined))): OptionResult;
 /**
- * The value in force as text: "true" or "false"; a number; a REAL as
- * "%.17g" writes it; a TEXT as it is, and a null one as nothing; a CHOICE
+ * The value in force as text: "true" or "false"; a number; a REAL in the
+ * fewest of 15, 16 and 17 digits that read back as it ("0.1"); a TEXT as
+ * it is, and a null one as nothing; a CHOICE
  * or an INT by its value's name where it has one; FLAGS as names joined by
  * '|', the widest first, with bits no name covers in hexadecimal.
  *
@@ -1154,11 +1159,13 @@ export type OptionCell = {
  */
 export type OptionLayer = {
     /**
-     * the frame that holds the binding.
+     * the frame that holds the binding; for
+     * the default's layer, the frame that declares the variable.
      */
     frame: OptionEnv;
     /**
-     * the binding's scope.
+     * the binding's scope; GLOBAL for the
+     * default's.
      */
     scope: number;
     /**
@@ -1169,6 +1176,11 @@ export type OptionLayer = {
      * its value.
      */
     value: OptionValue;
+    /**
+     * the default's: the compile-time knob its
+     * value came from; null for a binding, and for a row with none.
+     */
+    knob: string | null;
 };
 /**
  * A layer as the machine works it, its value an OptionValueInner.

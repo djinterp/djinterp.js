@@ -38,7 +38,7 @@
 *     with the room D_OPTION_ENV_DECLARE gives, the reference cannot
 *     report it.
 *   reference: inc/djinterp/c/option/option_env.h and
-*              src/djinterp/c/option/option_env.c, at 3eb096c9
+*              src/djinterp/c/option/option_env.c, at 6fe35d43
 *
 *
 * path:      /src/option/option_env.js
@@ -97,7 +97,7 @@ TABLE OF CONTENTS
 */
 
 import data from '../../generated/option.js';
-import { formatReal } from '../text/real_format.js';
+import { formatG } from '../text/real_format.js';
 import { readReal } from '../text/real_read.js';
 import { STATUS, fail, ok } from './option_common.js';
 
@@ -2436,10 +2436,14 @@ function handed(
  * gives one.
  *
  * @typedef {object} OptionLayer
- * @property {OptionEnv}   frame  the frame that holds the binding.
- * @property {number}      scope  the binding's scope.
+ * @property {OptionEnv}   frame  the frame that holds the binding; for
+ *           the default's layer, the frame that declares the variable.
+ * @property {number}      scope  the binding's scope; GLOBAL for the
+ *           default's.
  * @property {boolean}     shown  whether it is the one in force.
  * @property {OptionValue} value  its value.
+ * @property {?string}     knob   the default's: the compile-time knob its
+ *           value came from; null for a binding, and for a row with none.
  */
 
 /**
@@ -2718,7 +2722,7 @@ function layersInner(
             }
 
             const layer = { frame: f, scope: cell.scope, shown: false,
-                            value: defaultValue(decl) };
+                            value: defaultValue(decl), knob: null };
 
             read(f, cell, layer.value);
             nameValue(decl, layer.value);
@@ -2745,8 +2749,20 @@ function layersInner(
         }
     }
 
-    if ( (count > 0) &&
-         (capacity > 0) )
+    // the default, under them all: its declaring frame, and its knob. A
+    // variable the frame sees is declared on its way to the root
+    if (count < capacity)
+    {
+        const value = defaultValue(decl);
+
+        nameValue(decl, value);
+        layers.push({ frame: varFrame(_env, _var) ?? _env, scope: GLOBAL,
+                      shown: false, value: value, knob: decl.knob });
+    }
+
+    ++count;
+
+    if (capacity > 0)
     {
         layers[0].shown = true;
     }
@@ -2756,19 +2772,24 @@ function layersInner(
 
 /**
  * Every binding that bears on a variable in a scope, the one in force
- * first and the rest in the order they would come into force: what a
- * reader asked "why is it this?" is shown.
+ * first and the rest in the order they would come into force, and under
+ * them all the row's default: what a reader asked "why is it this?" is
+ * shown, as `get --show-origin` shows it.
+ *
+ * The default's layer is always last and always counted, so a variable
+ * nothing binds has one layer, the one in force. It is unbound (source
+ * DEFAULT, depth NONE), its frame is the one that declares the variable,
+ * and its `knob` names the knob its value came from.
  *
  * @param {?OptionEnv} _env    the frame.
  * @param {number}      _scope  the scope's id, or GLOBAL.
  * @param {number}      _var    the variable's id.
  * @param {number}      [_capacity=64]  the most layers to give; the
  *        reference gives at most 64.
- * @returns {{count: number, layers: Array<{frame: OptionEnv,
- *            scope: number, shown: boolean, value: OptionValue}>}}
- *          `count` is how many bindings bear, which may be more than are
- *          given; -1, with no layers, for an id the frame does not see.
- *          `shown` marks the one in force.
+ * @returns {{count: number, layers: Array<OptionLayer>}} `count` is how
+ *          many there are, the default's included, which may be more than
+ *          are given; -1, with no layers, for an id the frame does not
+ *          see. `shown` marks the one in force.
  */
 export function layers(
     _env,
@@ -2790,7 +2811,8 @@ export function layers(
             frame: _layer.frame,
             scope: _layer.scope,
             shown: _layer.shown,
-            value: handed(found.decl, _layer.value)
+            value: handed(found.decl, _layer.value),
+            knob:  _layer.knob
         }))
     };
 }
@@ -4652,6 +4674,37 @@ function formatFlags(
 }
 
 /**
+ * formatReal
+ *   A real as the machine writes one: in the fewest of 15, 16 and 17
+ * significant digits that read back as the same double -- "0.1", not
+ * "0.10000000000000001", as JSON's reals are written -- and in 17 where
+ * none does, as for a NaN. reference: d_internal_option_env_format_real
+ * (option_env.c), the log's decision 51.
+ *
+ * @param {number} _real  the value.
+ * @returns {string}
+ */
+function formatReal(
+    _real
+)
+{
+    let text = '';
+
+    // 15 digits read back most doubles; 17 reads back every one
+    for (let digits = 15; digits <= 17; ++digits)
+    {
+        text = formatG(_real, digits);
+
+        if (readReal(text).value === _real)
+        {
+            break;
+        }
+    }
+
+    return text;
+}
+
+/**
  * formatValue
  *   A value as text, as `format` writes it.
  *
@@ -4809,8 +4862,9 @@ function formatQuotedInner(
 
 // 9.1
 /**
- * The value in force as text: "true" or "false"; a number; a REAL as
- * "%.17g" writes it; a TEXT as it is, and a null one as nothing; a CHOICE
+ * The value in force as text: "true" or "false"; a number; a REAL in the
+ * fewest of 15, 16 and 17 digits that read back as it ("0.1"); a TEXT as
+ * it is, and a null one as nothing; a CHOICE
  * or an INT by its value's name where it has one; FLAGS as names joined by
  * '|', the widest first, with bits no name covers in hexadecimal.
  *

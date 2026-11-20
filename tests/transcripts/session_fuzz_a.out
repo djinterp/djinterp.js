@@ -117,7 +117,8 @@ reg_put ok 3
 > import	cache	
 import ok 0
 > layers	printer	select	8
-layers 0
+layers 1
+  [0] frame=printer scope=0 shown=1 kind=flags bound=0 source=default depth=none integer=3 real=0 text=(null)
 > reg_put	6	-maxe_depth
 reg_put fail 8 INVALID_ARGUMENT
 > reg_count
@@ -540,7 +541,8 @@ reg_import ok 0
 > layers	cache	color
 layers fail 1 KEY_ABSENT
 > layers	printer	depth
-layers 0
+layers 1
+  [0] frame=app scope=0 shown=1 kind=int bound=0 source=default depth=none integer=8 real=0 text=(null)
 > unenv	APP_PREFIX
 unenv
 > djin_frame	app
@@ -596,7 +598,8 @@ djin_frame 0
 > bound	tiny	size
 bound fail 1 KEY_ABSENT
 > layers	printer	depth
-layers 0
+layers 1
+  [0] frame=app scope=0 shown=1 kind=int bound=0 source=default depth=none integer=8 real=0 text=(null)
 > env	APP_CACHE_T	0x
 env
 > reg_remove	cache
@@ -1239,7 +1242,8 @@ set fail 1 KEY_ABSENT
 > put	printer_two	1	  module = off\t
 put fail 1 KEY_ABSENT
 > layers	tiny	n
-layers 0
+layers 1
+  [0] frame=tiny scope=0 shown=1 kind=int bound=0 source=default depth=none integer=0 real=0 text=(null)
 > reg_import	
 reg_import ok 0
 > scope	printer	debug
@@ -1844,7 +1848,8 @@ statement_end 2
 > reg_assign	0	CPP_FEATURES.m_odule	huge
 reg_assign fail 8 INVALID_ARGUMENT
 > layers	app	title
-layers 0
+layers 1
+  [0] frame=app scope=0 shown=1 kind=text bound=0 source=default depth=none integer=0 real=0 text=(null)
 > reg_add	net
 reg_add fail 2 KEY_DUPLICATE
 > reg_assign	3	seed	xml
@@ -1864,7 +1869,8 @@ unset_from fail 1 KEY_ABSENT
 > unenv	WIDTH
 unenv
 > layers	net	port	3
-layers 0
+layers 1
+  [0] frame=net scope=0 shown=1 kind=int bound=0 source=default depth=none integer=8080 real=0 text=(null)
 > unset	printer	
 unset fail 1 KEY_ABSENT
 > clear	printer
@@ -2043,7 +2049,8 @@ no frame
 > raw_get	app	0	1048585
 raw_get fail 1 KEY_ABSENT source=-1 | -1 (null) | -1 (null)
 > layers	printer_two	style	8
-layers 0
+layers 1
+  [0] frame=printer scope=0 shown=1 kind=choice bound=0 source=default depth=none integer=0 real=0 text=plain
 > scope	cache	summary
 scope fail 1 KEY_ABSENT
 > unenv	P
@@ -2287,7 +2294,8 @@ scope fail 1 KEY_ABSENT
 > assign	app	1	cache.xstyle	TRUE
 assign fail 1 KEY_ABSENT
 > layers	printer	title
-layers 0
+layers 1
+  [0] frame=app scope=0 shown=1 kind=text bound=0 source=default depth=none integer=0 real=0 text=(null)
 > djin_register	printer
 djin_register 2 duplicate
 > reg_target	max_depth
@@ -2715,7 +2723,8 @@ get fail 1 KEY_ABSENT
 > text_copy	cache	printer_two.U	café
 text_copy fail 1 KEY_ABSENT
 > layers	tiny	title	8
-layers 0
+layers 1
+  [0] frame=app scope=0 shown=1 kind=text bound=0 source=default depth=none integer=0 real=0 text=(null)
 > unset	printer	
 unset fail 1 KEY_ABSENT
 > statement_end	MODE ;   big= 9007199254740992 # c\n\tscle\t=  30  ;   u =\t"\q" ;	2
@@ -3622,7 +3631,8 @@ clear
 > get	net	depth
 get fail 1 KEY_ABSENT
 > layers	app	title
-layers 0
+layers 1
+  [0] frame=app scope=0 shown=1 kind=text bound=0 source=default depth=none integer=0 real=0 text=(null)
 > reg_assign	3	style	0
 reg_assign fail 1 KEY_ABSENT
 > put	app	3	\t= 1.5 

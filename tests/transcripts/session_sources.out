@@ -24,30 +24,32 @@ put ok 1
 > get	app	width
 get id=1 scope=0 kind=int bound=1 source=command line depth=0 integer=400 real=0 text=(null) | 3 400 | 3 400
 > layers	app	width
-layers 4
+layers 5
   [0] frame=app scope=0 shown=1 kind=int bound=1 source=command line depth=0 integer=400 real=0 text=(null)
   [1] frame=app scope=0 shown=0 kind=int bound=1 source=environment depth=0 integer=300 real=0 text=(null)
   [2] frame=app scope=0 shown=0 kind=int bound=1 source=file depth=0 integer=200 real=0 text=(null)
   [3] frame=app scope=0 shown=0 kind=int bound=1 source=program depth=0 integer=110 real=0 text=(null)
+  [4] frame=app scope=0 shown=0 kind=int bound=0 source=default depth=none integer=240 real=0 text=(null)
 > put	app	5	width = 500
 put ok 1
 > get	app	width
 get id=1 scope=0 kind=int bound=1 source=override depth=0 integer=500 real=0 text=(null) | 3 500 | 3 500
 > layers	app	width
-layers 5
+layers 6
   [0] frame=app scope=0 shown=1 kind=int bound=1 source=override depth=0 integer=500 real=0 text=(null)
   [1] frame=app scope=0 shown=0 kind=int bound=1 source=command line depth=0 integer=400 real=0 text=(null)
   [2] frame=app scope=0 shown=0 kind=int bound=1 source=environment depth=0 integer=300 real=0 text=(null)
   [3] frame=app scope=0 shown=0 kind=int bound=1 source=file depth=0 integer=200 real=0 text=(null)
   [4] frame=app scope=0 shown=0 kind=int bound=1 source=program depth=0 integer=110 real=0 text=(null)
+  [5] frame=app scope=0 shown=0 kind=int bound=0 source=default depth=none integer=240 real=0 text=(null)
 > layers	app	width	2
-layers 5
+layers 6
   [0] frame=app scope=0 shown=1 kind=int bound=1 source=override depth=0 integer=500 real=0 text=(null)
   [1] frame=app scope=0 shown=0 kind=int bound=1 source=command line depth=0 integer=400 real=0 text=(null)
 > layers	app	width	0
-layers 5
+layers 6
 > layers	app	width	1
-layers 5
+layers 6
   [0] frame=app scope=0 shown=1 kind=int bound=1 source=override depth=0 integer=500 real=0 text=(null)
 > unset_from	app	5	width
 unset_from ok 1
@@ -68,7 +70,8 @@ unset ok 1
 > get	app	width
 get id=1 scope=0 kind=int bound=0 source=default depth=none integer=240 real=0 text=(null) | 3 240 | 3 240
 > layers	app	width
-layers 0
+layers 1
+  [0] frame=app scope=0 shown=1 kind=int bound=0 source=default depth=none integer=240 real=0 text=(null)
 > # scopes: the scoped binding over the global one of the same source
 > put	app	1	color = no
 put ok 0
@@ -79,12 +82,14 @@ get id=0 scope=0 kind=bool bound=1 source=program depth=0 integer=0 real=0 text=
 > get	app	debug.color
 get id=0 scope=1 kind=bool bound=1 source=program depth=0 integer=1 real=0 text=(null) | 4 true | 4 true
 > layers	app	debug.color
-layers 2
+layers 3
   [0] frame=app scope=1 shown=1 kind=bool bound=1 source=program depth=0 integer=1 real=0 text=(null)
   [1] frame=app scope=0 shown=0 kind=bool bound=1 source=program depth=0 integer=0 real=0 text=(null)
+  [2] frame=app scope=0 shown=0 kind=bool bound=0 source=default depth=none integer=1 real=0 text=(null)
 > layers	app	color
-layers 1
+layers 2
   [0] frame=app scope=0 shown=1 kind=bool bound=1 source=program depth=0 integer=0 real=0 text=(null)
+  [1] frame=app scope=0 shown=0 kind=bool bound=0 source=default depth=none integer=1 real=0 text=(null)
 > put	app	2	color = yes
 put ok 0
 > get	app	debug.color
@@ -94,11 +99,12 @@ put ok 0
 > get	app	debug.color
 get id=0 scope=1 kind=bool bound=1 source=file depth=0 integer=0 real=0 text=(null) | 5 false | 5 false
 > layers	app	debug.color
-layers 4
+layers 5
   [0] frame=app scope=1 shown=1 kind=bool bound=1 source=file depth=0 integer=0 real=0 text=(null)
   [1] frame=app scope=0 shown=0 kind=bool bound=1 source=file depth=0 integer=1 real=0 text=(null)
   [2] frame=app scope=1 shown=0 kind=bool bound=1 source=program depth=0 integer=1 real=0 text=(null)
   [3] frame=app scope=0 shown=0 kind=bool bound=1 source=program depth=0 integer=0 real=0 text=(null)
+  [4] frame=app scope=0 shown=0 kind=bool bound=0 source=default depth=none integer=1 real=0 text=(null)
 > bound	app	color
 bound is_bound=1 scope_is_bound=1
 > bound	app	debug.color
@@ -131,26 +137,29 @@ put ok 3
 > get	printer_two	title
 get id=3 scope=0 kind=text bound=1 source=program depth=2 integer=0 real=0 text=from two | 8 from two | 8 from two
 > layers	printer_two	title
-layers 3
+layers 4
   [0] frame=printer_two scope=0 shown=1 kind=text bound=1 source=program depth=2 integer=0 real=0 text=from two
   [1] frame=printer scope=0 shown=0 kind=text bound=1 source=program depth=1 integer=0 real=0 text=from printer
   [2] frame=app scope=0 shown=0 kind=text bound=1 source=program depth=0 integer=0 real=0 text=from app
+  [3] frame=app scope=0 shown=0 kind=text bound=0 source=default depth=none integer=0 real=0 text=(null)
 > put	app	2	title = app file
 put ok 3
 > get	printer_two	title
 get id=3 scope=0 kind=text bound=1 source=file depth=0 integer=0 real=0 text=app file | 8 app file | 8 app file
 > layers	printer_two	title
-layers 4
+layers 5
   [0] frame=app scope=0 shown=1 kind=text bound=1 source=file depth=0 integer=0 real=0 text=app file
   [1] frame=printer_two scope=0 shown=0 kind=text bound=1 source=program depth=2 integer=0 real=0 text=from two
   [2] frame=printer scope=0 shown=0 kind=text bound=1 source=program depth=1 integer=0 real=0 text=from printer
   [3] frame=app scope=0 shown=0 kind=text bound=1 source=program depth=0 integer=0 real=0 text=from app
+  [4] frame=app scope=0 shown=0 kind=text bound=0 source=default depth=none integer=0 real=0 text=(null)
 > get	net	title
 get id=3 scope=0 kind=text bound=1 source=file depth=0 integer=0 real=0 text=app file | 8 app file | 8 app file
 > layers	net	title
-layers 2
+layers 3
   [0] frame=app scope=0 shown=1 kind=text bound=1 source=file depth=0 integer=0 real=0 text=app file
   [1] frame=app scope=0 shown=0 kind=text bound=1 source=program depth=0 integer=0 real=0 text=from app
+  [2] frame=app scope=0 shown=0 kind=text bound=0 source=default depth=none integer=0 real=0 text=(null)
 > # a name the root declares too: the innermost is found
 > get	printer	width
 get id=1048584 scope=0 kind=int bound=0 source=default depth=none integer=80 real=0 text=(null) | 2 80 | 2 80
@@ -218,9 +227,10 @@ get id=1048576 scope=1048578 kind=int bound=1 source=environment depth=1 integer
 > get	printer	debug.key_width
 get id=1048576 scope=1 kind=int bound=1 source=program depth=1 integer=20 real=0 text=(null) | 2 20 | 2 20
 > layers	printer	summary.key_width
-layers 2
+layers 3
   [0] frame=printer scope=1048578 shown=1 kind=int bound=1 source=environment depth=1 integer=50 real=0 text=(null)
   [1] frame=printer scope=0 shown=0 kind=int bound=1 source=program depth=1 integer=20 real=0 text=(null)
+  [2] frame=printer scope=0 shown=0 kind=int bound=0 source=default depth=none integer=30 real=0 text=(null)
 > put	printer	1	nothing.key_width = 1
 put fail 1 KEY_ABSENT
 > put	printer	1	local.key_width = 1
@@ -261,10 +271,11 @@ put ok 1048583
 > get	printer	module
 get id=1048583 scope=0 kind=text bound=1 source=override depth=1 integer=0 real=0 text=override | 8 override | 8 override
 > layers	printer	module
-layers 3
+layers 4
   [0] frame=printer scope=0 shown=1 kind=text bound=1 source=override depth=1 integer=0 real=0 text=override
   [1] frame=printer scope=0 shown=0 kind=text bound=1 source=command line depth=1 integer=0 real=0 text=command line
   [2] frame=printer scope=0 shown=0 kind=text bound=1 source=program depth=1 integer=0 real=0 text=program
+  [3] frame=printer scope=0 shown=0 kind=text bound=0 source=default depth=none integer=0 real=0 text=builtin
 > set	printer	3	banner	bool	1
 set fail 6 POLICY_REJECTED
 > set	printer	2	module	text	x
@@ -275,8 +286,9 @@ put ok 1
 > put	app	1	width = 130
 put ok 1
 > layers	app	width
-layers 1
+layers 2
   [0] frame=app scope=0 shown=1 kind=int bound=1 source=program depth=0 integer=130 real=0 text=(null)
+  [1] frame=app scope=0 shown=0 kind=int bound=0 source=default depth=none integer=240 real=0 text=(null)
 > generation	app
 generation 27
 > put	app	1	width = 130

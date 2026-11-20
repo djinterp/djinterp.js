@@ -27,8 +27,10 @@ export function parts(_value: number): {
  */
 export function formatG(_value: number, _precision: number): string;
 /**
- * A real as the option machine writes one: "%.17g", which is enough digits
- * for any double to read back as itself.
+ * A real as a description's default and an origin's line write one:
+ * "%.17g", which is enough digits for any double to read back as itself.
+ * The option machine writes its own in the fewest of 15, 16 and 17 that
+ * do (`format`, in src/option/option_env.js).
  *
  * @param {number}  _value  the double.
  * @returns {string} the text.

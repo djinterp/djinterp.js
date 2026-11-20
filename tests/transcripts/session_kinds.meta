@@ -1,6 +1,6 @@
 program: tools/session.c
 arguments: (none; the input is its standard input)
 reference: djinterp
-commit: 3eb096c9
-recorded: 2026-11-17
+commit: 6fe35d43
+recorded: 2026-11-18
 environment: empty

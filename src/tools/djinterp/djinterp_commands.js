@@ -25,7 +25,7 @@
 * and the address of the port's module, where the reference names its
 * file; and `kit:` with the language, the commit of djinterp the port
 * follows and "unbuilt", where it names its compiler and build.
-*   reference: src/djinterp/tools/djinterp/djinterp_commands.c, at 3eb096c9
+*   reference: src/djinterp/tools/djinterp/djinterp_commands.c, at 6fe35d43
 *
 *
 * path:      /src/tools/djinterp/djinterp_commands.js
@@ -73,6 +73,12 @@ import { cutAt } from '../../text/cut.js';
 /** @import { SettingsFile } from '../cli/cli_settings.js' */
 
 const ROOM     = 512;
+
+// LAYERS
+//   constant: the most layers of a setting `get --show-origin` shows: as
+// many as the option machine lists, far more than a frame chain of the
+// program's can bind. Past them the default's line comes from the row.
+const LAYERS = 64;
 const envInner = optionEnv.inner;
 const regInner = optionEnvRegistry.inner;
 const KIND     = optionEnv.KIND;
@@ -423,8 +429,12 @@ function valueText(
 
 /**
  * origins
- *   What lies under a setting's value in force: each other binding that bears,
- * then the row's default.
+ *   What lies under a setting's value in force: each binding the one in
+ * force stands over, then the default, with the knob it came from. Where
+ * the frame's layers end with the default, that layer gives the default's
+ * line; where they do not, the row gives it, so the lines are the same
+ * either way. reference: d_internal_djinterp_origins
+ * (djinterp_commands.c).
  *
  * @param {DjinterpSetting} _setting  the setting.
  * @returns {string} a line for each.
@@ -434,20 +444,29 @@ function origins(
 )
 {
     const found = envInner.layers(_setting.frame, _setting.scope,
-                                  _setting.var, 8);
+                                  _setting.var, LAYERS);
 
     if (found === null)
     {
         return '';
     }
 
-    const shown = Math.min(found.count, 8);
-    const decl  = _setting.decl;
-    let   out   = '';
+    const shown  = Math.min(found.count, LAYERS);
+    const decl   = _setting.decl;
+    let   bottom = null;
+    let   out    = '';
 
     for (let i = 1; i < shown; ++i)
     {
         const value = found.layers[i].value;
+
+        // the default's own layer is the last line, not one under it
+        if (!value.bound)
+        {
+            bottom = value;
+
+            continue;
+        }
 
         out += ('    under it   ' +
                 valueText(decl, value.text, value.integer, value.real) +
@@ -457,8 +476,10 @@ function origins(
 
     if (shown > 0)
     {
+        const under = bottom ?? decl;
+
         out += ('    default    ' +
-                valueText(decl, decl.text, decl.integer, decl.real) +
+                valueText(decl, under.text, under.integer, under.real) +
                 '   (' + ((decl.knob !== null) ? decl.knob : 'default') +
                 ')\n').slice(0, (ROOM * 2) - 1);
     }
