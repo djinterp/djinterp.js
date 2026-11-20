@@ -13,6 +13,9 @@
     The page's own, and no part of djinterp: lines after '#' in the URL,
   separated by '|', are run as the page opens:
   /examples/console.html#list|get --show-origin
+    It tells the program it draws colour (open's `colour`), so errors,
+  warnings and notes come with the reference's escapes, as on a terminal,
+  and it draws them.
 
   path:      /examples/console.html
   link(s):   TBA
@@ -28,6 +31,10 @@
   pre   { white-space: pre-wrap; margin: 0 0 1rem; }
   .err  { color: #a40000; }
   .line { color: #555; }
+  .bold { font-weight: 700; }
+  .c31  { color: #c01c28; }
+  .c35  { color: #a347ba; }
+  .c36  { color: #0e7c86; }
   input { font: inherit; width: 100%; box-sizing: border-box; }
 </style>
 </head>
@@ -47,17 +54,48 @@ const heard = document.getElementById('heard');
 
 /*
 say
-  Adds text to the page, as one of its kinds.
+  Adds text to the page, as one of its kinds, drawing the colour the
+program's escapes ask for: bold (1), red (31), magenta (35) and cyan (36),
+each until a reset (0), as a terminal draws them. The program colours only
+because this page said it draws colour (open's `colour`).
 */
 function say(
     _kind,
     _text
 )
 {
-    const span = document.createElement('span');
+    const span  = document.createElement('span');
+    const parts = _text.split(/\x1B\[([0-9;]*)m/);
+    let   bold  = false;
+    let   shade = '';
 
-    span.className   = _kind;
-    span.textContent = _text;
+    span.className = _kind;
+
+    // the text between escapes, at even places; each escape's codes, at odd
+    for (const [at, part] of parts.entries())
+    {
+        if ((at % 2) === 1)
+        {
+            for (const code of part.split(';'))
+            {
+                bold  = (code === '0') ? false : (code === '1') || bold;
+                shade = (code === '0') ? ''
+                      : /^3[0-7]$/.test(code) ? ('c' + code) : shade;
+            }
+
+            continue;
+        }
+
+        if (part.length !== 0)
+        {
+            const piece = document.createElement('span');
+
+            piece.className   = [bold ? 'bold' : '', shade].join(' ').trim();
+            piece.textContent = part;
+            span.append(piece);
+        }
+    }
+
     out.append(span);
 
     return;
@@ -82,8 +120,9 @@ const dj = await djinterp.open({
                                      'the width of a key')
         ])
     }],
-    file:  djinterp.storageFile(localStorage),
-    query: location.search
+    file:   djinterp.storageFile(localStorage),
+    query:  location.search,
+    colour: true
 });
 
 say('err', dj.warnings);

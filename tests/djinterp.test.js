@@ -518,3 +518,62 @@ test('--version at -v names the port and the djinterp it follows',
     // the commit is the one the port's data was made from
     assert.match(kit.reference, /^[0-9a-f]{7,40}$/);
 });
+
+test('a console that draws colour is coloured as a terminal is', async () =>
+{
+    // the bytes are the reference's own, as it wrote them on a terminal
+    // (measured 2026-11-17, every line here among them)
+    const bold    = (_text) => '\x1B[1m' + _text + '\x1B[0m';
+    const error   = bold('djinterp:') + ' \x1B[1;31merror:\x1B[0m ';
+    const note    = bold('djinterp:') + ' \x1B[1;36mnote:\x1B[0m ';
+    const tryHelp = 'Try \'djinterp --help\' for more information.\n';
+    const shown   = await djinterp.open({ settings: SETTINGS, colour: true });
+    const plain   = await djinterp.open({ settings: SETTINGS });
+    const err     = async (_dj, _line) => (await _dj.run(_line)).err;
+
+    // --color=auto, the default, colours (D27)
+    assert.equal(await err(shown, 'get nothing'),
+                 error + 'no setting is named \'nothing\'\n');
+    assert.equal(await err(shown, '--color=auto get nothing'),
+                 await err(shown, 'get nothing'));
+    assert.equal(await err(shown, 'lst'),
+                 error + '\'lst\' is not a command\n' +
+                 note + 'did you mean \'list\'?\n' + tryHelp);
+
+    // never is never; a word that is none of the three changes nothing
+    assert.equal(await err(shown, '--color=never get nothing'),
+                 await err(plain, 'get nothing'));
+    assert.equal(await err(shown, '--color=never --color=bright get x'),
+                 error + '--color: \'bright\' is not auto, always or ' +
+                 'never\n' + tryHelp);
+
+    // what is refused before the program's options are read is coloured
+    // as the program began, whatever --color says
+    assert.equal(await err(shown, '--color=never --set'),
+                 error + '--set: NAME=VALUE is required\n' + tryHelp);
+
+    // only what is said to the error stream: the output is never coloured
+    assert.equal((await shown.run('list')).out,
+                 (await plain.run('list')).out);
+
+    // and a page that says nothing of colour has none, as before
+    assert.equal(await err(plain, 'get nothing'),
+                 'djinterp: error: no setting is named \'nothing\'\n');
+
+    // what is said as the program begins -- of its settings file, with
+    // the file and line bold, and of the query -- is coloured whatever a
+    // line's --color says, since it is said before
+    const warning = ' \x1B[1;35mwarning:\x1B[0m ';
+    const filed   = await djinterp.open({
+        settings: SETTINGS, colour: true, query: '?nothing=1',
+        file:     { name: 'settings', read: () => 'nothing = 1\n',
+                    write: () => {} }
+    });
+    const begun   = bold('settings:1:') + warning +
+                    'no setting is named \'nothing\'\n';
+
+    assert.equal(filed.warnings,
+                 begun + bold('djinterp:') + warning + 'query: --set: no ' +
+                 'setting is named \'nothing\'\n');
+    assert.equal(await err(filed, '--color=never get color'), begun);
+});

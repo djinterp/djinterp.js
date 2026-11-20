@@ -44,7 +44,8 @@ TABLE OF CONTENTS
     3.  programStart
 2.  RUNNING
     -------
-    1.  programRun
+    1.  coloured
+    2.  programRun
 */
 
 import kit from '../../../generated/kit.js';
@@ -101,6 +102,8 @@ export const COMMANDS = Object.freeze(['list', 'describe', 'get', 'set']);
  *           (src/tools/cli/cli_settings.js), or null for none.
  * @property {*} environment  the environment, as `optionEnv.import`
  *           takes one.
+ * @property {boolean} colour  whether what shows its console draws
+ *           colour, as a terminal does: what `--color=auto` asks after.
  */
 
 // 1.2
@@ -113,6 +116,9 @@ export const COMMANDS = Object.freeze(['list', 'describe', 'get', 'set']);
  * @param {*} [_options.environment=null]  the environment.
  * @param {number} [_options.djins=16]  the most djins its set holds; the
  *        reference's program holds 16.
+ * @param {boolean} [_options.colour=false]  whether what shows its
+ *        console draws colour, as a terminal does (the owner's ruling
+ *        D27): `--color=auto`, the default, then colours.
  * @returns {DjinterpProgram}
  */
 export function programMake(
@@ -126,7 +132,8 @@ export function programMake(
                                     registry: _options.registry,
                                     reserved: RESERVED }),
         file:        _options.file ?? null,
-        environment: _options.environment ?? null
+        environment: _options.environment ?? null,
+        colour:      _options.colour === true
     };
 }
 
@@ -143,7 +150,11 @@ export function programStart(
     _program
 )
 {
-    return cliSettings.start(_program);
+    const said = cliSettings.start(_program);
+
+    // said before any line's options are read: coloured as the program
+    // began, as the reference's is on a terminal
+    return _program.colour ? coloured(said) : said;
 }
 
 
@@ -1151,50 +1162,57 @@ function read(
     return line;
 }
 
-/*
-coloured
-  What a run said, with each diagnostic's start coloured as the kit colours
-one: the program's name bold, and `error:`, `warning:` or `note:` in its
-own colour. reference: d_cli_vreport (cli_program.c).
-*/
-function coloured(
-    _name,
+// 2.1
+/**
+ * What the program said, with each diagnostic's start coloured as the kit
+ * colours one: its locus bold -- the program's name, or a file and a
+ * line -- and `error:`, `warning:` or `note:` in its own colour. The
+ * escapes are the reference's (d_cli_vreport, d_cli_internal_locus in
+ * cli_program.c), and what a console that draws colour shows (D27).
+ *
+ * @param {string} _said  what was said, a diagnostic a line.
+ * @returns {string} the same, coloured.
+ */
+export function coloured(
     _said
 )
 {
-    const KINDS = [['error', '1;31'], ['warning', '1;35'], ['note', '1;36']];
+    const KINDS = new Map([['error', '1;31'], ['warning', '1;35'],
+                           ['note', '1;36']]);
 
     return _said.split('\n').map((_line) =>
     {
-        for (const [kind, colour] of KINDS)
-        {
-            const plain = _name + ': ' + kind + ': ';
+        // the first `: KIND: ` ends the locus
+        const found = /^(.+?): (error|warning|note): /.exec(_line);
 
-            if (_line.startsWith(plain))
-            {
-                return '\x1B[1m' + _name + ':\x1B[0m \x1B[' + colour + 'm' +
-                       kind + ':\x1B[0m ' + _line.slice(plain.length);
-            }
-        }
-
-        return _line;
+        return (found === null)
+                   ? _line
+                   : '\x1B[1m' + found[1] + ':\x1B[0m \x1B[' +
+                     KINDS.get(found[2]) + 'm' + found[2] + ':\x1B[0m ' +
+                     _line.slice(found[0].length);
     }).join('\n');
 }
 
 /*
 colourAsked
-  Whether `--color`'s words ask for colour: the last decides, and only as
-"always". "auto" is no colour where nothing is a terminal, and a word that
-is none of the three is refused before any work, or changes nothing where
-the line was wrong some other way. reference:
-d_cli_internal_read_standard (cli_program.c).
+  Whether `--color`'s words ask for colour: the last decides. "always"
+colours and "never" does not; "auto", no word, and a word that is none of
+the three -- refused before any work, or changing nothing where the line
+was wrong some other way -- leave it to what shows the console, as the
+reference leaves it to whether its stream is a terminal (D27). reference:
+d_cli_internal_read_standard (cli_program.c), d_cli_colour_wanted
+(cli_io.c).
 */
 function colourAsked(
-    _words
+    _words,
+    _terminal
 )
 {
-    return ( (_words.length !== 0) &&
-             (_words[_words.length - 1] === 'always') );
+    const last = _words[_words.length - 1];
+
+    return (last === 'always') ? true
+         : (last === 'never')  ? false
+         : _terminal;
 }
 
 /*
@@ -1252,19 +1270,21 @@ function runInner(
                                    OWN_LONG);
     const done  = (_status, _colour) =>
         ({ status: _status, out: run.out,
-           err: _colour ? coloured(_program.name, run.err) : run.err,
+           err: _colour ? coloured(run.err) : run.err,
            set: run.set });
 
     if (taken.refused !== null)
     {
-        // said before the program's own options are read: never coloured
+        // said before the program's own options are read: coloured as the
+        // program began, whatever --color says, as the reference's is on a
+        // terminal
         usageError(run, taken.refused.command, taken.refused.message);
 
-        return done(EXIT.TROUBLE, false);
+        return done(EXIT.TROUBLE, _program.colour);
     }
 
     const line   = read(taken.kept.slice(1));
-    const colour = colourAsked(line.colours);
+    const colour = colourAsked(line.colours, _program.colour);
     const work   = { list:       () => workList(run),
                      describe:   () => workDescribe(run, line.operands),
                      get:        () => workGet(run, line.operands,
@@ -1372,7 +1392,7 @@ function runInner(
     return done(status, colour);
 }
 
-// 2.1
+// 2.2
 /**
  * Runs the program on a command line.
  *

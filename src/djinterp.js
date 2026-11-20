@@ -52,7 +52,7 @@
 * path:      /src/djinterp.js
 * link(s):   TBA
 * author(s): Samuel 'teer' Neal-Blim                         created: 2026.11.15
-*                                                            revised: 2026.11.16
+*                                                            revised: 2026.11.17
 *******************************************************************************/
 
 /*
@@ -448,9 +448,13 @@ export function openProgram(
             }
         }
 
+        const asked = (query !== null) ? takeQuery(program, query) : '';
+
+        // the query is the command line's, and is coloured as its
+        // settings are, before its options are read
         return { said:  djinterpCommands.programStart(program),
-                 asked: (query !== null) ? takeQuery(program, query)
-                                         : '' };
+                 asked: program.colour ? djinterpCommands.coloured(asked)
+                                       : asked };
     };
 
     const first = start();
@@ -487,10 +491,14 @@ export function openProgram(
             // an unclosed quote is found before the program starts
             if (words === null)
             {
+                const said = program.name +
+                             ': error: a quote is not closed\n';
+
                 ran = { status: djinterpCommands.EXIT.TROUBLE, out: '',
-                        err: program.name +
-                             ': error: a quote is not closed\n',
-                        set: [] };
+                        err:    program.colour
+                                    ? djinterpCommands.coloured(said)
+                                    : said,
+                        set:    [] };
             }
             else
             {
@@ -571,6 +579,11 @@ export function openProgram(
  *        `printer.style`.
  * @param {?string} [_options.query=null]  a URL's query, such as
  *        `location.search`, bound as the command line.
+ * @param {boolean} [_options.colour=false]  whether what shows the
+ *        program's console draws colour, as a terminal does: then
+ *        `--color=auto`, the default, colours what it says of errors,
+ *        warnings and notes with the reference's escapes, as the reference
+ *        does on a terminal (the owner's ruling D27).
  * @returns {DjinterpSession}
  * @throws {Error} for a row or a djin the reference refuses: the page's
  *         own mistake.
@@ -609,7 +622,8 @@ export function openNow(
         registry:    registry,
         file:        (_options.file === undefined) ? memoryFile()
                                                    : _options.file,
-        environment: _options.environment ?? null
+        environment: _options.environment ?? null,
+        colour:      _options.colour === true
     });
 
     for (const frame of (_options.frames ?? []))

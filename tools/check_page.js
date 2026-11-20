@@ -12,14 +12,15 @@
 * browser.
 *   The first opening binds the URL's query and runs a `set`, which the
 * page keeps in its localStorage; the second, with nothing in its URL's
-* query, reads those settings as the file's. Exits 1 where either differs
-* from what is written here.
+* query, reads those settings as the file's; the third has an error said,
+* which the page, having told the program it draws colour, draws. Exits 1
+* where any differs from what is written here.
 *
 *
 * path:      /tools/check_page.js
 * link(s):   TBA
 * author(s): Samuel 'teer' Neal-Blim                         created: 2026.11.15
-*                                                            revised: 2026.11.16
+*                                                            revised: 2026.11.17
 *******************************************************************************/
 
 import { spawnSync } from 'node:child_process';
@@ -62,6 +63,13 @@ const VISITS = [
               '    default    plain   (default)\n' +
               'printer.key_width = 30  (default)\n',
         heard: ''
+    },
+    {
+        url:   PAGE + '#get nothing',
+        want:  '> get nothing\n' +
+               'djinterp: error: no setting is named \'nothing\'\n',
+        heard: '',
+        drawn: true
     }
 ];
 /*
@@ -135,6 +143,16 @@ try
              /<body[^>]*data-ready="yes"/.test(page), true);
         same(visit.url, textOf(page, 'out'), visit.want);
         same('what was heard', textOf(page, 'heard'), visit.heard);
+
+        // the page said it draws colour (D27): the escapes are drawn, and
+        // none is left in the text
+        if (visit.drawn === true)
+        {
+            same('whether the colour was drawn',
+                 /<span class="bold">djinterp:<\/span>/.test(page) &&
+                 /<span class="bold c31">error:<\/span>/.test(page) &&
+                 !/\x1B|&#27;|\[1;31m/.test(page), true);
+        }
     }
 }
 finally
