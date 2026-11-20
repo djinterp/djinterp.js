@@ -6,7 +6,18 @@
 *     node tools/check_style.js
 *   No line past 80 columns; no tab; no space at a line's end; no carriage
 * return; one line break at the file's end; and, in a file under src/,
-* tests/ or tools/, the banner's path is the file's own. A row of a table
+* tests/ or tools/, the banner's path is the file's own. A banner's
+* title, `created:` and `revised:` end on column 80, and it has all five
+* of its fields, as the C guide's do.
+*   In a module under src/ held to the strict mode (tools/strict_modules.js),
+* a function that is not exported has a JSDoc comment that names it on its
+* first line, ` * name`, as the C guide's definitions are named (the
+* owner's ruling D25, 2026-11-17).
+*   A file's table of contents agrees with its body, as the C guide has
+* it: each section's name in capitals with a line of hyphens beneath it,
+* the name and number its divider has, and as many entries as the section
+* has markers (`// 1.1`). Under src/, two empty lines come before each
+* section's divider and nowhere else. A row of a table
 * in a `.md` file may pass 80 columns, since it cannot be broken.
 *   Generated files, recorded transcripts and the declarations in types/
 * are not people's, and are not checked. Exits 1 where anything is found,
@@ -16,12 +27,14 @@
 * path:      /tools/check_style.js
 * link(s):   TBA
 * author(s): Samuel 'teer' Neal-Blim                         created: 2026.11.15
-*                                                            revised: 2026.11.16
+*                                                            revised: 2026.11.17
 *******************************************************************************/
 
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { dirname, join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
+
+import { STRICT } from './strict_modules.js';
 
 const ROOT    = join(dirname(fileURLToPath(import.meta.url)), '..');
 const CHECKED = /\.(js|c|h|sh|md|json|html)$/;
@@ -121,6 +134,155 @@ for (const path of filesUnder(ROOT))
         if (/[ ]$/.test(line))
         {
             say(file, index + 1, 'ends with a space');
+        }
+    }
+
+    // a function inside a module held to the strict mode is named by its
+    // JSDoc comment
+    if (STRICT.includes(file.replace(/^src\//, '')))
+    {
+        const lines = text.split('\n');
+
+        for (const [index, line] of lines.entries())
+        {
+            const found = /^function (\w+)\(/.exec(line);
+
+            if (found === null)
+            {
+                continue;
+            }
+
+            // the comment's first line: after `/*`, or ` * ` after `/**`
+            let start = index - 1;
+
+            while ( (start >= 0) &&
+                    !lines[start].startsWith('/*') )
+            {
+                --start;
+            }
+
+            const named = (start < 0) ? null
+                        : lines[start + 1].replace(/^ \* /, '');
+
+            if ( (start < 0)                  ||
+                 (lines[start] !== '/**')      ||
+                 (lines[index - 1] !== ' */') ||
+                 (named !== found[1]) )
+            {
+                say(file, index + 1, 'function ' + found[1] + ' has no ' +
+                    'comment that names it first');
+            }
+        }
+    }
+
+    // two empty lines before a section's divider, and nowhere else
+    if (/^src\/.*\.js$/.test(file))
+    {
+        const lines = text.split('\n');
+
+        for (let index = 2; index < lines.length; ++index)
+        {
+            const named   = lines[index + 1] ?? '';
+            const divider = /^\/\/=+$/.test(lines[index])           &&
+                            /^\/\/ (\d+\.  )?[A-Z]/.test(named) &&
+                            (lines[index - 1] !== '//' + '='.repeat(78));
+
+            if ( divider &&
+                 ( (lines[index - 1] !== '') ||
+                   (lines[index - 2] !== '') ||
+                   (lines[index - 3] === '') ) )
+            {
+                say(file, index + 1, 'a section\'s divider wants two ' +
+                    'empty lines before it, and no more');
+            }
+            else if ( !divider              &&
+                      (lines[index] !== '') &&
+                      (lines[index - 1] === '') &&
+                      (lines[index - 2] === '') )
+            {
+                say(file, index + 1, 'two empty lines come only before ' +
+                    'a section\'s divider');
+            }
+        }
+    }
+
+    // a table of contents is its body's
+    const toc = file.endsWith('.js')
+                    ? /\/\*\nTABLE OF CONTENTS\n=+\n([\s\S]*?)\n\*\//.exec(text)
+                    : null;
+
+    if (toc !== null)
+    {
+        const body    = [...text.matchAll(
+                            /^\/\/=+\n\/\/ (\d+)\.\s+(.*)\n\/\/=+$/mg)]
+                            .map((_found) => _found[1] + '.  ' + _found[2]);
+        const marks   = [...text.matchAll(/^\/\/ (\d+)\.\d+$/mg)]
+                            .map((_found) => _found[1]);
+        const listed  = [];
+        const entries = [];
+        const lines   = toc[1].split('\n');
+
+        for (const [index, line] of lines.entries())
+        {
+            const section = /^(\d+)\.\s+(.*)$/.exec(line);
+
+            if (section !== null)
+            {
+                const under = ' '.repeat(line.length - section[2].length) +
+                              '-'.repeat(section[2].length);
+
+                listed.push(section[1] + '.  ' + section[2]);
+
+                if (lines[index + 1] !== under)
+                {
+                    say(file, 0, 'the contents\' ' + section[2] + ' has ' +
+                        'no line of hyphens beneath it');
+                }
+            }
+            else if (/^    \d+\.\s/.test(line))
+            {
+                entries.push(listed[listed.length - 1].split('.')[0]);
+            }
+        }
+
+        if ( (listed.join('|') !== body.join('|'))  ||
+             (entries.join('|') !== marks.join('|')) ||
+             listed.some((_name) => _name !== _name.toUpperCase()) )
+        {
+            say(file, 0, 'the table of contents is not the body\'s ' +
+                'sections, in capitals, with their entries');
+        }
+    }
+
+    // a banner's lines of fixed geometry end on column 80, and it has all
+    // five fields
+    const all    = text.split('\n');
+    const close  = all.findIndex((_line, _at) => (_at > 0) &&
+                                 /^(\*{79}\/|-->|#{80})$/.test(_line));
+    const banner = (close < 0) ? [] : all.slice(0, close + 1);
+
+    if (/djinterp\.js( \[|  )/.test(banner.slice(0, 4).join('\n')))
+    {
+        for (const field of ['path:      /', 'link(s):   ', 'author(s): ',
+                             'created: ', 'revised: '])
+        {
+            if (!banner.some((_line) => _line.includes(field)))
+            {
+                say(file, 1, 'the banner has no ' + field.trim());
+            }
+        }
+    }
+
+    for (const [index, line] of banner.entries())
+    {
+        const fixed = ( (index < 4) && /djinterp\.js( \[|  )/.test(line) ) ||
+                      /(created|revised): \d{4}\.\d\d\.\d\d$/.test(line);
+
+        if ( fixed &&
+             ([...line].length !== 80) )
+        {
+            say(file, index + 1, 'a banner\'s line that ends on column ' +
+                '80 ends on ' + [...line].length);
         }
     }
 

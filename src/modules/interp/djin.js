@@ -23,21 +23,24 @@
 * path:      /src/modules/interp/djin.js
 * link(s):   TBA
 * author(s): Samuel 'teer' Neal-Blim                         created: 2026.11.15
-*                                                            revised: 2026.11.16
+*                                                            revised: 2026.11.17
 *******************************************************************************/
 
 /*
 TABLE OF CONTENTS
 =================
-1.  Vocabulary
+1.  VOCABULARY
+    ----------
     1.  ABI, STATUS
     2.  statusName
-2.  The set
+2.  THE SET
+    -------
     1.  setInit
     2.  register
     3.  setCount, setAt, setFind
     4.  commandFind
-3.  As text
+3.  AS TEXT
+    -------
     1.  writeList
     2.  writeDescription
     3.  writeFrame

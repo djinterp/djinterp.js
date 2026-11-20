@@ -20,24 +20,27 @@
 * path:      /src/option/option_env_registry.js
 * link(s):   TBA
 * author(s): Samuel 'teer' Neal-Blim                         created: 2026.11.15
-*                                                            revised: 2026.11.16
+*                                                            revised: 2026.11.17
 *******************************************************************************/
 
 /*
 TABLE OF CONTENTS
 =================
-1.  The registry
+1.  THE REGISTRY
+    ------------
     1.  registry
     2.  init
     3.  frame
     4.  add, remove
     5.  count, at, find, target
-2.  Settings by full name
+2.  SETTINGS BY FULL NAME
+    ---------------------
     1.  assign, put, load
     2.  import
     3.  takeOption
     4.  suggest
-3.  Inner
+3.  INNER
+    -----
     1.  inner
 */
 

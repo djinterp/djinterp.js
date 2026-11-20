@@ -20,15 +20,17 @@
 * path:      /src/text/real_format.js
 * link(s):   TBA
 * author(s): Samuel 'teer' Neal-Blim                         created: 2026.11.15
-*                                                            revised: 2026.11.16
+*                                                            revised: 2026.11.17
 *******************************************************************************/
 
 /*
 TABLE OF CONTENTS
 =================
-1.  A double's parts
+1.  A DOUBLE'S PARTS
+    ----------------
     1.  parts
-2.  Writing
+2.  WRITING
+    -------
     1.  formatG
     2.  formatReal
 */
@@ -73,7 +75,8 @@ export function parts(
 //==============================================================================
 
 /**
- * The decimal digits of a finite double's magnitude, rounded to
+ * digitsOf
+ *   The decimal digits of a finite double's magnitude, rounded to
  * `_precision` significant digits, to nearest with ties to even, and the
  * power of ten of the first: the value is d.ddd * 10^exponent. Zero is "0"
  * at exponent 0.

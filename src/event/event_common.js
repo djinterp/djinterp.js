@@ -15,19 +15,22 @@
 * path:      /src/event/event_common.js
 * link(s):   TBA
 * author(s): Samuel 'teer' Neal-Blim                         created: 2026.11.15
-*                                                            revised: 2026.11.16
+*                                                            revised: 2026.11.17
 *******************************************************************************/
 
 /*
 TABLE OF CONTENTS
 =================
-1.  Keys and ids
+1.  KEYS AND IDS
+    ------------
     1.  KEY_NONE, HANDLER_ID_NULL
     2.  keyOfName
-2.  Verdicts
+2.  VERDICTS
+    --------
     1.  VERDICT
     2.  verdictIsConsumed
-3.  Statuses
+3.  STATUSES
+    --------
     1.  STATUS
 */
 

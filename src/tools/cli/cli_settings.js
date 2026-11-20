@@ -25,17 +25,20 @@
 * path:      /src/tools/cli/cli_settings.js
 * link(s):   TBA
 * author(s): Samuel 'teer' Neal-Blim                         created: 2026.11.15
-*                                                            revised: 2026.11.16
+*                                                            revised: 2026.11.17
 *******************************************************************************/
 
 /*
 TABLE OF CONTENTS
 =================
-1.  What went wrong
+1.  WHAT WENT WRONG
+    ---------------
     1.  why
-2.  The user's file
+2.  THE USER'S FILE
+    ---------------
     1.  load
-3.  A run's settings
+3.  A RUN'S SETTINGS
+    ----------------
     1.  start
     2.  take
     3.  saidFor

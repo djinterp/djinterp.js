@@ -58,14 +58,18 @@
 /*
 TABLE OF CONTENTS
 =================
-1.  A line's words
+1.  A LINE'S WORDS
+    --------------
     1.  split
-2.  Where settings are kept
+2.  WHERE SETTINGS ARE KEPT
+    -----------------------
     1.  memoryFile
     2.  storageFile
-3.  Settings a page declares
+3.  SETTINGS A PAGE DECLARES
+    ------------------------
     1.  settingsFrame
-4.  The program
+4.  THE PROGRAM
+    -----------
     1.  openProgram
     2.  openNow
     3.  open

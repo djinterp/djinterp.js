@@ -24,26 +24,32 @@
 * path:      /src/event/event_table_common.js
 * link(s):   TBA
 * author(s): Samuel 'teer' Neal-Blim                         created: 2026.11.15
-*                                                            revised: 2026.11.15
+*                                                            revised: 2026.11.17
 *******************************************************************************/
 
 /*
 TABLE OF CONTENTS
 =================
-1.  The table
+1.  THE TABLE
+    ---------
     1.  tableInit, tableDispose, tableClear, tableClearKey
-2.  Bind and unbind
+2.  BIND AND UNBIND
+    ---------------
     1.  tableBind, tableUnbind
-3.  The mask
+3.  THE MASK
+    --------
     1.  tableEnable, tableDisable, tableIsEnabled, tableContains
-4.  Reading
+4.  READING
+    -------
     1.  tableFind, tableWord
     2.  tableCount, tableEnabledCount, tableCountFor,
         tableHasEntriesFor, tableKeyCount
     3.  tableForEach, tableForEachKey
-5.  Merge
+5.  MERGE
+    -----
     1.  tableMerge
-6.  For the registry
+6.  FOR THE REGISTRY
+    ----------------
     1.  internal
 */
 

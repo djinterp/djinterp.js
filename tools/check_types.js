@@ -12,7 +12,8 @@
 *   Everywhere, what is checked is what the comments claim: a function
 * with a JSDoc comment is held to its parameters and what it returns, and
 * every type a comment names must be one that exists.
-*   The modules in STRICT are also held to the checker's strict mode: a
+*   The modules in tools/strict_modules.js are also held to the checker's
+* strict mode: a
 * type on every parameter, and null and undefined told apart from values.
 * The strict mode is brought in a module at a time (the owner's ruling of
 * 2026-11-16); a module joins STRICT when it has no finding there, and
@@ -24,7 +25,7 @@
 * path:      /tools/check_types.js
 * link(s):   TBA
 * author(s): Samuel 'teer' Neal-Blim                         created: 2026.11.16
-*                                                            revised: 2026.11.16
+*                                                            revised: 2026.11.17
 *******************************************************************************/
 
 import { spawnSync } from 'node:child_process';
@@ -34,13 +35,10 @@ import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import { STRICT } from './strict_modules.js';
+
 const ROOT  = join(dirname(fileURLToPath(import.meta.url)), '..');
 const [tsc] = process.argv.slice(2);
-
-// the modules held to the strict mode, by their paths under src/
-const STRICT = ['event/event.js', 'event/event_common.js',
-                'event/event_handler_common.js', 'option/option_common.js',
-                'text/cut.js', 'text/real_format.js', 'text/real_read.js'];
 
 if (tsc === undefined)
 {

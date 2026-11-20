@@ -50,36 +50,45 @@
 /*
 TABLE OF CONTENTS
 =================
-1.  Vocabulary
+1.  VOCABULARY
+    ----------
     1.  KIND, SOURCE, SOURCES, GLOBAL, NONE, DEPTH_MAX
     2.  refuses, idDepth, idIndex
     3.  kindName, sourceName
     4.  rowBool ... rowFlags
-2.  Setting up
+2.  SETTING UP
+    ----------
     1.  init, fromRecord
     2.  declare, declareAll
     3.  setScopes, setParent, setName
     4.  clear, detach, generation, root, name
-3.  Finding
+3.  FINDING
+    -------
     1.  varCount, varId, varIndex, varAt, varFrame
     2.  scopeName, find, findScope, resolve
     3.  distance, suggest
-4.  Reading
+4.  READING
+    -------
     1.  get, bool, int, real, text, source
     2.  isBound, scopeIsBound, layers
-5.  Binding by value
+5.  BINDING BY VALUE
+    ----------------
     1.  setBool, setInt, setReal, setText, setValue, setTextCopy
     2.  unset, unsetFrom, unsetSource
-6.  Binding from text
+6.  BINDING FROM TEXT
+    -----------------
     1.  assignFrom, assign
     2.  putFrom, put, putNFrom
     3.  statementEnd, loadFrom, load
     4.  import
-7.  Writing text
+7.  WRITING TEXT
+    ------------
     1.  format, formatQuoted
-8.  Reading on a hot path
+8.  READING ON A HOT PATH
+    ---------------------
     1.  cached
-9.  Inner
+9.  INNER
+    -----
     1.  inner
 */
 
@@ -3917,7 +3926,8 @@ export { import_ as import };
 //==============================================================================
 
 /**
- * The row's name whose bits are all still to be written and are the most;
+ * widest
+ *   The row's name whose bits are all still to be written and are the most;
  * -1 for none.
  *
  * @param {*}      _decl  the row, as the machine holds it.

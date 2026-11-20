@@ -21,15 +21,17 @@
 * path:      /src/text/real_read.js
 * link(s):   TBA
 * author(s): Samuel 'teer' Neal-Blim                         created: 2026.11.15
-*                                                            revised: 2026.11.16
+*                                                            revised: 2026.11.17
 *******************************************************************************/
 
 /*
 TABLE OF CONTENTS
 =================
-1.  The nearest double
+1.  THE NEAREST DOUBLE
+    ------------------
     1.  nearestDouble
-2.  Reading
+2.  READING
+    -------
     1.  readReal
 */
 
@@ -41,7 +43,8 @@ TABLE OF CONTENTS
 const SCRATCH = new DataView(new ArrayBuffer(8));
 
 /**
- * The bits of a positive whole number.
+ * bitLength
+ *   The bits of a positive whole number.
  *
  * @param {bigint} _value  the number.
  * @returns {number}

@@ -14,19 +14,21 @@
 * path:      /src/option/option_common.js
 * link(s):   TBA
 * author(s): Samuel 'teer' Neal-Blim                         created: 2026.11.15
-*                                                            revised: 2026.11.15
+*                                                            revised: 2026.11.17
 *******************************************************************************/
 
 /*
 TABLE OF CONTENTS
 =================
-1.  Statuses
+1.  STATUSES
+    --------
     1.  STATUS
     2.  STATUS_MECHANICAL_FLOOR
     3.  statusName
     4.  statusMessage
     5.  statusIsMechanical
-2.  Results
+2.  RESULTS
+    -------
     1.  ok
     2.  fail
     3.  resultStatus

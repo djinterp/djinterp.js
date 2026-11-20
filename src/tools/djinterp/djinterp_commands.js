@@ -29,17 +29,19 @@
 * path:      /src/tools/djinterp/djinterp_commands.js
 * link(s):   TBA
 * author(s): Samuel 'teer' Neal-Blim                         created: 2026.11.15
-*                                                            revised: 2026.11.16
+*                                                            revised: 2026.11.17
 *******************************************************************************/
 
 /*
 TABLE OF CONTENTS
 =================
-1.  The program
+1.  THE PROGRAM
+    -----------
     1.  EXIT, RESERVED, COMMANDS
     2.  programMake
     3.  programStart
-2.  Running
+2.  RUNNING
+    -------
     1.  programRun
 */
 

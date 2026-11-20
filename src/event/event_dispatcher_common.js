@@ -23,17 +23,19 @@
 * path:      /src/event/event_dispatcher_common.js
 * link(s):   TBA
 * author(s): Samuel 'teer' Neal-Blim                         created: 2026.11.15
-*                                                            revised: 2026.11.15
+*                                                            revised: 2026.11.17
 *******************************************************************************/
 
 /*
 TABLE OF CONTENTS
 =================
-1.  The queue
+1.  THE QUEUE
+    ---------
     1.  queueInit, queueClear
     2.  queueEnqueue, queueProcess
     3.  queuePending, queueIsEmpty, queuePeek
-2.  The dispatcher
+2.  THE DISPATCHER
+    --------------
     1.  dispatcherInit, dispatcherDispose
     2.  dispatcherBind, dispatcherUnbind, dispatcherEnable,
         dispatcherDisable, dispatcherIsEnabled, dispatcherContains

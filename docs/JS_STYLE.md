@@ -3,7 +3,14 @@
 Written 2026-11-14 for the agent starting djinterp.js. Revised 2026-11-16
 at the owner's word that djinterp.js is ignorant of every framework but
 itself: what spoke of other libraries is gone, and no rule has changed.
-The file as it came is in the repository's history.
+The file as it came is in the repository's history. Revised 2026-11-17
+at the owner's ruling D25 (section 3, a function's comment).
+
+**The guide.** `docs/style_guidelines_js.html` is this style written out
+in the form of djinterp's C and C++ guides, rule by rule, beside the
+rulings that made them. It carries every rule here. Which of the two is
+djinterp.js's file of style from now on is the owner's to rule (D28);
+until then this file governs wherever they differ.
 
 **Standing.** All of this is **recommended**. The owner has not ruled on
 JavaScript's home or style (the morning's note, J2). Where it is silent,
@@ -82,6 +89,12 @@ for a file with sections, and numbered dividers matching it.
 * A short `// name` / `//   kind: ...` note on small declarations; a JSDoc
   block (`@param`, `@returns`, with types) on everything exported. JSDoc
   is how a reader and an editor get types with no build step.
+* A function inside a module has a JSDoc block in the C guide's form:
+  `/**`, then ` * name` on its own line, then what it does, its first
+  line indented, then `@param` and `@returns` (the owner's ruling D25,
+  2026-11-17). A module not yet held to the strict mode keeps the C
+  guide's plain form, `/*`, the name, what it does, `*/`, until it is
+  (D24); `tools/check_style.js` holds the strict modules to the rule.
 * Prose in comments says what is true, plainly. No "we".
 
 

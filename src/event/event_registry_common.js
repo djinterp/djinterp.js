@@ -21,21 +21,25 @@
 * path:      /src/event/event_registry_common.js
 * link(s):   TBA
 * author(s): Samuel 'teer' Neal-Blim                         created: 2026.11.15
-*                                                            revised: 2026.11.15
+*                                                            revised: 2026.11.17
 *******************************************************************************/
 
 /*
 TABLE OF CONTENTS
 =================
-1.  The registry
+1.  THE REGISTRY
+    ------------
     1.  registryInit, registryDispose
     2.  registryBind, registryUnbind
-2.  Dispatch
+2.  DISPATCH
+    --------
     1.  dispatchResultEmpty
     2.  registryDispatch
-3.  Run
+3.  RUN
+    ---
     1.  registryRun
-4.  The fused word
+4.  THE FUSED WORD
+    --------------
     1.  registryCompile
     2.  wordRunOne, wordDrive
 */

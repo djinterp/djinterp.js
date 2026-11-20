@@ -17,19 +17,23 @@
 * path:      /src/event/event_handler_common.js
 * link(s):   TBA
 * author(s): Samuel 'teer' Neal-Blim                         created: 2026.11.15
-*                                                            revised: 2026.11.15
+*                                                            revised: 2026.11.17
 *******************************************************************************/
 
 /*
 TABLE OF CONTENTS
 =================
-1.  The step
+1.  THE STEP
+    --------
     1.  stepMake, stepSkip, stepIsSkip, stepInvoke
-2.  Adapting a callback
+2.  ADAPTING A CALLBACK
+    -------------------
     1.  stepFromCallback
-3.  Sequencing
+3.  SEQUENCING
+    ----------
     1.  stepSeq
-4.  Folding a word
+4.  FOLDING A WORD
+    --------------
     1.  stepFold
 */
 
