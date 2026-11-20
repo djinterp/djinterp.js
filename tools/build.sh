@@ -13,6 +13,7 @@
 #                            and the djin records
 #     OUT/djinterp_fixture   the reference's program over the fixture
 #     OUT/reals              "%.*g" of doubles, for the real writer's sweep
+#     OUT/option_driver      the starting package's driver, as it came
 #   Needs cc and cmake.
 #
 #
@@ -53,4 +54,8 @@ $CC $FLAGS -isystem "$REF/inc" -I "$REF/src/djinterp/tools/djinterp"          \
 
 $CC $FLAGS "$HERE/reals.c" -lm -o "$OUT/reals"
 
-echo "built: $OUT/rows_json $OUT/session $OUT/djinterp_fixture $OUT/reals"
+$CC $FLAGS -isystem "$REF/inc" "$HERE/option_driver.c" $LIBS -ldl             \
+    -o "$OUT/option_driver"
+
+echo "built: $OUT/rows_json $OUT/session $OUT/djinterp_fixture $OUT/reals" \
+     "$OUT/option_driver"

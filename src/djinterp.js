@@ -3,15 +3,20 @@
 *
 *   djinterp in a page: what a page imports.
 *     import * as djinterp from './src/djinterp.js';
-*     const dj = djinterp.open({ djins: [printer] });
-*     dj.run('set printer.style=json');
-*     dj.run('get --show-origin printer.style').out;
+*     const dj = await djinterp.open({ djins: [printer] });
+*     await dj.run('set printer.style=json');
+*     (await dj.run('get --show-origin printer.style')).out;
 *     dj.on('set', (_event) => { ... });
 *   `open` makes a program over a registry of settings and a set of djins,
 * and readies its settings as the reference's program does at its start:
 * the environment's, then the user's settings file's. `run` gives it one
 * line, as a person types one at a console, and answers with a status,
 * what was written and what was said. `on` hears what the program does.
+*   `open` and `run` answer with promises, as the interface was first
+* drawn: what answers a page can then become an engine that is not in
+* the page's own thread, and no page changes. With this engine, the port,
+* nothing waits, and `open_now` and `run_now` are the same two with the
+* answer handed straight back; an engine elsewhere will have neither.
 *   The engine is the port: the option machine (src/option), the djin
 * records (src/modules/interp), the program's own commands
 * (src/tools/djinterp) and the event core (src/event). Nothing here
@@ -51,7 +56,8 @@ TABLE OF CONTENTS
 3.  Settings a page declares
     1.  settings_frame
 4.  The program
-    1.  open
+    1.  open_now
+    2.  open
 */
 
 import * as event from './event/event.js';
@@ -323,6 +329,16 @@ function take_query(
 }
 
 /**
+ * What a line is answered with.
+ *
+ * @typedef {object} djinterp_reply
+ * @property {number} status  the program's exit status for the line: 0,
+ *           1 for no, 2 for trouble.
+ * @property {string} out  what it wrote.
+ * @property {string} err  what it said.
+ */
+
+/**
  * An open program. Made by `open`.
  *
  * @typedef {object} djinterp_session
@@ -331,8 +347,12 @@ function take_query(
  * @property {string} warnings  what was said while its settings were
  *           readied: a line for each statement of the settings file, and
  *           each piece of the query, that was refused.
- * @property {function(string): {status: number, out: string, err: string}}
- *           run  gives the program one line.
+ * @property {function(string): Promise<djinterp_reply>} run  gives the
+ *           program one line. What is heard of the line has been heard
+ *           by the time the promise is kept. A line that is not a string
+ *           is a promise broken with a TypeError.
+ * @property {function(string): djinterp_reply} run_now  the same, with
+ *           the reply handed straight back; the port's own.
  * @property {function(string, function(object): (number|void)): number}
  *           on  hears an event; gives an id for `off`.
  * @property {function(number): boolean} off  stops hearing.
@@ -365,7 +385,7 @@ function take_query(
  * @throws {Error} for a row or a djin the reference refuses: the page's
  *         own mistake.
  */
-export function open(
+export function open_now(
     _options = {}
 )
 {
@@ -435,6 +455,12 @@ export function open(
 
         run(_line)
         {
+            // a misuse is a promise broken, not a throw past one
+            return new Promise((_keep) => _keep(this.run_now(_line)));
+        },
+
+        run_now(_line)
+        {
             if (typeof _line !== 'string')
             {
                 throw new TypeError('run: the line is not a string');
@@ -483,4 +509,20 @@ export function open(
                     event.STATUS.OK);
         }
     };
+}
+
+// 4.2
+/**
+ * Opens a program, as `open_now` does, and answers with a promise of it:
+ * the interface a page is written to, whatever engine answers it.
+ *
+ * @param {object} [_options]  as `open_now` takes them.
+ * @returns {Promise<djinterp_session>}  broken with an Error for a row
+ *          or a djin the reference refuses.
+ */
+export function open(
+    _options = {}
+)
+{
+    return new Promise((_keep) => _keep(open_now(_options)));
 }

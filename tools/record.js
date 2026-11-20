@@ -11,6 +11,11 @@
 *     program_NAME   BUILD/djinterp_fixture, once a line, as a new process
 *                    each, as a shell would run the reference's program
 *   For each it writes NAME.out, the program's bytes, and NAME.meta.
+*   A `.meta` is written so that recording again what has not changed
+* changes nothing: where the program's bytes and the commit are those of
+* the recording already there, its date is kept. Lines of a `.meta` that
+* the recorder does not write itself (a fuzzed input's seed, count and
+* the command that made it) are a person's, and are kept after its own.
 *
 *   A PROGRAM TRANSCRIPT's `.in` holds command lines, and lines that set
 * the scene for those after them:
@@ -35,8 +40,8 @@
 *******************************************************************************/
 
 import { spawnSync } from 'node:child_process';
-import { mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync }
-    from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync,
+         writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -45,29 +50,50 @@ const TRANSCRIPTS = join(HERE, '..', 'tests', 'transcripts');
 const HOME_ROOT   = '/tmp/djinterp.js/home';
 const REPOSITORY  = 'djinterp';
 
+// the keys of the lines the recorder writes; any other line is a person's
+const WRITTEN = new Set(['program', 'arguments', 'reference', 'commit',
+                         'recorded', 'home', 'settings', 'environment']);
+
 /*
-meta
-  A transcript's `.meta`: what was run, on what, and when.
+write_transcript
+  A transcript's `.out` and its `.meta`: what was run, on what, and when.
+The date is the one already there where nothing it dates has changed.
 */
-function meta(
+function write_transcript(
     _name,
+    _bytes,
     _program,
     _arguments,
     _commit,
     _more
 )
 {
-    const lines = [
+    const out_path  = join(TRANSCRIPTS, _name + '.out');
+    const meta_path = join(TRANSCRIPTS, _name + '.meta');
+    const before    = existsSync(meta_path)
+                          ? readFileSync(meta_path, 'utf8').split('\n')
+                                .filter((_line) => (_line.length !== 0))
+                          : [];
+    const key_of    = (_line) => _line.slice(0, _line.indexOf(':'));
+    const had       = (_key) => before.find((_line) =>
+                                                (key_of(_line) === _key));
+    const same      = existsSync(out_path) &&
+                      readFileSync(out_path).equals(_bytes) &&
+                      (had('commit') === ('commit: ' + _commit)) &&
+                      (had('recorded') !== undefined);
+    const lines     = [
         'program: ' + _program,
         'arguments: ' + _arguments,
         'reference: ' + REPOSITORY,
         'commit: ' + _commit,
-        'recorded: ' + new Date().toISOString().slice(0, 10),
-        ..._more
+        same ? had('recorded')
+             : ('recorded: ' + new Date().toISOString().slice(0, 10)),
+        ..._more,
+        ...before.filter((_line) => !WRITTEN.has(key_of(_line)))
     ];
 
-    writeFileSync(join(TRANSCRIPTS, _name + '.meta'),
-                  lines.join('\n') + '\n');
+    writeFileSync(out_path, _bytes);
+    writeFileSync(meta_path, lines.join('\n') + '\n');
 
     return;
 }
@@ -92,9 +118,9 @@ function record_session(
         throw new Error(_name + ': tools/session exited ' + run.status);
     }
 
-    writeFileSync(join(TRANSCRIPTS, _name + '.out'), run.stdout);
-    meta(_name, 'tools/session.c', '(none; the input is its standard input)',
-         _commit, ['environment: empty']);
+    write_transcript(_name, run.stdout, 'tools/session.c',
+                     '(none; the input is its standard input)', _commit,
+                     ['environment: empty']);
 
     return;
 }
@@ -195,12 +221,12 @@ function record_program(
         }
     }
 
-    writeFileSync(join(TRANSCRIPTS, _name + '.out'), Buffer.concat(out));
-    meta(_name, 'tools/djinterp_fixture_main.c',
-         '--line LINE, a process a command line', _commit,
-         ['home: ' + home, 'settings: ' + settings,
-          'environment: HOME and XDG_CONFIG_HOME are the home; then as ' +
-          'the input\'s env lines set it']);
+    write_transcript(_name, Buffer.concat(out),
+                     'tools/djinterp_fixture_main.c',
+                     '--line LINE, a process a command line', _commit,
+                     ['home: ' + home, 'settings: ' + settings,
+                      'environment: HOME and XDG_CONFIG_HOME are the home; ' +
+                      'then as the input\'s env lines set it']);
 
     return;
 }

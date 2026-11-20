@@ -10,9 +10,11 @@
 # and every transcript's `.meta`. BUILD is where the tools are built; a
 # directory under /tmp where left out.
 #   In order: builds the tools (tools/build.sh); writes generated/*.json and
-# the modules beside them; writes the sweep of doubles; records every
-# transcript under tests/transcripts. `node --test` then says whether the
-# port still follows.
+# the modules beside them; writes the sweep of doubles; makes the fuzzed
+# inputs again from their seeds; records every transcript under
+# tests/transcripts; and checks that the starting package's four runs
+# (tests/transcripts/prototype, kept as they came) are still what the
+# reference prints. `node --test` then says whether the port still follows.
 #   This is how the port moves to a later commit of djinterp: run it, read
 # what `git diff` shows changed in the reference's own words, and bring the
 # port after it.
@@ -52,7 +54,23 @@ node "$HERE/json_module.js" "$ROOT/generated/option.json"                     \
 # the sweep of doubles: the edges, then 4000 from a fixed seed
 "$BUILD/reals" 4000 20261115 > "$ROOT/generated/reals.txt"
 
+# the fuzzed inputs, each from its seed (named in its `.meta`)
+T="$ROOT/tests/transcripts"
+node "$HERE/fuzz_session.js" 20261115 1500 > "$T/session_fuzz_a.in"
+node "$HERE/fuzz_session.js" 7 1500        > "$T/session_fuzz_b.in"
+node "$HERE/fuzz_program.js" 20261115 400  > "$T/program_fuzz_a.in"
+
 # the transcripts
 node "$HERE/record.js" "$BUILD" "$COMMIT"
+
+# the starting package's four runs are kept as they came, and are not
+# recorded again; this commit of the reference is to print the same bytes
+for run in bind refuse stops exponent
+do
+    "$BUILD/option_driver" "$(cat "$T/prototype/$run.in")"                    \
+        | cmp -s - "$T/prototype/$run.out"                                    \
+        || { echo "prototype/$run: the reference no longer prints this" >&2
+             exit 1; }
+done
 
 echo "regenerated at $COMMIT; now: node --test"
