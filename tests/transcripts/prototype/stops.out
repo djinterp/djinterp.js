@@ -1,0 +1,6 @@
+init 0
+declare ratio 0
+declare width 0
+load 8 (an argument was null, aliased, or out of range) at 0
+ratio=0.5  [default]
+width=240  [default]

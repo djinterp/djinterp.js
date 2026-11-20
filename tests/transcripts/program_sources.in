@@ -1,0 +1,77 @@
+# who set it: the environment, the user's file, the command line
+get --show-origin width color printer.style
+env DJINTERP_WIDTH=333
+env DJINTERP_COLOR=off
+env DJINTERP_PRINTER_STYLE=json
+env DJINTERP_PRINTER_BANNER=yes
+env DJINTERP_NET_P=2222
+env DJINTERP_CACHE_SIZE=lots
+env DJINTERP_TITLE=from the environment
+env DJINTERP_PRINTER_MODULE=env
+get --show-origin width color printer.style printer.banner net.port cache.size title printer.module
+file width = 200\nprinter.style = table\ntitle = "from the file"\n
+get --show-origin width printer.style title
+get --set width=400 --show-origin width
+--set width=400 get --show-origin width
+get --show-origin width --set width=400
+get --show-origin --printer.style=plain printer.style
+--printer.style=plain get --show-origin printer.style
+get --printer.banner --show-origin printer.banner
+get --no-printer.banner --show-origin printer.banner
+get --show-origin --net.port=1 --net.port=2 net.port
+get --set title=cli --set printer.style=grid --show-origin title printer.style
+set width=500 --set color=yes
+get --show-origin width color
+# a setting the command line gives and the registry refuses
+get --set
+get --set width
+get --set nothing=1
+get --set width=99
+get --set printer.style=xml
+--set width=99 get
+get --printer.style
+get --no-printer.style
+get --printer.nothing
+get --printer.nothing=1
+get --printer.stlye=json
+get --printr.style=json
+get --printer.style=yaml
+get --printer.banner=maybe
+get --no-printer.nothing
+--printer.style get
+--printer.style=yaml get
+get --width=260
+get --no-color
+get width --printer.style
+list --printer.style
+describe --printer.style=yaml printer
+set --printer.style=yaml width=1
+# the user's file: a statement refused is a warning with its line, and the rest load
+unenv DJINTERP_WIDTH
+unenv DJINTERP_COLOR
+unenv DJINTERP_PRINTER_STYLE
+unenv DJINTERP_PRINTER_BANNER
+unenv DJINTERP_NET_P
+unenv DJINTERP_CACHE_SIZE
+unenv DJINTERP_TITLE
+unenv DJINTERP_PRINTER_MODULE
+file width = 300\nwidth = 99\n\n  nothing = 1 ; printer.style = xml\nprinter.stlye = json # c\ntitle = "open\nprinter.banner\ncolor\nprinter.module = x\nratio = abc\n-width\nnet.port=70000;net.port = 99999999999999999999999999\ncache.size = 128\n
+get --show-origin width color printer.banner cache.size title
+list
+file width = 99
+get width
+file \n\n\nwidth = 99 ; color = maybe\n\n; ratio = x\n
+get width
+file width = 310\r\ncolor = no\r\nratio = x\r\n
+get --show-origin width color
+file # only a comment
+get width
+file =
+get width
+file width
+get width
+file -nothing\n- width\n-printer.banner\n
+get --show-origin printer.banner
+env DJINTERP_WIDTH=abc
+env DJINTERP_PRINTER_STYLE=xml
+get --show-origin width printer.style

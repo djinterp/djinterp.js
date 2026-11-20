@@ -1,0 +1,11 @@
+program: tools/djinterp_fixture_main.c
+arguments: --line LINE, a process a command line
+reference: djinterp
+commit: d20c0b23
+recorded: 2026-11-16
+home: /tmp/djinterp.js/home/program_fuzz_a
+settings: /tmp/djinterp.js/home/program_fuzz_a/djinterp/settings
+environment: HOME and XDG_CONFIG_HOME are the home; then as the input's env lines set it
+seed: 20261115
+count: 400
+input: node tools/fuzz_program.js 20261115 400

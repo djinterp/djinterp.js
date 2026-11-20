@@ -1,0 +1,249 @@
+> # set binds for the run and keeps what it set in the user's settings file
+> get --show-origin width
+exit 0
+out: width = 240  (default)
+> set width=300
+exit 0
+> get --show-origin width
+exit 0
+out: width = 300  (file)
+out:     default    240   (default)
+> set width=99
+exit 2
+err: djinterp: error: '99' is not a value 'width' takes
+> get --show-origin width
+exit 0
+out: width = 300  (file)
+out:     default    240   (default)
+> set width=250 color=no printer.style=json
+exit 0
+> get --show-origin width color printer.style
+exit 0
+out: width = 250  (file)
+out:     default    240   (default)
+out: color = false  (file)
+out:     default    true   (default)
+out: printer.style = json  (file)
+out:     default    plain   (D_CFG_ENV_PRINTER_STYLE)
+> set title="two words"
+exit 0
+> get --show-origin title
+exit 0
+out: title = two words  (file)
+out:     default    unset   (default)
+> set 'title=  padded  '
+exit 0
+> get title
+exit 0
+out: title = "  padded  "
+> set 'title=a;b#c "d" \e'
+exit 0
+> get title
+exit 0
+out: title = "a;b#c \"d\" \\e"
+> set title=
+exit 0
+> get --show-origin title
+exit 0
+out: title = ""  (file)
+out:     default    unset   (default)
+> set printer.select=c,posix
+exit 0
+> get --show-origin printer.select
+exit 0
+out: printer.select = c|posix  (file)
+out:     default    3   (default)
+> set printer.select=+wide
+exit 0
+> get printer.select
+exit 0
+out: printer.select = c|posix|wide
+> set printer.select=legacy
+exit 2
+err: djinterp: error: 'printer.select' cannot be 'legacy' in this build
+> set printer.style=xml
+exit 2
+err: djinterp: error: 'printer.style' cannot be 'xml' in this build
+> set printer.banner=yes
+exit 0
+> get --show-origin printer.banner
+exit 0
+out: printer.banner = true  (file)
+out:     default    false   (default)
+> set printer.module=mine
+exit 0
+> get --show-origin printer.module
+exit 0
+out: printer.module = builtin  (D_CFG_ENV_PRINTER_MODULE)
+err: /tmp/djinterp.js/home/program_set/djinterp/settings:8: warning: 'printer.module' cannot be 'mine' in this build
+> set net.port=443 net.host=example.org
+exit 0
+err: /tmp/djinterp.js/home/program_set/djinterp/settings:8: warning: 'printer.module' cannot be 'mine' in this build
+> get --show-origin net.port net.host
+exit 0
+out: net.port = 443  (file)
+out:     default    8080   (default)
+out: net.host = example.org  (file)
+out:     default    "localhost"   (default)
+err: /tmp/djinterp.js/home/program_set/djinterp/settings:8: warning: 'printer.module' cannot be 'mine' in this build
+> set net.p=8443
+exit 0
+err: /tmp/djinterp.js/home/program_set/djinterp/settings:8: warning: 'printer.module' cannot be 'mine' in this build
+> get net.port net.p
+exit 0
+out: net.port = 8443
+out: net.p = 8443
+err: /tmp/djinterp.js/home/program_set/djinterp/settings:8: warning: 'printer.module' cannot be 'mine' in this build
+> set ratio=0.1 printer.scale=1e21
+exit 0
+err: /tmp/djinterp.js/home/program_set/djinterp/settings:8: warning: 'printer.module' cannot be 'mine' in this build
+> get ratio printer.scale
+exit 0
+out: ratio = 0.10000000000000001
+out: printer.scale = 1e+21
+err: /tmp/djinterp.js/home/program_set/djinterp/settings:8: warning: 'printer.module' cannot be 'mine' in this build
+> set depth=unbounded
+exit 0
+err: /tmp/djinterp.js/home/program_set/djinterp/settings:8: warning: 'printer.module' cannot be 'mine' in this build
+> get --show-origin depth
+exit 0
+out: depth = unbounded  (file)
+out:     default    8   (default)
+err: /tmp/djinterp.js/home/program_set/djinterp/settings:8: warning: 'printer.module' cannot be 'mine' in this build
+> set max_depth=3
+exit 0
+err: /tmp/djinterp.js/home/program_set/djinterp/settings:8: warning: 'printer.module' cannot be 'mine' in this build
+> get depth max_depth
+exit 0
+out: depth = 3
+out: max_depth = 3
+err: /tmp/djinterp.js/home/program_set/djinterp/settings:8: warning: 'printer.module' cannot be 'mine' in this build
+> set printer.summary.style=table
+exit 0
+err: /tmp/djinterp.js/home/program_set/djinterp/settings:8: warning: 'printer.module' cannot be 'mine' in this build
+> get --show-origin printer.summary.style printer.style
+exit 0
+out: printer.summary.style = table  (file)
+out:     under it   json   (file)
+out:     default    plain   (D_CFG_ENV_PRINTER_STYLE)
+out: printer.style = json  (file)
+out:     default    plain   (D_CFG_ENV_PRINTER_STYLE)
+err: /tmp/djinterp.js/home/program_set/djinterp/settings:8: warning: 'printer.module' cannot be 'mine' in this build
+> set debug.color=yes
+exit 0
+err: /tmp/djinterp.js/home/program_set/djinterp/settings:8: warning: 'printer.module' cannot be 'mine' in this build
+> get --show-origin debug.color color
+exit 0
+out: debug.color = true  (file)
+out:     under it   false   (file)
+out:     default    true   (default)
+out: color = false  (file)
+out:     default    true   (default)
+err: /tmp/djinterp.js/home/program_set/djinterp/settings:8: warning: 'printer.module' cannot be 'mine' in this build
+> set width=400 nothing=1
+exit 2
+err: /tmp/djinterp.js/home/program_set/djinterp/settings:8: warning: 'printer.module' cannot be 'mine' in this build
+err: djinterp: error: no setting is named 'nothing'
+> get width
+exit 0
+out: width = 250
+err: /tmp/djinterp.js/home/program_set/djinterp/settings:8: warning: 'printer.module' cannot be 'mine' in this build
+> set width=1000 color=yes
+exit 2
+err: /tmp/djinterp.js/home/program_set/djinterp/settings:8: warning: 'printer.module' cannot be 'mine' in this build
+err: djinterp: error: '1000' is not a value 'width' takes
+> get width color
+exit 0
+out: width = 250
+out: color = false
+err: /tmp/djinterp.js/home/program_set/djinterp/settings:8: warning: 'printer.module' cannot be 'mine' in this build
+> set color=yes width=1000
+exit 2
+err: /tmp/djinterp.js/home/program_set/djinterp/settings:8: warning: 'printer.module' cannot be 'mine' in this build
+err: djinterp: error: '1000' is not a value 'width' takes
+> get width color
+exit 0
+out: width = 250
+out: color = false
+err: /tmp/djinterp.js/home/program_set/djinterp/settings:8: warning: 'printer.module' cannot be 'mine' in this build
+> set width=120 width=130
+exit 0
+err: /tmp/djinterp.js/home/program_set/djinterp/settings:8: warning: 'printer.module' cannot be 'mine' in this build
+> get width
+exit 0
+out: width = 130
+err: /tmp/djinterp.js/home/program_set/djinterp/settings:7: warning: 'printer.module' cannot be 'mine' in this build
+> get
+exit 0
+out: color = false
+out: width = 130
+out: ratio = 0.10000000000000001
+out: title = ""
+out: depth = 3
+out: # plugin_path is unset
+out: printer.key_width = 30
+out: printer.style = json
+out: printer.select = c|posix|wide
+out: printer.prefix = "> "
+out: printer.banner = true
+out: printer.seed = 0
+out: printer.scale = 1e+21
+out: printer.module = builtin
+out: printer.width = 80
+out: net.host = example.org
+out: net.port = 8443
+out: net.mode = off
+out: net.bits = 0
+out: net.big = 0
+out: cache.size = 64
+out: # cache.path is unset
+out: cli.plugin_search = $ORIGIN:$ORIGIN/../lib/$PROGRAM
+out: cli.plugin_strict_version = true
+err: /tmp/djinterp.js/home/program_set/djinterp/settings:7: warning: 'printer.module' cannot be 'mine' in this build
+> # the file's own lines: a line that sets a name alone is replaced
+> file # my settings\nwidth = 200\n  width=210  \ncolor = no ; width = 220\nwidth = 230 # kept: a comment follows\nprinter.width = 50\nwidth  =  240\n
+> get --show-origin width color printer.width
+exit 0
+out: width = 240  (file)
+out:     default    240   (default)
+out: color = false  (file)
+out:     default    true   (default)
+out: printer.width = 50  (file)
+out:     default    80   (default)
+> set width=500
+exit 0
+> get --show-origin width color
+exit 0
+out: width = 500  (file)
+out:     default    240   (default)
+out: color = false  (file)
+out:     default    true   (default)
+> set printer.width=60 color=yes
+exit 0
+> get --show-origin width color printer.width
+exit 0
+out: width = 500  (file)
+out:     default    240   (default)
+out: color = true  (file)
+out:     default    true   (default)
+out: printer.width = 60  (file)
+out:     default    80   (default)
+> nofile
+> get --show-origin width
+exit 0
+out: width = 240  (default)
+> set width=150
+exit 0
+> get --show-origin width
+exit 0
+out: width = 150  (file)
+out:     default    240   (default)
+> file width = 300
+> set color=no
+exit 0
+> get --show-origin width color
+exit 0
+out: width = 300  (file)
+out:     default    240   (default)
+out: color = false  (file)
+out:     default    true   (default)

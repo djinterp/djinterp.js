@@ -1,0 +1,346 @@
+> # the program's own commands over the fixture's djins
+> list
+exit 0
+out: printer  -  settings only
+out: net      -  settings only
+out: cache    -  settings only
+out: cli      -  settings only
+> describe printer
+exit 0
+out: printer
+out:   settings only
+out: 
+out: settings
+out:   printer.key_width  int     30         D_CFG_ENV_PRINTER_KEY_WIDTH  the width of a key
+out:   printer.style      choice  plain      D_CFG_ENV_PRINTER_STYLE      how a description is written
+out:   printer.select     flags   3          -                            the sections written
+out:   printer.prefix     text    "> "       -                            a text whose default needs quotes
+out:   printer.banner     bool    false      -                            a bool the environment may not set
+out:   printer.seed       int     0          -                            an int of any value
+out:   printer.scale      real    1          -
+out:   printer.module     text    "builtin"  D_CFG_ENV_PRINTER_MODULE     a text only the program and the command line set
+out:   printer.width      int     80         -                            a name the root declares too
+> describe net
+exit 0
+out: net
+out:   settings only
+out: 
+out: settings
+out:   net.host  text    "localhost"  -  a text with a default
+out:   net.port  int     8080         -  an int with an alias
+out:   net.mode  choice  off          -  a choice of 64-bit values
+out:   net.bits  flags   0            -  flags with the sign bit
+out:   net.big   int     0            -  an int one past the exact integers each way
+> describe cache
+exit 0
+out: cache
+out:   settings only
+out: 
+out: settings
+out:   cache.size  int   64     -
+out:   cache.path  text  unset  -  where it is kept
+> describe cli
+exit 0
+out: cli
+out:   settings only
+out: 
+out: settings
+out:   cli.plugin_search          text  "$ORIGIN:$ORIGIN/../lib/$PROGRAM"  D_CFG_CLI_PLUGIN_SEARCH          the directories a command's module is looked for in, after the run's and plugin_path's
+out:   cli.plugin_strict_version  bool  true                               D_CFG_CLI_PLUGIN_STRICT_VERSION  whether a module of another version of the program is refused, or loaded with a warning
+> describe
+exit 2
+err: djinterp: error: describe: DJIN is required
+err: Try 'djinterp describe --help' for more information.
+> describe nothing
+exit 2
+err: djinterp: error: describe: no djin is named 'nothing'
+err: Try 'djinterp describe --help' for more information.
+> describe printer net
+exit 2
+err: djinterp: error: describe: the following argument was not expected: net
+err: Try 'djinterp describe --help' for more information.
+> describe djinterp
+exit 2
+err: djinterp: error: describe: no djin is named 'djinterp'
+err: Try 'djinterp describe --help' for more information.
+> describe printer_two
+exit 2
+err: djinterp: error: describe: no djin is named 'printer_two'
+err: Try 'djinterp describe --help' for more information.
+> list extra
+exit 2
+err: djinterp: error: list: the following argument was not expected: extra
+err: Try 'djinterp list --help' for more information.
+> get
+exit 0
+out: color = true
+out: width = 240
+out: ratio = 0.5
+out: # title is unset
+out: depth = 8
+out: # plugin_path is unset
+out: printer.key_width = 30
+out: printer.style = plain
+out: printer.select = c|cpp
+out: printer.prefix = "> "
+out: printer.banner = false
+out: printer.seed = 0
+out: printer.scale = 1
+out: printer.module = builtin
+out: printer.width = 80
+out: net.host = localhost
+out: net.port = 8080
+out: net.mode = off
+out: net.bits = 0
+out: net.big = 0
+out: cache.size = 64
+out: # cache.path is unset
+out: cli.plugin_search = $ORIGIN:$ORIGIN/../lib/$PROGRAM
+out: cli.plugin_strict_version = true
+> get --show-origin
+exit 0
+out: color = true  (default)
+out: width = 240  (default)
+out: ratio = 0.5  (default)
+out: # title is unset  (default)
+out: depth = 8  (default)
+out: # plugin_path is unset  (default)
+out: printer.key_width = 30  (D_CFG_ENV_PRINTER_KEY_WIDTH)
+out: printer.style = plain  (D_CFG_ENV_PRINTER_STYLE)
+out: printer.select = c|cpp  (default)
+out: printer.prefix = "> "  (default)
+out: printer.banner = false  (default)
+out: printer.seed = 0  (default)
+out: printer.scale = 1  (default)
+out: printer.module = builtin  (D_CFG_ENV_PRINTER_MODULE)
+out: printer.width = 80  (default)
+out: net.host = localhost  (default)
+out: net.port = 8080  (default)
+out: net.mode = off  (default)
+out: net.bits = 0  (default)
+out: net.big = 0  (default)
+out: cache.size = 64  (default)
+out: # cache.path is unset  (default)
+out: cli.plugin_search = $ORIGIN:$ORIGIN/../lib/$PROGRAM  (D_CFG_CLI_PLUGIN_SEARCH)
+out: cli.plugin_strict_version = true  (D_CFG_CLI_PLUGIN_STRICT_VERSION)
+> get width
+exit 0
+out: width = 240
+> get width color title
+exit 0
+out: width = 240
+out: color = true
+out: # title is unset
+> get printer.style printer.format printer.select
+exit 0
+out: printer.style = plain
+out: printer.format = plain
+out: printer.select = c|cpp
+> get printer.summary.style
+exit 0
+out: printer.summary.style = plain
+> get debug.color
+exit 0
+out: debug.color = true
+> get printer.debug.color
+exit 0
+out: printer.debug.color = true
+> get net.p
+exit 0
+out: net.p = 8080
+> get nothing
+exit 2
+err: djinterp: error: no setting is named 'nothing'
+> get printer.nothing
+exit 2
+err: djinterp: error: no setting is named 'printer.nothing'
+> get printer.stlye
+exit 2
+err: djinterp: error: no setting is named 'printer.stlye'; did you mean 'printer.style'?
+> get printr.style
+exit 2
+err: djinterp: error: no setting is named 'printr.style'; did you mean 'printer.style'?
+> get colr width
+exit 2
+out: width = 240
+err: djinterp: error: no setting is named 'colr'; did you mean 'color'?
+> get width colr title nothing
+exit 2
+out: width = 240
+out: # title is unset
+err: djinterp: error: no setting is named 'colr'; did you mean 'color'?
+err: djinterp: error: no setting is named 'nothing'
+> get printer.width
+exit 0
+out: printer.width = 80
+> get printer_two.verbose
+exit 2
+err: djinterp: error: no setting is named 'printer_two.verbose'
+> get cli.plugin_strict_version
+exit 0
+out: cli.plugin_strict_version = true
+> get plugin_path
+exit 0
+out: # plugin_path is unset
+> get --show-origin plugin_path title
+exit 0
+out: # plugin_path is unset  (default)
+out: # title is unset  (default)
+> get --bogus
+exit 2
+err: djinterp: error: get: the following argument was not expected: --bogus
+err: Try 'djinterp get --help' for more information.
+> get --show-origin --bogus width
+exit 2
+err: djinterp: error: get: the following argument was not expected: --bogus
+err: Try 'djinterp get --help' for more information.
+> 
+> set
+exit 2
+err: djinterp: error: set: SETTING is required
+err: Try 'djinterp set --help' for more information.
+> set width
+exit 2
+err: djinterp: error: set: 'width' is not NAME=VALUE
+err: Try 'djinterp set --help' for more information.
+> set =3
+exit 2
+err: djinterp: error: set: '=3' is not NAME=VALUE
+err: Try 'djinterp set --help' for more information.
+> set width=
+exit 2
+err: djinterp: error: '' is not a value 'width' takes
+> set nothing=3
+exit 2
+err: djinterp: error: no setting is named 'nothing'
+> set printer.stlye=json
+exit 2
+err: djinterp: error: no setting is named 'printer.stlye'; did you mean 'printer.style'?
+> set bogus
+exit 2
+err: djinterp: error: set: 'bogus' is not NAME=VALUE
+err: Try 'djinterp set --help' for more information.
+> 
+> nothing
+exit 2
+err: djinterp: error: 'nothing' is not a command
+err: Try 'djinterp --help' for more information.
+> --bogus get
+exit 2
+err: djinterp: error: get: the following argument was not expected: --bogus
+err: Try 'djinterp get --help' for more information.
+> get "unclosed
+exit 2
+err: djinterp: error: a quote is not closed
+> get 'unclosed
+exit 2
+err: djinterp: error: a quote is not closed
+> # arguments the parser does not expect, and what a command requires
+> --bogus
+exit 2
+err: djinterp: error: the following argument was not expected: --bogus
+err: Try 'djinterp --help' for more information.
+> --bogus list
+exit 2
+err: djinterp: error: list: the following argument was not expected: --bogus
+err: Try 'djinterp list --help' for more information.
+> --show-origin get width
+exit 2
+err: djinterp: error: get: the following argument was not expected: --show-origin
+err: Try 'djinterp get --help' for more information.
+> -x get
+exit 2
+err: djinterp: error: get: the following argument was not expected: -x
+err: Try 'djinterp get --help' for more information.
+> --bogus nothing
+exit 2
+err: djinterp: error: the following arguments were not expected: --bogus nothing
+err: Try 'djinterp --help' for more information.
+> get width --bogus
+exit 2
+err: djinterp: error: get: the following argument was not expected: --bogus
+err: Try 'djinterp get --help' for more information.
+> describe --bogus
+exit 2
+err: djinterp: error: describe: DJIN is required
+err: Try 'djinterp describe --help' for more information.
+> set --bogus
+exit 2
+err: djinterp: error: set: SETTING is required
+err: Try 'djinterp set --help' for more information.
+> list --show-origin
+exit 2
+err: djinterp: error: list: the following argument was not expected: --show-origin
+err: Try 'djinterp list --help' for more information.
+> get --show-origin --show-origin width
+exit 0
+out: width = 240  (default)
+> nothing more
+exit 2
+err: djinterp: error: 'nothing' is not a command
+err: Try 'djinterp --help' for more information.
+> nothing --bogus
+exit 2
+err: djinterp: error: 'nothing' is not a command
+err: Try 'djinterp --help' for more information.
+> nothing list
+exit 2
+err: djinterp: error: list: the following argument was not expected: nothing
+err: Try 'djinterp list --help' for more information.
+> list list
+exit 2
+err: djinterp: error: list: the following argument was not expected: list
+err: Try 'djinterp list --help' for more information.
+> get list
+exit 2
+err: djinterp: error: no setting is named 'list'
+> --bogus --other
+exit 2
+err: djinterp: error: the following arguments were not expected: --bogus --other
+err: Try 'djinterp --help' for more information.
+> --bogus x y
+exit 2
+err: djinterp: error: the following arguments were not expected: --bogus x y
+err: Try 'djinterp --help' for more information.
+> x --bogus list a
+exit 2
+err: djinterp: error: list: the following arguments were not expected: x --bogus a
+err: Try 'djinterp list --help' for more information.
+> get --bogus width --other
+exit 2
+err: djinterp: error: get: the following arguments were not expected: --bogus --other
+err: Try 'djinterp get --help' for more information.
+> list a b
+exit 2
+err: djinterp: error: list: the following arguments were not expected: a b
+err: Try 'djinterp list --help' for more information.
+> describe a b c
+exit 2
+err: djinterp: error: describe: the following arguments were not expected: b c
+err: Try 'djinterp describe --help' for more information.
+> describe --x a b
+exit 2
+err: djinterp: error: describe: the following arguments were not expected: --x b
+err: Try 'djinterp describe --help' for more information.
+> set --x
+exit 2
+err: djinterp: error: set: SETTING is required
+err: Try 'djinterp set --help' for more information.
+> set a=1 --x
+exit 2
+err: djinterp: error: set: the following argument was not expected: --x
+err: Try 'djinterp set --help' for more information.
+> get -x
+exit 2
+err: djinterp: error: get: the following argument was not expected: -x
+err: Try 'djinterp get --help' for more information.
+> get --show-origin=1 width
+exit 0
+out: width = 240  (default)
+> - get
+exit 2
+err: djinterp: error: get: the following argument was not expected: -
+err: Try 'djinterp get --help' for more information.
+> get -
+exit 2
+err: djinterp: error: no setting is named '-'

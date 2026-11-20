@@ -1,0 +1,63 @@
+# set binds for the run and keeps what it set in the user's settings file
+get --show-origin width
+set width=300
+get --show-origin width
+set width=99
+get --show-origin width
+set width=250 color=no printer.style=json
+get --show-origin width color printer.style
+set title="two words"
+get --show-origin title
+set 'title=  padded  '
+get title
+set 'title=a;b#c "d" \e'
+get title
+set title=
+get --show-origin title
+set printer.select=c,posix
+get --show-origin printer.select
+set printer.select=+wide
+get printer.select
+set printer.select=legacy
+set printer.style=xml
+set printer.banner=yes
+get --show-origin printer.banner
+set printer.module=mine
+get --show-origin printer.module
+set net.port=443 net.host=example.org
+get --show-origin net.port net.host
+set net.p=8443
+get net.port net.p
+set ratio=0.1 printer.scale=1e21
+get ratio printer.scale
+set depth=unbounded
+get --show-origin depth
+set max_depth=3
+get depth max_depth
+set printer.summary.style=table
+get --show-origin printer.summary.style printer.style
+set debug.color=yes
+get --show-origin debug.color color
+set width=400 nothing=1
+get width
+set width=1000 color=yes
+get width color
+set color=yes width=1000
+get width color
+set width=120 width=130
+get width
+get
+# the file's own lines: a line that sets a name alone is replaced
+file # my settings\nwidth = 200\n  width=210  \ncolor = no ; width = 220\nwidth = 230 # kept: a comment follows\nprinter.width = 50\nwidth  =  240\n
+get --show-origin width color printer.width
+set width=500
+get --show-origin width color
+set printer.width=60 color=yes
+get --show-origin width color printer.width
+nofile
+get --show-origin width
+set width=150
+get --show-origin width
+file width = 300
+set color=no
+get --show-origin width color

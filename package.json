@@ -1,7 +1,7 @@
 {
   "name": "djinterp.js",
   "version": "0.0.1",
-  "description": "djinterp in a page: the option machine, the registry of djins and their settings, and events. A port of the C core that follows it.",
+  "description": "djinterp in a page: a port that follows the C reference",
   "type": "module",
   "private": true,
   "exports": {
@@ -12,6 +12,7 @@
     "node": ">=22"
   },
   "scripts": {
-    "test": "node --test"
+    "test": "node --test",
+    "style": "node tools/check_style.js"
   }
 }

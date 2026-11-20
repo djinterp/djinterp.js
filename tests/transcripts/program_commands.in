@@ -1,0 +1,76 @@
+# the program's own commands over the fixture's djins
+list
+describe printer
+describe net
+describe cache
+describe cli
+describe
+describe nothing
+describe printer net
+describe djinterp
+describe printer_two
+list extra
+get
+get --show-origin
+get width
+get width color title
+get printer.style printer.format printer.select
+get printer.summary.style
+get debug.color
+get printer.debug.color
+get net.p
+get nothing
+get printer.nothing
+get printer.stlye
+get printr.style
+get colr width
+get width colr title nothing
+get printer.width
+get printer_two.verbose
+get cli.plugin_strict_version
+get plugin_path
+get --show-origin plugin_path title
+get --bogus
+get --show-origin --bogus width
+
+set
+set width
+set =3
+set width=
+set nothing=3
+set printer.stlye=json
+set bogus
+
+nothing
+--bogus get
+get "unclosed
+get 'unclosed
+# arguments the parser does not expect, and what a command requires
+--bogus
+--bogus list
+--show-origin get width
+-x get
+--bogus nothing
+get width --bogus
+describe --bogus
+set --bogus
+list --show-origin
+get --show-origin --show-origin width
+nothing more
+nothing --bogus
+nothing list
+list list
+get list
+--bogus --other
+--bogus x y
+x --bogus list a
+get --bogus width --other
+list a b
+describe a b c
+describe --x a b
+set --x
+set a=1 --x
+get -x
+get --show-origin=1 width
+- get
+get -

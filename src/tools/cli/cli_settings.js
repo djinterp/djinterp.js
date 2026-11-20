@@ -39,6 +39,7 @@ TABLE OF CONTENTS
 3.  A run's settings
     1.  start
     2.  take
+    3.  said_for
 */
 
 import { STATUS, result_status, status_name }
@@ -359,12 +360,18 @@ function shaped(
                     .includes('.');
 }
 
-/*
-said_for
-  What the kit says of a setting the command line gave and the registry
-refused: the message of a usage error.
-*/
-function said_for(
+// 3.3
+/**
+ * What the kit says of a setting the command line gave and the registry
+ * refused: the message of a usage error.
+ *
+ * @param {option_env_registry} _registry  the registry.
+ * @param {Array<string>} _argv    the command line, in bytes.
+ * @param {number}        _at      where the option stands on it.
+ * @param {number}        _status  the refusal's status.
+ * @returns {string} the message, in bytes.
+ */
+export function said_for(
     _registry,
     _argv,
     _at,

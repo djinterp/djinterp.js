@@ -733,8 +733,8 @@ function take_option_bytes(
  * @returns {{took: number, at: number, result: ?option_result}}
  *          `took` is 1 for a setting bound, 0 for an argument that is no
  *          option of this form, with no result, and -1 for one that is
- *          and is refused, with why in `result`. `at` is the last argument used: `_at`,
- *          or the one after it for "--set".
+ *          and is refused, with why in `result`. `at` is the last
+ *          argument used: `_at`, or the one after it for "--set".
  */
 export function take_option(
     _registry,

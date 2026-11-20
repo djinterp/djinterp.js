@@ -1,0 +1,6 @@
+init 0
+declare ratio 0
+declare width 0
+load 8 (an argument was null, aliased, or out of range) at 12
+ratio=0.25  [program]
+width=240  [default]

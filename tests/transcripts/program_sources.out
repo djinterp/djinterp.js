@@ -1,0 +1,294 @@
+> # who set it: the environment, the user's file, the command line
+> get --show-origin width color printer.style
+exit 0
+out: width = 240  (default)
+out: color = true  (default)
+out: printer.style = plain  (D_CFG_ENV_PRINTER_STYLE)
+> env DJINTERP_WIDTH=333
+> env DJINTERP_COLOR=off
+> env DJINTERP_PRINTER_STYLE=json
+> env DJINTERP_PRINTER_BANNER=yes
+> env DJINTERP_NET_P=2222
+> env DJINTERP_CACHE_SIZE=lots
+> env DJINTERP_TITLE=from the environment
+> env DJINTERP_PRINTER_MODULE=env
+> get --show-origin width color printer.style printer.banner net.port cache.size title printer.module
+exit 0
+out: width = 333  (environment)
+out:     default    240   (default)
+out: color = false  (environment)
+out:     default    true   (default)
+out: printer.style = json  (environment)
+out:     default    plain   (D_CFG_ENV_PRINTER_STYLE)
+out: printer.banner = false  (default)
+out: net.port = 2222  (environment)
+out:     default    8080   (default)
+out: cache.size = 64  (default)
+out: title = from the environment  (environment)
+out:     default    unset   (default)
+out: printer.module = builtin  (D_CFG_ENV_PRINTER_MODULE)
+> file width = 200\nprinter.style = table\ntitle = "from the file"\n
+> get --show-origin width printer.style title
+exit 0
+out: width = 333  (environment)
+out:     under it   200   (file)
+out:     default    240   (default)
+out: printer.style = json  (environment)
+out:     under it   grid   (file)
+out:     default    plain   (D_CFG_ENV_PRINTER_STYLE)
+out: title = from the environment  (environment)
+out:     under it   "from the file"   (file)
+out:     default    unset   (default)
+> get --set width=400 --show-origin width
+exit 0
+out: width = 400  (command line)
+out:     under it   333   (environment)
+out:     under it   200   (file)
+out:     default    240   (default)
+> --set width=400 get --show-origin width
+exit 0
+out: width = 400  (command line)
+out:     under it   333   (environment)
+out:     under it   200   (file)
+out:     default    240   (default)
+> get --show-origin width --set width=400
+exit 0
+out: width = 400  (command line)
+out:     under it   333   (environment)
+out:     under it   200   (file)
+out:     default    240   (default)
+> get --show-origin --printer.style=plain printer.style
+exit 0
+out: printer.style = plain  (command line)
+out:     under it   json   (environment)
+out:     under it   grid   (file)
+out:     default    plain   (D_CFG_ENV_PRINTER_STYLE)
+> --printer.style=plain get --show-origin printer.style
+exit 0
+out: printer.style = plain  (command line)
+out:     under it   json   (environment)
+out:     under it   grid   (file)
+out:     default    plain   (D_CFG_ENV_PRINTER_STYLE)
+> get --printer.banner --show-origin printer.banner
+exit 0
+out: printer.banner = true  (command line)
+out:     default    false   (default)
+> get --no-printer.banner --show-origin printer.banner
+exit 0
+out: printer.banner = false  (command line)
+out:     default    false   (default)
+> get --show-origin --net.port=1 --net.port=2 net.port
+exit 0
+out: net.port = 2  (command line)
+out:     under it   2222   (environment)
+out:     default    8080   (default)
+> get --set title=cli --set printer.style=grid --show-origin title printer.style
+exit 0
+out: title = cli  (command line)
+out:     under it   "from the environment"   (environment)
+out:     under it   "from the file"   (file)
+out:     default    unset   (default)
+out: printer.style = table  (command line)
+out:     under it   json   (environment)
+out:     under it   grid   (file)
+out:     default    plain   (D_CFG_ENV_PRINTER_STYLE)
+> set width=500 --set color=yes
+exit 0
+> get --show-origin width color
+exit 0
+out: width = 333  (environment)
+out:     under it   500   (file)
+out:     default    240   (default)
+out: color = false  (environment)
+out:     default    true   (default)
+> # a setting the command line gives and the registry refuses
+> get --set
+exit 2
+err: djinterp: error: get: --set: NAME=VALUE is required
+err: Try 'djinterp get --help' for more information.
+> get --set width
+exit 2
+err: djinterp: error: get: --set: NAME=VALUE is required
+err: Try 'djinterp get --help' for more information.
+> get --set nothing=1
+exit 2
+err: djinterp: error: get: --set: no setting is named 'nothing'
+err: Try 'djinterp get --help' for more information.
+> get --set width=99
+exit 2
+err: djinterp: error: get: --set: '99' is not a value 'width' takes
+err: Try 'djinterp get --help' for more information.
+> get --set printer.style=xml
+exit 2
+err: djinterp: error: get: --set: 'printer.style' cannot be 'xml' in this build
+err: Try 'djinterp get --help' for more information.
+> --set width=99 get
+exit 2
+err: djinterp: error: --set: '99' is not a value 'width' takes
+err: Try 'djinterp --help' for more information.
+> get --printer.style
+exit 2
+err: djinterp: error: get: --printer.style: 'printer.style' is not a bool: give it a value, as --printer.style=VALUE
+err: Try 'djinterp get --help' for more information.
+> get --no-printer.style
+exit 2
+err: djinterp: error: get: --no-printer.style: 'printer.style' is not a bool: give it a value, as --printer.style=VALUE
+err: Try 'djinterp get --help' for more information.
+> get --printer.nothing
+exit 2
+err: djinterp: error: get: --printer.nothing: no setting is named 'printer.nothing'
+err: Try 'djinterp get --help' for more information.
+> get --printer.nothing=1
+exit 2
+err: djinterp: error: get: --printer.nothing: no setting is named 'printer.nothing'
+err: Try 'djinterp get --help' for more information.
+> get --printer.stlye=json
+exit 2
+err: djinterp: error: get: --printer.stlye: no setting is named 'printer.stlye'; did you mean 'printer.style'?
+err: Try 'djinterp get --help' for more information.
+> get --printr.style=json
+exit 2
+err: djinterp: error: get: --printr.style: no setting is named 'printr.style'; did you mean 'printer.style'?
+err: Try 'djinterp get --help' for more information.
+> get --printer.style=yaml
+exit 2
+err: djinterp: error: get: --printer.style: 'yaml' is not a value 'printer.style' takes
+err: Try 'djinterp get --help' for more information.
+> get --printer.banner=maybe
+exit 2
+err: djinterp: error: get: --printer.banner: 'maybe' is not a value 'printer.banner' takes
+err: Try 'djinterp get --help' for more information.
+> get --no-printer.nothing
+exit 2
+err: djinterp: error: get: --no-printer.nothing: no setting is named 'printer.nothing'
+err: Try 'djinterp get --help' for more information.
+> --printer.style get
+exit 2
+err: djinterp: error: --printer.style: 'printer.style' is not a bool: give it a value, as --printer.style=VALUE
+err: Try 'djinterp --help' for more information.
+> --printer.style=yaml get
+exit 2
+err: djinterp: error: --printer.style: 'yaml' is not a value 'printer.style' takes
+err: Try 'djinterp --help' for more information.
+> get --width=260
+exit 2
+err: djinterp: error: get: the following argument was not expected: --width=260
+err: Try 'djinterp get --help' for more information.
+> get --no-color
+exit 2
+err: djinterp: error: get: the following argument was not expected: --no-color
+err: Try 'djinterp get --help' for more information.
+> get width --printer.style
+exit 2
+err: djinterp: error: get: --printer.style: 'printer.style' is not a bool: give it a value, as --printer.style=VALUE
+err: Try 'djinterp get --help' for more information.
+> list --printer.style
+exit 2
+err: djinterp: error: list: --printer.style: 'printer.style' is not a bool: give it a value, as --printer.style=VALUE
+err: Try 'djinterp list --help' for more information.
+> describe --printer.style=yaml printer
+exit 2
+err: djinterp: error: describe: --printer.style: 'yaml' is not a value 'printer.style' takes
+err: Try 'djinterp describe --help' for more information.
+> set --printer.style=yaml width=1
+exit 2
+err: djinterp: error: set: --printer.style: 'yaml' is not a value 'printer.style' takes
+err: Try 'djinterp set --help' for more information.
+> # the user's file: a statement refused is a warning with its line, and the rest load
+> unenv DJINTERP_WIDTH
+> unenv DJINTERP_COLOR
+> unenv DJINTERP_PRINTER_STYLE
+> unenv DJINTERP_PRINTER_BANNER
+> unenv DJINTERP_NET_P
+> unenv DJINTERP_CACHE_SIZE
+> unenv DJINTERP_TITLE
+> unenv DJINTERP_PRINTER_MODULE
+> file width = 300\nwidth = 99\n\n  nothing = 1 ; printer.style = xml\nprinter.stlye = json # c\ntitle = "open\nprinter.banner\ncolor\nprinter.module = x\nratio = abc\n-width\nnet.port=70000;net.port = 99999999999999999999999999\ncache.size = 128\n
+> get --show-origin width color printer.banner cache.size title
+exit 0
+out: width = 300  (file)
+out:     default    240   (default)
+out: color = true  (default)
+out: printer.banner = false  (default)
+out: cache.size = 64  (default)
+out: # title is unset  (default)
+err: /tmp/djinterp.js/home/program_sources/djinterp/settings:2: warning: '99' is not a value 'width' takes
+err: /tmp/djinterp.js/home/program_sources/djinterp/settings:4: warning: no setting is named 'nothing'
+err: /tmp/djinterp.js/home/program_sources/djinterp/settings:4: warning: 'printer.style' cannot be 'xml' in this build
+err: /tmp/djinterp.js/home/program_sources/djinterp/settings:5: warning: no setting is named 'printer.stlye'; did you mean 'printer.style'?
+err: /tmp/djinterp.js/home/program_sources/djinterp/settings:6: warning: '"open
+err: printer.banner
+err: color
+err: printer.module = x
+err: ratio = abc
+err: -width
+err: net.port=70000;net.port = 99999999999999999999999999
+err: cache.size = 128
+err: ' is not a value 'title' takes
+> list
+exit 0
+out: printer  -  settings only
+out: net      -  settings only
+out: cache    -  settings only
+out: cli      -  settings only
+err: /tmp/djinterp.js/home/program_sources/djinterp/settings:2: warning: '99' is not a value 'width' takes
+err: /tmp/djinterp.js/home/program_sources/djinterp/settings:4: warning: no setting is named 'nothing'
+err: /tmp/djinterp.js/home/program_sources/djinterp/settings:4: warning: 'printer.style' cannot be 'xml' in this build
+err: /tmp/djinterp.js/home/program_sources/djinterp/settings:5: warning: no setting is named 'printer.stlye'; did you mean 'printer.style'?
+err: /tmp/djinterp.js/home/program_sources/djinterp/settings:6: warning: '"open
+err: printer.banner
+err: color
+err: printer.module = x
+err: ratio = abc
+err: -width
+err: net.port=70000;net.port = 99999999999999999999999999
+err: cache.size = 128
+err: ' is not a value 'title' takes
+> file width = 99
+> get width
+exit 0
+out: width = 240
+err: /tmp/djinterp.js/home/program_sources/djinterp/settings:1: warning: '99' is not a value 'width' takes
+> file \n\n\nwidth = 99 ; color = maybe\n\n; ratio = x\n
+> get width
+exit 0
+out: width = 240
+err: /tmp/djinterp.js/home/program_sources/djinterp/settings:4: warning: '99' is not a value 'width' takes
+err: /tmp/djinterp.js/home/program_sources/djinterp/settings:4: warning: 'maybe' is not a value 'color' takes
+err: /tmp/djinterp.js/home/program_sources/djinterp/settings:6: warning: 'x' is not a value 'ratio' takes
+> file width = 310\r\ncolor = no\r\nratio = x\r\n
+> get --show-origin width color
+exit 0
+out: width = 240  (default)
+out: color = true  (default)
+err: /tmp/djinterp.js/home/program_sources/djinterp/settings:1: warning: '310\r' is not a value 'width' takes
+err: /tmp/djinterp.js/home/program_sources/djinterp/settings:2: warning: 'no\r' is not a value 'color' takes
+err: /tmp/djinterp.js/home/program_sources/djinterp/settings:3: warning: 'x\r' is not a value 'ratio' takes
+> file # only a comment
+> get width
+exit 0
+out: width = 240
+> file =
+> get width
+exit 0
+out: width = 240
+err: /tmp/djinterp.js/home/program_sources/djinterp/settings:1: warning: '' is not a value '' takes
+> file width
+> get width
+exit 0
+out: width = 240
+err: /tmp/djinterp.js/home/program_sources/djinterp/settings:1: warning: 'width' cannot be set so (INVALID_ARGUMENT)
+> file -nothing\n- width\n-printer.banner\n
+> get --show-origin printer.banner
+exit 0
+out: printer.banner = false  (default)
+err: /tmp/djinterp.js/home/program_sources/djinterp/settings:1: warning: no setting is named '-nothing'
+err: /tmp/djinterp.js/home/program_sources/djinterp/settings:2: warning: no setting is named '- width'; did you mean 'width'?
+> env DJINTERP_WIDTH=abc
+> env DJINTERP_PRINTER_STYLE=xml
+> get --show-origin width printer.style
+exit 0
+out: width = 240  (default)
+out: printer.style = plain  (D_CFG_ENV_PRINTER_STYLE)
+err: /tmp/djinterp.js/home/program_sources/djinterp/settings:1: warning: no setting is named '-nothing'
+err: /tmp/djinterp.js/home/program_sources/djinterp/settings:2: warning: no setting is named '- width'; did you mean 'width'?

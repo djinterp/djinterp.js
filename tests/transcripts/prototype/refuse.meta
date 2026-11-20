@@ -1,0 +1,6 @@
+program: tools/option_driver.c
+arguments: the whole input, as its one argument
+reference: djinterp
+commit: 2bb6b246
+recorded: 2026-11-14
+note: recorded for the session's starting package (GCC 13.3, Linux x86-64); the same bytes at d20c0b23, checked 2026-11-15

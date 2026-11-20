@@ -13,7 +13,7 @@
 *   The reference's program reads its command line with djinterp's
 * argument parser and its command-line kit. Neither is ported. This file
 * reads the four commands' own arguments itself, and says what the parser
-* says for a missing command, a word that is no command, an argument a
+* says for a missing command, a word that is no command, arguments a
 * command does not expect and one it requires. What the kit adds to every
 * program -- `help`, `completion`, `--help`, `--version`, `-q`, `-v`,
 * `--color`, and "did you mean" for a mistyped command -- is not here
@@ -192,11 +192,6 @@ function work_describe(
     _names
 )
 {
-    if (_names.length === 0)
-    {
-        return usage_error(_run, 'describe', 'DJIN is required');
-    }
-
     const found = djin.bytes.find(_run.program.set, _names[0]);
     const frame = (found === null)
                       ? reg_bytes.find(_run.program.registry, _names[0])
@@ -647,6 +642,9 @@ function work_set(
         return said('write', error);
     }
 
+    // what was set and kept, for whoever listens
+    _run.set = _items.map((_item) => _item.slice(0, _item.indexOf('=')));
+
     return EXIT.OK;
 }
 
@@ -657,17 +655,78 @@ function work_set(
 
 /*
 unexpected
-  The usage error for the first argument a command does not expect.
+  The usage error for the arguments a command does not expect, or the
+program with no command: every one of them, in the order they were given.
 */
 function unexpected(
     _run,
     _command,
-    _argument
+    _extras
 )
 {
     return usage_error(_run, _command,
-                       'the following argument was not expected: ' +
-                       _argument);
+                       ((_extras.length === 1)
+                            ? 'the following argument was not expected: '
+                            : 'the following arguments were not expected: ') +
+                       _extras.join(' '));
+}
+
+/*
+read
+  A command line's arguments, read as the reference's parser reads them for
+these commands: the first word that is a command's name is the command;
+what stands before it, and what the command does not take, is unexpected;
+the rest are the command's own.
+*/
+function read(
+    _arguments
+)
+{
+    const line = { command: null, operands: [], extras: [], origin: false };
+
+    for (const argument of _arguments)
+    {
+        const option = ( argument.startsWith('-') &&
+                         (argument.length > 1) );
+
+        if (line.command === null)
+        {
+            if (COMMANDS.includes(argument))
+            {
+                line.command = argument;
+            }
+            else
+            {
+                line.extras.push(argument);
+            }
+        }
+        else if (option)
+        {
+            // get's one flag; the parser lets a flag be given a value
+            if ( (line.command === 'get') &&
+                 ( (argument === '--show-origin') ||
+                   argument.startsWith('--show-origin=') ) )
+            {
+                line.origin = true;
+            }
+            else
+            {
+                line.extras.push(argument);
+            }
+        }
+        else if ( (line.command === 'list') ||
+                  ( (line.command === 'describe') &&
+                    (line.operands.length === 1) ) )
+        {
+            line.extras.push(argument);
+        }
+        else
+        {
+            line.operands.push(argument);
+        }
+    }
+
+    return line;
 }
 
 function run_bytes(
@@ -675,71 +734,74 @@ function run_bytes(
     _argv
 )
 {
-    const run   = { program: _program, out: '', err: '' };
+    const run   = { program: _program, out: '', err: '', set: [] };
     const taken = cli_settings.take(_program.registry, _argv, COMMANDS);
 
     if (taken.refused !== null)
     {
         usage_error(run, taken.refused.command, taken.refused.message);
 
-        return { status: EXIT.TROUBLE, out: run.out, err: run.err };
+        return { status: EXIT.TROUBLE, out: run.out, err: run.err, set: [] };
     }
 
-    const [, command, ...rest] = taken.kept;
-    const options              = rest.filter((_a) => _a.startsWith('-'));
-    const operands             = rest.filter((_a) => !_a.startsWith('-'));
+    const line = read(taken.kept.slice(1));
     let   status;
 
-    if (command === undefined)
+    if (line.command === null)
     {
-        run.err += _program.name + ': error: a command is required\n' +
-                   'Usage: ' + _program.name +
-                   ' [OPTION]... COMMAND [ARGUMENT]...\n' +
-                   'Commands: ' + COMMANDS.join(', ') + '\n' +
-                   'Try \'' + _program.name +
-                   ' --help\' for more information.\n';
-        status   = EXIT.TROUBLE;
+        if (line.extras.length === 0)
+        {
+            run.err += _program.name + ': error: a command is required\n' +
+                       'Usage: ' + _program.name +
+                       ' [OPTION]... COMMAND [ARGUMENT]...\n' +
+                       'Commands: ' + COMMANDS.join(', ') + '\n' +
+                       'Try \'' + _program.name +
+                       ' --help\' for more information.\n';
+            status   = EXIT.TROUBLE;
+        }
+        else if (line.extras[0].startsWith('-'))
+        {
+            status = unexpected(run, null, line.extras);
+        }
+        else
+        {
+            status = usage_error(run, null, '\'' + line.extras[0] +
+                                            '\' is not a command');
+        }
     }
-    else if (command.startsWith('-'))
+    else if ( (line.command === 'describe') &&
+              (line.operands.length === 0) )
     {
-        status = unexpected(run, null, command);
+        // what a command requires is missed before what it does not expect
+        status = usage_error(run, 'describe', 'DJIN is required');
     }
-    else if (!COMMANDS.includes(command))
+    else if ( (line.command === 'set') &&
+              (line.operands.length === 0) )
     {
-        status = usage_error(run, null,
-                             '\'' + command + '\' is not a command');
+        status = usage_error(run, 'set', 'SETTING is required');
     }
-    else if (command === 'list')
+    else if (line.extras.length !== 0)
     {
-        status = (rest.length !== 0) ? unexpected(run, command, rest[0])
-                                     : work_list(run);
+        status = unexpected(run, line.command, line.extras);
     }
-    else if (command === 'describe')
+    else if (line.command === 'list')
     {
-        status = (options.length !== 0)
-                     ? unexpected(run, command, options[0])
-               : (operands.length > 1)
-                     ? unexpected(run, command, operands[1])
-               : work_describe(run, operands);
+        status = work_list(run);
     }
-    else if (command === 'get')
+    else if (line.command === 'describe')
     {
-        const stray = options.filter((_a) => (_a !== '--show-origin'));
-
-        status = (stray.length !== 0)
-                     ? unexpected(run, command, stray[0])
-                     : work_get(run, operands, (options.length !== 0));
+        status = work_describe(run, line.operands);
+    }
+    else if (line.command === 'get')
+    {
+        status = work_get(run, line.operands, line.origin);
     }
     else
     {
-        status = (options.length !== 0)
-                     ? unexpected(run, command, options[0])
-               : (operands.length === 0)
-                     ? usage_error(run, command, 'SETTING is required')
-               : work_set(run, operands);
+        status = work_set(run, line.operands);
     }
 
-    return { status: status, out: run.out, err: run.err };
+    return { status: status, out: run.out, err: run.err, set: run.set };
 }
 
 // 2.1
@@ -749,9 +811,11 @@ function run_bytes(
  * @param {djinterp_program} _program  the program.
  * @param {Array<string>}    _argv     the command line's words, the
  *        program's name first: ['djinterp', 'get', 'printer.style'].
- * @returns {{status: number, out: string, err: string}} an EXIT status;
- *          what the command wrote; and what it said, which is empty for
- *          a run with no trouble.
+ * @returns {{status: number, out: string, err: string,
+ *            set: Array<string>}} an EXIT status; what the command wrote;
+ *          what it said, which is empty for a run with no trouble; and
+ *          the full names a `set` bound and kept, which the reference's
+ *          program has no one to tell and a page does.
  */
 export function program_run(
     _program,
@@ -761,5 +825,6 @@ export function program_run(
     const ran = run_bytes(_program,
                           _argv.map((_word) => env_bytes.cstr(encode(_word))));
 
-    return { status: ran.status, out: decode(ran.out), err: decode(ran.err) };
+    return { status: ran.status, out: decode(ran.out), err: decode(ran.err),
+             set: ran.set.map(decode) };
 }

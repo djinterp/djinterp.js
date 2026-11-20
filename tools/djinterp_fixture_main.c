@@ -39,7 +39,7 @@
 #include "djinterp/c/modules/parse/cli/arg_parser/arg_parser.h"  // the parser
 #include "djinterp/tools/cli/c/cli_program.h"   // the kit's program
 #include "djinterp/tools/cli/c/cli_settings.h"  // d_cli_settings_start
-#include "djinterp_commands.h"                  // the program (-I src/djinterp/tools/djinterp)
+#include "djinterp_commands.h"                  // -I .../tools/djinterp
 #include "./fixture.h"                          // the fixture
 #include "./json_out.h"                         // json_rows
 
