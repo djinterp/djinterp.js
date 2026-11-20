@@ -97,6 +97,7 @@ import * as djinterpCommands from './tools/djinterp/djinterp_commands.js';
  */
 /** @import { OptionResult } from './option/option_common.js' */
 /** @import { OptionRow } from './option/option_env.js' */
+/** @import { SettingsFile } from './tools/cli/cli_settings.js' */
 
 export { djin, event, optionEnv, optionEnvRegistry };
 
@@ -196,8 +197,7 @@ export function split(
  *        when the program speaks of it.
  * @param {?string} [_text=null]  its text to start with; null for a file
  *        that is not there yet.
- * @returns {{name: string, read: function(): ?string,
- *            write: function(string): void}}
+ * @returns {SettingsFile}
  */
 export function memoryFile(
     _name = SETTINGS_NAME,
@@ -228,8 +228,7 @@ export function memoryFile(
  *        Storage.
  * @param {string} [_key='djinterp/settings']  the key the text is kept
  *        under, and what the file is called.
- * @returns {{name: string, read: function(): ?string,
- *            write: function(string): void}}
+ * @returns {SettingsFile}
  */
 export function storageFile(
     _storage,
@@ -590,7 +589,7 @@ export function openProgram(
  * @param {Array<DjinRecord>} [_options.djins=[]]  its djins.
  * @param {Array<OptionEnv>} [_options.frames=[]]  named frames of
  *        settings with no djin's record.
- * @param {?object} [_options.file]  the user's settings file; one in
+ * @param {?SettingsFile} [_options.file]  the user's settings file; one in
  *        memory where left out, none for null: `set` then binds for the
  *        run and says it has nowhere to keep what it set.
  * @param {*} [_options.environment=null]  the environment, as

@@ -18,7 +18,7 @@
  *
  * @param {object} _options  what it is made over.
  * @param {OptionEnvRegistry} _options.registry  its registry.
- * @param {?object} [_options.file=null]  the user's settings file.
+ * @param {?SettingsFile} [_options.file=null]  the user's settings file.
  * @param {*} [_options.environment=null]  the environment.
  * @param {number} [_options.djins=16]  the most djins its set holds; the
  *        reference's program holds 16.
@@ -29,7 +29,7 @@
  */
 export function programMake(_options: {
     registry: optionEnvRegistry.OptionEnvRegistry;
-    file?: object | null;
+    file?: cliSettings.SettingsFile | null;
     environment?: any;
     djins?: number;
     colour?: boolean;
@@ -122,6 +122,139 @@ export type DjinterpProgram = {
      */
     colour: boolean;
 };
+/**
+ * A run of the program, as its commands write to it.
+ */
+export type DjinterpRun = {
+    /**
+     * the program running.
+     */
+    program: DjinterpProgram;
+    /**
+     * what the command wrote.
+     */
+    out: string;
+    /**
+     * what was said, which is empty for a run
+     * with no trouble.
+     */
+    err: string;
+    /**
+     * the full names a `set` bound and kept.
+     */
+    set: Array<string>;
+};
+/**
+ * A setting found by its full name (`find`).
+ */
+export type DjinterpSetting = {
+    /**
+     * the frame it is a setting of.
+     */
+    frame: optionEnv.OptionEnv;
+    /**
+     * the scope it was found in.
+     */
+    scope: number;
+    /**
+     * its variable's id.
+     */
+    var: number;
+    /**
+     * its row, as the frame holds it.
+     */
+    decl: optionEnv.OptionDecl;
+};
+/**
+ * A command line as `read` reads it.
+ */
+export type DjinterpLine = {
+    /**
+     * the command; null for none.
+     */
+    command: string | null;
+    /**
+     * the words given to the command.
+     */
+    operands: Array<string>;
+    /**
+     * the arguments nothing took, in order.
+     */
+    extras: Array<string>;
+    /**
+     * how many of them count: a `--` is listed
+     * and not counted.
+     */
+    counted: number;
+    /**
+     * the places in `extras` of those taken as
+     * words after a `--`.
+     */
+    words: Set<number>;
+    /**
+     * whether `get` was given `--show-origin`.
+     */
+    origin: boolean;
+    /**
+     * whether help was asked for.
+     */
+    help: boolean;
+    /**
+     * whether it was asked for before a command
+     * was misplaced.
+     */
+    helped: boolean;
+    /**
+     * whether the version was asked for.
+     */
+    version: boolean;
+    /**
+     * how many times `-q` was given.
+     */
+    quiet: number;
+    /**
+     * how many times `-v` was given.
+     */
+    verbose: number;
+    /**
+     * `--color`'s words, in order.
+     */
+    colours: Array<string>;
+    /**
+     * the colour option as it was typed, for
+     * what is said of its word; null for none.
+     */
+    colourName: string | null;
+    /**
+     * a command's name where no command can
+     * stand; null for none.
+     */
+    misplaced: string | null;
+};
+/**
+ * What a run of the program comes to.
+ */
+export type DjinterpOutcome = {
+    /**
+     * an EXIT status.
+     */
+    status: number;
+    /**
+     * what the command wrote.
+     */
+    out: string;
+    /**
+     * what it said, which is empty for a run with
+     * no trouble.
+     */
+    err: string;
+    /**
+     * the full names a `set` bound and kept,
+     * which the reference's file holds from the next run on.
+     */
+    set: Array<string>;
+};
 import * as optionEnvRegistry from '../../option/option_env_registry.js';
-import * as djin from '../../modules/interp/djin.js';
 import * as cliSettings from '../cli/cli_settings.js';
+import * as djin from '../../modules/interp/djin.js';
+import * as optionEnv from '../../option/option_env.js';

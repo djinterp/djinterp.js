@@ -18,14 +18,9 @@ export function split(_line: string): Array<string> | null;
  *        when the program speaks of it.
  * @param {?string} [_text=null]  its text to start with; null for a file
  *        that is not there yet.
- * @returns {{name: string, read: function(): ?string,
- *            write: function(string): void}}
+ * @returns {SettingsFile}
  */
-export function memoryFile(_name?: string, _text?: string | null): {
-    name: string;
-    read: () => string | null;
-    write: (arg0: string) => void;
-};
+export function memoryFile(_name?: string, _text?: string | null): cliSettings.SettingsFile;
 /**
  * A settings file kept in a Storage the page hands over, such as its
  * localStorage, under one key. A Storage that refuses -- one that is full,
@@ -37,17 +32,12 @@ export function memoryFile(_name?: string, _text?: string | null): {
  *        Storage.
  * @param {string} [_key='djinterp/settings']  the key the text is kept
  *        under, and what the file is called.
- * @returns {{name: string, read: function(): ?string,
- *            write: function(string): void}}
+ * @returns {SettingsFile}
  */
 export function storageFile(_storage: {
     getItem: (arg0: string) => string | null;
     setItem: (arg0: string, arg1: string) => void;
-}, _key?: string): {
-    name: string;
-    read: () => string | null;
-    write: (arg0: string) => void;
-};
+}, _key?: string): cliSettings.SettingsFile;
 /**
  * A named frame of settings: made, named, its rows declared and its
  * scopes named, ready to be a djin's `settings` or to be listed with no
@@ -88,7 +78,7 @@ export function openProgram(_program: djinterpCommands.DjinterpProgram, _options
  * @param {Array<DjinRecord>} [_options.djins=[]]  its djins.
  * @param {Array<OptionEnv>} [_options.frames=[]]  named frames of
  *        settings with no djin's record.
- * @param {?object} [_options.file]  the user's settings file; one in
+ * @param {?SettingsFile} [_options.file]  the user's settings file; one in
  *        memory where left out, none for null: `set` then binds for the
  *        run and says it has nowhere to keep what it set.
  * @param {*} [_options.environment=null]  the environment, as
@@ -110,7 +100,7 @@ export function openNow(_options?: {
     scopes?: Array<string>;
     djins?: Array<djin.DjinRecord>;
     frames?: Array<optionEnv.OptionEnv>;
-    file?: object | null;
+    file?: cliSettings.SettingsFile | null;
     environment?: any;
     query?: string | null;
     colour?: boolean;
@@ -191,6 +181,7 @@ export type DjinterpSession = {
      */
     off: (arg0: number) => boolean;
 };
+import * as cliSettings from './tools/cli/cli_settings.js';
 import * as optionEnv from './option/option_env.js';
 import * as djinterpCommands from './tools/djinterp/djinterp_commands.js';
 import * as djin from './modules/interp/djin.js';

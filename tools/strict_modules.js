@@ -29,5 +29,6 @@ export const STRICT = Object.freeze([
     'text/cut.js',
     'text/real_format.js',
     'text/real_read.js',
-    'tools/cli/cli_settings.js'
+    'tools/cli/cli_settings.js',
+    'tools/djinterp/djinterp_commands.js'
 ]);
