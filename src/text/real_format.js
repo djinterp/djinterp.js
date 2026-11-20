@@ -72,12 +72,16 @@ export function parts(
 // 2.  WRITING
 //==============================================================================
 
-/*
-digitsOf
-  The decimal digits of a finite double's magnitude, rounded to _precision
-significant digits, to nearest with ties to even, and the power of ten of
-the first: the value is d.ddd * 10^exponent. Zero is "0" at exponent 0.
-*/
+/**
+ * The decimal digits of a finite double's magnitude, rounded to
+ * `_precision` significant digits, to nearest with ties to even, and the
+ * power of ten of the first: the value is d.ddd * 10^exponent. Zero is "0"
+ * at exponent 0.
+ *
+ * @param {number} _value      the double, finite.
+ * @param {number} _precision  the significant digits, 1 or more.
+ * @returns {{digits: string, exponent: number}}
+ */
 function digitsOf(
     _value,
     _precision

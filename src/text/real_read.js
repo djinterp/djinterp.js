@@ -40,10 +40,12 @@ TABLE OF CONTENTS
 
 const SCRATCH = new DataView(new ArrayBuffer(8));
 
-/*
-bitLength
-  The bits of a positive whole number.
-*/
+/**
+ * The bits of a positive whole number.
+ *
+ * @param {bigint} _value  the number.
+ * @returns {number}
+ */
 function bitLength(
     _value
 )
@@ -229,6 +231,7 @@ export function readReal(
     }
 
     // digits, a point, digits
+    /** @type {function(number): boolean} */
     const isDigit = (_i) => ( (_text.charCodeAt(_i) >= 48) &&
                               (_text.charCodeAt(_i) <= 57) );
     let   digits   = '';

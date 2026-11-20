@@ -523,10 +523,17 @@ export function openProgram(
             return event.dispatcherBind(
                        events, event.keyOfName(_name),
                        event.stepMake((_payload) =>
-                           (event.verdictIsConsumed(_handler(_payload) ??
-                                                    event.VERDICT.PASS)
-                                ? event.VERDICT.CONSUME
-                                : event.VERDICT.PASS))).id;
+                       {
+                           // a handler that gives nothing lets the event
+                           // pass on
+                           const verdict = /** @type {number | undefined} */
+                                           (_handler(_payload));
+
+                           return event.verdictIsConsumed(
+                                      verdict ?? event.VERDICT.PASS)
+                                      ? event.VERDICT.CONSUME
+                                      : event.VERDICT.PASS;
+                       })).id;
         },
 
         off(_id)

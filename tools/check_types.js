@@ -9,13 +9,16 @@
 * repository does not depend on one, no page needs one, and
 * `node --test` does not run this: the sources are what a page imports,
 * as they are written (docs/JS_STYLE.md, JS2).
-*   What is checked is what the comments claim: a function with a JSDoc
-* comment is held to its parameters and what it returns, and every type a
-* comment names must be one that exists. A function with none is not
-* held to anything; the checker is not run in its strict mode, which
-* would ask for a type on every parameter there is.
-*   Exits 1, having shown them, where the checker finds anything; types/
-* is then left as it was.
+*   Everywhere, what is checked is what the comments claim: a function
+* with a JSDoc comment is held to its parameters and what it returns, and
+* every type a comment names must be one that exists.
+*   The modules in STRICT are also held to the checker's strict mode: a
+* type on every parameter, and null and undefined told apart from values.
+* The strict mode is brought in a module at a time (the owner's ruling of
+* 2026-11-16); a module joins STRICT when it has no finding there, and
+* the tool says how many findings the others still have.
+*   Exits 1, having shown them, where the checker finds anything it holds
+* a module to; types/ is then left as it was.
 *
 *
 * path:      /tools/check_types.js
@@ -33,6 +36,11 @@ import { fileURLToPath } from 'node:url';
 
 const ROOT  = join(dirname(fileURLToPath(import.meta.url)), '..');
 const [tsc] = process.argv.slice(2);
+
+// the modules held to the strict mode, by their paths under src/
+const STRICT = ['event/event_common.js', 'event/event_handler_common.js',
+                'option/option_common.js', 'text/cut.js',
+                'text/real_format.js', 'text/real_read.js'];
 
 if (tsc === undefined)
 {
@@ -67,25 +75,45 @@ function sourcesUnder(
     return found;
 }
 
-const made = mkdtempSync(join(tmpdir(), 'djinterp.js-types-'));
-const ran  = spawnSync(process.execPath, [
-    tsc, '--allowJs', '--checkJs', '--declaration', '--emitDeclarationOnly',
-    '--target', 'es2022', '--module', 'nodenext',
-    '--moduleResolution', 'nodenext', '--skipLibCheck',
-    '--rootDir', ROOT, '--outDir', made,
-    ...sourcesUnder(join(ROOT, 'src')),
-    ...sourcesUnder(join(ROOT, 'generated'))
-], { encoding: 'utf8' });
+/*
+check
+  Runs the checker over src/ and the generated modules, with more
+arguments; what it said, a finding a line or more.
+*/
+function check(
+    _more
+)
+{
+    const ran = spawnSync(process.execPath, [
+        tsc, '--allowJs', '--checkJs', '--target', 'es2022',
+        '--module', 'nodenext', '--moduleResolution', 'nodenext',
+        '--skipLibCheck', '--rootDir', ROOT, ..._more,
+        ...sourcesUnder(join(ROOT, 'src')),
+        ...sourcesUnder(join(ROOT, 'generated'))
+    ], { encoding: 'utf8', cwd: ROOT, maxBuffer: 1 << 26 });
 
-const said     = (ran.stdout ?? '') + (ran.stderr ?? '');
+    return (ran.stdout ?? '') + (ran.stderr ?? '');
+}
+
+const made     = mkdtempSync(join(tmpdir(), 'djinterp.js-types-'));
+const said     = check(['--declaration', '--emitDeclarationOnly',
+                        '--outDir', made]);
 const findings = said.split('\n').filter((_line) =>
                                              _line.includes('error TS'));
 
-if ( (ran.status !== 0) ||
-     (findings.length !== 0) )
+// the strict mode's findings, by the module each is in
+const strict   = check(['--noEmit', '--strict']).split('\n')
+                     .filter((_line) => _line.includes('error TS'));
+const held     = strict.filter((_line) =>
+                     STRICT.some((_module) =>
+                                     _line.startsWith('src/' + _module + '(')));
+
+if ( (findings.length !== 0) ||
+     (held.length !== 0) )
 {
-    console.log(said.trimEnd());
-    console.log(findings.length + ' to put right');
+    console.log([...((findings.length !== 0) ? [said.trimEnd()] : []),
+                 ...held].join('\n'));
+    console.log((findings.length + held.length) + ' to put right');
     rmSync(made, { recursive: true, force: true });
     process.exit(1);
 }
@@ -94,3 +122,6 @@ rmSync(join(ROOT, 'types'), { recursive: true, force: true });
 cpSync(made, join(ROOT, 'types'), { recursive: true });
 rmSync(made, { recursive: true, force: true });
 console.log('the code is as its comments say; declarations in types/');
+console.log(STRICT.length + ' modules are held to the strict mode; the ' +
+            'others have ' + (strict.length - held.length) +
+            ' findings there');

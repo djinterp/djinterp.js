@@ -33,6 +33,7 @@ TABLE OF CONTENTS
 
 import data from '../../generated/event.js';
 
+/** @type {function(string, string): string} */
 const strip = (_name, _prefix) => _name.slice(_prefix.length);
 
 
@@ -78,7 +79,7 @@ export function keyOfName(
     // walked as UTF-8 here, and nowhere else is text taken as bytes
     for (const character of _name)
     {
-        const point = character.codePointAt(0);
+        const point = character.codePointAt(0) ?? 0;
 
         // a surrogate with no partner is written as U+FFFD is
         const scalar = ( (point >= 0xD800) &&

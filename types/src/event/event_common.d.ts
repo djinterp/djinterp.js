@@ -26,10 +26,14 @@ export const HANDLER_ID_NULL: number;
  * What a handler gives: PASS, or CONSUME, after which no later handler of
  * the occurrence is invoked.
  */
-export const VERDICT: any;
+export const VERDICT: Readonly<{
+    [k: string]: number;
+}>;
 /**
  * The outcome of a table's or a queue's operation, by the reference's
  * names without their prefix: `STATUS.ERR_NOT_FOUND` is
  * D_EVENT_ERR_NOT_FOUND.
  */
-export const STATUS: any;
+export const STATUS: Readonly<{
+    [k: string]: number;
+}>;

@@ -103,7 +103,9 @@ export function stepInvoke(
     _payload
 )
 {
-    if (stepIsSkip(_step))
+    if ( (_step === null)  ||
+         (_step.fn === null) ||
+         stepIsSkip(_step) )
     {
         return VERDICT.PASS;
     }

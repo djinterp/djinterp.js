@@ -73,8 +73,7 @@ export function statusName(
     _status
 )
 {
-    return BY_CODE.has(_status) ? BY_CODE.get(_status).name
-                                : data.status_unknown.name;
+    return BY_CODE.get(_status)?.name ?? data.status_unknown.name;
 }
 
 // 1.4
@@ -88,8 +87,7 @@ export function statusMessage(
     _status
 )
 {
-    return BY_CODE.has(_status) ? BY_CODE.get(_status).message
-                                : data.status_unknown.message;
+    return BY_CODE.get(_status)?.message ?? data.status_unknown.message;
 }
 
 // 1.5
@@ -159,5 +157,7 @@ export function resultStatus(
     _result
 )
 {
-    return _result.isOk ? STATUS.OK : _result.error;
+    // a failure has its status
+    return _result.isOk ? STATUS.OK
+                        : /** @type {number} */ (_result.error);
 }
